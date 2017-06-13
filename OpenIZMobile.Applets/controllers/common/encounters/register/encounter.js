@@ -224,7 +224,9 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     // Gets the next sequence based on current scope encounter
     scope.getNextDoseSequence = scope.getNextDoseSequence || function (productId) {
         var nextDose = 1;
-        $.grep(scope.encounters, function (a) {
+        var scp = scope;
+        while (!scp.encounters && scp.$parent) scp = scp.$parent;
+        $.grep(scp.encounters, function (a) {
             if (nextDose <= a.doseSequence &&
                 a.statusConcept == OpenIZModel.StatusKeys.Completed &&
                 a.participation.Product &&

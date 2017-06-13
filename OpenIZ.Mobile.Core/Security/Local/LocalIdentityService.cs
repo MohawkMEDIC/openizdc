@@ -135,10 +135,14 @@ namespace OpenIZ.Mobile.Core.Security
 						dbs.InvalidLoginAttempts = 0;
 						connection.Update(dbs);
 
-						// Create the principal
-						retVal = new SQLitePrincipal(new SQLiteIdentity(dbs.UserName, true),
-							connection.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?",
-							dbs.Uuid).Select(o => o.Name).ToArray());
+                        // Create the principal
+                        retVal = new SQLitePrincipal(new SQLiteIdentity(dbs.UserName, true),
+                            connection.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?",
+                            dbs.Uuid).Select(o => o.Name).ToArray())
+                        {
+                            IssueTime = DateTime.Now,
+                            Expires = DateTime.Now.Add(ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>()?.MaxLocalSession ?? new TimeSpan(0, 15, 0))
+                        };
 
 					}
 				}
@@ -454,10 +458,20 @@ namespace OpenIZ.Mobile.Core.Security
 	{
 		private String[] m_roles;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Security.SQLitePrincipal"/> class.
-		/// </summary>
-		public SQLitePrincipal(SQLiteIdentity identity, String[] roles)
+        /// <summary>
+        /// The time that the principal was issued
+        /// </summary>
+        public DateTime IssueTime { get; set; }
+
+        /// <summary>
+        /// Expiration time
+        /// </summary>
+        public DateTime Expires { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Security.SQLitePrincipal"/> class.
+        /// </summary>
+        public SQLitePrincipal(SQLiteIdentity identity, String[] roles)
 		{
 			this.m_roles = roles;
 			this.Identity = identity;

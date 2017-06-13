@@ -50,7 +50,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
                 this.m_networkAvailable = e.IsAvailable;
                 this.NetworkStatusChanged?.Invoke(this, e);
             };
-
             // TODO: Discuss the ramifications of this
 			// this.NetworkStatusChanged += NetworkInformationService_NetworkStatusChanged;
         }
@@ -97,7 +96,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
         {
             get
             {
-                return this.m_networkAvailable;
+                return NetworkInterface.GetIsNetworkAvailable();
 			}
         }
 

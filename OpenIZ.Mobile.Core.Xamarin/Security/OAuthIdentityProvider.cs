@@ -142,9 +142,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             };
 
                             // Invoke
-                            OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
-                            retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
-
+                            if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
+                            {
+                                OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
+                                retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
+                            }
+                            else
+                            {
+                                this.m_tracer.TraceWarning("Network unavailable, trying local");
+                                try
+                                {
+                                    retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                                }
+                                catch
+                                {
+                                    throw new SecurityException(Strings.err_offline_use_cache_creds);
+                                }
+                            }
                             this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password, true) { Principal = retVal });
 
                         }
@@ -232,35 +246,35 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
                             try
                             {
-	                            var userKey = Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value);
+                                var userKey = Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value);
 
-								var adminService = ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
+                                var adminService = ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
 
-								var networkIsAvailable = adminService?.IsAvailable() ?? false;
+                                var networkIsAvailable = adminService?.IsAvailable() ?? false;
 
-	                            SecurityUser securityUser = null;
+                                SecurityUser securityUser = null;
 
-								if (localUser == null)
-	                            {
-		       //                     if (networkIsAvailable)
-		       //                     {
-			      //                      // force download the security user from the AMI
-			      //                      // to be able to retrive any updated security information
-			      //                      // such as the email and phone number
-			      //                      securityUser = adminService.GetSecurityUser(userKey);
-		       //                     }
+                                if (localUser == null)
+                                {
+                                    //                     if (networkIsAvailable)
+                                    //                     {
+                                    //                      // force download the security user from the AMI
+                                    //                      // to be able to retrive any updated security information
+                                    //                      // such as the email and phone number
+                                    //                      securityUser = adminService.GetSecurityUser(userKey);
+                                    //                     }
 
-									//if (securityUser != null)
-		       //                     {
-			      //                      localIdp.CreateIdentity(securityUser, password, new SystemPrincipal());
-									//}
-		       //                     else
-		       //                     {
-									//	localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
-									//}
+                                    //if (securityUser != null)
+                                    //                     {
+                                    //                      localIdp.CreateIdentity(securityUser, password, new SystemPrincipal());
+                                    //}
+                                    //                     else
+                                    //                     {
+                                    //	localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
+                                    //}
 
-									localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
-								}
+                                    localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
+                                }
                                 else
                                 {
                                     localIdp.ChangePassword(principal.Identity.Name, password, principal);
@@ -309,7 +323,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     }
                 }
             }
-            catch {
+            catch
+            {
                 this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password, false) { Principal = retVal });
                 throw;
             }
@@ -364,7 +379,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
                     // User ID not found - lookup
                     if (userId == Guid.Empty)
-                    { 
+                    {
                         // User service is null
                         var securityUser = securityUserService.GetUser(principal.Identity);
                         if (securityUser == null)
@@ -407,16 +422,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 throw;
             }
 
-		}
+        }
 
-		/// <summary>
-		/// Changes the users password.
-		/// </summary>
-		/// <param name="userName">The username of the user.</param>
-		/// <param name="password">The new password of the user.</param>
+        /// <summary>
+        /// Changes the users password.
+        /// </summary>
+        /// <param name="userName">The username of the user.</param>
+        /// <param name="password">The new password of the user.</param>
         public void ChangePassword(string userName, string password)
         {
-			this.ChangePassword(userName, password, AuthenticationContext.Current.Principal);
+            this.ChangePassword(userName, password, AuthenticationContext.Current.Principal);
         }
 
         /// <summary>

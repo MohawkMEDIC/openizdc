@@ -14,7 +14,7 @@
         "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
         "typeConceptModel": {
           "id": "62fc0be4-f75f-460b-ab98-4215f4573748",
-          "mnemonic": "DrugNonAllergyIntolerance"
+          "mnemonic": "saDrugNonAllergyIntolerance"
         },
         "actTime": "{{now}}",
         "value": "70fe34ce-caff-4f46-b6e6-9cd6d8f289d6",

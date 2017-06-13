@@ -249,6 +249,14 @@ namespace OpenIZ.Mobile.Core.Security
                     Guid.TryParse(cp.FindClaim(ClaimTypes.Sid)?.Value, out subKey);
 
             }
+            else if (principal is SQLitePrincipal)
+            {
+                var sqlPrincipal = principal as SQLitePrincipal;
+                this.Issued = sqlPrincipal.IssueTime;
+                this.Expiry = sqlPrincipal.Expires;
+                IRoleProviderService rps = ApplicationContext.Current.GetService<IRoleProviderService>();
+                this.Roles = rps.GetAllRoles(this.UserName).ToList();
+            }
             else
             {
                 IRoleProviderService rps = ApplicationContext.Current.GetService<IRoleProviderService>();

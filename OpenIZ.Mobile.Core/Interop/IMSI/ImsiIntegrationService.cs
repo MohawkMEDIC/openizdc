@@ -268,14 +268,15 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             try
             {
                 //var restClient = ApplicationContext.Current.GetRestClient("imsi");
-
-                ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
-                client.Client.Credentials = this.GetCredentials(client.Client);
-
                 var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
-
-                return networkInformationService.IsNetworkAvailable &&
-                    this.IsValidVersion(client);
+                if (networkInformationService.IsNetworkAvailable)
+                {
+                    ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
+                    client.Client.Credentials = this.GetCredentials(client.Client);
+                    return this.IsValidVersion(client);
+                }
+                else
+                    return false;
             }
             catch (Exception e)
             {

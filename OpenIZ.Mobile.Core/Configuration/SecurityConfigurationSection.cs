@@ -36,6 +36,14 @@ namespace OpenIZ.Mobile.Core.Configuration
 	{
 
 
+        /// <summary>
+        /// Max local session
+        /// </summary>
+        public SecurityConfigurationSection()
+        {
+            this.MaxLocalSession = new TimeSpan(0, 30, 0);
+        }
+
 		/// <summary>
 		/// Gets the real/domain to which the application is currently joined
 		/// </summary>
@@ -128,6 +136,28 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlElement("onlySubscribedAuth"), JsonProperty("onlySubscribedAuth")]
         public bool OnlySubscribedFacilities { get; set; }
+
+        /// <summary>
+        /// Local session length
+        /// </summary>
+        [XmlElement("localSessionLength"), JsonProperty("localSessionLength")]
+        public String MaxLocalSessionXml
+        {
+            get
+            {
+                return this.MaxLocalSession.ToString();
+            }
+            set
+            {
+                this.MaxLocalSession = TimeSpan.Parse(!String.IsNullOrEmpty(value) ? value : "00:30:00");
+            }
+        }
+
+        /// <summary>
+        /// Local session
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public TimeSpan? MaxLocalSession { get; set; }
     }
 
 }

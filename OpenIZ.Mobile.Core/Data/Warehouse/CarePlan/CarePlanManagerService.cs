@@ -159,16 +159,11 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     var patientSync = SynchronizationLog.Current.GetAll().FirstOrDefault(o => o.ResourceType == "Person");
                     
                     this.RefreshCarePlan(false);
+                    
+                    // Subscribe to events
+                    this.SubscribeEvents();
 
-
-                    // Stage 3. Subscribe to persistence
-                    ApplicationContext.Current.GetService<ISynchronizationService>().PullCompleted += (o, e) =>
-                    {
-                        if (!this.m_isSubscribed && e.Type == null && SynchronizationQueue.Inbound.Count() == 0) // General subscribption is done
-                            this.SubscribeEvents();
-                    };
-
-
+                    // We're not connected to the in
                     queueService.QueueExhausted += (o, e) =>
                             {
                                 int inboundQueueCount = SynchronizationQueue.Inbound.Count();
@@ -214,12 +209,16 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             {
                 try
                 {
+                    ISynchronizationService syncService = ApplicationContext.Current.GetService<ISynchronizationService>();
+                    
                     while (this.m_running)
                     {
                         this.m_resetEvent.WaitOne();
                         // de-queue
                         int promiseCount = this.m_actCarePlanPromise.Count;
-                        while (this.m_actCarePlanPromise.Count > 0)
+                        while (!syncService.IsSynchronizing && 
+                            SynchronizationQueue.Inbound.Count() == 0 && 
+                            this.m_actCarePlanPromise.Count > 0)
                         {
                             if (this.m_actCarePlanPromise.Count > promiseCount)
                                 promiseCount = this.m_actCarePlanPromise.Count;

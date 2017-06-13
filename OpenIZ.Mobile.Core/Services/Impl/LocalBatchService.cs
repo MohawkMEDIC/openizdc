@@ -27,18 +27,58 @@ using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization;
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
 	/// <summary>
 	/// Local batch service
 	/// </summary>
-	public class LocalBatchService : IBatchRepositoryService, IAuditEventSource
+	public class LocalBatchService : IBatchRepositoryService, IAuditEventSource, IRepositoryService<Bundle>
 	{
         public event EventHandler<AuditDataEventArgs> DataCreated;
         public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
         public event EventHandler<AuditDataEventArgs> DataObsoleted;
         public event EventHandler<AuditDataEventArgs> DataUpdated;
+
+        /// <summary>
+        /// Find a bundle
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public IEnumerable<Bundle> Find(Expression<Func<Bundle, bool>> query)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Find bundle with control
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
+        /// <param name="totalResults"></param>
+        /// <returns></returns>
+        public IEnumerable<Bundle> Find(Expression<Func<Bundle, bool>> query, int offset, int? count, out int totalResults)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Get a bundle
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public Bundle Get(Guid key)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Bundle Get(Guid key, Guid versionKey)
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Insert the bundle
@@ -68,10 +108,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return data;
 		}
 
-		/// <summary>
-		/// Obsolete all the contents in the bundle
-		/// </summary>
-		public Bundle Obsolete(Bundle obsolete)
+        public Bundle Obsolete(Guid key)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Obsolete all the contents in the bundle
+        /// </summary>
+        public Bundle Obsolete(Bundle obsolete)
 		{
 			obsolete = this.Validate(obsolete);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
@@ -90,12 +135,22 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return obsolete;
 		}
 
-		/// <summary>
-		/// Update the specified data in the bundle
-		/// </summary>
-		/// <param name="data"></param>
-		/// <returns></returns>
-		public Bundle Update(Bundle data)
+        /// <summary>
+        /// Update
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Bundle Save(Bundle data)
+        {
+            return this.Update(data);
+        }
+
+        /// <summary>
+        /// Update the specified data in the bundle
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Bundle Update(Bundle data)
 		{
 			data = this.Validate(data);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
