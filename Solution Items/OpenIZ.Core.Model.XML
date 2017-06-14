@@ -789,6 +789,11 @@
             Gets or sets whether the persistence engine should throw an exception when persisting duplicates
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Attributes.NonCachedAttribute">
+            <summary>
+            Instructs any data caching that the object should not be cached
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Attributes.SerializationReferenceAttribute">
             <summary>
             Identifies where tools can find the serialization information
