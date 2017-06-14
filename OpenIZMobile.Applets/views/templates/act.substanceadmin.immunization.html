@@ -54,7 +54,7 @@
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
                     <select 
-                            ng-init="act.targetModel.participation.Consumable = Array.isArray(act.targetModel.participation.Consumable) ? act.targetModel.participation.Consumable : [act.targetModel.participation.Consumable]; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
+                        ng-init="act.targetModel.participation.Consumable = makeArrayIfNot(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
                             ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" 
                             ng-if="act.targetModel.participation.Product.player"
                             ng-required="act._enabled" 
@@ -138,7 +138,7 @@
                     <label>
                         {{ product.targetModel.name.OfficialRecord | oizEntityName }} {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
-                    <select ng-init="act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + product.target]"
+                    <select ng-init="act.targetModel.participation.Consumable[$index + 1].player = $root.session.prefs['default.lot.' + product.target]"
                             ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid}"
                             ng-if="act.targetModel.participation.Product.player"
                             ng-required="act._enabled"
@@ -150,8 +150,7 @@
                             data-filter='{ "relationship[ManufacturedProduct].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                             data-display="scope.lotNumber"
                             data-defaultEmpty="true"
-                            data-defaultFirst="true"
-                            ></select>
+                            data-defaultFirst="true"></select>
                 </div>
             </div>
             <div class="col-xs-2" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">

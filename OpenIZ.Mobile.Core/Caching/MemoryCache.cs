@@ -231,7 +231,7 @@ namespace OpenIZ.Mobile.Core.Caching
                             try
                             {
                                 IEnumerable<Guid> gc = o as IEnumerable<Guid>;
-                                foreach (var g in gc)
+                                foreach (var g in gc.ToArray())
                                     lock (this.m_lock)
                                         this.m_entryTable.Remove(g);
                             }

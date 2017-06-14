@@ -301,6 +301,26 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         }
     }
 
+    scope.makeArrayIfNot = scope.makeArrayIfNot || function (ptcpt)
+    {
+        return Array.isArray(ptcpt) ? ptcpt : [ptcpt];
+    }
+
+    // Encounter
+    scope.validateAct = scope.validateAct || function (act)
+    {
+        var validation = [];
+
+        // Act not done!?
+        if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
+            validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
+        else
+        {
+        }
+
+        return validation;
+    };
+
     scope.getMinDateValidation = function (date) {
         if (date) {
             date.setHours(0);
