@@ -362,6 +362,13 @@ a.not-active {
     display: block;
     margin: -20px;
 }
+.panel>.panel-collapse>.table-responsive {
+    margin-bottom: 0;
+    border: 0;
+}
+.panel-group .panel-heading+.panel-collapse>table.panel-body {
+    border-top: 0;
+}
 .label{
     border-radius: 12px;
 }
@@ -1696,3 +1703,4 @@ a.disabled {
 #settings-nav-wrapper {
     margin: 0 -15px;
 }
+
