@@ -54,7 +54,7 @@
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
                     <select 
-                            ng-init="act.targetModel.participation.Consumable = Array.isArray(act.targetModel.participation.Consumable) ? act.targetModel.participation.Consumable : [act.targetModel.participation.Consumable]; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
+                            ng-init="act.targetModel.participation.Consumable = makeArrayIfNot(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
                             ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" 
                             ng-if="act.targetModel.participation.Product.player"
                             ng-required="act._enabled" 
@@ -72,6 +72,7 @@
                             data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"
                             >
                     </select>
+
                 </div>
                 <div class="row">
                     <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid">
@@ -138,7 +139,7 @@
                     <label>
                         {{ product.targetModel.name.OfficialRecord | oizEntityName }} {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
-                    <select ng-init="act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + product.target]"
+                    <select ng-init="act.targetModel.participation.Consumable[$index + 1].player = $root.session.prefs['default.lot.' + product.target]"
                             ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid}"
                             ng-if="act.targetModel.participation.Product.player"
                             ng-required="act._enabled"
