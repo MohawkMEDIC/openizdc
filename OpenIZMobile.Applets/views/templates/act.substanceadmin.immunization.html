@@ -54,7 +54,7 @@
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
                     <select 
-                            ng-init="act.targetModel.participation.Consumable = makeArrayIfNot(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
+                        ng-init="act.targetModel.participation.Consumable = makeArrayIfNot(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
                             ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" 
                             ng-if="act.targetModel.participation.Product.player"
                             ng-required="act._enabled" 
@@ -151,12 +151,11 @@
                             data-filter='{ "relationship[ManufacturedProduct].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                             data-display="scope.lotNumber"
                             data-defaultEmpty="true"
-                            data-defaultFirst="true"
-                            ></select>
+                            data-defaultFirst="true"></select>
                 </div>
             </div>
             <div class="col-xs-2" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                <a class="btn btn-lg btn-info" ng-click="makeOverdue(act)" id="makeOvd_{{act.targetModel.id}}">
+                <a class="btn btn-lg btn-info margin-top-10" ng-click="makeOverdue(act)" id="makeOvd_{{act.targetModel.id}}">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                         <span class="hidden-xs">{{ 'locale.action.backEnter' | i18n }}</span>
@@ -165,7 +164,7 @@
             </div>
         </div>
         <div ng-if="act.targetModel.tag.backEntry">
-            <div class="col-xs-9">
+            <div class="col-xs-8">
                 <div class="input-group">
                     <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
                     <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; 
@@ -177,7 +176,7 @@
                            ng-init="act._originalTime = act.targetModel.actTime" />
                 </div>
             </div>
-            <div class="col-xs-2"  ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+            <div class="col-xs-3"  ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                 <a class="btn btn-lg btn-info" ng-click="removeOverdue(act, '#enable_' + act.targetModel.id)">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-down"></span>

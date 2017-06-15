@@ -1,5 +1,5 @@
-﻿/// <reference path="~/.ref/js/openiz-bre.js"/>
-/// <reference path="~/.ref/js/openiz-model.js"/>
+﻿/// <reference path="~/js/openiz-bre.js"/>
+/// <reference path="~/js/openiz-model.js"/>
 
 /** 
  * @summary Performs the merge functionality
