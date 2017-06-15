@@ -282,6 +282,8 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                     $scope.$parent.encounters = null;
                     $scope.$parent.refreshEncounters();
 
+                    console.log($scope);
+
                     $("#appointmentScheduler").modal("hide");
 
                 },
@@ -293,7 +295,8 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                 },
                 finally: function () {
                     OpenIZ.App.hideWait('#saveAppointmentButton');
-                }
+                },
+                synchronous: true
             });
 
             appointmentBundleSubmitted = true;
