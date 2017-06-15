@@ -27,107 +27,110 @@
 
         <div class="search-results-container">
             <div class="row" style="padding: 0 10px;">
-                <div class="col-xs-12 col-sm-6 search-results-tile-container" ng-repeat="patient in search.results.item track by $index">
-                    <div class="search-results-tile" ng-click="$root.isLoading=true; goResult(patient.id)">
-                        <span class="search-results-tile-circle">
-                            <span class="search-results-tile-counter">
-                                {{$index + 1}}
+                <div ng-repeat="patient in search.results.item track by $index">
+                    <div class="col-xs-12 col-sm-6 search-results-tile-container">
+                        <div class="search-results-tile" ng-click="$root.isLoading=true; goResult(patient.id)">
+                            <span class="search-results-tile-circle">
+                                <span class="search-results-tile-counter">
+                                    {{$index + 1}}
+                                </span>
                             </span>
-                        </span>
 
-                        <div class="row" ng-if="patient.tag.onlineResult">
-                            <div class="col-xs-12">
-                                <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.patient.onlineResult' | i18n }}
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.names' | i18n }}
-                            </div>
-                            <div class="col-xs-9 search-result-field search-results-name">
-                                {{ patient.name.OfficialRecord | oizEntityName }}
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.mother' | i18n }}
-                            </div>
-                            <div class="col-xs-9 search-result-field">
-                                <span ng-if="patient.relationship.Mother.targetModel">
-                                    {{ patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }}
-                                </span>
-                                <span ng-if="!patient.relationship.Mother.targetModel">
-                                    {{ 'locale.common.na' | i18n }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.identifier' | i18n }}
-                            </div>
-                            <div class="col-xs-9 no-padding-right search-result-field">
-                                <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
-                                    <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
-                                    <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ i.authority.domainName}}</span><br /></span>
+                            <div class="row" ng-if="patient.tag.onlineResult">
+                                <div class="col-xs-12">
+                                    <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.patient.onlineResult' | i18n }}
                                 </div>
                             </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.names' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field search-results-name">
+                                    {{ patient.name.OfficialRecord | oizEntityName }}
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.mother' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field">
+                                    <span ng-if="patient.relationship.Mother.targetModel">
+                                        {{ patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }}
+                                    </span>
+                                    <span ng-if="!patient.relationship.Mother.targetModel">
+                                        {{ 'locale.common.na' | i18n }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.identifier' | i18n }}
+                                </div>
+                                <div class="col-xs-9 no-padding-right search-result-field">
+                                    <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
+                                        <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
+                                        <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ i.authority.domainName}}</span><br /></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="patient.dateOfBirth">
+                                    {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}
+                                    <span class="label label-info" ng-if="isApproxDob(patient)">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="!patient.dateOfBirth">
+                                    {{ 'locale.common.na' | i18n }}
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.deceasedDate' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="patient.deceasedDate">
+                                    {{ patient.deceasedDate | date: 'yyyy-MMM-dd' }}
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="!patient.deceasedDate">
+                                    {{ 'locale.common.na' | i18n }}
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.gender' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field">
+                                    {{ patient.genderConceptModel.name[$root.page.locale] }}
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.cityVillage' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field ellipsis">
+                                    {{ patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="row" style="height:auto;">
+                                <div class="col-xs-6" ng-repeat="act in OpenIZ.UserInterface.patientController.actions">
+                                    <button class="btn tile-btn" ng-disabled="patient.tag.onlineResult || patient.deceasedDate" ng-click="$event.stopPropagation(); act.action(patient.id)">
+                                        {{ act.label }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
-                            </div>
-                            <div class="col-xs-9 search-result-field" ng-if="patient.dateOfBirth">
-                                {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}} 
-                                <span class="label label-info" ng-if="isApproxDob(patient)">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
-                            </div>
-                            <div class="col-xs-9 search-result-field" ng-if="!patient.dateOfBirth">
-                                {{ 'locale.common.na' | i18n }}
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.deceasedDate' | i18n }}
-                            </div>
-                            <div class="col-xs-9 search-result-field" ng-if="patient.deceasedDate">
-                                {{ patient.deceasedDate | date: 'yyyy-MMM-dd' }}
-                            </div>
-                            <div class="col-xs-9 search-result-field" ng-if="!patient.deceasedDate">
-                                {{ 'locale.common.na' | i18n }}
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.gender' | i18n }}
-                            </div>
-                            <div class="col-xs-9 search-result-field">
-                                {{ patient.genderConceptModel.name[$root.page.locale] }}
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.cityVillage' | i18n }}
-                            </div>
-                            <div class="col-xs-9 search-result-field ellipsis">
-                                {{ patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="row" style="height:auto;">
-                            <div class="col-xs-6" ng-repeat="act in OpenIZ.UserInterface.patientController.actions">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ng-click="$event.stopPropagation(); act.action(patient.id)">
-                                    {{ act.label }}
-                                </a>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
                     </div>
+                    <div class="clearfix" ng-if="$index % 2 === 1"></div>
                 </div>
             </div>
         </div>

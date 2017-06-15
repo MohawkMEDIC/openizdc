@@ -611,10 +611,6 @@ body{
     padding: 5px;
 }
 
-.search-results-tile-container:nth-child(2)::after {
-    clear: both;
-}
-
 .search-results-tile-circle{
     width: 30px;
     height: 30px;
