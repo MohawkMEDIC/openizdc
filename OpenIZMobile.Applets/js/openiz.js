@@ -496,7 +496,8 @@ var OpenIZ = OpenIZ || {
 
                     if (controlData.finally !== undefined)
                         controlData.finally(controlData.state);
-                }
+                },
+                async: !(controlData.synchronous || false)
             });
         },
         /**
@@ -2353,7 +2354,8 @@ var OpenIZ = OpenIZ || {
                 onException: controlData.onException,
                 data: controlData.data,
                 state: controlData.state,
-                finally: controlData.finally
+                finally: controlData.finally,
+                synchronous: controlData.synchronous
             });
         }
     },
