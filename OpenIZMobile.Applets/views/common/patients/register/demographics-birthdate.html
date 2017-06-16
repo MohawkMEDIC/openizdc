@@ -24,7 +24,7 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (dateOfBirthForm.dateOfBirth.$touched || (dateOfBirthForm.$submitted || formSubmitted)) &amp;&amp; dateOfBirthForm.dateOfBirth.$invalid }">
             <div class="input-group">
-                <input ng-disabled="patientBackup.tag.hasBirthCertificate"
+                <input ng-disabled="patientBackup.tag.hasBirthCertificate === 'True'"
                        ng-readonly="patient.readonly.dateOfBirth" type="date"
                        name="dateOfBirth" id="dobInput"
                        class="form-control"
@@ -36,7 +36,7 @@
                     <label class="control control--checkbox">
                         <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                         <input type="checkbox"
-                               ng-disabled="patientBackup.tag.hasBirthCertificate"
+                               ng-disabled="patientBackup.tag.hasBirthCertificate === 'True'"
                                ng-model="patient.dateOfBirthPrecision"
                                ng-checked="patient.dateOfBirthPrecision == 2"
                                ng-true-value="2"
@@ -49,7 +49,7 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-if="patientBackup.tag.hasBirthCertificate">
+            <p ng-if="patientBackup.tag.hasBirthCertificate === 'True'">
                 {{ 'locale.patient.demographics.dateOfBirth.hasCertificate' | i18n }}
             </p>
             <p ng-if="(dateOfBirthForm.dateOfBirth.$touched || (dateOfBirthForm.$submitted || formSubmitted)) &amp;&amp; dateOfBirthForm.dateOfBirth.$invalid">

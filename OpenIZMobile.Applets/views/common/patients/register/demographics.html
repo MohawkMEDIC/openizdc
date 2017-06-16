@@ -108,7 +108,7 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.gender.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.gender.$invalid }">
             <div class="input-group">
-                <select ng-disabled="patient.readonly.genderConcept || patientBackup.tag.hasBirthCertificate || patient.hasVaccines" name="gender" 
+                <select ng-disabled="patient.readonly.genderConcept || patientBackup.tag.hasBirthCertificate === 'True' || patient.hasVaccines" name="gender" 
                         ng-model="patient.genderConcept" 
                         ng-required="true" id="genderSelect" 
                         class="form-control"
@@ -121,7 +121,7 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="4" data-trigger="focus" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-if="patientBackup.tag.hasBirthCertificate || patient.hasVaccines">
+            <p ng-if="patientBackup.tag.hasBirthCertificate === 'True' || patient.hasVaccines">
                 {{ 'locale.patient.demographics.gender.hasCertificateOrVaccines' | i18n }}
             </p>
             <p ng-show="(editPatientForm.gender.$touched||(editPatientForm.$submitted || formSubmitted))&amp;&amp;editPatientForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
