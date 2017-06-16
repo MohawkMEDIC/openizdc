@@ -84,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Instructs the service to compact all databases
         /// </summary>
         [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "POST", UriPath = "/data")]
-        [Demand(PolicyIdentifiers.UnrestrictedAdministration)]
+        [Demand(PolicyIdentifiers.Login)]
         public void Compact()
         {
 
@@ -140,10 +140,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             ApplicationContext.Current.GetService<QueueManagerService>().ExhaustOutboundQueue();
             ApplicationContext.Current.GetService<QueueManagerService>().ExhaustAdminQueue();
 
-            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o=>o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange)))
+            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o => o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange)))
                 if (itm.Filters.Count > 0)
                     foreach (var f in itm.Filters)
-                        ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f));
+                        ApplicationContext.Current.GetService<RemoteSynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f), itm.Always);
                 else
                     ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType);
             

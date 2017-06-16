@@ -286,7 +286,11 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// </summary>
         public void RefreshCarePlan(bool force)
         {
-            if (m_actCarePlanPromise.Count > 0) return; 
+            if (m_actCarePlanPromise.Count > 0)
+            {
+                this.m_tracer.TraceWarning("Care planner is already busy aborting...");
+                return;
+            }
             var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
             var remoteSyncService = ApplicationContext.Current.GetService<ISynchronizationService>();
             var queueService = ApplicationContext.Current.GetService<QueueManagerService>();
@@ -309,7 +313,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                 while (ofs < tr)
                 {
                     ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
-                    var prodPatients = patientPersistence.QueryExplicitLoad(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.CreationTime > lastRefresh, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
+                    var prodPatients = patientPersistence.QueryExplicitLoad(o => o.StatusConcept.Mnemonic != "OBSOLETE", ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
                     ofs += 15;
 
                     //if (queueService.IsBusy ||
@@ -319,6 +323,9 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                         this.QueueWorkItem(p);
                 }
             }
+            else
+                this.m_tracer.TraceWarning("Care planner does not need to run because iq={0}, lr={1}, f={2}...", inboundQueueCount, lastRefresh, force);
+
         }
 
         /// <summary>

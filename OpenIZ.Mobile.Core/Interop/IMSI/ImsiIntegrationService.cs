@@ -240,7 +240,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 {
                     var bund = e.Body as Bundle;
                     if (!(bund?.Entry is UserEntity)) // not submitting a user entity so we only submit ACT
-                        bund?.Item.RemoveAll(i => !(i is Act || i is Person && !(i is UserEntity)));
+                        bund?.Item.RemoveAll(i => !(i is Act || i is Person && !(i is UserEntity) || i is EntityRelationship));
                 };
 
                 // Create method
@@ -442,7 +442,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     if (!unsafeUpdate)
                         client.Client.Requesting += (o, e) => e.AdditionalHeaders["If-Match"] = data.Tag;
 
-                    client.Client.Requesting += (o, e) => (e.Body as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Patient || i is Provider || i is UserEntity));
+                    client.Client.Requesting += (o, e) => (e.Body as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Patient || i is Provider || i is UserEntity || i is EntityRelationship));
 
                     var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
                     method = method.MakeGenericMethod(new Type[] { submission.GetType() });

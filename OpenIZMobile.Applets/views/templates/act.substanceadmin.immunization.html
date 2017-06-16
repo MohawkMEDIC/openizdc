@@ -23,7 +23,10 @@
         <div class="control-label col-xs-12">
             <div class="input-group">
                 <label class="control-label">
-                    {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ act.targetModel.doseSequence }}
+                    {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} 
+                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose">{{ act.targetModel.doseSequence }}</a>
+                    <select ng-model="act.targetModel.doseSequence"  ng-options="i for i in [0,1,2,3]" ng-if="act._overrideDose" class="form-control"/>
+                
                 <span ng-if="act._created">
                     ({{ 'locale.encounters.immunization.isBooster' | i18n }})
                 </span>

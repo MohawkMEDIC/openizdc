@@ -119,5 +119,10 @@ namespace OpenIZ.Mobile.Core.Services
         int Pull(Type modelType, NameValueCollection filter);
 
 
+        /// <summary>
+        /// Pull data from the remove server and place it on the inbound queue
+        /// </summary>
+        int Pull(Type modelType, NameValueCollection filter, bool always);
+
     }
 }

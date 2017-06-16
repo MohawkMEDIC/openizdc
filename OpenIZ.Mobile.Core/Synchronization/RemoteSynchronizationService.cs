@@ -240,13 +240,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Pull with always filter
         /// </summary>
-        private int Pull(Type modelType, NameValueCollection filter, bool always)
+        public int Pull(Type modelType, NameValueCollection filter, bool always)
         {
             lock (this.m_lock)
             {
                 var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
                 if (always)
                     lastModificationDate = null;
+                if (lastModificationDate != null)
+                    lastModificationDate = lastModificationDate.Value.AddMinutes(-1);
 
                 try
                 {

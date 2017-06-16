@@ -371,6 +371,7 @@ namespace OpenIZ.Mobile.Reporting
             }
             else if (facet.Name == xs_report + "expr")
             {
+                
                 Delegate evaluator = this.CompileExpression($"{context.Report.Description.Name}.{context.Scope.GetType().Name}.{facet.Value}", facet.Value);
 
                 var toAtt = facet.Attribute("to-att")?.Value;
@@ -487,9 +488,9 @@ namespace OpenIZ.Mobile.Reporting
             if (value is DateTime)
             {
                 if (((DateTime)value).ToString("HH:mm:ss") == "00:00:00")
-                    return ((DateTime)value).ToString(context.Report.Formatter.Date);
+                    return ((DateTime)value).ToString(context.Report.Formatter?.Date ?? "yyyy-MMM-dd");
                 else
-                    return ((DateTime)value).ToString(context.Report.Formatter.DateTime);
+                    return ((DateTime)value).ToString(context.Report.Formatter?.DateTime ?? "yyyy-MMM-dd HH:mm:ss");
             }
             return value;
         }
