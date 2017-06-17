@@ -111,16 +111,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <label class="control-label">
-                    <input type="checkbox" ng-model="encounter.tag.signedByAuthor" ng-true-value="true" ng-false-value="false" />
-                    <span>{{ 'locale.encounters.confirm.agree' | i18n }}</span>
-                </label>
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" ng-click="OpenIZ.Authentication.$elevationCredentials = {}">
                     <span>
                         <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
                     </span>
                 </button>
-                <button type="submit" id="submitEncounterButton" class="btn btn-primary btn-lg" ng-disabled="!encounter.tag.signedByAuthor">
+                <button type="submit" id="submitEncounterButton" class="btn btn-primary btn-lg" ng-click="encounter.tag.signedByAuthor = 'True'">
                     {{ 'locale.action.confirm' | i18n }}
                 </button>
             </div>

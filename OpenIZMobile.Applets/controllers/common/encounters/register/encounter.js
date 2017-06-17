@@ -210,10 +210,16 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             bind.splice(index, 1);
     };
 
+    /**
+     * Makes the ptcpt supplied an array if it is not an array
+     */
     scope.makeArrayIfNot = scope.makeArrayIfNot || function (ptcpt) {
         return Array.isArray(ptcpt) ? ptcpt : [ptcpt];
     }
-    // Encounter
+
+    /** 
+     * Validate the act
+     */
     scope.validateAct = scope.validateAct || function (act) {
         var validation = [];
 
@@ -225,6 +231,37 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
 
         return validation;
     };
+
+    /** 
+     * Gets all valid dose sequences for the specified product
+     */
+    scope.getDoseSequences = scope.getDoseSequences || function (productId) {
+        var retVal = [];
+        var scp = scope;
+        while (!scp.encounters && scp.$parent) scp = scp.$parent;
+
+        $.each(scp.encounters, function (i, a) {
+            if (a.participation && a.participation.Product &&
+                a.participation.Product.player == productId &&
+                a.moodConcept == OpenIZModel.ActMoodKeys.Propose)
+                retVal.push(a.doseSequence);
+        });
+        return retVal;
+    }
+
+    /** 
+     * Cascade dose sequences
+     */
+    scope.cascadeDoseSequences = scope.cascadeDoseSequences || function (bind, doseSequenceId) {
+        $.each(bind, function (i, a) {
+            // Set dose sequence if it is applicable
+            if (a.targetModel.participation && a.targetModel.participation.Product && !a._overrideDose) {
+                var allowedDoses = scope.getDoseSequences(a.targetModel.participation.Product.player);
+                if (allowedDoses.indexOf(doseSequenceId) > -1)
+                    a.targetModel.doseSequence = doseSequenceId;
+            }
+        });
+    }
 
     // Gets the next sequence based on current scope encounter
     scope.getNextDoseSequence = scope.getNextDoseSequence || function (productId) {
