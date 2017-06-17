@@ -282,8 +282,6 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                     $scope.$parent.encounters = null;
                     $scope.$parent.refreshEncounters();
 
-                    console.log($scope);
-
                     $("#appointmentScheduler").modal("hide");
 
                 },
