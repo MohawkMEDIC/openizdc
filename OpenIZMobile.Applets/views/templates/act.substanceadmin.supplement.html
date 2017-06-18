@@ -24,10 +24,10 @@
                 {{ 'locale.encounters.supplement.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} #{{ act.targetModel.doseSequence }}
             </label><br />
             <span ng-if="act.targetModel.tag.backEntry &amp;&amp; !act.targetModel.relationship.Fulfills">
-                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.stopTime | date: 'yyyy-MMM-dd' }})</small>
+                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
             </span>
             <span ng-if="act.targetModel.tag.backEntry &amp;&amp; act.targetModel.relationship.Fulfills">
-                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})</small>
+                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
             </span>
         </div>
         <div ng-if="!act.targetModel.tag.backEntry">

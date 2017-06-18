@@ -55,8 +55,8 @@
                                    ng-model="sequence.actTime"
                                    ng-init="sequence._originalTime = sequence.actTime"
                                    ng-change="harmonizeDoseTimes(sequence, $index)"
-                                   max="{{sequence._enabled ? $root.page.maxEventTime : '' | date: 'yyyy-MM-dd'}}"
-                                   min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
+                                   max="{{sequence._enabled ? $root.page.maxEventTime : '' | date:'yyyy-MM-dd'}}"
+                                   min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date:'yyyy-MM-dd'}}" />
                         </div>
                     </td>
                 </tr>

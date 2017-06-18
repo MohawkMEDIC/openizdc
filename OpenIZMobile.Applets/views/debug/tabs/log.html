@@ -22,7 +22,7 @@
         <div class="form-group">
             <label for="logFile" class="control-label">{{ 'locale.about.logFiles.logFile' | i18n }}</label>
             <select ng-model="logid" class="form-control" ng-change="loadLogContents()">
-                <option ng-repeat="log in about.logInfo" value="{{log.id}}">{{log.description}} - {{log.size / 1024 | number: 2}} kb (Last written: {{log.lastWrite | date: 'yyyy-MMM-dd HH:mm'}})</option>
+                <option ng-repeat="log in about.logInfo" value="{{log.id}}">{{log.description}} - {{log.size / 1024 | number: 2}} kb (Last written: {{log.lastWrite | datePrecisionFormat:'M'}})</option>
             </select>
         </div>
         <div class="form-group">

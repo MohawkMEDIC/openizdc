@@ -32,11 +32,11 @@
                 </span>
                 </label><br />
                 <span ng-if="act.targetModel.tag.backEntry">
-                    <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})</small>
+                    <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
                 </span>
                 <span ng-if="!act.targetModel.tag.backEntry &amp;&amp; act.targetModel.relationship.Fulfills">
                     <small>
-                        ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                        ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})
                     </small>
                 </span>
             </div>
@@ -68,7 +68,7 @@
                             data-watch="act.targetModel.participation.Product.player" 
                             data-watch-target="relationship[ManufacturedProduct].source" 
                             oiz-databind="ManufacturedMaterial" 
-                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }' 
+                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }' 
                             data-display="scope.lotNumber" 
                             data-defaultEmpty="true"
                             data-defaultFirst="true"
@@ -151,7 +151,7 @@
                             class="form-control"
                             ng-model="act.targetModel.participation.Consumable[$index + 1].player"
                             oiz-databind="ManufacturedMaterial"
-                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                             data-display="scope.lotNumber"
                             data-defaultEmpty="true"
                             data-defaultFirst="true"></select>
@@ -176,8 +176,8 @@
                     <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; 
                            (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}" 
                            ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled ? $root.page.loadTime : null" ng-min="act._enabled ? patient.dateOfBirth : null"
-                           max="{{ getMaxDate(act) | date: 'yyyy-MM-dd' }}"
-                           min="{{ getMinDate(act) | date: 'yyyy-MM-dd' }}"
+                           max="{{ getMaxDate(act) | date:'yyyy-MM-dd' }}"
+                           min="{{ getMinDate(act) | date:'yyyy-MM-dd' }}"
                            ng-change="synchronizeDates(act)"
                            ng-init="act._originalTime = act.targetModel.actTime" />
                 </div>

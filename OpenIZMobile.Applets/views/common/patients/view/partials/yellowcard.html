@@ -52,7 +52,7 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </div>
                                     <div class="text-info" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &gt; $root.page.maxEventTime">
-                                        {{ sequence.actTime | date: 'dd-MM-yyyy' }}
+                                        {{ sequence.actTime | datePrecisionFormat:'D' }}
                                         <span class="glyphicon glyphicon glyphicon-th-large"></span>
                                     </div>
                                 </div>
@@ -67,7 +67,7 @@
                                 <div ng-switch-when="ec74541f-87c4-4327-a4b9-97f325501747">
                                     <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-ok"></span> 
-                                        <div ng-if="sequence.actTime != null">{{ sequence.actTime | date: 'dd-MM-yyyy' }}</div>
+                                        <div ng-if="sequence.actTime != null">{{ sequence.actTime | datePrecisionFormat:'D' }}</div>
                                     </div>
                                     <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <i class="fa fa-universal-access"></i> 

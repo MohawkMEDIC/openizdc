@@ -37,7 +37,7 @@
                 </td>
                 <td>{{ f.description }}</td>
                 <td>{{ f.size | number:0 }} b</td>
-                <td>{{ f.lastWrite | date: 'yyyy-MMM-dd HH:mm'}}</td>
+                <td>{{ f.lastWrite | datePrecisionFormat:'M'}}</td>
             </tr>
         </table>
     </div>

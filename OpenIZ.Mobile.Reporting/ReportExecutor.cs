@@ -271,8 +271,16 @@ namespace OpenIZ.Mobile.Reporting
                 bool success = false;
                 if (facet.Attribute("expr") == null)
                     throw new InvalidOperationException("Switch must have expr attribute");
-                var value = this.CompileExpression($"{context.Report.Description.Name}.{context.Scope.GetType().Name}.{facet.Attribute("expr").Value}", facet.Attribute("expr").Value).DynamicInvoke(context.Scope);
 
+                object value = null;
+                try
+                {
+                    value = this.CompileExpression($"{context.Report.Description.Name}.{context.Scope.GetType().Name}.{facet.Attribute("expr").Value}", facet.Attribute("expr").Value).DynamicInvoke(context.Scope);
+                }
+                catch
+                {
+
+                }
 
                 var when = facet.Attribute("when")?.Value;
                 switch (when)
@@ -285,7 +293,7 @@ namespace OpenIZ.Mobile.Reporting
                         }
                         break;
                 }
-                context.ParentScope?.SetLast(facet.Value, value.ToString());
+                context.ParentScope?.SetLast(facet.Value, value?.ToString());
 
                 var xel = facet.Elements(xs_report + "when").FirstOrDefault();
                 while (xel != null)

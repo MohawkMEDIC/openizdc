@@ -26,7 +26,7 @@
                                             {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}
                                             {{ 'locale.encounters.immunization.doseSequence' | i18n }}
                                             {{ act.targetModel.doseSequence }}
-                                            - {{ act.targetModel.actTime | date: 'yyyy-MMM-dd' }}
+                                            - {{ act.targetModel.actTime | datePrecisionFormat:'D' }}
                                         </span>
                                         <span ng-switch-when="QuantityObservation">
                                             <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.scale.png" ng-if="act.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
@@ -38,7 +38,7 @@
                                             <span ng-if="!act.targetModel.unitOfMeasure">
                                                 {{ act.targetModel.value }}
                                             </span>
-                                            - {{ act.targetModel.actTime | date: 'yyyy-MMM-dd' }}
+                                            - {{ act.targetModel.actTime | datePrecisionFormat:'D' }}
                                         </span>
                                     </div>
                                 </li>

@@ -66,7 +66,7 @@
                                         {{ queueItem.id }}
                                     </td>
                                     <td>
-                                        {{ queueItem.creationTime | date: 'yyyy-MMM-dd HH:mm' }}
+                                        {{ queueItem.creationTime | datePrecisionFormat:'M' }}
                                     </td>
                                     <td>
                                         {{ renderType(queueItem.type) }}
@@ -254,7 +254,7 @@
                 </tr>
                 <tr ng-repeat="s in about.syncInfo">
                     <td>{{ OpenIZ.Localization.getString("locale.sync.resource." + s.resource) }}</td>
-                    <td>{{ s.lastSync | date: 'yyyy-MMM-dd HH:mm' }}</td>
+                    <td>{{ s.lastSync | datePrecisionFormat:'M' }}</td>
                     <td>{{ s.etag }}</td>
                 </tr>
             </table>

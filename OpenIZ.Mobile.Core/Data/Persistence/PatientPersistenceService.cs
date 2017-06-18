@@ -77,6 +77,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Reverse lookup
             if (!String.IsNullOrEmpty(dbp.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == dbp.DateOfBirthPrecision).Select(o => o.Key).First();
+            else
+                retVal.DateOfBirthPrecision = OpenIZ.Core.Model.DataTypes.DatePrecision.Day;
 
             retVal.DeceasedDate = patient.DeceasedDate.HasValue ? (DateTime?)patient.DeceasedDate.Value.ToLocalTime() : null;
             // Reverse lookup

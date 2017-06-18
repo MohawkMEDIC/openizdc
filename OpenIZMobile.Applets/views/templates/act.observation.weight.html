@@ -37,17 +37,17 @@
                 <span ng-if="act.targetModel.tag.backEntry">
                     {{ 'locale.encounters.overdue' | i18n }} <br />
                     <small ng-if="act.targetModel.startTime || act.targetModel.targetModel.startTime">
-                        ({{ act.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                        ({{ act.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.stopTime | datePrecisionFormat:'D' }})
                     </small>
                     <small ng-if="!act.targetModel.startTime &amp;&amp; !act.targetModel.stopTime">
-                        ({{ act.targetModel.actTime | date : 'yyyy-MMM-dd' }})
+                        ({{ act.targetModel.actTime | datePrecisionFormat:'D' }})
                     </small>
                 </span>
                 <span ng-if="!act.targetModel.tag.backEntry &amp;&amp; act.targetModel.relationship.Fulfills">
                     <small ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime || act.targetModel.relationship.Fulfills.targetModel.stopTime">
-                        ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                        ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})
                         <small ng-if="!act.targetModel.relationship.Fulfills.targetModel.startTime &amp;&amp; !act.targetModel.relationship.Fulfills.targetModel.stopTime">
-                            ({{ act.targetModel.relationship.Fulfills.targetModel.actTime | date : 'yyyy-MMM-dd' }})
+                            ({{ act.targetModel.relationship.Fulfills.targetModel.actTime | datePrecisionFormat:'D' }})
                         </small>
                     </small>
                 </span>

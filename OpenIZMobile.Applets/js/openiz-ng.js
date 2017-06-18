@@ -156,22 +156,29 @@ angular.module('openiz', [])
 
             switch (format) {
                 case 1:   // Year     "Y"
+                case 'Y':
                     dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatYear;
                     break;
                 case 2:   // Month    "m"
+                case 'm':
                     dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatMonth;
                     break;
                 case 3:   // Day      "D"
+                case 'D':
                     dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatDay;
                     break;
                 case 4:   // Hour     "H"
+                case 'H':
                     dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatHour;
                     break;
                 case 5:   // Minute   "M"
+                case 'M':
                     dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatMinute;
                     break;
                 case 6:   // Second   "S"
+                case 'S':
                 case 0:   // Full     "F"
+                case 'F':
                 default:
                     dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatSecond;
                     break;
@@ -247,7 +254,7 @@ angular.module('openiz', [])
                         filter = JSON.parse(filterString);
 
                     if (!filter.statusConcept)
-                        filter.statusConcept =  'C8064CBD-FA06-4530-B430-1A52F1530C27';
+                        filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     var bind = function () {
                         // Get the bind element
@@ -262,7 +269,7 @@ angular.module('openiz', [])
                                 var currentValue = $(element).val();
                                 var options = $(element)[0].options;
                                 $('option', element[0]).remove(); // clear existing 
-                                
+
 
                                 if (!data.item || !defaultFirst) {
                                     if (defaultKey)
@@ -314,13 +321,13 @@ angular.module('openiz', [])
 
                     if (watchString !== null)
                         scope.$watch(watchString, function (newValue, oldValue) {
-                                var $root = scope.$root;
-                                if (watchTargetString !== null && newValue !== undefined) {
-                                    filter[watchTargetString] = newValue;
-                                    if (defaultValueExpression)
-                                        defaultValue = eval(defaultValueExpression) || defaultValue;
-                                }
-                                bind();
+                            var $root = scope.$root;
+                            if (watchTargetString !== null && newValue !== undefined) {
+                                filter[watchTargetString] = newValue;
+                                if (defaultValueExpression)
+                                    defaultValue = eval(defaultValueExpression) || defaultValue;
+                            }
+                            bind();
                         });
 
                 });
@@ -346,20 +353,20 @@ angular.module('openiz', [])
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
 
-                    if(modelType != "SecurityUser" && modelType != "SecurityRole")
+                    if (modelType != "SecurityUser" && modelType != "SecurityRole")
                         filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
-                    
+
 
                     // Bind select 2 search
                     $(element).select2({
-                        defaultResults: function() {
+                        defaultResults: function () {
                             var s = scope;
                             if (defaultResults != null) {
                                 try {
                                     return eval(defaultResults);
-                                } catch(e) {
+                                } catch (e) {
 
                                 }
                             }

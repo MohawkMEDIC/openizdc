@@ -127,6 +127,7 @@
     <string key="locale.action.save">Save</string>
     <string key="locale.action.search">Search</string>
     <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.start">Start</string>
     <string key="locale.action.update">Update</string>
     <string key="locale.action.verify">Verify</string>
     <string key="locale.action.view">View</string>

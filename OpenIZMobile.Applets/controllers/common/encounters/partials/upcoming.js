@@ -32,6 +32,10 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
         }
     });
 
+    $scope.canStartAppointment = function (apt) {
+        return apt.actTime < new Date().addDays(70);
+    }
+
     function updateCarePlan() {
         //OpenIZ.CarePlan.getCarePlanAsync({
         //    query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),

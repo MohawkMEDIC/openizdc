@@ -70,7 +70,7 @@
                 <div class="col-xs-12">
                     <div ng-if="act.targetModel.relationship.RefersTo">
                         ( {{ 'locale.encounters.date' | i18n }}:
-                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.actTime">{{ act.targetModel.relationship.RefersTo.targetModel.actTime | date: 'yyyy-MM-dd' }}</span><span ng-if="!act.targetModel.relationship.RefersTo.targetModel.actTime">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>, 
+                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.actTime">{{ act.targetModel.relationship.RefersTo.targetModel.actTime | datePrecisionFormat:'D' }}</span><span ng-if="!act.targetModel.relationship.RefersTo.targetModel.actTime">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>, 
                         {{ 'locale.encounters.immunization.doseSequence' | i18n }}:
                         <span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence !== undefined">{{ act.targetModel.relationship.RefersTo.targetModel.doseSequence }}</span><span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence === undefined">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>,
                         {{ 'locale.encounters.immunizations.site' | i18n }}:

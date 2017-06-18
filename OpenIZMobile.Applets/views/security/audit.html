@@ -33,7 +33,7 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-xs-3 control-label"><label>{{ 'locale.audit.date' | i18n }}</label></div>
-                            <div class="col-xs-8"><input class="form-control" type="text" readonly="readonly" value="{{ audit.current.timestamp | date: 'yyyy-MMM-dd HH:mm:ss' }}" /></div>
+                            <div class="col-xs-8"><input class="form-control" type="text" readonly="readonly" value="{{ audit.current.timestamp | datePrecisionFormat:'S' }}" /></div>
                         </div>
                         <div class="row form-group">
                             <div class="col-xs-3 control-label"><label>{{ 'locale.audit.event' | i18n }}</label></div>
@@ -133,7 +133,7 @@
                                    ng-model="audit.queryTimestamp"
                                    ng-change="audit.query._offset = 0; audit.query.timestamp = '~' + OpenIZ.Util.toDateInputString(audit.queryTimestamp)"
                                    ng-max="page.maxEventTime"
-                                   max="{{ page.maxEventTime | date: 'yyyy-MM-dd' }}"/>
+                                   max="{{ page.maxEventTime | date:'yyyy-MM-dd' }}"/>
                         </td>
                         <td>
                             <select class="form-control" 
@@ -168,7 +168,7 @@
                     <tr ng-repeat="aud in audit.log.CollectionItem" ng-class="{'danger' : aud.Audit.outcome != 'Success'}">
                         <td>{{ aud.Audit[0].action }}</td>
                         <td>{{ aud.Audit[0].event }}</td>
-                        <td>{{ aud.Audit[0].timestamp | date: 'yyyy-MMM-dd HH:mm' }}</td>
+                        <td>{{ aud.Audit[0].timestamp | datePrecisionFormat:'M' }}</td>
                         <td>{{ aud.Audit[0].actor[0].uname }}</td>
                         <td>{{ aud.Audit[0].type.display }}</td>
                         <td>{{ aud.Audit[0].outcome }}</td>
