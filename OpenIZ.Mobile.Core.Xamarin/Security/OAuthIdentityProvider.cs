@@ -170,7 +170,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             if (ex.Status == WebExceptionStatus.ProtocolError)
                                 throw;
 
-                            this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
+                            this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex.Message);
                             try
                             {
                                 retVal = localIdp.Authenticate(principal.Identity.Name, password);
@@ -182,14 +182,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         }
                         catch (SecurityException ex)
                         {
-                            this.m_tracer.TraceError("Server was contacted however the token is invalid: {0}", ex);
+                            this.m_tracer.TraceError("Server was contacted however the token is invalid: {0}", ex.Message);
                             throw;
                         }
                         catch (Exception ex) // fallback to local
                         {
                             try
                             {
-                                this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
+                                this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex.Message);
                                 retVal = localIdp.Authenticate(principal.Identity.Name, password);
                             }
                             catch
@@ -209,7 +209,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         {
                             try
                             {
-                                this.m_tracer.TraceWarning("Failed to fetch remote security parameters - {0}", ex);
+                                this.m_tracer.TraceWarning("Failed to fetch remote security parameters - {0}", ex.Message);
                                 retVal = localIdp.Authenticate(principal.Identity.Name, password);
                             }
                             catch
@@ -220,7 +220,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     }
                     catch (RestClientException<OAuthTokenResponse> ex)
                     {
-                        this.m_tracer.TraceError("REST client exception: {0}", ex);
+                        this.m_tracer.TraceError("REST client exception: {0}", ex.Message);
                         var se = new SecurityException(
                             String.Format("err_oauth2_{0}", ex.Result.Error),
                             ex
@@ -230,7 +230,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     }
                     catch (SecurityTokenException ex)
                     {
-                        this.m_tracer.TraceError("TOKEN exception: {0}", ex);
+                        this.m_tracer.TraceError("TOKEN exception: {0}", ex.Message);
                         throw new SecurityException(
                             String.Format("err_token_{0}", ex.Type),
                             ex
@@ -238,7 +238,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     }
                     catch (SecurityException ex)
                     {
-                        this.m_tracer.TraceError("Security exception: {0}", ex);
+                        this.m_tracer.TraceError("Security exception: {0}", ex.Message);
                         throw;
                     }
                     catch (Exception ex)

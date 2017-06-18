@@ -94,16 +94,23 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         /// </summary>
         private Credentials GetCredentials(IRestClient client)
         {
-            var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+            try
+            {
+                var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
-            AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
+                AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
 
-            // TODO: Clean this up - Login as device account
-            if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
-                ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
-                AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
-            this.m_cachedCredential = AuthenticationContext.Current.Principal;
-            return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+                // TODO: Clean this up - Login as device account
+                if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
+                    ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
+                    AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
+                this.m_cachedCredential = AuthenticationContext.Current.Principal;
+                return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -152,6 +159,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 ImsiServiceClient client = this.GetServiceClient();
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                if (client.Client.Credentials == null) return null;
                 if (options?.Timeout.HasValue == true)
                     client.Client.Description.Endpoint[0].Timeout = options.Timeout.Value;
 
@@ -202,6 +210,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                if (client.Client.Credentials == null) return null;
+
                 this.m_tracer.TraceVerbose("Performing IMSI GET ({0}):{1}v{2}", typeof(TModel).FullName, key, versionKey);
                 var retVal = client.Get<TModel>(key, versionKey);
 
@@ -233,6 +243,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                if (client.Client.Credentials == null) return;
 
                 // Special case = Batch submit of data with an entry point
                 var submission = (data as Bundle)?.Entry ?? data;
@@ -240,7 +251,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 {
                     var bund = e.Body as Bundle;
                     if (!(bund?.Entry is UserEntity)) // not submitting a user entity so we only submit ACT
-                        bund?.Item.RemoveAll(i => !(i is Act || i is Person && !(i is UserEntity) || i is EntityRelationship));
+                        bund?.Item.RemoveAll(i => !(i is Act || i is Person && !(i is UserEntity)));// || i is EntityRelationship));
                 };
 
                 // Create method
@@ -273,6 +284,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 {
                     ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
                     client.Client.Credentials = this.GetCredentials(client.Client);
+                    if (client.Client.Credentials == null) return false;
                     return this.IsValidVersion(client);
                 }
                 else
@@ -293,11 +305,12 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             try
             {
 
-                if (!(data is Bundle || data is Entity || data is Act || data is EntityRelationship))
+                if (!(data is Bundle || data is Entity || data is Act)) // || data is EntityRelationship))
                     return;
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                if (client.Client.Credentials == null) return;
                 // Force an update
                 if (unsafeObsolete)
                     client.Client.Requesting += (o, e) => e.AdditionalHeaders["X-OpenIZ-Unsafe"] = "true";
@@ -331,11 +344,14 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 // HACK
                 if (!(data is Bundle || data is Entity || data is Act || data is Patch))
                     return;
-                //if (data is Patch && !typeof(Entity).GetTypeInfo().IsAssignableFrom((data as Patch).AppliesTo.Type.GetTypeInfo()))
-                //    return;
+                if (data is Patch && 
+                    !typeof(Entity).GetTypeInfo().IsAssignableFrom((data as Patch).AppliesTo.Type.GetTypeInfo()) &&
+                    !typeof(Act).GetTypeInfo().IsAssignableFrom((data as Patch).AppliesTo.Type.GetTypeInfo()))
+                    return;
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                if (client.Client.Credentials == null) return;
 
                 // Force an update
                 if (unsafeUpdate)
@@ -442,7 +458,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     if (!unsafeUpdate)
                         client.Client.Requesting += (o, e) => e.AdditionalHeaders["If-Match"] = data.Tag;
 
-                    client.Client.Requesting += (o, e) => (e.Body as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Patient || i is Provider || i is UserEntity || i is EntityRelationship));
+                    client.Client.Requesting += (o, e) => (e.Body as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Patient || i is Provider || i is UserEntity)); // || i is EntityRelationship));
 
                     var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
                     method = method.MakeGenericMethod(new Type[] { submission.GetType() });

@@ -171,6 +171,29 @@ var OpenIZ = OpenIZ || {
      */
     Act: {
         /**
+         * @summary Asynchronously updates an encounter object in the IMS
+         * @memberof OpenIZ.Act
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the act that is to be updated
+         * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Act
+         */
+        updateAsync: function (controlData) {
+            OpenIZ.Ims.put({
+                resource: "Act",
+                data: controlData.data,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                id: controlData.id,
+                state: controlData.state
+            });
+        },
+        /**
          * @summary Asynchronously deletes an encounter object in the IMS
          * @memberof OpenIZ.Act
          * @method
@@ -323,7 +346,8 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 data: controlData.data,
-                state: controlData.state
+                state: controlData.state,
+                finally: controlData.finally
             });
         },
         /**

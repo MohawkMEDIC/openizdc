@@ -135,7 +135,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get specified service
         /// </summary>
         private IdentifiedData GetAct<TAct>() where TAct : IdentifiedData
-        { 
+        {
             var actRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<TAct>>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
@@ -248,8 +248,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 throw new FileNotFoundException("Act not found");
             }
         }
-
-
+        
         /// <summary>
         /// Updates an act.
         /// </summary>
@@ -263,11 +262,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
             Guid actKey = Guid.Empty;
-            Guid actVersionKey = Guid.Empty;
 
-            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey))
             {
-                if (act.Key == actKey && act.VersionKey == actVersionKey)
+                if (act.Key == actKey)
                 {
                     var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
                     return actRepositoryService.Save(act);

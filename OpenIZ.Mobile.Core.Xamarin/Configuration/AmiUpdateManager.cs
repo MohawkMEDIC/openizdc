@@ -101,7 +101,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             }
             catch (Exception ex)
             {
-                this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
+                this.m_tracer.TraceError("Error contacting AMI: {0}", ex.Message);
                 throw;
             }
         }
@@ -132,7 +132,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             }
             catch (Exception ex)
             {
-                this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
+                this.m_tracer.TraceError("Error contacting AMI: {0}", ex.Message);
                 throw;
             }
         }
@@ -170,7 +170,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                 }
                 catch (Exception ex)
                 {
-                    this.m_tracer.TraceError("Error checking for updates: {0}", ex);
+                    this.m_tracer.TraceError("Error checking for updates: {0}", ex.Message);
                 };
             };
 

@@ -294,9 +294,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
                                         break;
                                     case "Person":
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm );
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[IncidentalServiceDeliveryLocation].target=" + itm);
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm );
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship.target=" + itm );
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship.target=" + itm );
                                         break;
                                     case "Act":
                                         syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Destination].player=" + itm + "&_expand=relationship&_expand=participation");
@@ -314,8 +313,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "CodedObservation":
                                     case "TextObservation":
                                     case "PatientEncounter":
-                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship.target=!" + itm);
-                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship.target=" + itm);
+                                        // All stuff that is happening in my facility for out of catchment
+                                        syncSetting.Filters.Add("participation.player=" + itm + "&participation[RecordTarget].player.relationship.target=!" + itm);
+                                        // All stuff that is happening out of my facility for any patient associated with me
+                                        syncSetting.Filters.Add("participation.player=!" + itm + "&participation[RecordTarget].player.relationship.target=" + itm);
                                         //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":

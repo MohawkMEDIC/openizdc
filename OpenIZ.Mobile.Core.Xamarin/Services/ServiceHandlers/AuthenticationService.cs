@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             }
             catch (Exception e)
             {
-                this.m_tracer.TraceError("Error getting TFA mechanisms: {0}", e);
+                this.m_tracer.TraceError("Error getting TFA mechanisms: {0}", e.Message);
                 throw;
             }
 

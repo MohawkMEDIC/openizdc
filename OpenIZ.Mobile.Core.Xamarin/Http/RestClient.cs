@@ -360,13 +360,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                 }
                 catch (TimeoutException e)
                 {
-                    this.m_tracer.TraceError("Request timed out:{0}", e);
+                    this.m_tracer.TraceError("Request timed out:{0}", e.Message);
                     throw;
                 }
                 catch (WebException e)
                 {
 
-                    this.m_tracer.TraceError(e.ToString());
+                    this.m_tracer.TraceError("Error executing {0} {1} : {2}", method, url, e.Message);
 
                     // status
                     switch (e.Status)
@@ -399,7 +399,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             }
                             catch (Exception dse)
                             {
-                                this.m_tracer.TraceError("Could not de-serialize error response! {0}", dse);
+                                this.m_tracer.TraceError("Could not de-serialize error response! {0}", dse.Message);
                             }
 
                             switch (errorResponse.StatusCode)

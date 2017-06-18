@@ -157,7 +157,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// Local session
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public TimeSpan? MaxLocalSession { get; set; }
+        public TimeSpan MaxLocalSession { get; set; }
     }
 
 }

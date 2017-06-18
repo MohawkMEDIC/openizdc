@@ -273,6 +273,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, ((float)ofs / tr) * 0.9f + 0.1f);
                 ofs += 20;
                 pdp.Insert(bundle);
+
+                // Let the server know we're interested in this stuff
+                foreach (var itm in bundle.Item.OfType<Act>())
+                    itm.Participations.Add(new ActParticipation(ActParticipationKey.InformationRecipient, Guid.Parse(facilityId)));
+
+                imsiIntegrationService.Update(bundle, true);
             }
 
             return patient;

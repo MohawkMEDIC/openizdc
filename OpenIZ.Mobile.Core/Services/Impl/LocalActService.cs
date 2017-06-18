@@ -107,7 +107,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
         public Act Insert(Act data)
         {
-            throw new NotImplementedException();
+            return this.Insert<Act>(data);
         }
 
         /// <summary>

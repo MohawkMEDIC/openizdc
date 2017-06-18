@@ -82,7 +82,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         // Call care planner to suggest the next item
         OpenIZ.App.showWait("#makeOvd_" + bind.targetModel.id);
         OpenIZ.CarePlan.getCarePlanAsync({
-            query: "_patientId=" + scope.patient.id + "&_protocolId=" + bind.targetModel.protocol[0].protocol,
+            query: "_patientId=" + scope.patient.id + "&_protocolId=" + bind.targetModel.protocol[0].protocol + "&_viewModel=min",
             onDate: new Date(),
             continueWith: function (dat) {
                 for (var i in dat.item) {

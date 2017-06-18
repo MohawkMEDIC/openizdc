@@ -91,8 +91,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException("Missing persistence service");
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
+            // Before insert or update?
             data = breService?.BeforeInsert(data) ?? data;
-
 			data = persistence.Insert(data);
 			data = breService?.AfterInsert(data) ?? data;
 
