@@ -288,6 +288,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         {
             if (m_actCarePlanPromise.Count > 0)
             {
+                this.m_resetEvent.Set();
                 this.m_tracer.TraceWarning("Care planner is already busy aborting...");
                 return;
             }
@@ -509,9 +510,9 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     protocol_id = o.Protocols.FirstOrDefault().ProtocolKey,
                     class_id = o.ClassConceptKey.Value,
                     type_id = o.TypeConceptKey.Value,
-                    min_date = o.StartTime?.DateTime.Date,
-                    max_date = o.StopTime?.DateTime.Date,
-                    act_date = o.ActTime.DateTime.Date,
+                    min_date = o.StartTime?.DateTime,
+                    max_date = o.StopTime?.DateTime,
+                    act_date = o.ActTime.DateTime,
                     product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
                     sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
                     dose_seq = (o as SubstanceAdministration)?.SequenceId
@@ -560,9 +561,9 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                         class_id = o.ClassConceptKey.Value,
                         type_id = o.TypeConceptKey.Value,
                         protocol_id = o.Protocols.FirstOrDefault()?.ProtocolKey,
-                        min_date = o.StartTime?.DateTime.Date,
-                        max_date = o.StopTime?.DateTime.Date,
-                        act_date = o.ActTime.DateTime.Date,
+                        min_date = o.StartTime?.DateTime,
+                        max_date = o.StopTime?.DateTime,
+                        act_date = o.ActTime.DateTime,
                         product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
                         sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
                         dose_seq=(o as SubstanceAdministration)?.SequenceId

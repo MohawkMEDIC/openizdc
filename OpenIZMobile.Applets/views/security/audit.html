@@ -166,14 +166,14 @@
                 </thead>
                 <tbody ng-if="!isLoading">
                     <tr ng-repeat="aud in audit.log.CollectionItem" ng-class="{'danger' : aud.Audit.outcome != 'Success'}">
-                        <td>{{ aud.Audit.action }}</td>
-                        <td>{{ aud.Audit.event }}</td>
-                        <td>{{ aud.Audit.timestamp | date: 'yyyy-MMM-dd HH:mm' }}</td>
-                        <td>{{ aud.Audit.actor[0].uname }}</td>
-                        <td>{{ aud.Audit.type.display }}</td>
-                        <td>{{ aud.Audit.outcome }}</td>
+                        <td>{{ aud.Audit[0].action }}</td>
+                        <td>{{ aud.Audit[0].event }}</td>
+                        <td>{{ aud.Audit[0].timestamp | date: 'yyyy-MMM-dd HH:mm' }}</td>
+                        <td>{{ aud.Audit[0].actor[0].uname }}</td>
+                        <td>{{ aud.Audit[0].type.display }}</td>
+                        <td>{{ aud.Audit[0].outcome }}</td>
                         <td>
-                            <button data-toggle="modal" data-target="#detailModel" ng-click="getAudit(aud.Audit.correlationId)" class="btn btn-info">
+                            <button data-toggle="modal" data-target="#detailModel" ng-click="getAudit(aud.Audit[0].correlationId)" class="btn btn-info">
                                 <span>
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                     {{ 'locale.action.view' | i18n }}

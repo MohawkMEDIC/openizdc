@@ -224,6 +224,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 if (act.Key.HasValue)
                 {
                     var old = persistenceService.Get(act.Key.Value).Clone();
+                    if (old is Act)
+                        old = (TAct)(old as Act).Copy();
 
                     if (old == null)
                         throw new KeyNotFoundException();

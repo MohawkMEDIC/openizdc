@@ -314,8 +314,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "CodedObservation":
                                     case "TextObservation":
                                     case "PatientEncounter":
-                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm);
-                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm);
+                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship.target=!" + itm);
+                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship.target=" + itm);
                                         //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":

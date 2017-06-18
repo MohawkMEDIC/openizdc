@@ -36,6 +36,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -283,7 +284,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.m_tracer.TraceError("Error sending object {0}: {1}", dpe, ex);
 
                         syncItm.IsRetry = false;
-
+                        syncItm.RetryCount++;
                         // Re-queue
                         if (syncItm.RetryCount > 3) // TODO: Make this configurable
                         {
@@ -296,6 +297,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             SynchronizationQueue.Admin.UpdateRaw(syncItm);
                         }
                     }
+                    catch (SecurityException) { }
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError("Error sending object to AMI: {0}", ex);
@@ -400,6 +402,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             SynchronizationQueue.Outbound.UpdateRaw(syncItm);
                         }
                     }
+                    catch (SecurityException) { }
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError("Error sending object to IMS: {0}", ex);

@@ -47,7 +47,7 @@ layoutApp.controller('AuditController', ['$scope', function ($scope) {
             OpenIZ.Audit.getAuditAsync({
                 query: { _id: id},
                 continueWith: function (data) {
-                    $scope.audit.current = data.CollectionItem[0].Audit;
+                    $scope.audit.current = data.CollectionItem[0].Audit[0];
                    
                 },
                 finally: function () {

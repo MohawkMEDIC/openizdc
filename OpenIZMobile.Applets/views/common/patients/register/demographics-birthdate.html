@@ -24,8 +24,8 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (dateOfBirthForm.dateOfBirth.$touched || (dateOfBirthForm.$submitted || formSubmitted)) &amp;&amp; dateOfBirthForm.dateOfBirth.$invalid }">
             <div class="input-group">
-                <input ng-disabled="patientBackup.tag.hasBirthCertificate === 'True'"
-                       ng-readonly="patient.readonly.dateOfBirth" type="date"
+                <input 
+                       ng-readonly="patient.readonly.dateOfBirth || patientBackup.tag.hasBirthCertificate === 'True'" type="date"
                        name="dateOfBirth" id="dobInput"
                        class="form-control"
                        ng-model="patient.dateOfBirth"
@@ -36,7 +36,7 @@
                     <label class="control control--checkbox">
                         <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                         <input type="checkbox"
-                               ng-disabled="patientBackup.tag.hasBirthCertificate === 'True'"
+                               ng-readonly="patientBackup.tag.hasBirthCertificate === 'True'"
                                ng-model="patient.dateOfBirthPrecision"
                                ng-checked="patient.dateOfBirthPrecision == 2"
                                ng-true-value="2"

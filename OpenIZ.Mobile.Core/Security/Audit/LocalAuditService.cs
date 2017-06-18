@@ -16,6 +16,8 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Interfaces;
 using OpenIZ.Mobile.Core.Configuration;
+using System.Threading;
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Mobile.Core.Security.Audit
 {
@@ -47,6 +49,12 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         // Tracer class
         private Tracer m_tracer = Tracer.GetTracer(typeof(LocalAuditService));
 
+        // Audit queue
+        private Queue<AuditData> m_auditQueue = new Queue<AuditData>();
+
+        // Reset event
+        private AutoResetEvent m_resetEvent = new AutoResetEvent(false);
+
         /// <summary>
         ///  True if the service is running
         /// </summary>
@@ -63,31 +71,36 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         public event EventHandler Stopped;
         public event EventHandler Stopping;
 
+        // Duplicate guard
+        private Dictionary<Guid, DateTime> m_duplicateGuard = new Dictionary<Guid, DateTime>();
+
         /// <summary>
         /// Send an audit (which stores the audit locally in the audit file and then queues it for sending)
         /// </summary>
         public bool SendAudit(AuditData audit)
         {
-            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o =>
+            // Check duplicate guard
+            Guid objId = Guid.Empty;
+            var queryObj = audit.AuditableObjects.FirstOrDefault(o => o.Role == AuditableObjectRole.Query);
+            if (queryObj != null && Guid.TryParse(queryObj.QueryData, out objId))
             {
-                var ad = o as AuditData;
-                try
-                {
-                    // First, save the audit locally
-                    var ar = ApplicationContext.Current.GetService<IAuditRepositoryService>();
-                    if (ar == null)
-                        throw new InvalidOperationException("!!SECURITY ALERT!! >> Cannot find audit repository");
-                    ad = ar.Insert(ad);
+                // prevent duplicate sending
+                DateTime lastAuditObj = default(DateTime);
+                if (this.m_duplicateGuard.TryGetValue(objId, out lastAuditObj) && DateTime.Now.Subtract(lastAuditObj).TotalSeconds < 2)
+                    return true; // duplicate
+                else
+                    lock (this.m_duplicateGuard)
+                    {
+                        if (this.m_duplicateGuard.ContainsKey(objId))
+                            this.m_duplicateGuard[objId] = DateTime.Now;
+                        else
+                            this.m_duplicateGuard.Add(objId, DateTime.Now);
+                    }
+            }
 
-                    // Queue for send
-                    SynchronizationQueue.Admin.Enqueue(new AuditInfo(ad), Synchronization.Model.DataOperationType.Insert);
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("!!SECURITY ALERT!! >> Error sending audit {0}: {1}", ad, e);
-                    throw;
-                }
-            }, audit);
+            lock (this.m_auditQueue)
+                this.m_auditQueue.Enqueue(audit);
+            this.m_resetEvent.Set();
             return true;
         }
 
@@ -132,7 +145,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                         svc.DataObsoleted += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Delete, AuditableObjectLifecycle.LogicalDeletion, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
                         svc.DataDisclosed += (so, se) =>
                         {
-                            if (se.Objects.Count() > 0)
+                            if (se.Objects.Count() > 0 && se.Objects.Any(i=>i is Patient || i is Act))
                                 AuditUtil.AuditDataAction(EventTypeCodes.Query, ActionType.Read, AuditableObjectLifecycle.Disclosure, EventIdentifierType.Query, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, se.Query, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
 
@@ -142,7 +155,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
 
                     AuditUtil.AuditApplicationStartStop(EventTypeCodes.ApplicationStart);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     this.m_tracer.TraceError("Error starting up audit repository service: {0}", ex);
                 }
@@ -150,6 +163,60 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             ApplicationContext.Current.Stopped += (o, e) => AuditUtil.AuditApplicationStartStop(EventTypeCodes.ApplicationStop);
             ApplicationContext.Current.Stopping += (o, e) => this.m_safeToStop = true;
 
+            AuditInfo sendAudit = new AuditInfo();
+
+            // Send audit
+            Action<Object> timerQueue = null;
+            timerQueue = o =>
+            {
+                lock(sendAudit)
+                    if (sendAudit.Audit.Count > 0)
+                        SynchronizationQueue.Admin.Enqueue(sendAudit, Synchronization.Model.DataOperationType.Insert);
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(new TimeSpan(0, 0, 30), timerQueue, null);
+            };
+
+            // Queue user work item for sending
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(new TimeSpan(0, 0, 30), timerQueue, null);
+
+            // Queue pooled item
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
+            {
+                while (!this.m_safeToStop)
+                {
+                    try
+                    {
+                        this.m_resetEvent.WaitOne();
+                        while (this.m_auditQueue.Count > 0)
+                        {
+                            AuditData ad = null;
+
+                            lock(this.m_auditQueue)
+                                ad = this.m_auditQueue.Dequeue();
+
+                            try
+                            {
+                                // First, save the audit locally
+                                var ar = ApplicationContext.Current.GetService<IAuditRepositoryService>();
+                                if (ar == null)
+                                    throw new InvalidOperationException("!!SECURITY ALERT!! >> Cannot find audit repository");
+                                ad = ar.Insert(ad);
+
+                                lock(sendAudit)
+                                    sendAudit.Audit.Add(ad);
+                            }
+                            catch (Exception e)
+                            {
+                                this.m_tracer.TraceError("!!SECURITY ALERT!! >> Error sending audit {0}: {1}", ad, e);
+                            }
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("!!SECURITY ALERT!! >> Error polling audit task list {0}", e);
+                    }
+                }
+            }, null);
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;
         }
@@ -162,7 +229,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             this.Stopping?.Invoke(this, EventArgs.Empty);
 
             // Audit tool should never stop!!!!!
-            if (!this.m_safeToStop) {
+            if (!this.m_safeToStop)
+            {
                 AuditData securityAlertData = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, AuditUtil.CreateAuditActionCode(EventTypeCodes.UseOfARestrictedFunction));
                 AuditUtil.AddDeviceActor(securityAlertData);
                 AuditUtil.SendAudit(securityAlertData);

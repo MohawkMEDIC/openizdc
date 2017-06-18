@@ -3348,3 +3348,32 @@ String.prototype.hexDecode = function () {
         return String.fromCharCode(parseInt(a, 16));
     });
 }
+
+/** 
+ * @summary Encodes a hex string
+ * @method
+ */
+String.prototype.hexEncode = function () {
+    var hex, i;
+
+    var result = "";
+    for (i = 0; i < this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += ("0" + hex).slice(-2);
+    }
+
+    return result
+}
+
+/** 
+ * @summary Turns a string into a byte array
+ * @method
+ */
+String.prototype.toByteArray = function () {
+    var result = [];
+    for (var i = 0; i < this.length; i++) {
+        result.push(this.charCodeAt(i));
+    }
+
+    return result
+}

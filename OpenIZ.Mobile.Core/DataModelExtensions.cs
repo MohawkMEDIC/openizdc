@@ -239,7 +239,7 @@ namespace OpenIZ.Mobile.Core
             s_tracer.TraceVerbose("Load associations for {0} took {1} ms", me, sw.ElapsedMilliseconds);
 #endif
 
-            me.LoadState = LoadState.FullLoad;
+            me.LoadState = excludeProperties.Length > 0 ? LoadState.PartialLoad : LoadState.FullLoad;
 
             ApplicationContext.Current.GetService<IDataCachingService>()?.Add(me as IdentifiedData);
             //}

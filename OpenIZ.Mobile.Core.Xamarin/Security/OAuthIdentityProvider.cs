@@ -144,6 +144,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             // Invoke
                             if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
                             {
+                                if(principal.Identity.Name == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName) 
+                                    restClient.Description.Endpoint[0].Timeout = 20000;
                                 OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                                 retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
                             }
@@ -196,99 +198,24 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             }
                         }
 
-                        // Create a security user and ensure they exist!
-                        var localRp = new LocalRoleProviderService();
-                        var localPip = new LocalPolicyInformationService();
 
                         // We have a match! Lets make sure we cache this data
                         // TODO: Clean this up
-                        if (!String.IsNullOrEmpty(password) && retVal is ClaimsPrincipal &&
-                            XamarinApplicationContext.Current.ConfigurationManager.IsConfigured)
+                        try
                         {
-                            ClaimsPrincipal cprincipal = retVal as ClaimsPrincipal;
-                            var amiPip = new AmiPolicyInformationService(cprincipal);
-
-                            // We want to impersonate SYSTEM
-                            //AndroidApplicationContext.Current.SetPrincipal(cprincipal);
-
-                            // Ensure policies exist from the claim
-                            foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimTypes.OpenIzGrantedPolicyClaim))
-                            {
-                                if (localPip.GetPolicy(itm.Value) == null)
-                                {
-                                    var policy = amiPip.GetPolicy(itm.Value);
-                                    localPip.CreatePolicy(policy, new SystemPrincipal());
-                                }
-                            }
-
-                            // Ensure roles exist from the claim
-                            var localRoles = localRp.GetAllRoles();
-                            foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType))
-                            {
-                                // Ensure policy exists
-                                var amiPolicies = amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray();
-                                foreach (var pol in amiPolicies)
-                                    if (localPip.GetPolicy(pol.Policy.Oid) == null)
-                                    {
-                                        var policy = amiPip.GetPolicy(pol.Policy.Oid);
-                                        localPip.CreatePolicy(policy, new SystemPrincipal());
-                                    }
-
-                                // Local role doesn't exist
-                                if (!localRoles.Contains(itm.Value))
-                                {
-                                    localRp.CreateRole(itm.Value, new SystemPrincipal());
-                                }
-                                localRp.AddPoliciesToRoles(amiPolicies, new String[] { itm.Value }, new SystemPrincipal());
-
-                            }
-
-                            IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
+                            this.SynchronizeSecurity(password, retVal);
+                        }
+                        catch(Exception ex)
+                        {
                             try
                             {
-                                var userKey = Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value);
-
-                                var adminService = ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
-
-                                var networkIsAvailable = adminService?.IsAvailable() ?? false;
-
-                                SecurityUser securityUser = null;
-
-                                if (localUser == null)
-                                {
-                                    //                     if (networkIsAvailable)
-                                    //                     {
-                                    //                      // force download the security user from the AMI
-                                    //                      // to be able to retrive any updated security information
-                                    //                      // such as the email and phone number
-                                    //                      securityUser = adminService.GetSecurityUser(userKey);
-                                    //                     }
-
-                                    //if (securityUser != null)
-                                    //                     {
-                                    //                      localIdp.CreateIdentity(securityUser, password, new SystemPrincipal());
-                                    //}
-                                    //                     else
-                                    //                     {
-                                    //	localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
-                                    //}
-
-                                    localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
-                                }
-                                else
-                                {
-                                    localIdp.ChangePassword(principal.Identity.Name, password, principal);
-                                }
+                                this.m_tracer.TraceWarning("Failed to fetch remote security parameters - {0}", ex);
+                                retVal = localIdp.Authenticate(principal.Identity.Name, password);
                             }
-                            catch (Exception ex)
+                            catch
                             {
-                                this.m_tracer.TraceWarning("Insertion of local cache credential failed: {0}", ex);
+                                throw new SecurityException(Strings.err_offline_use_cache_creds);
                             }
-
-                            // Add user to roles
-                            // TODO: Remove users from specified roles?
-                            localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
-
                         }
                     }
                     catch (RestClientException<OAuthTokenResponse> ex)
@@ -331,10 +258,113 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
             return retVal;
         }
+
+        /// <summary>
+        /// Synchronize the security settings
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="principal"></param>
+        private void SynchronizeSecurity(string password, IPrincipal principal)
+        {
+            // Create a security user and ensure they exist!
+            var localRp = new LocalRoleProviderService();
+            var localPip = new LocalPolicyInformationService();
+            var localIdp = new LocalIdentityService();
+
+            if (!String.IsNullOrEmpty(password) && principal is ClaimsPrincipal &&
+                            XamarinApplicationContext.Current.ConfigurationManager.IsConfigured)
+            {
+                ClaimsPrincipal cprincipal = principal as ClaimsPrincipal;
+                var amiPip = new AmiPolicyInformationService(cprincipal);
+
+                // We want to impersonate SYSTEM
+                //AndroidApplicationContext.Current.SetPrincipal(cprincipal);
+
+                // Ensure policies exist from the claim
+                foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimTypes.OpenIzGrantedPolicyClaim))
+                {
+                    if (localPip.GetPolicy(itm.Value) == null)
+                    {
+                        var policy = amiPip.GetPolicy(itm.Value);
+                        localPip.CreatePolicy(policy, new SystemPrincipal());
+                    }
+                }
+
+                // Ensure roles exist from the claim
+                var localRoles = localRp.GetAllRoles();
+                foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType))
+                {
+                    // Ensure policy exists
+                    var amiPolicies = amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray();
+                    foreach (var pol in amiPolicies)
+                        if (localPip.GetPolicy(pol.Policy.Oid) == null)
+                        {
+                            var policy = amiPip.GetPolicy(pol.Policy.Oid);
+                            localPip.CreatePolicy(policy, new SystemPrincipal());
+                        }
+
+                    // Local role doesn't exist
+                    if (!localRoles.Contains(itm.Value))
+                    {
+                        localRp.CreateRole(itm.Value, new SystemPrincipal());
+                    }
+                    localRp.AddPoliciesToRoles(amiPolicies, new String[] { itm.Value }, new SystemPrincipal());
+
+                }
+
+                IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
+                try
+                {
+                    var userKey = Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value);
+
+                    var adminService = ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
+
+                    var networkIsAvailable = adminService?.IsAvailable() ?? false;
+
+                    SecurityUser securityUser = null;
+
+                    if (localUser == null)
+                    {
+                        //                     if (networkIsAvailable)
+                        //                     {
+                        //                      // force download the security user from the AMI
+                        //                      // to be able to retrive any updated security information
+                        //                      // such as the email and phone number
+                        //                      securityUser = adminService.GetSecurityUser(userKey);
+                        //                     }
+
+                        //if (securityUser != null)
+                        //                     {
+                        //                      localIdp.CreateIdentity(securityUser, password, new SystemPrincipal());
+                        //}
+                        //                     else
+                        //                     {
+                        //	localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
+                        //}
+
+                        localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
+                    }
+                    else
+                    {
+                        localIdp.ChangePassword(principal.Identity.Name, password, principal);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.m_tracer.TraceWarning("Insertion of local cache credential failed: {0}", ex);
+                }
+
+                // Add user to roles
+                // TODO: Remove users from specified roles?
+                localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
+
+            }
+        }
+
         /// <summary>
         /// Gets the specified identity
         /// </summary>
-		public System.Security.Principal.IIdentity GetIdentity(string userName)
+        public System.Security.Principal.IIdentity GetIdentity(string userName)
         {
             throw new NotImplementedException();
         }

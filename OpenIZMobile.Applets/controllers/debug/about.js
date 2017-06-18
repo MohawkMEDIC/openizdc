@@ -116,7 +116,7 @@ layoutApp.controller('AboutApplicationController', ['$scope', '$rootScope', '$st
                 }
             })
             if (!noTimer && $state.is('org-openiz-core.about'))
-                setTimeout(refreshHealth, 5000);
+                setTimeout(refreshHealth, 750);
         }
     }
 

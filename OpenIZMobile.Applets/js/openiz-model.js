@@ -5595,6 +5595,7 @@ var OpenIZModel = OpenIZModel || {
             this.extensionTypeModel = copyData.extensionTypeModel;
             this.extensionType = copyData.extensionType;
             this.value = copyData.value;
+            this.valueModel = copyData.valueModel;
         }
     },  // EntityExtension 
     // OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=0.8.1.31069, Culture=neutral, PublicKeyToken=null

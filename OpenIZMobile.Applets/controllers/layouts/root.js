@@ -70,6 +70,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             $rootScope.isLoading = false;
         });
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            $rootScope.isLoading = false;
             if ($rootScope.confirmNavigation && !$rootScope.confirmNavigation(event, fromState)) {
                 event.preventDefault();
                 $state.go(fromState.name);
@@ -89,6 +90,18 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
         $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
             OpenIZ.App.hideWait();
             $rootScope.isLoading = false;
+
+            // Refresh the session ?
+            if ($rootScope.session && ($rootScope.session.exp - new Date() < 240000)) { // The session is about to expire so let's extend it!
+                OpenIZ.Authentication.refreshSessionAsync({
+                    continueWith: function (s) {
+                        $rootScope.session = s;
+                    },
+                    onException: function (e) {
+                        console.error(e);
+                    }
+                });
+            }
         });
 
             $rootScope.page = {

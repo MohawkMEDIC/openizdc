@@ -181,7 +181,8 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                         // Only send audits over wifi
                         if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkWifi)
                         {
-                            AuditUtil.AddDeviceActor((data as AuditInfo).Audit);
+                            foreach(var a in (data as AuditInfo).Audit)
+                                AuditUtil.AddDeviceActor(a);
                             amiClient.SubmitAudit(data as AuditInfo);
                         }
                         break;

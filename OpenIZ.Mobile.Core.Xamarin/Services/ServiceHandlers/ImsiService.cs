@@ -462,12 +462,51 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return repository.Save(entityToUpdate).GetLocked() as Entity;
         }
 
-		/// <summary>
-		/// Updates the entity relationship.
-		/// </summary>
-		/// <param name="entityRelationship">The entity relationship.</param>
-		/// <returns>Returns the updated entity relationship.</returns>
-		[RestOperation(Method = "PUT", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+        /// <summary>
+        /// Updates an entity.
+        /// </summary>
+        /// <param name="entityToUpdate">The entity to be updated.</param>
+        /// <returns>Returns the updated entity.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/EntityExtension", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Entity UpdateEntityExtension([RestMessage(RestMessageFormat.SimpleJson)]EntityExtension extensionToSave)
+        {
+            var entityRepository = ApplicationContext.Current.GetService<IRepositoryService<Entity>>();
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            Guid entityKey = Guid.Empty;
+
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out entityKey))
+            {
+                var entity = entityRepository.Get(entityKey).Copy() as Entity;
+                if(entity != null)
+                {
+
+                    // Add extension if not already exists
+                    entity.Extensions.RemoveAll(o => o == null);
+                    var extension = entity.Extensions.FirstOrDefault(o => o.LoadProperty<ExtensionType>("ExtensionType").Name == extensionToSave.ExtensionType.Name);
+                    if (extension != null)
+                        entity.Extensions.Remove(extension);
+                    entity.Extensions.Add(extensionToSave);
+                    return entityRepository.Save(entity);
+
+                }
+                else
+                    throw new ArgumentException("Entity not found");
+
+            }
+            else
+            {
+                throw new ArgumentException("Entity not found");
+            }
+        }
+        /// <summary>
+        /// Updates the entity relationship.
+        /// </summary>
+        /// <param name="entityRelationship">The entity relationship.</param>
+        /// <returns>Returns the updated entity relationship.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
 	    [Demand(PolicyIdentifiers.WriteClinicalData)]
 	    public EntityRelationship UpdateEntityRelationship([RestMessage(RestMessageFormat.SimpleJson)] EntityRelationship entityRelationship)
 	    {
