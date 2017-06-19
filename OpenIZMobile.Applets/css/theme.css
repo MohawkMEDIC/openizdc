@@ -122,11 +122,15 @@ fieldset{
     border: 1px solid #0887d9;
     background-color: white;
 }
-
+.input-group.tokenfield-placeholder .tokenfield .token-input {
+    width: 100% !important
+}
+.input-group:not(.tokenfield-placeholder) .tokenfield .token-input {
+    width: auto !important
+}
 .tokenfield .token-input{
     margin-bottom: 0;
     height: initial;
-    width:auto !important;
 }
 
 .tokenfield .token .close{
