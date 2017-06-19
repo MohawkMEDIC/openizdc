@@ -250,7 +250,7 @@ namespace OpenIZ.Mobile.Core.Caching
 
                 if (sourceEntity != null) // search and replace
                 {
-                    var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                    var idx = sourceEntity.Relationships.ToArray().FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
                         sourceEntity.Relationships.Remove(idx);
