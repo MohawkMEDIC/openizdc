@@ -337,53 +337,6 @@ namespace OpenIZ.Mobile.Core.Security
 		}
 
 		/// <summary>
-		/// Updates the security user information.
-		/// </summary>
-		/// <param name="username">The username.</param>
-		/// <param name="email">The email.</param>
-		/// <param name="phoneNumber">The phone number.</param>
-		/// <param name="principal">The principal.</param>
-		/// <returns>IIdentity.</returns>
-		/// <exception cref="PolicyViolationException"></exception>
-		/// <exception cref="System.InvalidOperationException">Cannot update user which does not exist!</exception>
-		public IIdentity UpdateIdentity(string username, string email, string phoneNumber, IPrincipal principal)
-		{
-			try
-			{
-				var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-				if (pdp.GetPolicyOutcome(principal ?? AuthenticationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
-					throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
-
-				var conn = this.CreateConnection();
-				IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
-
-				using (conn.Lock())
-				{
-					var user = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == username);
-
-					if (user == null)
-					{
-						throw new InvalidOperationException("Cannot update user which does not exist!");
-					}
-
-					user.Email = email;
-					user.PhoneNumber = phoneNumber;
-					user.UpdatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == AuthenticationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray();
-
-					conn.Update(user);
-
-					this.DataUpdated?.Invoke(this, new AuditDataEventArgs(user));
-				}
-				return new SQLiteIdentity(username, false);
-			}
-			catch
-			{
-				this.DataUpdated?.Invoke(this, new AuditDataEventArgs(new SecurityUser() { UserName = username }) { Success = false });
-				throw;
-			}
-		}
-
-		/// <summary>
 		/// Creates a connection to the local database
 		/// </summary>
 		/// <returns>The connection.</returns>
