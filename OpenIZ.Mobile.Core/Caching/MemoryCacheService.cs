@@ -51,6 +51,8 @@ namespace OpenIZ.Mobile.Core.Caching
 		private EventHandler<ModelMapEventArgs> m_mappingHandler = null;
 		private EventHandler<ModelMapEventArgs> m_mappedHandler = null;
 
+		private object lockInstance = new object();
+
 		// Memory cache configuration
 		private Tracer m_tracer = Tracer.GetTracer(typeof(MemoryCacheService));
 
@@ -188,32 +190,34 @@ namespace OpenIZ.Mobile.Core.Caching
             //// Relationships should always be clean of source/target so the source/target will load the new relationship
             if (e.Object is ActParticipation)
             {
-                var ptcpt = (e.Object as ActParticipation);
-                var sourceEntity = MemoryCache.Current.TryGetEntry(ptcpt.SourceEntityKey) as Act;
-                var targetEntity = MemoryCache.Current.TryGetEntry(ptcpt.PlayerEntityKey) as Entity;
+	            lock (lockInstance)
+	            {
+					var ptcpt = (e.Object as ActParticipation);
+		            var sourceEntity = MemoryCache.Current.TryGetEntry(ptcpt.SourceEntityKey) as Act;
+		            var targetEntity = MemoryCache.Current.TryGetEntry(ptcpt.PlayerEntityKey) as Entity;
 
-                if(sourceEntity != null) // search and replace
-                {
-                    var idx = sourceEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
-                        o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
-                    if(idx != null)
-                        sourceEntity.Participations.Remove(idx);
+		            if (sourceEntity != null) // search and replace
+		            {
+			            var idx = sourceEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
+																							o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
+			            if (idx != null)
+				            sourceEntity.Participations.Remove(idx);
 
-                    if(!remove)
-                        sourceEntity.Participations.Add(ptcpt);
-                }
-                if(targetEntity != null)
-                {
-                    var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
-                        o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
-                    if (idx != null)
-                    {
-                        targetEntity.Participations.Remove(idx);
-                        if (!remove)
-                            targetEntity.Participations.Add(ptcpt);
-                    }
-                }
-                //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
+			            if (!remove)
+				            sourceEntity.Participations.Add(ptcpt);
+		            }
+		            if (targetEntity != null)
+		            {
+			            var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
+																				o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
+			            if (idx != null)
+			            {
+				            targetEntity.Participations.Remove(idx);
+				            if (!remove)
+					            targetEntity.Participations.Add(ptcpt);
+			            }
+		            }
+				}
             }
             else if (e.Object is ActRelationship)
             {
