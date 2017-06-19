@@ -42,39 +42,34 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div ng-if="!act.targetModel.tag.backEntry">
+    <div ng-if="!act.targetModel.tag.backEntry">
+        <div class="row">
             <div class="col-xs-6" ng-show="act._enabled">
                 <div class="input-group" ng-show="act._created">
                     <label>{{ 'locale.encounters.immunizations.antigen' | i18n }}</label>
                     <select ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;classConcept.mnemonic=Material" bind:value="name[Assigned].component[null].value"
-                            ng-change="act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]; act.targetModel.doseSequence = getNextDoseSequence(act.targetModel.participation.Product.player); fillParticipationPlayerEntity(act.targetModel.participation.Product);"
-                            >
-                    </select>
+                            ng-change="act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]; act.targetModel.doseSequence = getNextDoseSequence(act.targetModel.participation.Product.player); fillParticipationPlayerEntity(act.targetModel.participation.Product);"></select>
                 </div>
                 <div class="input-group">
                     <label>
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
-                    <select 
-                        ng-init="act.targetModel.participation.Consumable = makeArrayIfNot(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
-                            ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" 
+                    <select ng-init="act.targetModel.participation.Consumable = makeArrayIfNot(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
+                            ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}"
                             ng-if="act.targetModel.participation.Product.player"
-                            ng-required="act._enabled" 
+                            ng-required="act._enabled"
                             ng-disabled="!act._enabled"
                             name="consumable_{{act.targetModel.id}}"
-                            class="form-control" 
-                            ng-model="act.targetModel.participation.Consumable[0].player" 
-                            data-watch="act.targetModel.participation.Product.player" 
-                            data-watch-target="relationship[ManufacturedProduct].source" 
-                            oiz-databind="ManufacturedMaterial" 
-                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }' 
-                            data-display="scope.lotNumber" 
+                            class="form-control"
+                            ng-model="act.targetModel.participation.Consumable[0].player"
+                            data-watch="act.targetModel.participation.Product.player"
+                            data-watch-target="relationship[ManufacturedProduct].source"
+                            oiz-databind="ManufacturedMaterial"
+                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                            data-display="scope.lotNumber"
                             data-defaultEmpty="true"
                             data-defaultFirst="true"
-                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"
-                            >
-                    </select>
+                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"></select>
 
                 </div>
                 <div class="row">
@@ -92,17 +87,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-5" ng-show="act._enabled" >
+            <div class="col-xs-5" ng-show="act._enabled">
                 <div class="input-group">
                     <label>
                         {{ 'locale.encounters.immunizations.site' | i18n }}
                     </label>
-                    <select name="site_{{act.targetModel.id}}" 
-                            ng-required="act._enabled" 
-                            class="form-control" 
-                            ng-model="act.targetModel.site" 
-                            bind:source="Concept" 
-                            bind:value="name[{{ locale }}].value" 
+                    <select name="site_{{act.targetModel.id}}"
+                            ng-required="act._enabled"
+                            class="form-control"
+                            ng-model="act.targetModel.site"
+                            bind:source="Concept"
+                            bind:value="name[{{ locale }}].value"
                             bind:filter="conceptSet.mnemonic=AdministrationSite"
                             ng-disabled="!act._enabled"
                             ng-change="act.targetModel.site == 'e5b6847e-91e0-4fca-ac2e-753962008080' ? act.targetModel.route = '0a1388b0-66fb-4063-bfe3-151dd8442838' : act.targetModel.route='d594f99f-0151-41a0-a359-282ab54683a1'">
@@ -128,15 +123,16 @@
             <div class="col-xs-1" ng-if="!act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                 <label class="control control--checkbox">
                     <input type="checkbox"
-                           ng-model="act._enabled"
-                           checked="checked"
-                           value="1"
-                           id="enable_{{act.targetModel.id}}" />
+                            ng-model="act._enabled"
+                            checked="checked"
+                            value="1"
+                            id="enable_{{act.targetModel.id}}" />
                     <div class="control__indicator control__indicator_alt" style="top: 35px; left: 0px;"></div>
                 </label>
             </div>
-            <!-- Used Entities !! -->
-
+        </div>
+        <!-- Used Entities !! -->
+        <div class="row">
             <div ng-if="act._enabled" class="col-xs-6" ng-repeat="product in act.targetModel.participation.Product.playerModel.relationship.UsedEntity">
                 <div class="input-group">
                     <label>
@@ -169,12 +165,14 @@
                 </a>
             </div>
         </div>
-        <div ng-if="act.targetModel.tag.backEntry">
+    </div>
+    <div ng-if="act.targetModel.tag.backEntry">
+        <div class="row">
             <div class="col-xs-8">
                 <div class="input-group">
                     <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
-                    <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; 
-                           (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}" 
+                    <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp;
+                        (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}"
                            ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled ? $root.page.loadTime : null" ng-min="act._enabled ? patient.dateOfBirth : null"
                            max="{{ getMaxDate(act) | date:'yyyy-MM-dd' }}"
                            min="{{ getMinDate(act) | date:'yyyy-MM-dd' }}"
@@ -182,7 +180,7 @@
                            ng-init="act._originalTime = act.targetModel.actTime" />
                 </div>
             </div>
-            <div class="col-xs-3"  ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+            <div class="col-xs-3" ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                 <a class="btn btn-lg btn-info" ng-click="removeOverdue(act, '#enable_' + act.targetModel.id)">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-down"></span>
@@ -195,12 +193,14 @@
                     <input type="checkbox"
                            ng-model="act._enabled"
                            checked="checked"
-                           value="1" 
+                           value="1"
                            id="enable_{{act.targetModel.id}}" />
 
                     <div class="control__indicator control__indicator_alt" style="top: 14px; left: 0px;"></div>
                 </label>
             </div>
+        </div>
+        <div class="row">
             <div ng-if="act._enabled">
                 <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.required">
                     {{ 'locale.encounters.immunizations.errors.requiredDate' | i18n }}
@@ -216,9 +216,9 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-xs-12 alert alert-warning" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime">
-            <span><span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.encounters.immunizations.early' | i18n }}</span>
-        </div>
+    <div class="col-xs-12 alert alert-warning" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime">
+        <span><span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.encounters.immunizations.early' | i18n }}</span>
     </div>
 </div>
