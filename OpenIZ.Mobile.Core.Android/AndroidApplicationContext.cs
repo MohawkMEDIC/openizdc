@@ -46,6 +46,7 @@ using A = Android;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using System.IO.Compression;
 using System.Threading;
+using Android.OS;
 using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Android
@@ -417,6 +418,11 @@ namespace OpenIZ.Mobile.Core.Android
         /// </summary>
         public override void ShowToast(String message)
         {
+	        if (Looper.MyLooper() == null)
+	        {
+		        Looper.Prepare();
+	        }
+
             A.Widget.Toast.MakeText(this.CurrentActivity, message, A.Widget.ToastLength.Long);
         }
 
