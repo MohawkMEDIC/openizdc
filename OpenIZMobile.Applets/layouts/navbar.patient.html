@@ -68,12 +68,11 @@
                             <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
                         </div>
 
-                        <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
-                        <label class="col-xs-2 header-dock-labels">Mothers Info</label>
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
                         <div class="col-xs-4">
                             <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
-                                <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
-                                <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+                                <span class="list-group-item-heading">{{ 'locale.patient.demographics.mothersName' | i18n }}: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
+                                <small ng-if="rel.targetModel.identifier">{{ 'locale.patient.demographics.mothersId' | i18n }}: {{rel.targetModel.identifier[0] | oizEntityIdentifier}}</small>
                                 <span ng-repeat="contact in rel.targetModel.telecom">
                                     <small>Contact: {{contact.value}}</small>
                                 </span>

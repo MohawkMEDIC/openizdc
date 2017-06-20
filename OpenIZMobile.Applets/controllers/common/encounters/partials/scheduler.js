@@ -25,7 +25,7 @@
 
 layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', function ($scope, $rootScope, $stateParams) {
     $scope._isCalendarInitialized = false;
-    $scope.isLoading = true;
+    $scope.isLoading = false;
     var appointmentBundleSubmitted;
 
     angular.element(document).ready(init);
@@ -141,8 +141,9 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
     $scope.renderAppointments = function (start, end, timezone, callback) {
         if ($scope.appointment == null) return;
 
+        $(".fc-button").attr('disabled', true);
+        $(".fc-button").addClass('fc-state-disabled');
         OpenIZ.App.showWait("#appointmentScheduler .fc-center");
-
         var appointments = [{
             id: $scope.appointment.id,
             title: OpenIZ.Localization.getString("locale.encounters.appointment.recommended"),
@@ -194,6 +195,9 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                     callback(appointments);
                 },
                 finally: function () {
+                    $(".fc-button").attr('disabled', false);
+
+                    $(".fc-button").removeClass('fc-state-disabled');
                     OpenIZ.App.hideWait("#appointmentScheduler .fc-center");
                 }
             });

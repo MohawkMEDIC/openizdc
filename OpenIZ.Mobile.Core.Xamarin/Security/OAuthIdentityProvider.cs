@@ -315,37 +315,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
                 }
 
-                IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
+                var localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
+
                 try
                 {
-                    var userKey = Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value);
-
-                    var adminService = ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
-
-                    var networkIsAvailable = adminService?.IsAvailable() ?? false;
-
-                    SecurityUser securityUser = null;
-
                     if (localUser == null)
                     {
-                        //                     if (networkIsAvailable)
-                        //                     {
-                        //                      // force download the security user from the AMI
-                        //                      // to be able to retrive any updated security information
-                        //                      // such as the email and phone number
-                        //                      securityUser = adminService.GetSecurityUser(userKey);
-                        //                     }
-
-                        //if (securityUser != null)
-                        //                     {
-                        //                      localIdp.CreateIdentity(securityUser, password, new SystemPrincipal());
-                        //}
-                        //                     else
-                        //                     {
-                        //	localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
-                        //}
-
-                        localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
+                        localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password, new SystemPrincipal());
                     }
                     else
                     {
@@ -360,7 +336,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 // Add user to roles
                 // TODO: Remove users from specified roles?
                 localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
-
             }
         }
 

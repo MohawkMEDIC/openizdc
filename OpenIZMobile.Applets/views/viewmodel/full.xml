@@ -55,7 +55,7 @@
   <type type="ActParticipation" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
-    <property name="playerModel" all="true" ref="Entity"/>
+    <property name="playerModel" all="true" ref="Entity" behavior="always"/>
     <property name="participationRole" all="true"/>
     <property name="key" all="true"/>
     <property name="quantity" all="true"/>
