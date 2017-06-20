@@ -294,6 +294,7 @@
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
     </property>
+   
     <property name="valueModel" all="true" ref="Concept" behavior="always"/>
   
     <property name="classConceptModel" behavior="never"/>

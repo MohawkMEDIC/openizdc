@@ -136,7 +136,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             if (dbInstance.TemplateUuid != null)
             {
-                var tpl = context.Connection.Table<DbTemplateDefinition>().FirstOrDefault(o => o.Uuid == dbInstance.TemplateUuid);
+                var tpl = context.Connection.Table<DbTemplateDefinition>().Where(o => o.Uuid == dbInstance.TemplateUuid).FirstOrDefault();
                 retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(tpl, true);
             }
             // Has this been updated? If so, minimal information about the previous version is available
