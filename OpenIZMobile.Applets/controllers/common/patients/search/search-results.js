@@ -146,7 +146,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     /** 
      * @summary Searches patients by the provided query
      */
-    function searchPatient(query, searchOnlineOnly, onSearchResults) {
+    function searchPatient(query, searchOnlineOnly, onSearchResults, onError) {
         if (searchOnlineOnly)
             query["_onlineOnly"] = searchOnlineOnly;
         else
@@ -184,6 +184,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             },
             onException: function (e) {
                 OpenIZ.App.toast(e.message);
+                if(onError) onError(e);
             },
             finally: function () {
                 scope.search.isSearching = false;

@@ -3271,6 +3271,11 @@ $.ajaxSetup({
                 btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
         }
         data.setRequestHeader("X-OIZMagic", OpenIZApplicationService.GetMagic());
+    },
+    converters: {
+        "text json": function (data) {
+            return $.parseJSON(data, true);
+        }
     }
 });
 

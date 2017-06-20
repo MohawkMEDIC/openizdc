@@ -100,10 +100,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 return e.Principal;
             }
 
+            var localIdp = new LocalIdentityService();
+
             // Get the scope being requested
             String scope = "*";
             if (principal is ClaimsPrincipal)
                 scope = (principal as ClaimsPrincipal).Claims.FirstOrDefault(o => o.Type == ClaimTypes.OpenIzScopeClaim)?.Value ?? scope;
+            else if (principal is SQLitePrincipal && password == null)
+                return localIdp.Authenticate(principal, password);
             else
                 scope = ApplicationContext.Current.GetRestClient("imsi")?.Description.Endpoint[0].Address ??
                     ApplicationContext.Current.GetRestClient("ami")?.Description.Endpoint[0].Address ??
@@ -111,7 +115,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
             // Authenticate
             IPrincipal retVal = null;
-            var localIdp = new LocalIdentityService();
 
             try
             {

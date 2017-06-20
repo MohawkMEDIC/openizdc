@@ -86,10 +86,20 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <param name="password">Password.</param>
 		public IPrincipal Authenticate(IPrincipal principal, String password)
 		{
-			if (principal == null)
-				throw new ArgumentNullException(nameof(principal));
-			else if (String.IsNullOrEmpty(password))
-				throw new ArgumentNullException(nameof(password));
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            else if (String.IsNullOrEmpty(password))
+            {
+                if (principal is SQLitePrincipal && principal.Identity.IsAuthenticated)
+                {
+                    // Refresh
+                    (principal as SQLitePrincipal).Expires = DateTime.Now.Add(ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>()?.MaxLocalSession ?? new TimeSpan(0, 15, 0));
+
+                    return principal;
+                }
+                else
+                    throw new ArgumentNullException(nameof(password));
+            }
 
 			// Pre-event
 			AuthenticatingEventArgs e = new AuthenticatingEventArgs(principal.Identity.Name, password) { Principal = principal };

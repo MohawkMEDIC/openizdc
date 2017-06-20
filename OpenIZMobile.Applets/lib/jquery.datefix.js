@@ -40,7 +40,7 @@
     var jsonDateConverter = function (key, value) {
         if (typeof (value) === "string") {
             if (dateISO.test(value)) {
-                return new Date(value);
+                return new Date(value + "T00:00:00");
             }
             if (dateTimeISO.test(value)) {
                 return new Date(value);

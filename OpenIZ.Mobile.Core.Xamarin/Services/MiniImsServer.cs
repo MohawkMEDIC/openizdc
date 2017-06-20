@@ -358,12 +358,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         {
                             case RestMessageFormat.Raw:
                                 response.AddHeader("Content-Security-Policy", "style-src 'unsafe-inline'");
-                                if (result is Stream)
-                                    (result as Stream).CopyTo(response.OutputStream);
-                                else
+
+                                response.AddHeader("Content-Encoding", "deflate");
+                                using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
                                 {
-                                    var br = result as Byte[] ?? Encoding.UTF8.GetBytes(result as String);
-                                    response.OutputStream.Write(br, 0, br.Length);
+                                    if (result is Stream)
+                                        (result as Stream).CopyTo(gzs);
+                                    else
+                                    {
+                                        var br = result as Byte[] ?? Encoding.UTF8.GetBytes(result as String);
+                                        gzs.Write(br, 0, br.Length);
+                                    }
                                 }
                                 break;
                             case RestMessageFormat.SimpleJson:
@@ -393,7 +398,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 break;
                             case RestMessageFormat.Json:
                                 response.ContentType = "application/json";
-                                this.m_contentTypeHandler.GetSerializer("application/json", invoke.Method.ReturnType).Serialize(response.OutputStream, result);
+                                response.AddHeader("Content-Encoding", "deflate");
+                                using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
+                                    this.m_contentTypeHandler.GetSerializer("application/json", invoke.Method.ReturnType).Serialize(gzs, result);
                                 break;
                             case RestMessageFormat.Xml:
                                 response.ContentType = "application/xml";

@@ -294,7 +294,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         if (syncSetting.Filters.Count == 0)
                                         {
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
-                                            syncSetting.Filters.Add("participation.act.participation.player=" + itm + "&_exclude=relationship&_exclude=participation");
+                                            syncSetting.Filters.Add("participation.source.participation.player=" + itm + "&_exclude=relationship&_exclude=participation");
                                         }
                                         break;
                                     case "Person":

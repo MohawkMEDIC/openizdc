@@ -415,7 +415,6 @@
           <property name="name" ref="EntityName"/>
         </property>
       </property>
-
       <property name="*" all="false">
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>

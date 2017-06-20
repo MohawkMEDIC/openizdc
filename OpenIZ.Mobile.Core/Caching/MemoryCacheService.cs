@@ -111,10 +111,14 @@ namespace OpenIZ.Mobile.Core.Caching
 					 //ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
 					 //ApplicationContext.Current.GetService<IDataPersistenceService<IdentifierType>>().Query(q => true);
 					 //ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Query(q => true);
-					 // Seed cache
-					 this.m_tracer.TraceInfo("Loading materials dictionary...");
-					 //ApplicationContext.Current.GetService<IDataPersistenceService<Material>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
-					 //ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
+
+                     foreach(var i in ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities)
+                        ApplicationContext.Current.GetService<IDataPersistenceService<Place>>().Get(Guid.Parse(i));
+
+                     // Seed cache
+                     this.m_tracer.TraceInfo("Loading materials dictionary...");
+					 ApplicationContext.Current.GetService<IDataPersistenceService<Material>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
+					 ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
 
 					 // handles when a item is being mapped
 					 if (this.m_mappingHandler == null)

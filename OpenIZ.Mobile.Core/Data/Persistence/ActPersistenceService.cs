@@ -135,8 +135,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = m_mapper.MapDomainInstance<DbAct, TActType>(dbInstance);
 
             if (dbInstance.TemplateUuid != null)
-                retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(context.Connection.Get<DbTemplateDefinition>(dbInstance.TemplateUuid), true);
-
+            {
+                var tpl = context.Connection.Table<DbTemplateDefinition>().FirstOrDefault(o => o.Uuid == dbInstance.TemplateUuid);
+                retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(tpl, true);
+            }
             // Has this been updated? If so, minimal information about the previous version is available
             if (dbInstance.UpdatedTime != null)
             {
