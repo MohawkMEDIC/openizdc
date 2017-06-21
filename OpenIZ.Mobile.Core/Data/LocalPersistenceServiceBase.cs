@@ -649,10 +649,10 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(LocalDataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             var retVal = this.QueryInternal(context, query, offset, count, out totalResults, queryId, countResults);
+
             foreach (var i in retVal.Where(i => i != null))
-            {
                 context.AddCacheCommit(i);
-            }
+
             return retVal;
 
         }
@@ -664,8 +664,10 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(LocalDataContext context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             var retVal = this.QueryInternal(context, storedQueryName, parms, offset, count, out totalResults, queryId, countResults);
-            foreach (var i in retVal)
+
+            foreach (var i in retVal.Where(i => i != null))
                 context.AddCacheCommit(i);
+
             return retVal;
 
         }

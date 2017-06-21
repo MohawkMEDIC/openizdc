@@ -201,7 +201,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             };
 
             $rootScope.$watch('session', function (nv, ov) {
-                if (nv)
+                if (nv) {
                     OpenIZ.App.getInfoAsync({
                         includeUpdates: true,
                         continueWith: function (data) {
@@ -223,18 +223,16 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                             console.error(ex);
                         }
                     });
+                    var locale = nv.entity.language[0].languageCode;
+
+                    // Set the locale for select2
+                    if (locale === "en") {
+                        locale = "en-ca";
+                    }
+
+                    $.fn.select2.defaults.set('language', locale);
+                }
             });
-
-            // Set the language for select2 localization
-            var locale = OpenIZ.Localization.getLocale();
-
-            // HACK: With the current version of select2 we cannot re-define the en locale, so lets change english to en-ca
-            // so the english localization can be used and we can fix the unicode character issues
-            if (locale === "en") {
-                locale = "en-ca";
-            }
-
-            $.fn.select2.defaults.set('language', locale);
 
         }
         $rootScope.OpenIZ = OpenIZ;

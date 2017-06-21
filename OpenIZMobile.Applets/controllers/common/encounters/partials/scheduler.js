@@ -35,7 +35,8 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
         $('a[data-target="#schedulingAssistant"]').on('shown.bs.tab', function () {
             if (!$scope._isCalendarInitialized) {
                 $scope._isCalendarInitialized = true;
-                $("#schedulingAssistantCalendar").fullCalendar({
+
+                var assistantCalendarOptions = {
                     defaultView: 'month',
                     defaultDate: $scope.appointment != null ? $scope.appointment.actTime : OpenIZ.Util.toDateInputString($rootScope.page.loadTime),
                     displayEventTime: false,
@@ -59,7 +60,13 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                             events: $scope.renderAppointments
                         }
                     ]
-                });
+                };
+
+                if ($rootScope.session.entity.language[0].languageCode) {
+                    assistantCalendarOptions.locale = $rootScope.session.entity.language[0].languageCode;
+                }
+
+                $("#schedulingAssistantCalendar").fullCalendar(assistantCalendarOptions);
             }
         });
 
