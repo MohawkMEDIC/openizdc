@@ -396,6 +396,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (optionObject["network"]["useProxy"].Value<Boolean>())
                 ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>().ProxyAddress = optionObject["network"]["proxyAddress"].Value<String>();
 
+            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets = true;
             // Log settings
             var logSettings = ApplicationContext.Current.Configuration.GetSection<DiagnosticsConfigurationSection>();
             logSettings.TraceWriter = new System.Collections.Generic.List<TraceWriterConfiguration>()
@@ -417,6 +418,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             };
 
+            
             this.m_tracer.TraceInfo("Saving configuration options {0}", optionObject);
             XamarinApplicationContext.Current.ConfigurationManager.Save();
 

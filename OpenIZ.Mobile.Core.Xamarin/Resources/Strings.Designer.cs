@@ -214,6 +214,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update failed. Please try again at a later time..
+        /// </summary>
+        internal static string err_updateFailed {
+            get {
+                return ResourceManager.GetString("err_updateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flusing diagnostics queue....
         /// </summary>
         internal static string flushing_logFile {

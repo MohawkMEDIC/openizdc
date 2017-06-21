@@ -327,6 +327,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     {
                         localIdp.ChangePassword(principal.Identity.Name, password, principal);
                     }
+
+                    // Set the user preferences
+                    
                 }
                 catch (Exception ex)
                 {

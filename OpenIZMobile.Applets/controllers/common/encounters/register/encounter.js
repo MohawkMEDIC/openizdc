@@ -210,12 +210,6 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             bind.splice(index, 1);
     };
 
-    /**
-     * Makes the ptcpt supplied an array if it is not an array
-     */
-    scope.toArray = scope.toArray || function (ptcpt) {
-        return ptcpt == null ? null : Array.isArray(ptcpt) ? ptcpt : [ptcpt];
-    }
 
     /** 
      * Validate the act
@@ -343,9 +337,9 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         }
     }
 
-    scope.makeArrayIfNot = scope.makeArrayIfNot || function (ptcpt)
+    scope.toArray = scope.toArray || function (ptcpt)
     {
-        return Array.isArray(ptcpt) ? ptcpt : [ptcpt];
+        return !ptcpt ? ptcpt : Array.isArray(ptcpt) ? ptcpt : [ptcpt];
     }
 
     // Encounter

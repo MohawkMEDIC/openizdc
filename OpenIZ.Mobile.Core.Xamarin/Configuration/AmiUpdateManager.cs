@@ -115,9 +115,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             {
                 if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
                 {
+
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
                     amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), e.Progress);
+                    amiClient.Client.Description.Endpoint[0].Timeout = 1000;
                     // Fetch the applet package
                     using (var ms = amiClient.DownloadApplet(packageId))
                     {
@@ -133,7 +135,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             catch (Exception ex)
             {
                 this.m_tracer.TraceError("Error contacting AMI: {0}", ex.Message);
-                throw;
+                throw new InvalidOperationException(Strings.err_updateFailed);
             }
         }
 

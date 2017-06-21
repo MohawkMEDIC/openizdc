@@ -363,7 +363,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 data.Relationships.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     new List<EntityRelationship>(),
-                    data.Relationships.Where(o => o.SourceEntityKey == data.Key || o.TargetEntityKey == data.Key).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
+                    data.Relationships.Where(o => o.SourceEntityKey == data.Key || o.TargetEntityKey == data.Key || !o.TargetEntityKey.HasValue ).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
             }
@@ -489,7 +489,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
-                    data.Relationships.Where(o => o.SourceEntityKey == data.Key || o.TargetEntityKey == data.Key).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
+                    data.Relationships.Where(o => o.SourceEntityKey == data.Key || o.TargetEntityKey == data.Key || !o.TargetEntityKey.HasValue).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
             }
