@@ -53,5 +53,11 @@ namespace OpenIZ.Mobile.Reporting.Model
         /// </summary>
         [XmlAttribute("required"), JsonProperty("required")]
         public bool Required { get; set; }
+
+        /// <summary>
+        /// When true indicates the value should be the ceiling of the entered value
+        /// </summary>
+        [XmlAttribute("ceil"), JsonProperty("ceil")]
+        public bool Ciel { get; set; }
     }
 }

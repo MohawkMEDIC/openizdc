@@ -533,7 +533,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in storage)
                 if (itm.SourceEntityKey == Guid.Empty || !itm.SourceEntityKey.HasValue)
                     itm.SourceEntityKey = sourceKey;
-                else if (!inversionInd && itm.SourceEntityKey != sourceKey) // ODD!!! This looks like a copy / paste job from a down-level serializer fix it
+                else if (!itm.SourceEntityKey.HasValue) // ODD!!! This looks like a copy / paste job from a down-level serializer fix it
                 {
                     itm.SourceEntityKey = sourceKey;
                     itm.Key = null;
@@ -554,7 +554,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var ins in insertRecords)
             {
                 if (ins.IsEmpty()) continue;
-                ins.SourceEntityKey = sourceKey;
+                if(!ins.SourceEntityKey.HasValue)
+                    ins.SourceEntityKey = sourceKey;
                 persistenceService.Insert(dataContext, ins);
             }
 
