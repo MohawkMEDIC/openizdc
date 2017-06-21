@@ -65,6 +65,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Rules
                 try
                 {
                     ApplicationServiceContext.Current = ApplicationContext.Current;
+                    ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
+
                     if (ApplicationContext.Current.GetService<IDataReferenceResolver>() == null)
                         ApplicationContext.Current.AddServiceProvider(typeof(AppletDataReferenceResolver));
                     new AppletBusinessRuleLoader().LoadRules();

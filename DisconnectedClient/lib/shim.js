@@ -18,7 +18,7 @@ OpenIZApplicationService.BarcodeScan = function () {
 }
 
 OpenIZApplicationService.Close = function () {
-    alert("You need to restart the DisconnectedClient application for the changes to take effect");
+    alert("You need to restart the MiniIMS service for the changes to take effect");
     window.close();
 }
 

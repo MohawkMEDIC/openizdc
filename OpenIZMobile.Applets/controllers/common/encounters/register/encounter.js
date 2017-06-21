@@ -213,8 +213,8 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     /**
      * Makes the ptcpt supplied an array if it is not an array
      */
-    scope.makeArrayIfNot = scope.makeArrayIfNot || function (ptcpt) {
-        return Array.isArray(ptcpt) ? ptcpt : [ptcpt];
+    scope.toArray = scope.toArray || function (ptcpt) {
+        return ptcpt == null ? null : Array.isArray(ptcpt) ? ptcpt : [ptcpt];
     }
 
     /** 

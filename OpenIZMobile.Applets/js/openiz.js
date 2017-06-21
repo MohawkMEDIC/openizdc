@@ -3262,9 +3262,7 @@ OpenIZ.UserInterface.patientController = new OpenIZ.UserInterface.PatientControl
 //OpenIZ.locale = OpenIZ.Localization.getLocale();
 // No caching
 $.ajaxSetup({
-    cache: false, converters: {
-        'text json': $.parseJSON
-    },
+    cache: false,
     beforeSend: function (data, settings) {
         if (OpenIZ.Authentication.$elevationCredentials.$enabled) {
             data.setRequestHeader("Authorization", "BASIC " +

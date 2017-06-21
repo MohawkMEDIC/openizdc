@@ -220,6 +220,8 @@ namespace OpenIZ.Mobile.Core.Android
                         EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
 
                         ApplicationServiceContext.Current = ApplicationContext.Current;
+                        ApplicationServiceContext.HostType = OpenIZHostType.MobileClient;
+
                     }
                     catch (Exception e)
                     {
@@ -267,6 +269,8 @@ namespace OpenIZ.Mobile.Core.Android
                 retVal.m_configurationManager = new ConfigurationManager(OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
                 ApplicationContext.Current = retVal;
                 ApplicationServiceContext.Current = ApplicationContext.Current;
+                ApplicationServiceContext.HostType = OpenIZHostType.MobileClient;
+
                 retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
 
                 try

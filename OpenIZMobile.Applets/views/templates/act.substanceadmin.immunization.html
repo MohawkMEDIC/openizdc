@@ -54,7 +54,7 @@
                     <label>
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
-                    <select ng-init="act.targetModel.participation.Consumable = makeArrayIfNot(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
+                    <select ng-init="act.targetModel.participation.Consumable = toArray(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
                             ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}"
                             ng-if="act.targetModel.participation.Product.player"
                             ng-required="act._enabled"
@@ -133,7 +133,7 @@
         </div>
         <!-- Used Entities !! -->
         <div class="row">
-            <div ng-if="act._enabled" class="col-xs-6" ng-repeat="product in act.targetModel.participation.Product.playerModel.relationship.UsedEntity">
+            <div ng-if="act._enabled" class="col-xs-6" ng-repeat="product in toArray(act.targetModel.participation.Product.playerModel.relationship.UsedEntity)">
                 <div class="input-group">
                     <label>
                         {{ product.targetModel.name.OfficialRecord | oizEntityName }} {{ 'locale.encounters.immunizations.lot' | i18n }}

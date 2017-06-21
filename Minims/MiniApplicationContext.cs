@@ -143,6 +143,7 @@ namespace Minims
                
                 ApplicationContext.Current = retVal;
                 ApplicationServiceContext.Current = ApplicationContext.Current;
+                ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
 
                 retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext));
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
@@ -256,6 +257,8 @@ namespace Minims
                         // Prepare clinical protocols
                         //retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
                         ApplicationServiceContext.Current = ApplicationContext.Current;
+                        ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
+
                     }
                     catch (Exception e)
                     {

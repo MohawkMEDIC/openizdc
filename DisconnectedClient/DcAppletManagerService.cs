@@ -70,6 +70,7 @@ namespace DisconnectedClient
         /// <returns></returns>
         private String GetShimMethods()
         {
+
             // Load the default SHIM
             // Write the generated shims
             using (StringWriter tw = new StringWriter())
@@ -82,12 +83,11 @@ namespace DisconnectedClient
                 tw.WriteLine("\tswitch(key) {");
                 foreach (var itm in this.Applets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
                 {
-                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value.Replace("'", "\\'"));
+                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value?.Replace("'", "\\'").Replace("\r", "").Replace("\n", ""));
                 }
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
 
-               
                 tw.WriteLine("OpenIZApplicationService.GetTemplateForm = function(templateId) {");
                 tw.WriteLine("\tswitch(templateId) {");
                 foreach (var itm in this.Applets.SelectMany(o => o.Templates))
@@ -110,6 +110,7 @@ namespace DisconnectedClient
                 return tw.ToString();
             }
         }
+
 
     }
 }

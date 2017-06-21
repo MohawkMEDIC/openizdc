@@ -305,7 +305,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             try
             {
 
-                if (!(data is Bundle || data is Entity || data is Act)) // || data is EntityRelationship))
+                if (!(data is Bundle || data is Entity || data is Act || data is EntityRelationship)) // || data is EntityRelationship))
                     return;
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));

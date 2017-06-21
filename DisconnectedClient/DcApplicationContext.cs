@@ -154,6 +154,7 @@ namespace DisconnectedClient
 
                 ApplicationContext.Current = retVal;
                 ApplicationServiceContext.Current = ApplicationContext.Current;
+                ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
 
                 retVal.m_tracer = Tracer.GetTracer(typeof(DcApplicationContext));
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
@@ -266,6 +267,8 @@ namespace DisconnectedClient
                         // Prepare clinical protocols
                         //retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
                         ApplicationServiceContext.Current = ApplicationContext.Current;
+                        ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
+
                     }
                     catch (Exception e)
                     {
