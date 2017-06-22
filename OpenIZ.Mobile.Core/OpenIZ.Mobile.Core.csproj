@@ -60,8 +60,10 @@
     <Compile Include="Security\Audit\Model\DbAuditData.cs" />
     <Compile Include="Security\Audit\Model\DbAuditObject.cs" />
     <Compile Include="Security\Audit\AuditUtil.cs" />
+    <Compile Include="Security\NullCredentials.cs" />
     <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
     <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
+    <Compile Include="Services\ITickleService.cs" />
     <Compile Include="Services\IUpdateManager.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />
@@ -159,7 +161,7 @@
     <Compile Include="Configuration\SecurityConfigurationSection.cs" />
     <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
     <Compile Include="Configuration\DiagnosticsConfigurationSection.cs" />
-    <Compile Include="Diagnostics\Tracer.cs" />
+    <Compile Include="Search\Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Resources\Strings.fr.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -252,6 +254,9 @@
     <Compile Include="Configuration\Data\Migrations\InitialQueueCatalog.cs" />
     <Compile Include="Data\LocalEntitySource.cs" />
     <Compile Include="Synchronization\SynchronizationLog.cs" />
+    <Compile Include="Tickler\MemoryTickleService.cs" />
+    <Compile Include="Tickler\Tickle.cs" />
+    <Compile Include="Tickler\TickleType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>

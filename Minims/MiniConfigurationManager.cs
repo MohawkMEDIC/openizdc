@@ -48,6 +48,7 @@ using OpenIZ.Protocol.Xml;
 using OpenIZ.Mobile.Reporting;
 using OpenIZ.Mobile.Core.Xamarin.Data;
 using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace Minims
 {
@@ -143,7 +144,7 @@ namespace Minims
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalPlaceService).AssemblyQualifiedName,
-                    //typeof(LocalAlertService).AssemblyQualifiedName,
+                    typeof(LocalAlertService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalEntityRepositoryService).AssemblyQualifiedName,
                     typeof(LocalOrganizationService).AssemblyQualifiedName,
@@ -171,6 +172,7 @@ namespace Minims
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(MiniAppletManagerService).AssemblyQualifiedName,
+                    typeof(MemoryTickleService).AssemblyQualifiedName,
                     typeof(LocalTagPersistenceService).AssemblyQualifiedName,
                     typeof(SQLiteReportDatasource).AssemblyQualifiedName,
                     typeof(ReportExecutor).AssemblyQualifiedName,

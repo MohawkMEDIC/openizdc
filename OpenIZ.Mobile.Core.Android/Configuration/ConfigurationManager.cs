@@ -56,6 +56,7 @@ using OpenIZ.Protocol.Xml;
 using OpenIZ.Mobile.Reporting;
 using OpenIZ.Mobile.Core.Xamarin.Data;
 using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -170,6 +171,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(SQLiteDatawarehouse).AssemblyQualifiedName,
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
+                    typeof(MemoryTickleService).AssemblyQualifiedName,
                     typeof(AndroidNetworkInformationService).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(CarePlanManagerService).AssemblyQualifiedName,

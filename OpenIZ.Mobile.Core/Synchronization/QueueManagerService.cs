@@ -286,7 +286,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         syncItm.IsRetry = false;
                         syncItm.RetryCount++;
                         // Re-queue
-                        if (syncItm.RetryCount > 3) // TODO: Make this configurable
+                        if (syncItm.RetryCount > 90) // TODO: Make this configurable
                         {
                             SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                             SynchronizationQueue.Admin.DequeueRaw(); // Get rid of the last item

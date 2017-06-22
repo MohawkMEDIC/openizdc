@@ -160,6 +160,20 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlElement("trace")]
         public bool Trace { get; set; }
+
+        /// <summary>
+        /// Clone the object
+        /// </summary>
+        public ServiceClientDescription Clone()
+        {
+            var retVal = this.MemberwiseClone() as ServiceClientDescription;
+            retVal.Endpoint = new List<ServiceClientEndpoint>(this.Endpoint.Select(o => new ServiceClientEndpoint()
+            {
+                Address = o.Address,
+                Timeout = o.Timeout
+            }));
+            return retVal;
+        }
     }
 
 	/// <summary>

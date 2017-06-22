@@ -1773,6 +1773,22 @@ var OpenIZ = OpenIZ || {
         },  // Date Precision Formats
         _originalText: {},
         /**
+         * @summary Fetches active tickles from the service
+         * @memberof OpenIZ.App
+         * @method
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.appId The application identifier to be updated
+         */
+        getTicklesAsync : function(controlData) {
+            OpenIZ.Util.simplePost("/__app/tickle", {
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
+        /**
          * @summary Instructs the update service to perform the update of the software
          * @memberof OpenIZ.App
          * @method

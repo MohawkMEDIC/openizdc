@@ -48,6 +48,7 @@ using OpenIZ.Protocol.Xml;
 using OpenIZ.Mobile.Core.Xamarin.Data;
 using OpenIZ.Mobile.Reporting;
 using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace DisconnectedClient
 
@@ -157,6 +158,7 @@ namespace DisconnectedClient
                     typeof(SQLiteDatawarehouse).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(LocalTagPersistenceService).AssemblyQualifiedName,
+                    typeof(MemoryTickleService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
                     typeof(CarePlanManagerService).AssemblyQualifiedName,
                     typeof(BusinessRulesDaemonService).AssemblyQualifiedName,

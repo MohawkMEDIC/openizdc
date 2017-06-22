@@ -271,6 +271,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your online session couldn&apos;t be extended, you are now operating in disconnected mode..
+        /// </summary>
+        internal static string locale_securitySwitchedMode {
+            get {
+                return ResourceManager.GetString("locale_securitySwitchedMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Session is expired.
         /// </summary>
         internal static string locale_session_expired {

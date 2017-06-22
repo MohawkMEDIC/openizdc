@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Interop
         {
 
             var configSection = me.GetSection<ServiceClientConfigurationSection>();
-            return configSection.Client.Find(o => clientName == o.Name);
+            return configSection.Client.Find(o => clientName == o.Name)?.Clone() ;
 
         }
 

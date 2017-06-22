@@ -217,9 +217,16 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
         {
             try
             {
+                //var restClient = ApplicationContext.Current.GetRestClient("imsi");
                 var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
-
-                return networkInformationService.IsNetworkAvailable;
+                if (networkInformationService.IsNetworkAvailable)
+                {
+                    var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                    amiClient.Client.Credentials = new NullCredentials();
+                    return amiClient.Ping();
+                }
+                else
+                    return false;
             }
             catch (Exception e)
             {

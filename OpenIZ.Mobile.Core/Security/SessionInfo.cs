@@ -276,12 +276,13 @@ namespace OpenIZ.Mobile.Core.Security
                 this.m_entity = userService.GetUserEntity(principal.Identity);
 
                 // Attempt to download if the user entity is null
-				// Or if there are no relationships of type dedicated service dedicated service delivery location to force a download of the user entity 
-                if(this.m_entity == null || this.m_entity?.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation) == true)
+                // Or if there are no relationships of type dedicated service dedicated service delivery location to force a download of the user entity 
+                var amiService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
+                if (amiService != null && amiService.IsAvailable() || this.m_entity == null || this.m_entity?.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation) == true)
                 {
-                    var amiService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
-                    if (amiService == null) throw new InvalidOperationException("Administrative integration service not configured");
-                    this.m_entity = amiService.Find<UserEntity>(o => o.SecurityUser.UserName == principal.Identity.Name, 0, 1, null).Item?.OfType<UserEntity>().FirstOrDefault();
+                    int t = 0;
+                    var sid = Guid.Parse((principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Sid)?.Value ?? ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().QueryFast(o => o.UserName == principal.Identity.Name, 0, 1, out t, Guid.Empty).FirstOrDefault()?.Key.ToString());
+                    this.m_entity = amiService.Find<UserEntity>(o => o.SecurityUser.Key == sid, 0, 1, null).Item?.OfType<UserEntity>().FirstOrDefault();
                 }
             }
             catch (Exception e)

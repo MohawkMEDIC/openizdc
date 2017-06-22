@@ -298,6 +298,7 @@
     <string key="locale.settings.pollInterval.5">Every 5 minutes</string>
     <string key="locale.settings.pollInterval.15">Every 15 minutes</string>
     <string key="locale.settings.pollInterval.30">Every 30 minutes</string>
+    <string key="locale.settings.pollInterval.60">Every 60 minutes</string>
     <string key="locale.settings.pollInterval.push">When new data is available</string>
 
     <string key="locale.settings.leaveRealm">Leave</string>
@@ -325,7 +326,7 @@
     <string key="locale.settings.security.audit.48hr">Retain audits for 48 hrs</string>
     <string key="locale.settings.security.audit.week">Retain audits for 1 week</string>
     <string key="locale.settings.security.audit.month">Retain audits for 1 month</string>
-    <string key="locale.settings.security.audit.help">This setting controls how long the applet will keep an audit trail locally</string>
+    <string key="locale.settings.security.audit.help">This setting controls how long the applet will keep an audit trail locally. Please note that audits are only synchronized on Wi-Fi based connections.</string>
 
     <string key="locale.settings.onlySubscribedFacilities">Only allow people in the subscribed facilities to login</string>
     <!-- End Settings -->

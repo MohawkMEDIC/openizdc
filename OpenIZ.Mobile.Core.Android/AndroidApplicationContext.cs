@@ -247,6 +247,7 @@ namespace OpenIZ.Mobile.Core.Android
                     ApplicationContext.Current = null;
                     throw;
                 }
+
                 return true;
             }
         }

@@ -47,6 +47,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
         {
             NetworkChange.NetworkAvailabilityChanged += (o, e) =>
             {
+                ApplicationContext.Current.GetService<ITickleService>()?.SendTickle(new Tickler.Tickle(Guid.Empty, Tickler.TickleType.Information | Tickler.TickleType.Toast, "Your network status changed", DateTime.Now.AddSeconds(20)));
                 this.m_networkAvailable = e.IsAvailable;
                 this.NetworkStatusChanged?.Invoke(this, e);
             };

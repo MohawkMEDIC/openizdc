@@ -45,6 +45,7 @@ using System.IO.Compression;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Mobile.Core.Xamarin.Threading;
 using OpenIZ.Core.Applets.Services;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -121,6 +122,28 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 this.m_tracer.TraceError("Error filing bug report: {0}", e);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Get tickles
+        /// </summary>
+        [RestOperation(UriPath = "/tickle", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
+        [Demand(PolicyIdentifiers.Login)]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public List<Tickle> GetTickles()
+        {
+            return ApplicationContext.Current.GetService<ITickleService>().GetTickles(o=>o.Target == Guid.Empty || o.Target == AuthenticationContext.Current.Session.SecurityUser.Key).ToList();
+        }
+
+        /// <summary>
+        /// Get tickles
+        /// </summary>
+        [RestOperation(UriPath = "/tickle", Method = "POST", FaultProvider = nameof(ApplicationServiceFault))]
+        [Demand(PolicyIdentifiers.Login)]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public void SendTickle([RestMessage(RestMessageFormat.Json)] Tickle tickle)
+        {
+            ApplicationContext.Current.GetService<ITickleService>()?.SendTickle(tickle);
         }
 
         /// <summary>

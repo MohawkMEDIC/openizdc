@@ -85,7 +85,7 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                         $scope.$apply();
                     }
                 }
-                setTimeout($scope.checkMessages, 30000);
+                setTimeout($scope.checkMessages, 10000);
             }
         });
 
@@ -97,8 +97,33 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                 },
                 onException: function() {}
             });
+
+        if ($rootScope.session != null)
+            OpenIZ.App.getTicklesAsync({
+                continueWith: function (data) {
+                    $scope.tickles = data;
+
+                    for (var t in data) {
+                        if (data[t].type & 4) {
+                            var alertOptions = {
+                                "preventDuplicates": true,
+                                "showDuration": 150,
+                                "hideDuration": 250,
+                                "timeout": new Date() - data[t].exp
+                            };
+
+                            if (data[t] & 1)
+                                toastr.info(data[t].text, null, alertOptions);
+                            else if (data[t] & 2)
+                                toastr.error(data[t].text, null, alertOptions);
+
+                        }
+                    }
+                },
+                onException: function() {}
+            });
     };
-    setTimeout($scope.checkMessages, 30000);
+    setTimeout($scope.checkMessages, 10000);
     $scope.checkMessages();
     /**
      * Window resize event handling

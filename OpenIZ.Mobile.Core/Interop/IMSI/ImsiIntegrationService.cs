@@ -146,6 +146,12 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             var retVal = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
             retVal.Client.Accept = "application/xml";
+            retVal.Client.Requesting += (o, e) =>
+            {
+                if (AuthenticationContext.Current.Principal != AuthenticationContext.AnonymousPrincipal &&
+                     AuthenticationContext.Current.Principal != AuthenticationContext.SystemPrincipal)
+                    e.AdditionalHeaders["X-OpenIZ-OnBehalfOf"] = AuthenticationContext.Current.Principal.Identity.Name;
+            };
             return retVal;
         }
 
@@ -283,9 +289,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 if (networkInformationService.IsNetworkAvailable)
                 {
                     ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
-                    client.Client.Credentials = this.GetCredentials(client.Client);
-                    if (client.Client.Credentials == null) return false;
-                    return this.IsValidVersion(client);
+                    client.Client.Credentials = new NullCredentials();
+
+                    return this.IsValidVersion(client) &&
+                        client.Ping();
                 }
                 else
                     return false;

@@ -157,7 +157,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                                 this.m_tracer.TraceWarning("Network unavailable, trying local");
                                 try
                                 {
-                                    retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                                    retVal = localIdp.Authenticate(principal, password);
                                 }
                                 catch
                                 {

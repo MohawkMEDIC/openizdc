@@ -37,7 +37,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 dataCollapsed: true,
                 securityCollapsed: true
             };
-
+ 
             $scope.config.data.mode = "sync"; //OpenIZ.App.getService("SynchronizationManagerService") == null ?
             //OpenIZ.App.getService("ImsiPersistenceService") == null ? "offline" : "online" : "sync";
             $scope.config.data.sync = {
@@ -49,7 +49,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
             $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService") || "SHA256PasswordHasher";
 
             $scope.config.security.offline = {
-                enable: false
+                enable: true
             };
             $scope.$apply();
         },
