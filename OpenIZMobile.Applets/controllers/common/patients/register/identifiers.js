@@ -117,7 +117,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
                 if (count > 0) {
                     focusDuplicates();
                 }
-                else if ($rootScope.page.onlineState && $rootScope.session.method !== 'LOCAL') {
+                else if (OpenIZ.App.getOnlineState()) {
                     // No duplicates found, search online
                     $scope.search.searchByBarcode(identifier, true, function (count) {
                         if (count > 0) {

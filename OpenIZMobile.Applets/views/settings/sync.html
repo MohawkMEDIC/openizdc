@@ -89,7 +89,7 @@
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group pull-right">
-                            <button type="button" ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="reQueueDeadModal" ng-if="queue.current == queue.dead" ng-click="requeueAllDead()" class="btn btn-lg btn-warning">
+                            <button type="button" ng-disabled="!$root.page.onlineState" id="reQueueDeadModal" ng-if="queue.current == queue.dead" ng-click="requeueAllDead()" class="btn btn-lg btn-warning">
                                 <span>
                                     <span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.sync.retry' | i18n }}
                                 </span>
@@ -130,12 +130,12 @@
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group pull-right">
-                            <button type="button" ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="deleteQueueItem" ng-click="deleteQueueItem(queue.currentItem.id)" class="btn btn-lg btn-success">
+                            <button type="button" ng-disabled="!$root.page.onlineState" id="deleteQueueItem" ng-click="deleteQueueItem(queue.currentItem.id)" class="btn btn-lg btn-success">
                                 <span>
                                     <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.sync.resolve.leaveServer' | i18n }}
                                 </span>
                             </button>
-                            <button type="button" ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="requeQueueItem" ng-click="requeueItem(queue.currentItem.id)" class="btn btn-lg btn-danger">
+                            <button type="button" ng-disabled="!$root.page.onlineState" id="requeQueueItem" ng-click="requeueItem(queue.currentItem.id)" class="btn btn-lg btn-danger">
                                 <span>
                                     <span class="glyphicon glyphicon-cloud-upload"></span> {{ 'locale.sync.resolve.takeMine' | i18n }}
                                 </span>
@@ -230,12 +230,12 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="btn-group pull-right">
-                <button ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="reQueueDead" ng-if="queue.dead.CollectionItem.length > 0" ng-click="requeueAllDead()" class="btn btn-lg  btn-warning">
+                <button ng-disabled="!$root.page.onlineState" id="reQueueDead" ng-if="queue.dead.CollectionItem.length > 0" ng-click="requeueAllDead()" class="btn btn-lg  btn-warning">
                     <span>
                         <span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.sync.retry' | i18n }}
                     </span>
                 </button>
-                <button ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="forceSync" ng-click="forceSync()" class="btn btn-lg btn-info">
+                <button ng-disabled="!$root.page.onlineState" id="forceSync" ng-click="forceSync()" class="btn btn-lg btn-info">
                     <span>
                         <span class="glyphicon glyphicon-cloud-upload"></span> {{ 'locale.sync.force' | i18n }}
                     </span>
