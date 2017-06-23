@@ -36,10 +36,16 @@
                 <br />
                 <span ng-if="act.targetModel.tag.backEntry">
                     {{ 'locale.encounters.overdue' | i18n }} <br />
-                    <small ng-if="act.targetModel.startTime || act.targetModel.targetModel.startTime">
+                    <small ng-if="act.targetModel.startTime || act.targetModel.targetModel.startTime &amp;&amp; act.targetModel.$type == 'QuantityObservation'">
+                        ({{ act.targetModel.startTime | datePrecisionFormat:'m' }} - {{ act.targetModel.stopTime | datePrecisionFormat:'m' }})
+                    </small>
+                    <small ng-if="act.targetModel.startTime || act.targetModel.targetModel.startTime &amp;&amp; act.targetModel.$type != 'QuantityObservation'">
                         ({{ act.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.stopTime | datePrecisionFormat:'D' }})
                     </small>
-                    <small ng-if="!act.targetModel.startTime &amp;&amp; !act.targetModel.stopTime">
+                    <small ng-if="!act.targetModel.startTime &amp;&amp; !act.targetModel.stopTime &amp;&amp; act.targetModel.$type == 'QuantityObservation'">
+                        ({{ act.targetModel.actTime | datePrecisionFormat:'m' }})
+                    </small>
+                    <small ng-if="!act.targetModel.startTime &amp;&amp; !act.targetModel.stopTime &amp;&amp; act.targetModel.$type != 'QuantityObservation'">
                         ({{ act.targetModel.actTime | datePrecisionFormat:'D' }})
                     </small>
                 </span>
