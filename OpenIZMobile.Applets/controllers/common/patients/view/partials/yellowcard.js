@@ -25,7 +25,6 @@
 
 layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function ($scope, $stateParams)
 {
-    angular.element(document).ready(init);
     var scope = $scope.$parent;
     // Init data
     scope.patient = scope.patient || new OpenIZModel.Patient({});
@@ -35,25 +34,22 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
     scope.showVaccineTab = showVaccineTab;
+
+    $scope.yellowcardLegend = [
+        { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
+        { title: OpenIZ.Localization.getString('locale.legend.performAsap'), color: '#337ab7', icon: 'glyphicon-info-sign' },
+        { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
+        { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' },
+        { title: OpenIZ.Localization.getString('locale.legend.appointment'), color: '#31708f', icon: 'glyphicon-calendar' }
+    ];
     
-   // for patient dob
+    // for patient dob
     scope.$watch('encounters', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
 
     // for encounters & care plan
     scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
 
     scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
-
-    function init() {
-
-
-        $scope.yellowcardLegend = [
-        { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
-        { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
-        { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' },
-        { title: OpenIZ.Localization.getString('locale.legend.appointment'), color: '#31708f', icon: 'glyphicon-calendar' }
-        ];
-    }
 
     var refreshYellowCard = function (newValue, oldValue) {
         

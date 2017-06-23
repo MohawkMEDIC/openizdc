@@ -364,6 +364,7 @@
 
     <!-- Chart Legend -->
     <string key="locale.legend.overdue">Overdue</string>
+    <string key="locale.legend.performAsap">Perform ASAP</string>
     <string key="locale.legend.completed">Completed</string>
     <string key="locale.legend.upcoming">Upcoming</string>
     <string key="locale.legend.appointment">Appointment</string>
@@ -684,6 +685,7 @@
     <string key="locale.forgotPassword.error.invalidCode">Nambari yako ya siri ni batili</string>
 
     <string key="locale.legend.completed">Kukamilika</string>
+    <string key="locale.legend.performAsap">Fanya haraka iwezekanavyo</string>
     <string key="locale.legend.overdue">Siku za nyuma kutokana</string>
     <string key="locale.legend.upcoming">Ujao</string>
     <string key="locale.legend.appointment">Kipambio</string>
