@@ -160,8 +160,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                     foreach (var i in amiClient.GetApplets().CollectionItem)
                     {
                         var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletInfo.Id);
-                        if (installed == null || new Version(installed.Info.Version) < new Version(i.AppletInfo.Version) &&
-                            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets)
+                        if (installed == null || 
+                            new Version(installed.Info.Version) < new Version(i.AppletInfo.Version) &&
+                            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets &&
+                            ApplicationContext.Current.Confirm(String.Format(Strings.locale_upgradeConfirm, i.AppletInfo.Names[0].Value)))
                             this.Install(i.AppletInfo.Id);
 
 

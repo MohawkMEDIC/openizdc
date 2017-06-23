@@ -1,4 +1,5 @@
-﻿using OpenIZ.Mobile.Core.Configuration;
+﻿using CefSharp;
+using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Security;
 using System;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -59,22 +61,49 @@ namespace DisconnectedClient
             // Start up!!!
             try
             {
-                if (!DcApplicationContext.StartContext())
-                {
-                    DcApplicationContext.StartTemporary();
-                    // Forward
-                    Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
-                }
-                else
-                {
-                    Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/splash.html");
-                }
+
+                Cef.EnableHighDPISupport();
+                var settings = new CefSettings();
+                Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new frmDisconnectedClient());
+
+                frmSplash splash = new frmSplash();
+                splash.Show();
+
+
+                bool started = false;
+                EventHandler startHandler = (o, e) =>
+                {
+                    started = true;
+                };
+
+                frmDisconnectedClient main = null;
+                if (!DcApplicationContext.StartContext())
+                {
+                    DcApplicationContext.StartTemporary();
+                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                    splash.Close();
+                    Application.Run(main);
+                    DcApplicationContext.Current.Stop();
+                }
+                else
+                {
+                    XamarinApplicationContext.Current.Started += startHandler;
+                    while (!started)
+                        Application.DoEvents();
+
+                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/splash.html");
+                    splash.Close();
+                    Application.Run(main);
+                }
+
+
+                
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
             }

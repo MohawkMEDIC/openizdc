@@ -100,6 +100,23 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             return ApplicationContext.Current?.GetService<INetworkInformationService>()?.IsNetworkAvailable == true;
         }
 
+
+        /// <summary>
+        /// Gets the online status
+        /// </summary>
+        public bool IsClinicalAvailable()
+        {
+            return ApplicationContext.Current.GetService<IClinicalIntegrationService>().IsAvailable();
+        }
+
+        /// <summary>
+        /// Gets the online status
+        /// </summary>
+        public bool IsAdminAvailable()
+        {
+            return ApplicationContext.Current.GetService<IAdministrationIntegrationService>().IsAvailable();
+        }
+
         /// <summary>
         /// Send log file
         /// </summary>

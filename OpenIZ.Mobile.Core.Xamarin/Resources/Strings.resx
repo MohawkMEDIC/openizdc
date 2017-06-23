@@ -144,6 +144,9 @@
   <data name="err_login_invalidusername" xml:space="preserve">
     <value>Invalid Username/Password</value>
   </data>
+  <data name="err_moreThanOneApplication" xml:space="preserve">
+    <value>There is more than one instance of the application running. This may cause serious issues. Closing all instances of the application and restarting is recommended.</value>
+  </data>
   <data name="err_offline_use_cache_creds" xml:space="preserve">
     <value>The authentication server cannot be contacted. Use the credentials you last used to access this device</value>
   </data>
@@ -200,5 +203,8 @@
   </data>
   <data name="locale_updateCheck" xml:space="preserve">
     <value>Checking for updates...</value>
+  </data>
+  <data name="locale_upgradeConfirm" xml:space="preserve">
+    <value>There is a new version of {0}. Would you lke to upgrade?</value>
   </data>
 </root>

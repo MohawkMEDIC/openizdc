@@ -177,6 +177,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             catch (Exception ex)
             {
                 this.m_tracer.TraceError("Error starting IMS : {0}", ex);
+                ApplicationContext.Current.Alert(Strings.err_moreThanOneApplication);
                 return false;
             }
         }

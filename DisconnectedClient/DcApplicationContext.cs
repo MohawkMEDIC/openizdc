@@ -181,6 +181,7 @@ namespace DisconnectedClient
                     }
 
                 retVal.Start();
+                
                 return true;
             }
             catch (Exception e)

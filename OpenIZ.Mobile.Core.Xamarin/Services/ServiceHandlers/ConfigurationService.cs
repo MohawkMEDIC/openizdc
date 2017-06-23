@@ -318,9 +318,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "TextObservation":
                                     case "PatientEncounter":
                                         // All stuff that is happening in my facility for out of catchment
-                                        syncSetting.Filters.Add("participation.player=" + itm + "&participation[RecordTarget].player.relationship.target=!" + itm);
+                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm);
                                         // All stuff that is happening out of my facility for any patient associated with me
-                                        syncSetting.Filters.Add("participation.player=!" + itm + "&participation[RecordTarget].player.relationship.target=" + itm);
+                                        syncSetting.Filters.Add("participation[Location].player=!" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm);
                                         //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":

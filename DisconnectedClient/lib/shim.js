@@ -2,36 +2,42 @@
 
 
 OpenIZApplicationService.GetStatus = function () {
-    return '[ "Dummy Status", 0 ]';
+    return OpenIZApplicationServer.getStatus();
 }
 
 OpenIZApplicationService.ShowToast = function (string) {
-    console.info("TOAST: " + string);
+    return OpenIZApplicationService.ShowToast(string);
 }
 
 OpenIZApplicationService.GetOnlineState = function () {
-    return true;
+    return OpenIZApplicationService.getOnlineState();
+}
+
+OpenIZApplicationService.IsAdminAvailable = function () {
+    return OpenIZApplicationService.isAdminAvailable();
+}
+
+OpenIZApplicationService.IsClinicalAvailable = function () {
+    return OpenIZApplicationService.isClinicalAvailable();
 }
 
 OpenIZApplicationService.BarcodeScan = function () {
-    return OpenIZApplicationService.NewGuid().substring(0, 8);
+    return OpenIZApplicationService.barcodeScan();
 }
 
 OpenIZApplicationService.Close = function () {
-    alert("You need to restart the MiniIMS service for the changes to take effect");
-    window.close();
+    return OpenIZApplicationService.close();
 }
 
 OpenIZApplicationService.GetLocale = function () {
-    return (navigator.language || navigator.userLanguage).substring(0, 2);
+    return OpenIZApplicationService.getLocale();
 }
 
+OpenIZApplicationService.SetLocale = function (lang) {
+    return OpenIZApplicationService.setLocale(lang);
+}
+
+
 OpenIZApplicationService.NewGuid = function () {
-    var retVal = "";
-    $.ajax({
-        url: "/__app/uuid",
-        success: function (data) { retVal = data; },
-        async: false
-    });
-    return retVal;
+    return OpenIZApplicationService.newGuid();
 }

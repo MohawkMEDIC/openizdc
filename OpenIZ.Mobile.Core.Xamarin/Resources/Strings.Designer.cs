@@ -142,6 +142,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is more than one instance of the application running. This may cause serious issues. Closing all instances of the application and restarting is recommended..
+        /// </summary>
+        internal static string err_moreThanOneApplication {
+            get {
+                return ResourceManager.GetString("err_moreThanOneApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The authentication server cannot be contacted. Use the credentials you last used to access this device.
         /// </summary>
         internal static string err_offline_use_cache_creds {
@@ -309,6 +318,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         internal static string locale_updateCheck {
             get {
                 return ResourceManager.GetString("locale_updateCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is a new version of {0}. Would you lke to upgrade?.
+        /// </summary>
+        internal static string locale_upgradeConfirm {
+            get {
+                return ResourceManager.GetString("locale_upgradeConfirm", resourceCulture);
             }
         }
     }

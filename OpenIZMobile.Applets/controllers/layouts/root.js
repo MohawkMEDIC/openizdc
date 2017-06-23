@@ -161,7 +161,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 else {
 
                 }
-                $rootScope.$applyAsync();
+                $rootScope.$apply();
             }, 10000);
 
 

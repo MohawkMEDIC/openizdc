@@ -1937,6 +1937,26 @@ var OpenIZ = OpenIZ || {
             return OpenIZApplicationService.GetOnlineState();
         },
         /**
+         * @summary Get the online state of the application
+         * @method
+         * @memberof OpenIZ.App
+         * @return {bool} Indicator whether the application is online.
+         * @deprecated
+         */
+        isAdminAvailable: function () {
+            return OpenIZApplicationService.IsAdminAvailable();
+        },
+        /**
+         * @summary Get the online state of the application
+         * @method
+         * @memberof OpenIZ.App
+         * @return {bool} Indicator whether the application is online.
+         * @deprecated
+         */
+        isClinicalAvailable: function () {
+            return OpenIZApplicationService.IsClinicalAvailable();
+        },
+        /**
          * @summary Indicates whether the status dialog is shown
          * @memberof OpenIZ.App
          */

@@ -13,6 +13,16 @@ OpenIZApplicationService.GetOnlineState = function () {
     return true;
 }
 
+
+OpenIZApplicationService.IsAdminAvailable = function () {
+    return true;
+}
+
+OpenIZApplicationService.IsClinicalAvailable = function () {
+    return true;
+}
+
+
 OpenIZApplicationService.BarcodeScan = function () {
     return OpenIZApplicationService.NewGuid().substring(0, 8);
 }
