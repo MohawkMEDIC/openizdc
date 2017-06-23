@@ -1067,7 +1067,8 @@ body{
 
 /* Chart legend styles */
 .chart-legend {
-    margin: 10px 0 10px 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .legend-item {
     display: inline-block;
@@ -1704,3 +1705,6 @@ a.disabled {
     margin: 0 -15px;
 }
 
+.clear-both {
+    clear: both;
+}

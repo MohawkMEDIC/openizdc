@@ -97,8 +97,8 @@
                            name="aefiReactionStarted_{{act.targetModel.id}}"
                            ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime"
                            type="date"
-                           ng-min="patient.dateOfBirth"
-                           min="{{ patient.dateOfBirth | date: 'yyyy-MM-dd' }}"
+                           ng-min="act.targetModel.relationship.RefersTo.targetModel.actTime || patient.dateOfBirth"
+                           min="{{ act.targetModel.relationship.RefersTo.targetModel.actTime || patient.dateOfBirth | date: 'yyyy-MM-dd' }}"
                            ng-max="getMaxDateValidation(act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime) || $root.page.maxEventTime"
                            max="{{ getMaxDateValidation(act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime) || $root.page.maxEventTime | date: 'yyyy-MM-dd' }}"
                            required="required" />

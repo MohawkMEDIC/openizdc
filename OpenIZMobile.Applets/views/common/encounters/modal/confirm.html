@@ -111,7 +111,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" ng-click="OpenIZ.Authentication.$elevationCredentials = {}">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" ng-click="OpenIZ.Authentication.$elevationCredentials = {}" ng-disabled="encounter.tag.signedByAuthor">
                     <span>
                         <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
                     </span>

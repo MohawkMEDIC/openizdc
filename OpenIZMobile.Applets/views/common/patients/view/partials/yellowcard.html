@@ -85,5 +85,5 @@
             </tbody>
         </table>
     </div>
-    <chart-legend class="chart-legend" ng-repeat="item in yellowcardLegend"></chart-legend>
+    <chart-legend class="chart-legend" ng-repeat="item in yellowcardLegend track by $index" ng-init="shortRowCols = yellowcardLegend.length - (yellowcardLegend.length &#37; 3)" />
 </div>

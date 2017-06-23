@@ -171,7 +171,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             // Obsolete child-acts
             if (act.Relationships != null)
-                foreach (var itm in act.Relationships.Where(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.HasComponent))
+	            // check for empty act relationships
+				foreach (var itm in act.Relationships.Where(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.HasComponent && !o.IsEmpty()))
                     this.Obsolete<Act>(itm.TargetActKey.Value);
             
             SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Obsolete);
