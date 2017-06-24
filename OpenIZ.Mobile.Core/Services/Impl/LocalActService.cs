@@ -128,7 +128,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             insert = breService?.BeforeInsert(insert) ?? insert;
 			insert = persistenceService.Insert(insert);
             
-            insert = breService?.AfterInsert(insert);
+            insert = breService?.AfterInsert(insert) ?? insert;
             
             // Patient relationships
             if (insert.Relationships.Count > 0 || insert.Participations.Count > 0)
