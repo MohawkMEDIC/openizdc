@@ -275,7 +275,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
                                     if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(clsModel.GetTypeInfo()))
                                         guardCondition.Append(".");
                                 }
-                                subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key));
+                                subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key.Split('|')));
                             }
 
                             // Generate method

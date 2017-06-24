@@ -92,7 +92,12 @@ namespace OpenIZ.Mobile.Core.Security
 				return this.m_identities.FirstOrDefault ();
 			}
 		}
-		#endregion
-	}
+
+        public string FindClaim(object telephone)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
 }
 

@@ -173,13 +173,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
             SqlStatement queryStatement = null;
-            queryStatement = new SqlStatement<TDomain>().SelectFrom();
             var expression = m_mapper.MapModelExpression<TModel, TDomain>(query, false);
             if (expression != null)
             {
                 if (typeof(TQueryResult) != typeof(TDomain))
                 {
+
                     var tableMap = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(typeof(TDomain));
+                    var resultMap = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(typeof(TQueryResult));
+                    queryStatement = new SqlStatement<TDomain>().SelectFrom(resultMap.Columns.Select(o=>$"{(typeof(TDomain).GetRuntimeProperty(o.SourceProperty.Name) != null? tableMap.TableName + "." : "")}{o.Name}").ToArray());
+
                     var fkStack = new Stack<OpenIZ.Core.Data.QueryBuilder.TableMapping>();
                     fkStack.Push(tableMap);
                     var scopedTables = new HashSet<Object>();
@@ -200,6 +203,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
 
                 }
+                else
+                    queryStatement = new SqlStatement<TDomain>().SelectFrom();
 
                 //queryStatement = new SqlStatement<TDomain>().SelectFrom()
                 queryStatement = queryStatement.Where<TDomain>(expression).Build();

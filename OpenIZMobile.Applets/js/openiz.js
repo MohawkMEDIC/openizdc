@@ -857,7 +857,8 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZModel.ConceptName} name The concept name to be rendered
          */
         renderConceptFromDom: function (val) {
-            return $("option[value=" + val + "]").first().text();
+            if(val)
+                return $("option[value=" + val + "]").first().text();
         },
         /** 
          * @summary Renders the specified concept name
@@ -1782,7 +1783,7 @@ var OpenIZ = OpenIZ || {
          * @param {String} controlData.appId The application identifier to be updated
          */
         getTicklesAsync : function(controlData) {
-            OpenIZ.Util.simplePost("/__app/tickle", {
+            OpenIZ.Util.simpleGet("/__app/tickle", {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally

@@ -319,17 +319,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
                 try
                 {
+                    Guid sid = Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value);
                     if (localUser == null)
                     {
-                        localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password, new SystemPrincipal());
+                        localIdp.CreateIdentity(sid, principal.Identity.Name, password, new SystemPrincipal());
                     }
                     else
                     {
                         localIdp.ChangePassword(principal.Identity.Name, password, principal);
                     }
 
-                    // Set the user preferences
-                    
+                    // Copy security attributes
+                    var localSu = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Get(sid);
+                    localSu.Email = cprincipal.FindClaim(ClaimTypes.Email)?.Value;
+                    localSu.PhoneNumber = cprincipal.FindClaim(ClaimTypes.Telephone)?.Value;
+                    ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Update(localSu);
+
                 }
                 catch (Exception ex)
                 {

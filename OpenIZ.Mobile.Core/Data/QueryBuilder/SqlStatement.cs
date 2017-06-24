@@ -451,6 +451,17 @@ namespace OpenIZ.Core.Data.QueryBuilder
             });
         }
 
+        /// <summary>
+        /// Construct a SELECT FROM statement
+        /// </summary>
+        public SqlStatement<T> SelectFrom(params string[] columnNames)
+        {
+            var tableMap = TableMapping.Get(typeof(T));
+            return this.Append(new SqlStatement<T>($"SELECT {String.Join(",", columnNames)} FROM {tableMap.TableName}  ")
+            {
+            });
+        }
+
 
         /// <summary>
         /// Construct a SELECT FROM statement

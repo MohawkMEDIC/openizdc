@@ -235,7 +235,7 @@ namespace OpenIZ.Mobile.Core.Android
                     }
 
                     // Start daemons
-                    retVal.GetService<IThreadPoolService>().QueueUserWorkItem(o => { retVal.Start(); });
+                    retVal.Start();
                     
                     // Set the tracer writers for the PCL goodness!
                     foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)

@@ -45,7 +45,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 			{ "authmethod", ClaimTypes.AuthenticationMethod },
 			{ "exp", ClaimTypes.Expiration },
 			{ "nbf", ClaimTypes.AuthenticationInstant },
-			{ "email", ClaimTypes.Email }
+			{ "email", ClaimTypes.Email },
+            { "tel", ClaimTypes.Telephone }
 		};
 
 		// The token

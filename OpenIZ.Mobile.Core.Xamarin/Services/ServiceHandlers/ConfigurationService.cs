@@ -298,13 +298,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         }
                                         break;
                                     case "Person":
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship.target=" + itm );
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship.target=" + itm );
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + itm );
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + itm );
                                         break;
                                     case "Act":
-                                        syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Destination].player=" + itm + "&_expand=relationship&_expand=participation");
-	                                    syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
-										syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + ActClassKeys.SubstanceAdministration +
+                                            "classConcept=!" + ActClassKeys.Observation +
+                                            "classConcept=!" + ActClassKeys.Encounter +
+                                            "classConcept=!" + ActClassKeys.Procedure +
+                                            "&participation[Destination|Location].player=" + itm + "&_expand=relationship&_expand=participation");
+	                                    //syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+										//syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
                                         //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "UserEntityMe":
@@ -317,10 +321,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "CodedObservation":
                                     case "TextObservation":
                                     case "PatientEncounter":
-                                        // All stuff that is happening in my facility for out of catchment
-                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm);
+                                        // I want all stuff for patients in my catchment
+                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + itm);
+                                        // I want all stuff for my facility for patients which are not assigned to me
+                                        syncSetting.Filters.Add("participation[Location|InformationRecipient|EntryLocation].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=!" + itm);
                                         // All stuff that is happening out of my facility for any patient associated with me
-                                        syncSetting.Filters.Add("participation[Location].player=!" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm);
+                                        //syncSetting.Filters.Add("participation[Location|InformationRecipient|EntryLocation].player=!" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + itm);
+                                        //syncSetting.Filters.Add("participation[Location].player=!" + itm + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm);
                                         //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":

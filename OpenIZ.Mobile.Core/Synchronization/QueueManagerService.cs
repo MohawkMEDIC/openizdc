@@ -141,7 +141,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         // Try to peek off the next queue item while we're doing something else
                         Task<IdentifiedData> nextPeekTask = null;
-                        if(nextPeek != null)
+                        if (nextPeek != null)
                             nextPeekTask = Task<IdentifiedData>.Run(() => SynchronizationQueue.Inbound.DeserializeObject(nextPeek));
 
 #if PERFMON
@@ -376,9 +376,37 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     }
                     catch (WebException ex)
                     {
-                        this.m_tracer.TraceError("Remote server rejected object: {0}", ex);
-                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
-                        SynchronizationQueue.Outbound.DequeueRaw();
+                        Exception ie = ex;
+                        while (ie != null && (ie as WebException)?.Response == null)
+                            ie = ie.InnerException;
+
+                        // Get status
+                        var we = ie as WebException;
+                        if (we?.Response == null)
+                        {
+                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+                            SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
+                        }
+                        else
+                        {
+                            var resp = we.Response as HttpWebResponse;
+                            switch (resp.StatusCode)
+                            {
+                                case HttpStatusCode.NotFound:
+                                    if (resp.Method == "DELETE") // Can't find the thing we're deleting? that is fine :)
+                                        SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
+                                    else
+                                    {
+                                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+                                        SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
+                                    }
+                                    break;
+                                default:
+                                    SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+                                    SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
+                                    break;
+                            }
+                        }
 
                         // Construct an alert
                         //this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusCode.ToString()) ?? Strings.locale_syncErrorBody, ex, dpe), dpe);

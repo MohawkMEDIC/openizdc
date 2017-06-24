@@ -250,8 +250,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // We shove the data onto the queue for import!!! :)
             ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, 0.1f);
-            var patient = imsiIntegrationService.Get<Patient>(patientId, Guid.Empty);
-            pdp.Insert(Bundle.CreateBundle(patient));
+            var dbundle = imsiIntegrationService.Find<Patient>(o=>o.Key == patientId, 0, 1);
+            dbundle.Item.RemoveAll(o => !(o is Patient || o is Person));
+            pdp.Insert(dbundle);
+            var patient = dbundle.Item.OfType<Patient>().FirstOrDefault();
 
             // We now want to subscribe this patient our facility
             var facilityId = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities?.FirstOrDefault();

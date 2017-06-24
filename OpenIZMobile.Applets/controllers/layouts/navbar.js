@@ -72,7 +72,7 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                             "preventDuplicates": true,
                             "showDuration": 150,
                             "hideDuration": 250,
-                            "timeout": 2000
+                            "timeout": 2000,
                         };
 
                         if ($scope.messages) {
@@ -109,12 +109,14 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                                 "preventDuplicates": true,
                                 "showDuration": 150,
                                 "hideDuration": 250,
-                                "timeout": new Date() - data[t].exp
+                                "timeout": data[t].exp - new Date(),
+                                "closeButton": false,
+                                "positionClass": "toast-bottom-center",
                             };
 
-                            if (data[t] & 1)
+                            if (data[t].type & 1)
                                 toastr.info(data[t].text, null, alertOptions);
-                            else if (data[t] & 2)
+                            else if (data[t].type & 2)
                                 toastr.error(data[t].text, null, alertOptions);
 
                         }

@@ -152,7 +152,6 @@
         <property name="targetModel" behavior="always">
           <property name="id"/>
           <property name="name" behavior="always" ref="EntityName"/>
-          <property name="identifier" behavior="always" ref="EntityIdentifier"/>
         </property>
       </property>
       <property name="ServiceDeliveryLocation">
@@ -163,10 +162,24 @@
         <property name="targetModel" behavior="always">
           <property name="id"/>
           <property name="name" behavior="always" ref="EntityName"/>
-          <property name="identifier" behavior="always" ref="EntityIdentifier"/>
         </property>
       </property>
-      <property name="*" ref="EntityRelationship"/>
+      <property name="IncidentalServiceDeliveryLocation">
+        <property name="id"/>
+        <property name="relationshipType"/>
+        <property name="source"/>
+        <property name="target"/>
+        <property name="targetModel" behavior="always">
+          <property name="id"/>
+          <property name="name" behavior="always" ref="EntityName"/>
+        </property>
+      </property>
+      <property name="*">
+        <property name="id"/>
+        <property name="relationshipType"/>
+        <property name="source"/>
+        <property name="target"/>
+      </property>
     </property>
     <property name="participation" all="false">
       <property name="*" all="true">
@@ -294,9 +307,9 @@
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
     </property>
-   
+
     <property name="valueModel" all="true" ref="Concept" behavior="always"/>
-  
+
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
@@ -311,7 +324,10 @@
     <property name="siteModel" behavior="always"  ref="Concept"/>
     <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
     <property name="relationship" all="true" behavior="always">
-      <property name="*" ref="ActRelationship"/>
+      <property name="*" all="false">
+        <property name="target"/>
+        <property name="source"/>
+      </property>
     </property>
     <property name="participation" all="true" behavior="always">
       <property name="RecordTarget" behavior="never">
@@ -373,17 +389,7 @@
         <property name="playerModel" all="false" behavior="always">
           <property name="id"/>
           <property name="version"/>
-          <property name="typeConceptModel" behavior="always" ref="Concept"/>
-          <property name="identifier" all="true" />
           <property name="name" all="true" behavior="always"/>
-          <property name="tag" all="true"/>
-          <property name="extension" all="true"/>
-          <property name="participation" all="true">
-            <property name="*" all="false">
-              <property name="participationRole"/>
-              <property name="player"/>
-            </property>
-          </property>
         </property>
       </property>
       <property name="EntryLocation" all="false">
@@ -393,17 +399,7 @@
         <property name="playerModel" all="false" behavior="always">
           <property name="id"/>
           <property name="version"/>
-          <property name="typeConceptModel" behavior="always" ref="Concept"/>
-          <property name="identifier" all="true"/>
           <property name="name" all="true" behavior="always"/>
-          <property name="tag" all="true"/>
-          <property name="extension" all="true"/>
-          <property name="participation" all="true">
-            <property name="*" all="false">
-              <property name="participationRole"/>
-              <property name="player"/>
-            </property>
-          </property>
         </property>
       </property>
       <property name="Authororiginator" all="false">
@@ -429,7 +425,7 @@
 
   <type type="SubstanceAdministration" all="true">
     <property name="createdBy" behavior="never"/>
-    <property name="creationTime" />
+    <property name="creationTime"/>
 
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
@@ -450,11 +446,10 @@
     <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
     <property name="protocol" behavior="always"/>
     <property name="relationship" all="true" behavior="always">
-      <property name="Replaces" all="false">
+      <property name="*" all="false">
         <property name="target"/>
         <property name="source"/>
       </property>
-      <property name="*" behavior="never" all="false"/>
     </property>
     <property name="participation" all="true" behavior="always">
       <property name="Product" all="false">
@@ -495,14 +490,7 @@
         <property name="sourceModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
         <property name="playerModel" all="false" behavior="always">
-          <property name="id"/>
-          <property name="version"/>
-          <property name="typeConceptModel" behavior="always" ref="Concept"/>
-          <property name="identifier" all="true" />
           <property name="name" all="true" behavior="always"/>
-          <property name="tag" all="true"/>
-          <property name="extension" all="true"/>
-          <property name="participation" behavior="never"/>
         </property>
       </property>
       <property name="Authororiginator" all="true">
@@ -542,11 +530,10 @@
     <property name="moodConceptModel" behavior="never"/>
     <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
     <property name="relationship" all="true" behavior="always">
-      <property name="Replaces" all="false">
+      <property name="*" all="false">
         <property name="target"/>
         <property name="source"/>
       </property>
-      <property name="*" behavior="never" all="false"/>
     </property>
     <property name="unitOfMeasureModel" behavior="always" ref="Concept"/>
     <property name="protocol" behavior="always"/>
@@ -555,15 +542,9 @@
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
+        <property name="player"/>
         <property name="playerModel" all="false" behavior="always">
-          <property name="id"/>
-          <property name="version"/>
-          <property name="typeConceptModel" behavior="always" ref="Concept"/>
-          <property name="identifier" all="true" />
           <property name="name" all="true" behavior="always"/>
-          <property name="tag" all="true"/>
-          <property name="extension" all="true"/>
-          <property name="participation" behavior="never"/>
         </property>
       </property>
       <property name="Authororiginator" all="false">
@@ -601,7 +582,12 @@
     <property name="statusConceptModel" behavior="never"/>
     <property name="moodConceptModel" behavior="never"/>
     <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
-    <property name="relationship" all="true" behavior="always" ref="ActRelationship"/>
+    <property name="relationship" all="true" behavior="always">
+      <property name="*" all="false">
+        <property name="target"/>
+        <property name="source"/>
+      </property>
+    </property>
     <property name="valueModel" all="true" ref="Concept" behavior="always"/>
     <property name="participation" all="true" behavior="always">
       <property name="Location" all="false">
@@ -609,14 +595,7 @@
         <property name="sourceModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
         <property name="playerModel" all="false" behavior="always">
-          <property name="id"/>
-          <property name="version"/>
-          <property name="typeConceptModel" behavior="always" ref="Concept"/>
-          <property name="identifier" all="true" />
           <property name="name" all="true" behavior="always"/>
-          <property name="tag" all="true"/>
-          <property name="extension" all="true"/>
-          <property name="participation" behavior="never"/>
         </property>
       </property>
       <property name="*" all="false">
