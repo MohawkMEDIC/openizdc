@@ -117,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 });
             }
 
-            SendAudit(audit);
+            ApplicationContext.Current.GetService<LocalAuditRepositoryService>().Insert(audit);
 
         }
 

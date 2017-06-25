@@ -64,45 +64,45 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 }
             });
 
-        $rootScope.$on("$stateChangeError", function () {
-            console.log.bind(console);
-            OpenIZ.App.hideWait();
-            $rootScope.isLoading = false;
-        });
-        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-            $rootScope.isLoading = false;
-            if ($rootScope.confirmNavigation && !$rootScope.confirmNavigation(event, fromState)) {
-                event.preventDefault();
-                $state.go(fromState.name);
-            }
-            else {
-                if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
-                    $('.modal-open').removeClass('modal-open');
-                    $('.modal-backdrop').remove();
-                    $('body').css('padding-right', '');
+            $rootScope.$on("$stateChangeError", function () {
+                console.log.bind(console);
+                OpenIZ.App.hideWait();
+                $rootScope.isLoading = false;
+            });
+            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+                $rootScope.isLoading = false;
+                if ($rootScope.confirmNavigation && !$rootScope.confirmNavigation(event, fromState)) {
+                    event.preventDefault();
+                    $state.go(fromState.name);
                 }
-                $('.select2-container').remove();
-
-                window.scrollTo(0, 0);
-                $rootScope.isLoading = true;
-            }
-        });
-        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-            OpenIZ.App.hideWait();
-            $rootScope.isLoading = false;
-
-            // Refresh the session ?
-            if ($rootScope.session && ($rootScope.session.exp - new Date() < 240000)) { // The session is about to expire so let's extend it!
-                OpenIZ.Authentication.refreshSessionAsync({
-                    continueWith: function (s) {
-                        $rootScope.session = s;
-                    },
-                    onException: function (e) {
-                        console.error(e);
+                else {
+                    if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
+                        $('.modal-open').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $('body').css('padding-right', '');
                     }
-                });
-            }
-        });
+                    $('.select2-container').remove();
+
+                    window.scrollTo(0, 0);
+                    $rootScope.isLoading = true;
+                }
+            });
+            $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+                OpenIZ.App.hideWait();
+                $rootScope.isLoading = false;
+
+                // Refresh the session ?
+                if ($rootScope.session && ($rootScope.session.exp - new Date() < 240000)) { // The session is about to expire so let's extend it!
+                    OpenIZ.Authentication.refreshSessionAsync({
+                        continueWith: function (s) {
+                            $rootScope.session = s;
+                        },
+                        onException: function (e) {
+                            console.error(e);
+                        }
+                    });
+                }
+            });
 
             $rootScope.page = {
                 title: OpenIZ.App.getCurrentAssetTitle(),
@@ -121,6 +121,10 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             // Interval to refresh online state and to check session
             setInterval(function () {
                 $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+                if ($rootScope.page.onlineState)
+                    $("#onlineStateIndicator").style('display', 'none');
+                else
+                    $("#onlineStateIndicator").style('display', 'inline-block');
 
                 if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000)) {
                     var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
@@ -161,7 +165,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 else {
 
                 }
-                $rootScope.$apply();
+                //$rootScope.$apply();
             }, 10000);
 
 

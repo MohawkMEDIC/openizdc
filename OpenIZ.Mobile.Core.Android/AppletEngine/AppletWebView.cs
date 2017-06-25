@@ -91,13 +91,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 #else
             this.Settings.CacheMode = CacheModes.Default;
 #endif
+            WebView.SetWebContentsDebuggingEnabled(true);
             this.Settings.JavaScriptEnabled = true;
             this.Settings.BlockNetworkLoads = false;
-            
             this.Settings.BuiltInZoomControls = false;
             this.Settings.DisplayZoomControls = false;
 
-			WebView.SetWebContentsDebuggingEnabled(true);
 
 		    this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
             //this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");

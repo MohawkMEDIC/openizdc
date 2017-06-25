@@ -46,6 +46,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
         // Cached credential
         private IPrincipal m_cachedCredential = null;
 
+        private bool m_checkedForUpdates = false;
+
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(AmiUpdateManager));
 
@@ -140,40 +142,48 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
         }
 
         /// <summary>
-        /// Application startup
+        /// Check for updates
         /// </summary>
-        public bool Start()
+        public void AutoUpdate()
         {
-            this.Starting?.Invoke(this, EventArgs.Empty);
-
             // Check for updates
-            try
-            {
-                if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
+            if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
+                try
                 {
                     ApplicationContext.Current.SetProgress(Strings.locale_updateCheck, 0.5f);
 
                     // Check for new applications
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-
-                    foreach (var i in amiClient.GetApplets().CollectionItem)
+                    amiClient.Client.Description.Endpoint[0].Timeout = 1000;
+                    if (amiClient.Ping())
                     {
-                        var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletInfo.Id);
-                        if (installed == null || 
-                            new Version(installed.Info.Version) < new Version(i.AppletInfo.Version) &&
-                            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets &&
-                            ApplicationContext.Current.Confirm(String.Format(Strings.locale_upgradeConfirm, i.AppletInfo.Names[0].Value)))
-                            this.Install(i.AppletInfo.Id);
-
-
+                        foreach (var i in amiClient.GetApplets().CollectionItem)
+                        {
+                            var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletInfo.Id);
+                            if (installed == null ||
+                                new Version(installed.Info.Version) < new Version(i.AppletInfo.Version) &&
+                                ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets &&
+                                ApplicationContext.Current.Confirm(String.Format(Strings.locale_upgradeConfirm, i.AppletInfo.Names[0].Value, i.AppletInfo.Version, installed.Info.Version)))
+                                this.Install(i.AppletInfo.Id);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                this.m_tracer.TraceError("Error checking for updates: {0}", ex.Message);
-            };
+                catch (Exception ex)
+                {
+                    this.m_tracer.TraceError("Error checking for updates: {0}", ex.Message);
+                };
+            this.m_checkedForUpdates = true;
+        }
+        /// <summary>
+        /// Application startup
+        /// </summary>
+        public bool Start()
+        {
+            this.Starting?.Invoke(this, EventArgs.Empty);
+
+            if (!this.m_checkedForUpdates)
+                this.AutoUpdate();
 
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;

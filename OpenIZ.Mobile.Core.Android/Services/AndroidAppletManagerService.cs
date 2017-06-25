@@ -41,18 +41,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
                                         navigateAsset.Manifest.Info.Id,
                                         navigateAsset.Name);
 
-            using (MemoryStream response = new MemoryStream())
-            using (var fs = File.OpenRead(itmPath))
-            {
-                int br = 8096;
-                byte[] buffer = new byte[8096];
-                while (br == 8096)
-                {
-                    br = fs.Read(buffer, 0, 8096);
-                    response.Write(buffer, 0, br);
-                }
-                return response.ToArray();
-            }
+            return File.ReadAllBytes(itmPath);
         }
 
     }

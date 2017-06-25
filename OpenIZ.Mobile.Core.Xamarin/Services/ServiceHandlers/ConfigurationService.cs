@@ -303,9 +303,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         break;
                                     case "Act":
                                         syncSetting.Filters.Add("classConcept=!" + ActClassKeys.SubstanceAdministration +
-                                            "classConcept=!" + ActClassKeys.Observation +
-                                            "classConcept=!" + ActClassKeys.Encounter +
-                                            "classConcept=!" + ActClassKeys.Procedure +
+                                            "&classConcept=!" + ActClassKeys.Observation +
+                                            "&classConcept=!" + ActClassKeys.Encounter +
+                                            "&classConcept=!" + ActClassKeys.Procedure +
                                             "&participation[Destination|Location].player=" + itm + "&_expand=relationship&_expand=participation");
 	                                    //syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
 										//syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");

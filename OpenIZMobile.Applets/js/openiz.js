@@ -437,7 +437,7 @@ var OpenIZ = OpenIZ || {
             }
 
             // Start the process
-            doSearch(0, OpenIZ.App.newGuid(), 0, 15);
+            doSearch(0, OpenIZ.App.newGuid(), 0, 50);
         },
     },
     /**
@@ -3305,7 +3305,9 @@ $.ajaxSetup({
             data.setRequestHeader("Authorization", "BASIC " +
                 btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
         }
-        data.setRequestHeader("X-OIZMagic", OpenIZApplicationService.GetMagic());
+        if (!OpenIZ.App.magic)
+            OpenIZ.App.magic = OpenIZApplicationService.GetMagic();
+        data.setRequestHeader("X-OIZMagic", OpenIZ.App.magic);
     },
     converters: {
         "text json": function (data) {

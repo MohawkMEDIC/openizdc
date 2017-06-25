@@ -35,7 +35,11 @@ namespace DisconnectedClient
 
             this.m_progressHandler = (o, ev) =>
             {
-                this.BeginInvoke(updateUi, ev);
+                try
+                {
+                    this.Invoke(updateUi, ev);
+                }
+                catch { }
             };
             XamarinApplicationContext.ProgressChanged += this.m_progressHandler;
         }

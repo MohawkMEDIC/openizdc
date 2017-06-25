@@ -271,8 +271,11 @@ namespace OpenIZ.Mobile.Core
                     throw new TypeLoadException($"{d} failed startup: {e.Message}", e);
                 }
             }
-            
-            this.Started?.Invoke(this, EventArgs.Empty);
+
+            this.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
+            {
+                this.Started?.Invoke(this, EventArgs.Empty);
+            }, null);
 
         }
 

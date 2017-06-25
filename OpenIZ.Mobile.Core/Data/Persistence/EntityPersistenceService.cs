@@ -47,7 +47,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityPersistenceService : VersionedDataPersistenceService<Entity, DbEntity>
     {
-
+        // Unique assigning authorities
+        private HashSet<Guid> m_uniqueAssigningAuthorites = null;
 
         private const String Entity = "E29FCFAD-EC1D-4C60-A055-039A494248AE";
         private const String ManufacturedMaterial = "FAFEC286-89D5-420B-9085-054ACA9D1EEF";
@@ -464,7 +465,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Identifiers != null)
             {
                 // Validate unique values for IDs
-                var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.AuthorityKey.Value)?.IsUnique == true);
+                if (this.m_uniqueAssigningAuthorites == null) {
+                    this.m_uniqueAssigningAuthorites = new HashSet<Guid>(context.Connection.Table<DbAssigningAuthority>().Where(o => o.IsUnique).ToArray().Select(o => new Guid(o.Uuid)));
+                }
+
+                var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => this.m_uniqueAssigningAuthorites.Contains(o.Authority.Key.Value));
                 byte[] entId = data.Key.Value.ToByteArray();
 
                 foreach (var itm in uniqueIds)

@@ -259,6 +259,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Would you like to check the server for updates?.
+        /// </summary>
+        internal static string locale_checkForUpdates {
+            get {
+                return ResourceManager.GetString("locale_checkForUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloading {0}....
         /// </summary>
         internal static string locale_downloading {
@@ -322,7 +331,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is a new version of {0}. Would you lke to upgrade?.
+        ///   Looks up a localized string similar to Would you like to upgrade {0} to version {1} from version {2}?.
         /// </summary>
         internal static string locale_upgradeConfirm {
             get {

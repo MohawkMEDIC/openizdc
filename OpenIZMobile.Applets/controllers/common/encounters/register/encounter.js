@@ -220,9 +220,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         // Act not done!?
         if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
             validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
-        else {
-        }
-
+        
         return validation;
     };
 
@@ -350,10 +348,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         // Act not done!?
         if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
             validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
-        else
-        {
-        }
-
+       
         return validation;
     };
 

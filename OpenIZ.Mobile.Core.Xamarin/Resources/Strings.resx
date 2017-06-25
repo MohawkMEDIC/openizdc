@@ -183,6 +183,9 @@
   <data name="locale_certificateValidation" xml:space="preserve">
     <value>The server responded with an invalid certificate: {0}. Do you want to trust this certificate?</value>
   </data>
+  <data name="locale_checkForUpdates" xml:space="preserve">
+    <value>Would you like to check the server for updates?</value>
+  </data>
   <data name="locale_downloading" xml:space="preserve">
     <value>Downloading {0}...</value>
   </data>
@@ -205,6 +208,6 @@
     <value>Checking for updates...</value>
   </data>
   <data name="locale_upgradeConfirm" xml:space="preserve">
-    <value>There is a new version of {0}. Would you lke to upgrade?</value>
+    <value>Would you like to upgrade {0} to version {1} from version {2}?</value>
   </data>
 </root>

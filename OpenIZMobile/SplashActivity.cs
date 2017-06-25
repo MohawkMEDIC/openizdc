@@ -56,7 +56,7 @@ namespace OpenIZMobile
 
         // Tracer
         private Tracer m_tracer;
-        
+
         /// <summary>
         /// Progress has changed
         /// </summary>
@@ -72,7 +72,7 @@ namespace OpenIZMobile
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            
+
             this.SetContentView(Resource.Layout.Splash);
         }
 
@@ -101,17 +101,21 @@ namespace OpenIZMobile
             {
                 if (!ct.IsCancellationRequested)
                 {
-                    AndroidApplicationContext.Current.GetService<MiniImsServer>().Started += (oo, oe) =>
+                    Action doStart = () =>
                     {
-
                         AndroidApplicationContext.ProgressChanged -= this.OnProgressUpdated;
-
                         Intent viewIntent = new Intent(this, typeof(AppletActivity));
                         var appletConfig = AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
                         viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/splash.html#/");
                         this.StartActivity(viewIntent);
-
                     };
+                    if (AndroidApplicationContext.Current.GetService<MiniImsServer>().IsRunning)
+                        doStart();
+                    else
+                        AndroidApplicationContext.Current.GetService<MiniImsServer>().Started += (oo, oe) =>
+                        {
+                            doStart();
+                        };
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -168,11 +172,21 @@ namespace OpenIZMobile
                     {
                         if (!ct.IsCancellationRequested)
                         {
-                            Intent viewIntent = new Intent(this, typeof(AppletActivity));
-                            viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
-                            viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
-                            this.StartActivity(viewIntent);
-
+                           
+                            Action doStart = () =>
+                            {
+                                Intent viewIntent = new Intent(this, typeof(AppletActivity));
+                                viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                                viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
+                                this.StartActivity(viewIntent);
+                            };
+                            if (AndroidApplicationContext.Current.GetService<MiniImsServer>().IsRunning)
+                                doStart();
+                            else
+                                AndroidApplicationContext.Current.GetService<MiniImsServer>().Started += (oo, oe) =>
+                                {
+                                    doStart();
+                                };
                         }
                     }, TaskScheduler.Current);
 
@@ -188,7 +202,7 @@ namespace OpenIZMobile
 
                 return true;
             }
-            catch(AppDomainUnloadedException)
+            catch (AppDomainUnloadedException)
             {
                 this.Finish();
                 return false;
@@ -202,7 +216,7 @@ namespace OpenIZMobile
 
         }
 
-     
+
 
         /// <summary>
         /// Shows an exception message box

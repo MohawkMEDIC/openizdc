@@ -57,35 +57,35 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
 
             if ($scope.encounters) {
                 // Sort based on dose
-                delete scope.display;
-                scope.display = {};
-                scope.display._vaccineAdministrations = {};
+                //delete scope.display;
+                //scope.display = {};
+                //scope.display._vaccineAdministrations = {};
                 var newEncounters = $scope.encounters;
             	// Sort based on dose
-                newEncounters.sort(function (a, b)
-                {
-                	if (a.actTime > b.actTime)
-                		return 1;
-                	else if (a.actTime < b.actTime)
-                		return -1;
-                	else
-                	{
-                	    if (a.actModel !== null && a.actModel !== undefined) {
-                	        if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value > b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
-                	            return 1;
-                	        }
-                	        else if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value < b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
-                	            return -1;
-                	        }
-                	        else {
-                	            return 0;
-                	        }
-                	    }
-                	    else {
-                	        return 0;
-                	    }
-                	}
-                });
+                //newEncounters.sort(function (a, b)
+                //{
+                //	if (a.actTime > b.actTime)
+                //		return 1;
+                //	else if (a.actTime < b.actTime)
+                //		return -1;
+                //	else
+                //	{
+                //	    if (a.actModel !== null && a.actModel !== undefined) {
+                //	        if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value > b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                //	            return 1;
+                //	        }
+                //	        else if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value < b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                //	            return -1;
+                //	        }
+                //	        else {
+                //	            return 0;
+                //	        }
+                //	    }
+                //	    else {
+                //	        return 0;
+                //	    }
+                //	}
+                //});
 
                 // Record target
                 for (var ptcpt in newEncounters) {
@@ -120,7 +120,7 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
                             ) {
                             var existing = scope.display._vaccineAdministrations[antigenId][model.doseSequence];
 
-                            if(existing && model.creationTime > existing.creationTime || !existing)
+                            if(existing && model.creationTime > existing.creationTime  || !existing)
                                 scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
                         }
                     }

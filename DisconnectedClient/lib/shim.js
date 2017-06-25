@@ -6,7 +6,7 @@ OpenIZApplicationService.GetStatus = function () {
 }
 
 OpenIZApplicationService.ShowToast = function (string) {
-    return OpenIZApplicationService.ShowToast(string);
+    return OpenIZApplicationService.showToast(string);
 }
 
 OpenIZApplicationService.GetOnlineState = function () {

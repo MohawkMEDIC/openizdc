@@ -247,6 +247,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 if (!(data is Bundle || data is Entity || data is Act))
                     return;
 
+                if (data is Bundle)
+                    data.Key = null;
+
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (client.Client.Credentials == null) return;

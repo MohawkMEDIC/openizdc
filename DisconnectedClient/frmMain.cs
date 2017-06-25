@@ -61,14 +61,14 @@ namespace DisconnectedClient
 
             this.m_progressHandler = (o, ev) =>
             {
-                this.BeginInvoke(updateUi, ev);
+                this.Invoke(updateUi, ev);
             };
             XamarinApplicationContext.ProgressChanged += this.m_progressHandler;
 
             this.m_browser = new ChromiumWebBrowser(url);
 
 #if !DEBUG
-            mnsTools.Visible = false;
+            mnsTools.Visible = Program.Parameters.Debug;
 #endif
 
             this.m_browser.RegisterJsObject("OpenIZApplicationService", new AppletFunctionBridge(this));
@@ -95,5 +95,23 @@ namespace DisconnectedClient
         {
             this.m_browser.ShowDevTools();
         }
+
+        private void btnZoomWidth_Click(object sender, EventArgs e)
+        {
+            
+            double zoomFactor = Double.Parse((sender as ToolStripMenuItem).Tag.ToString());
+            this.m_browser.SetZoomLevel(zoomFactor);
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            this.m_browser.Back();
+        }
+
+        private void btnForward_Click(object sender, EventArgs e)
+        {
+            this.m_browser.Forward();
+        }
+
     }
 }

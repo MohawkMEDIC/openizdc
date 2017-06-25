@@ -42,6 +42,13 @@ namespace OpenIZ.Mobile.Core.Android.Net
     /// TODO: Add configuration for roaming
     public class AndroidNetworkInformationService : NetworkInformationService
     {
+
+        private ConnectivityManager m_connManager = null;
+
+        public AndroidNetworkInformationService()
+        {
+            this.m_connManager = (ConnectivityManager)((Xamarin.XamarinApplicationContext.Current as AndroidApplicationContext).Context).GetSystemService(Context.ConnectivityService);
+        }
         /// <summary>
         /// Get interfaces
         /// </summary>
@@ -59,9 +66,9 @@ namespace OpenIZ.Mobile.Core.Android.Net
         {
             get
             {
-                ConnectivityManager connectivityManager = (ConnectivityManager)((Xamarin.XamarinApplicationContext.Current as AndroidApplicationContext).Context).GetSystemService(Context.ConnectivityService);
-                return connectivityManager.ActiveNetworkInfo != null && connectivityManager.ActiveNetworkInfo.IsConnected &&
-                    !connectivityManager.ActiveNetworkInfo.IsRoaming;
+                
+                return this.m_connManager.ActiveNetworkInfo != null && this.m_connManager.ActiveNetworkInfo.IsConnected &&
+                    !this.m_connManager.ActiveNetworkInfo.IsRoaming;
             }
         }
 
@@ -72,9 +79,7 @@ namespace OpenIZ.Mobile.Core.Android.Net
         {
             get
             {
-                var androidContext = (AndroidApplicationContext.Current as AndroidApplicationContext).Context;
-                ConnectivityManager connectivityManager = (ConnectivityManager)androidContext.GetSystemService(Context.ConnectivityService);
-                return this.IsNetworkAvailable && connectivityManager.ActiveNetworkInfo?.Type == ConnectivityType.Wifi;
+                return this.IsNetworkAvailable && this.m_connManager.ActiveNetworkInfo?.Type == ConnectivityType.Wifi;
             }
         }
     }

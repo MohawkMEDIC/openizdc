@@ -73,6 +73,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         private Dictionary<String, InvokationInformation> m_services = new Dictionary<string, InvokationInformation>();
         private IContentTypeMapper m_contentTypeHandler = new DefaultContentTypeMapper();
         private IThreadPoolService m_threadPool = null;
+        private bool m_startFinished = false;
 
         /// <summary>
         /// Returns true if the service is running
@@ -81,7 +82,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         {
             get
             {
-                return this.m_listener?.IsListening == true;
+                return this.m_listener?.IsListening == true && this.m_startFinished;
             }
         }
 
@@ -104,39 +105,37 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
 
                 // Scan for services
-                foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
-                    try
+                try
+                {
+                    foreach (var t in typeof(MiniImsServer).Assembly.DefinedTypes.Where(o => o.GetCustomAttribute<RestServiceAttribute>() != null))
                     {
-                        this.m_tracer.TraceVerbose("Scanning {0} for service attributes...", a);
-                        foreach (var t in a.DefinedTypes.Where(o => o.GetCustomAttribute<RestServiceAttribute>() != null))
+                        var serviceAtt = t.GetCustomAttribute<RestServiceAttribute>();
+                        object instance = Activator.CreateInstance(t);
+                        foreach (var mi in t.GetRuntimeMethods().Where(o => o.GetCustomAttribute<RestOperationAttribute>() != null))
                         {
-                            var serviceAtt = t.GetCustomAttribute<RestServiceAttribute>();
-                            object instance = Activator.CreateInstance(t);
-                            foreach (var mi in t.GetRuntimeMethods().Where(o => o.GetCustomAttribute<RestOperationAttribute>() != null))
-                            {
-                                var operationAtt = mi.GetCustomAttribute<RestOperationAttribute>();
-                                var faultMethod = operationAtt.FaultProvider != null ? t.GetRuntimeMethod(operationAtt.FaultProvider, new Type[] { typeof(Exception) }) : null;
-                                String pathMatch = String.Format("{0}:{1}{2}", operationAtt.Method, serviceAtt.BaseAddress, operationAtt.UriPath);
-                                if (!this.m_services.ContainsKey(pathMatch))
-                                    lock (this.m_lockObject)
-                                        this.m_services.Add(pathMatch, new InvokationInformation()
-                                        {
-                                            BindObject = instance,
-                                            Method = mi,
-                                            FaultProvider = faultMethod,
-                                            Demand = (mi.GetCustomAttributes<DemandAttribute>().Union(t.GetCustomAttributes<DemandAttribute>())).Select(o => o.PolicyId).ToList(),
-                                            Anonymous = (mi.GetCustomAttribute<AnonymousAttribute>() ?? t.GetCustomAttribute<AnonymousAttribute>()) != null,
-                                            Parameters = mi.GetParameters()
-                                        });
-
-                            }
+                            var operationAtt = mi.GetCustomAttribute<RestOperationAttribute>();
+                            var faultMethod = operationAtt.FaultProvider != null ? t.GetRuntimeMethod(operationAtt.FaultProvider, new Type[] { typeof(Exception) }) : null;
+                            String pathMatch = String.Format("{0}:{1}{2}", operationAtt.Method, serviceAtt.BaseAddress, operationAtt.UriPath);
+                            if (!this.m_services.ContainsKey(pathMatch))
+                                lock (this.m_lockObject)
+                                    this.m_services.Add(pathMatch, new InvokationInformation()
+                                    {
+                                        BindObject = instance,
+                                        Method = mi,
+                                        FaultProvider = faultMethod,
+                                        Demand = (mi.GetCustomAttributes<DemandAttribute>().Union(t.GetCustomAttributes<DemandAttribute>())).Select(o => o.PolicyId).ToList(),
+                                        Anonymous = (mi.GetCustomAttribute<AnonymousAttribute>() ?? t.GetCustomAttribute<AnonymousAttribute>()) != null,
+                                        Parameters = mi.GetParameters()
+                                    });
 
                         }
+
                     }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceWarning("Could not load assembly {0} : {1}", a, e);
-                    }
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceWarning("Could scan for handlers : {1}", e);
+                }
 
                 // Get loopback
                 var loopback = GetLocalIpAddress();
@@ -172,6 +171,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 // We have to wait for the IAppletManager service to come up or else it is pretty useless
                 this.Started?.Invoke(this, EventArgs.Empty);
 
+                this.m_startFinished = true;
                 return true;
             }
             catch (Exception ex)
@@ -564,7 +564,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 request.Url.ToString().EndsWith(".png") || request.Url.ToString().EndsWith(".woff2"))
             {
                 response.AddHeader("Cache-Control", "public");
-                response.AddHeader("Expires", DateTime.UtcNow.AddMinutes(10).ToString("ddd, dd MMM yyyy HH:mm:ss 'GMT'"));
+                response.AddHeader("Expires", DateTime.UtcNow.AddHours(1).ToString("ddd, dd MMM yyyy HH:mm:ss 'GMT'"));
             }
             else
                 response.AddHeader("Cache-Control", "no-cache");
