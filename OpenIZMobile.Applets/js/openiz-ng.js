@@ -26,6 +26,18 @@
  */
 
 angular.module('openiz', [])
+    //.factory('authInterceptor', ['$log', function ($log) {
+    //    return {
+    //        request: function (config) {
+    //            if (OpenIZ.Authentication.$session)
+    //                config.headers['Authorization'] = 'BEARER ' + OpenIZ.Authentication.$session.id;
+    //            if (!OpenIZ.App.magic)
+    //                OpenIZ.App.magic = OpenIZApplicationService.GetMagic();
+    //            config.headers["X-OIZMagic"] = OpenIZ.App.magic;
+    //            return config;
+    //        }
+    //    };
+    //}])
     // Localization service
     .provider('localize', function localizeProvider() {
 

@@ -148,9 +148,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             retVal.Client.Accept = "application/xml";
             retVal.Client.Requesting += (o, e) =>
             {
-                if (AuthenticationContext.Current.Principal != AuthenticationContext.AnonymousPrincipal &&
-                     AuthenticationContext.Current.Principal != AuthenticationContext.SystemPrincipal)
-                    e.AdditionalHeaders["X-OpenIZ-OnBehalfOf"] = AuthenticationContext.Current.Principal.Identity.Name;
+                if (AuthenticationContext.CurrentUIContext.Principal != AuthenticationContext.AnonymousPrincipal &&
+                    AuthenticationContext.CurrentUIContext.Principal != AuthenticationContext.Current.Principal)
+                    e.AdditionalHeaders["X-OpenIZ-OnBehalfOf"] = AuthenticationContext.CurrentUIContext.Principal.Identity.Name;
             };
             return retVal;
         }
@@ -293,6 +293,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 {
                     ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
                     client.Client.Credentials = new NullCredentials();
+                    client.Client.Description.Endpoint[0].Timeout = 1000;
 
                     return this.IsValidVersion(client) &&
                         client.Ping();

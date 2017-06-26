@@ -66,6 +66,7 @@ namespace DisconnectedClient
             XamarinApplicationContext.ProgressChanged += this.m_progressHandler;
 
             this.m_browser = new ChromiumWebBrowser(url);
+            this.m_browser.RequestHandler = new DisconnectedClientRequestHandler();
 
 #if !DEBUG
             mnsTools.Visible = Program.Parameters.Debug;
@@ -74,7 +75,6 @@ namespace DisconnectedClient
             this.m_browser.RegisterJsObject("OpenIZApplicationService", new AppletFunctionBridge(this));
             this.pnlMain.Controls.Add(this.m_browser);
             this.m_browser.Dock = DockStyle.Fill;
-
         }
 
         private void frmDisconnectedClient_FormClosing(object sender, FormClosingEventArgs e)

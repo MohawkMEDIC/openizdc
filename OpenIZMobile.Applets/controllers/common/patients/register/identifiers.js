@@ -29,15 +29,16 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
     $scope.removeIdentifier = removeIdentifier;
     $scope.searchDuplicates = searchDuplicates;
     $scope.Array = Array;
+
+    // JF- This should be changed to be patient identifiers in the future to more closely link with actual scope
     $scope.identifiers = $scope.identifiers || [];
     $scope.regexValidation = $scope.regexValidation || [];
 
-    // JF- ??? Why does this need to exist?
     angular.element(document).ready(init);
 
     function init() {
         $scope.$watch('patient.identifier', function (identifier, o) {
-            if (identifier && identifier != o) {
+            if (identifier && (identifier != o || Object.keys(identifier).length != $scope.identifiers.length)) {
                 $scope.identifiers = [];
                 for (key in identifier) {
                     if (identifier[key]) {

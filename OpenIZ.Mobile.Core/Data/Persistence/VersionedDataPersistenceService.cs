@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 data.VersionKey = Guid.NewGuid();
             else if (context.Connection.Table<TDomain>().Where(o => o.Uuid == key).ToList().FirstOrDefault()?.VersionKey == data.VersionKey)
                 data.VersionKey = Guid.NewGuid();
-            data.VersionSequence++;
+            data.VersionSequence = null;
             return base.UpdateInternal(context, data);
         }
 
@@ -74,6 +74,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             data.PreviousVersionKey = data.VersionKey;
             data.VersionKey = Guid.NewGuid();
+            data.VersionSequence = null;
             return base.ObsoleteInternal(context, data);
         }
     }

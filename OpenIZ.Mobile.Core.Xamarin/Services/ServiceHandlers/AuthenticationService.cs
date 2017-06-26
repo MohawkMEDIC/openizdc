@@ -70,6 +70,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
                 var sessionInfo = sessionService.Delete(value);
+                MiniImsServer.CurrentContext.Response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
+
                 AuditUtil.AuditLogout(sessionInfo.Principal);
             }
 
@@ -198,7 +200,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 if (!authRequest.ContainsKey("scope"))
                     MiniImsServer.CurrentContext.Response.SetCookie(new Cookie("_s", retVal.Key.ToString())
                     {
-
                         HttpOnly = true,
                         Secure = true,
                         Path = "/",

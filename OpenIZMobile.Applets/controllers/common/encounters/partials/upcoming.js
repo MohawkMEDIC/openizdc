@@ -28,8 +28,11 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
 
     $scope.$watch("encounters.length", function (newValue, oldValue) {
         if ($scope.encounters && $scope.encounters.length > 0 && newValue !== oldValue) {
+            
             updateCarePlan();
         }
+        else if(!$scope.encounters)
+            $scope.appointments = null;
     });
 
     $scope.canStartAppointment = function (apt) {

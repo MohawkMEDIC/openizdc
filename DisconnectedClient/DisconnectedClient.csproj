@@ -171,6 +171,7 @@
   <ItemGroup>
     <Compile Include="ConsoleParameters.cs" />
     <Compile Include="DcAppletManagerService.cs" />
+    <Compile Include="DisconnectedClientRequestHandler.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>

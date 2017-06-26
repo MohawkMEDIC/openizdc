@@ -29,7 +29,9 @@ function __ActMergeFunction(act) {
         }
     });
 
-    act.tag['hasDuplicateFix'] = true;
+    if (!OpenIZBre.IsInFrontEnd)
+        act.tag['hasDuplicateFix'] = true;
+
     return act;
 }
 

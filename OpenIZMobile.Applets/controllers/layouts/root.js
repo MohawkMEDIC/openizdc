@@ -23,7 +23,7 @@
 /// <reference path="~/lib/toastr.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', 'angular.filter'])
-    .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', function ($compileProvider, $stateProvider, $urlRouterProvider) {
+    .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', '$httpProvider', function ($compileProvider, $stateProvider, $urlRouterProvider, $httpProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 
@@ -40,16 +40,18 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 }
             });
 
+        //$httpProvider.interceptors.push('authInterceptor');
         //$urlRouterProvider.otherwise('/');
 
     }])
-    .run(function ($rootScope, $state) {
+    .run(function ($rootScope, $state, $templateCache) {
 
         angular.element(document).ready(init);
 
         function init() {
             $rootScope.isLoading = true;
             $rootScope.extendToast = null;
+            $rootScope.$$oizStateDataList = [];
 
             // HACK: Sometimes HASH is empty ... ugh... 
             // Once we fix the panels and tabs in BS this can be removed
@@ -70,8 +72,23 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 $rootScope.isLoading = false;
             });
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-                $rootScope.isLoading = false;
-                if ($rootScope.confirmNavigation && !$rootScope.confirmNavigation(event, fromState)) {
+
+                // Update ages of preserve states and set state if needed
+                var hasSavedState = false;
+                delete (event.targetScope.$$oizState);
+                for (var v in $rootScope.$$oizStateDataList) {
+                    hasSavedState |= $rootScope.$$oizStateDataList[v].state == fromState.name;
+                    $rootScope.$$oizStateDataList[v].age = ($rootScope.$$oizStateDataList[v].age || 0) + 1;
+                    if ($rootScope.$$oizStateDataList[v].state == toState.name) {
+                        event.targetScope.$$oizState = $rootScope.$$oizStateDataList[v];
+                        $rootScope.$$oizStateDataList.splice(v, 1);
+                    }
+                }
+
+                $rootScope.isLoading = true;
+                toastr.clear();
+                $rootScope.extendToast = null;
+                if ($rootScope.confirmNavigation && !hasSavedState && !$rootScope.confirmNavigation(event, fromState)) {
                     event.preventDefault();
                     $state.go(fromState.name);
                 }
@@ -122,9 +139,9 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             setInterval(function () {
                 $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
                 if ($rootScope.page.onlineState)
-                    $("#onlineStateIndicator").style('display', 'none');
+                    $("#onlineStateIndicator")[0].style.display = 'none';
                 else
-                    $("#onlineStateIndicator").style('display', 'inline-block');
+                    $("#onlineStateIndicator")[0].style.display = 'inline-block';
 
                 if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000)) {
                     var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
@@ -135,8 +152,16 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                     expiryStr = mins + ":" + secs;
                     var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + " " + expiryStr + " " + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
 
-                    if (expiry < 0)
-                        window.location.reload(true);
+                    if (expiry < 0) {
+                        OpenIZ.Authentication.abandonSession({
+                            continueWith:function() {
+                                $rootScope.session = null;
+                                $templateCache.removeAll();
+                                $state.reload();
+                                toastr.clear();
+                            }
+                        });
+                    }
                     else if (!$rootScope.extendToast)
                         $rootScope.extendToast = toastr.error(authString, OpenIZ.Localization.getString("locale.session.expiration"), {
                             closeButton: false,
@@ -158,44 +183,18 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                             timeOut: 0,
                             extendedTimeOut: 0
                         });
-                    else
+                    else {
                         $($rootScope.extendToast).children('.toast-message').html(authString);
-                    //$rootScope.extendToast.show();
+                    }
                 }
                 else {
-
+                    toastr.clear();
                 }
                 //$rootScope.$apply();
             }, 10000);
 
 
             // Get current session
-            OpenIZ.Authentication.getSessionAsync({
-                continueWith: function (session) {
-                    $rootScope.session = session;
-                    if (session != null && session.entity != null) {
-                        session.entity.telecom = session.entity.telecom || {};
-                        if (Object.keys(session.entity.telecom).length == 0)
-                            session.entity.telecom.MobilePhone = { value: "" };
-                    }
-
-                    OpenIZ.Configuration.getUserPreferencesAsync({
-                        continueWith: function (prefs) {
-                            $rootScope.session.prefs = {};
-                            for (var p in prefs.application.setting) {
-                                var set = prefs.application.setting[p];
-                                $rootScope.session.prefs[set.key] = set.value;
-                            }
-                            $rootScope.$apply();
-                        },
-                        onException: function (ex) { console.error(ex); }
-                    });
-                    $rootScope.$apply();
-                },
-                onException: function (ex) {
-                    console.error(ex);
-                }
-            });
 
             $rootScope.changeInputType = function (controlId, type) {
                 $(controlId).attr('type', type);
@@ -204,8 +203,39 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 }
             };
 
+            $rootScope.initSessionVars = function () {
+                OpenIZ.Authentication.getSessionAsync({
+                    continueWith: function (session) {
+                        $rootScope.session = session;
+                        if (session != null && session.entity != null) {
+                            session.entity.telecom = session.entity.telecom || {};
+                            if (Object.keys(session.entity.telecom).length == 0)
+                                session.entity.telecom.MobilePhone = { value: "" };
+                        }
+
+                        OpenIZ.Configuration.getUserPreferencesAsync({
+                            continueWith: function (prefs) {
+                                $rootScope.session.prefs = {};
+                                for (var p in prefs.application.setting) {
+                                    var set = prefs.application.setting[p];
+                                    $rootScope.session.prefs[set.key] = set.value;
+                                }
+                                $rootScope.$apply();
+                            },
+                            onException: function (ex) { console.error(ex); }
+                        });
+                        $rootScope.$apply();
+                    },
+                    onException: function (ex) {
+                        console.error(ex);
+                    }
+                });
+            };
+
+            $rootScope.initSessionVars();
+
             $rootScope.$watch('session', function (nv, ov) {
-                if (nv)
+                if (nv) {
                     OpenIZ.App.getInfoAsync({
                         includeUpdates: true,
                         continueWith: function (data) {
@@ -227,6 +257,8 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                             console.error(ex);
                         }
                     });
+
+                }
             });
 
             // Set the language for select2 localization

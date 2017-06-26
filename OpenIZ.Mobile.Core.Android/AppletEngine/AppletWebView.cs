@@ -43,6 +43,7 @@ using System.Security;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Xamarin.Security;
 using A = Android;
+using System.Net;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine
 {
@@ -51,6 +52,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
     /// </summary>
     public sealed class AppletWebView : WebView
     {
+
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
@@ -96,9 +98,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             this.Settings.BlockNetworkLoads = false;
             this.Settings.BuiltInZoomControls = false;
             this.Settings.DisplayZoomControls = false;
+            this.Settings.UserAgentString = $"OpenIZ-DC {ApplicationContext.Current.ExecutionUuid}";
 
-
-		    this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
+            this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
             //this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");
             //this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
             this.SetWebViewClient(new AppletWebViewClient());
@@ -115,13 +117,13 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             Uri uri = null;
             var unlockDictionary = new Dictionary<String, String>()
             {
-                {  "Authorization", Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", AndroidApplicationContext.Current.Application.Name, AndroidApplicationContext.Current.Application.ApplicationSecret))) },
+                {  "X-OIZMagic", ApplicationContext.Current.ExecutionUuid.ToString() }
             };
 
             if (!Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
                 base.LoadUrl("http://127.0.0.1:9200/views/errors/404.html", unlockDictionary);
             else if (uri.IsAbsoluteUri && uri.Host == "127.0.0.1" &&
-                uri.Port >= 9200)
+                uri.Port == 9200)
                 base.LoadUrl(url, unlockDictionary);
             else if (!uri.IsAbsoluteUri)
                 base.LoadUrl(new Uri(new Uri("http://127.0.0.1:9200/"), uri.PathAndQuery).ToString(), unlockDictionary);
@@ -161,6 +163,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             {
             }
 
+            
             /// <summary>
             /// On page is finished
             /// </summary>
@@ -185,7 +188,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                 view.LoadUrl(url);
                 return true;
             }
-
+            
             ///// <summary>
             ///// Page is finished
             ///// </summary>

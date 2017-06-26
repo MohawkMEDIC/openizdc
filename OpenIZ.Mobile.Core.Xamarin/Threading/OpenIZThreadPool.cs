@@ -316,6 +316,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         private void DoWorkItem(WorkItem state)
         {
             this.m_tracer.TraceVerbose("Starting task on {0} ---> {1}", Thread.CurrentThread.Name, state.Callback.Target.ToString());
+            AuthenticationContext.CurrentUIContext = null;
             AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.ThreadDefaultPrincipal) ?? new AuthenticationContext(AuthenticationContext.AnonymousPrincipal);
             var worker = (WorkItem)state;
             try {

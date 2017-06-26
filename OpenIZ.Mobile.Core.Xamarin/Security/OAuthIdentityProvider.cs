@@ -147,8 +147,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             // Invoke
                             if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
                             {
-                                if(principal.Identity.Name == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName) 
+                                if (principal.Identity.Name == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
                                     restClient.Description.Endpoint[0].Timeout = 20000;
+                                else
+                                    restClient.Description.Endpoint[0].Timeout = 2000;
                                 OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                                 retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
                             }
@@ -176,7 +178,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex.Message);
                             try
                             {
-                                retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                                retVal = localIdp.Authenticate(principal, password);
                             }
                             catch
                             {
@@ -193,7 +195,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             try
                             {
                                 this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex.Message);
-                                retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                                retVal = localIdp.Authenticate(principal, password);
                             }
                             catch
                             {
@@ -213,7 +215,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             try
                             {
                                 this.m_tracer.TraceWarning("Failed to fetch remote security parameters - {0}", ex.Message);
-                                retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                                retVal = localIdp.Authenticate(principal, password);
                             }
                             catch
                             {

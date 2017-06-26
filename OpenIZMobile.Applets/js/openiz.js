@@ -212,6 +212,30 @@ var OpenIZ = OpenIZ || {
                 onException: controlData.onException,
                 finally: controlData.finally,
                 id: controlData.id,
+                data: controlData.data,
+                state: controlData.state
+            });
+        },
+        /**
+         * @summary Asynchronously nullifies an act object in the IMS
+         * @memberof OpenIZ.Act
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the act that is to be updated
+         * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Act
+         */
+        nullifyAsync: function (controlData) {
+            OpenIZ.Ims.nullify({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                id: controlData.id,
+                data: controlData.data,
                 state: controlData.state
             });
         },
@@ -649,6 +673,56 @@ var OpenIZ = OpenIZ || {
                 url: "/__ims/" + controlData.resource + "?_id=" + controlData.id,
                 accept: 'application/json',
                 contentType: 'application/json',
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                success: function (xhr, data) {
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr, controlData.state);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === undefined)
+                        console.error(error);
+                    else if (error != undefined && error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                error.caused_by
+                            ), controlData.state);
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
+                                null
+                            ), controlData.state);
+
+                    // Do finally
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+
+                }
+            });
+        },
+        /**
+         * @summary Nullifies data from the IMS
+         * @memberof OpenIZ.Ims
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.resource The IMSI resource id to be posted to
+         * @param {object} controlData.id The identifier of the object to delete from the IMS 
+         * @method
+         */
+        nullify: function (controlData) {
+            $.ajax({
+                method: 'NULLIFY',
+                url: "/__ims/" + controlData.resource + "?_id=" + controlData.id,
+                accept: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
                 success: function (xhr, data) {
                     if (controlData.continueWith !== undefined)
                         controlData.continueWith(xhr, controlData.state);
@@ -1351,8 +1425,9 @@ var OpenIZ = OpenIZ || {
                          controlData.onException(new OpenIZModel.Exception(data.type, data.error, null), controlData.state
                          );
                      else if (data != null) {
+                         if (!controlData.scope || controlData.scope == "")
+                            OpenIZ.Authentication.$session = data;
                          controlData.continueWith(data, controlData.state);
-                         OpenIZ.Authentication.$session = data;
                      }
                      else
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
@@ -1475,6 +1550,9 @@ var OpenIZ = OpenIZ || {
                 dataType: "json",
                 contentType: 'application/x-www-urlform-encoded',
                 success: function (data, status) {
+
+                    OpenIZ.Authentication.$session = null;
+
                     controlData.continueWith(data, controlData.state);
 
                     if (controlData.finally !== undefined) {
@@ -1529,6 +1607,8 @@ var OpenIZ = OpenIZ || {
                          controlData.onException(new OpenIZModel.Exception(data.type, data.error, null), controlData.state
                          );
                      else if (data != null) {
+                         OpenIZ.Authentication.$session = data;
+
                          controlData.continueWith(data, controlData.state);
                          OpenIZ.Authentication.$session = data;
                      }
@@ -3305,6 +3385,8 @@ $.ajaxSetup({
             data.setRequestHeader("Authorization", "BASIC " +
                 btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
         }
+        else if (OpenIZ.Authentication.$session)
+            data.setRequestHeader("Authorization", "BEARER " + OpenIZ.Authentication.$session.id);
         if (!OpenIZ.App.magic)
             OpenIZ.App.magic = OpenIZApplicationService.GetMagic();
         data.setRequestHeader("X-OIZMagic", OpenIZ.App.magic);
@@ -3318,9 +3400,9 @@ $.ajaxSetup({
 
 $(document).ajaxError(function (e, data, setting, err) {
     if ((data.status == 401 || data.status == 403)) {
-        if (OpenIZ.Authentication.$session && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined && (OpenIZ.Authentication.$session && OpenIZ.Authentication.$session.exp < new Date() || document.cookie == "")) {
-            window.location.reload(true);
-            //console.log('hi');
+        if (OpenIZ.Authentication.$session && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined && (OpenIZ.Authentication.$session && OpenIZ.Authentication.$session.exp < new Date() || document.cookie == "") &&
+            window.location.hash != "/corelogin") {
+            console.error("Unauthorized Access:> " + e);
         }
         else if(OpenIZ.Authentication.$elevationCredentials.continueWith) // The session is active
             OpenIZ.Authentication.showElevationDialog();

@@ -22,13 +22,20 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
-layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', function ($scope, $interval, $rootScope, $window) {
-    // Add menu items
-    OpenIZ.App.getMenusAsync({
-        continueWith: function (menus) {
-            $scope.menuItems = menus;
-            $scope.$applyAsync();
+layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', '$state', '$templateCache', function ($scope, $interval, $rootScope, $window , $state, $templateCache) {
+    
+    $rootScope.$watch('session', function (nv, ov) {
+        if (nv && nv.user) {
+            // Add menu items
+            OpenIZ.App.getMenusAsync({
+                continueWith: function (menus) {
+                    $scope.menuItems = menus;
+                    $scope.$applyAsync();
+                }
+            });
         }
+        else
+            $scope.menuItems = null;
     });
 
 
@@ -38,9 +45,11 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
             OpenIZ.Authentication.abandonSession({
                 continueWith: function (data) {
                     console.log(data);
-                    window.location.hash = "#/";
                     $rootScope.isLoading = true;
-                    $window.location.reload();
+                    $rootScope.session = null;
+                    $templateCache.removeAll();
+                    $state.reload();
+                    //$window.location.reload();
                 },
                 onException: function (ex) {
                     console.log(ex);
@@ -103,6 +112,7 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                 continueWith: function (data) {
                     $scope.tickles = data;
 
+                    var already = [];
                     for (var t in data) {
                         if (data[t].type & 4) {
                             var alertOptions = {
@@ -113,6 +123,10 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                                 "closeButton": false,
                                 "positionClass": "toast-bottom-center",
                             };
+
+                            if (already.indexOf(data[t].text) > -1)
+                                continue;
+                            already.push(data[t].text);
 
                             if (data[t].type & 1)
                                 toastr.info(data[t].text, null, alertOptions);

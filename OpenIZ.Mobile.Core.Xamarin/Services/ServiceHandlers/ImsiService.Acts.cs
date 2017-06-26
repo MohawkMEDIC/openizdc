@@ -221,22 +221,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         /// <param name="act">The act to update.</param>
         /// <returns>Returns the updated act.</returns>
-        [RestOperation(Method = "DELETE", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
-        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [RestOperation(Method = "NULLIFY", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.DeleteClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
-        public Act DeleteAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
+        public Act NullifyAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
         {
             var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
             Guid actKey = Guid.Empty;
             Guid actVersionKey = Guid.Empty;
 
-            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey))
             {
-                if (act.Key == actKey && act.VersionKey == actVersionKey)
+                if (act.Key == actKey)
                 {
                     var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
-                    return actRepositoryService.Obsolete<Act>(act.Key.Value);
+                    return actRepositoryService.Nullify<Act>(act);
                 }
                 else
                 {

@@ -87,6 +87,12 @@ namespace OpenIZ.Mobile.Core
         private static AuthenticationContext s_current;
 
         /// <summary>
+        /// Current context in the request pipeline
+        /// </summary>
+        [ThreadStatic]
+        private static AuthenticationContext s_currentUserInterface;
+
+        /// <summary>
         /// Locking
         /// </summary>
         private static Object s_lockObject = new object();
@@ -122,12 +128,27 @@ namespace OpenIZ.Mobile.Core
         {
             get
             {
-                if(s_current == null)
-                    lock(s_lockObject)
+                if (s_current == null)
+                    lock (s_lockObject)
                         s_current = new AuthenticationContext(s_anonymous);
                 return s_current;
             }
             set { s_current = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the current context
+        /// </summary>
+        public static AuthenticationContext CurrentUIContext
+        {
+            get
+            {
+                if (s_currentUserInterface == null)
+                    lock (s_lockObject)
+                        s_currentUserInterface = new AuthenticationContext(s_anonymous);
+                return s_currentUserInterface;
+            }
+            set { s_currentUserInterface = value; }
         }
 
         /// <summary>

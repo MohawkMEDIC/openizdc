@@ -48,6 +48,7 @@ using OpenIZ.Core.Applets.ViewModel.Json;
 using System.IO.Compression;
 using OpenIZ.Core.Applets.Services;
 using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Core;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -237,6 +238,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                 MiniImsServer.CurrentContext = context;
 
+                // Services require magic
+#if !DEBUG
+                
+                if (request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString() &&
+                    request.UserAgent != $"OpenIZ-DC {ApplicationContext.Current.ExecutionUuid}")
+                {
+                    using (var sw = new StreamWriter(response.OutputStream))
+                        sw.WriteLine("Ah ah ah! You didn't say the magic word (hint: you need the right X-OIZMagic header, only browsers in the same process have this value)");
+                    return;
+                }
+#endif
+
+                this.m_tracer.TraceVerbose("Client has the right magic word");
+
                 // Session cookie?
                 if (request.Cookies["_s"] != null)
                 {
@@ -249,7 +264,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         {
                             try
                             {
-                                AuthenticationContext.Current = new AuthenticationContext(session);
+                                AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(session);
                                 this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
                             }
                             catch (SessionExpiredException)
@@ -277,11 +292,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 if (principal == null)
                                     throw new UnauthorizedAccessException();
                                 else
-                                    AuthenticationContext.Current = new AuthenticationContext(principal);
+                                    AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(principal);
                                 this.m_tracer.TraceVerbose("Performed BASIC auth for {0}", AuthenticationContext.Current.Principal.Identity.Name);
 
                                 break;
                             }
+                        case "bearer":
+                            {
+                                var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
+                                var session = smgr.Get(Guid.Parse(authHeader[1]));
+                                if (session != null)
+                                {
+                                    try
+                                    {
+                                        AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(session);
+                                        this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                                    }
+                                    catch (SessionExpiredException)
+                                    {
+                                        this.m_tracer.TraceWarning("Session {0} is expired and could not be extended", authHeader[1]);
+                                        throw new UnauthorizedAccessException("Session is expired");
+                                    }
+                                }
+                                else // Something wrong??? Perhaps it is an issue with the thingy?
+                                    throw new UnauthorizedAccessException("Session is invalid");
+                                break;
+                            }
+
                     }
                 }
 
@@ -292,15 +329,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 if (this.m_services.TryGetValue(rootPath, out invoke))
                 {
                     this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
-
-                    // Services require magic
-                    if (!invoke.Anonymous && (request.Headers["X-OIZMagic"] == null ||
-                        request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString()))
-                    {
-                        this.m_tracer.TraceVerbose("Ah ah ah! You didn't say the magic word");
-                        throw new UnauthorizedAccessException("Ah ah ah! You didn't say the magic word (client has invalid magic)");
-                    }
-                    this.m_tracer.TraceVerbose("Client has the right magic word");
 
                     // Get the method information 
                     var parmInfo = invoke.Parameters;
@@ -425,7 +453,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             catch (SecurityException ex)
             {
                 this.m_tracer.TraceError("General security exception: {0}", ex.Message);
-                if (AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
+                if (AuthenticationContext.CurrentUIContext.Principal == AuthenticationContext.AnonymousPrincipal)
                 {
                     // Is there an authentication asset in the configuration
                     var authentication = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset;

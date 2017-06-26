@@ -108,12 +108,12 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
                 if (Array.isArray(scope.search.query[key])) {
                     for (var i in scope.search.query[key])
-                        if(!scope.search.query[key][i])
+                        if(!scope.search.query[key][i] || scope.search.query[key][i] == "")
                             delete (scope.search.query[key][i]);
                         else if (!scope.search.query[key][i].startsWith("~") && key.startsWith("name"))
                             scope.search.query[key][i] = "~" + scope.search.query[key][i].replace(/^\s+|\s+$/g, '');
                 }
-                else if (!scope.search.query[key])
+                else if (!scope.search.query[key] || scope.search.query[key] == "")
                     delete (scope.search.query[key]);
                 else if (scope.search.query[key].startsWith && !scope.search.query[key].startsWith("~") && key.startsWith("name"))
                     scope.search.query[key] = "~" + scope.search.query[key];

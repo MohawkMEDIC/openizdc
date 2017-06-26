@@ -61,7 +61,7 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
                 //scope.display = {};
                 //scope.display._vaccineAdministrations = {};
                 var newEncounters = $scope.encounters;
-            	// Sort based on dose
+                // Sort based on dose
                 //newEncounters.sort(function (a, b)
                 //{
                 //	if (a.actTime > b.actTime)
@@ -89,7 +89,7 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
 
                 // Record target
                 for (var ptcpt in newEncounters) {
-                    
+
                     var acts = [];
 
                     // Patient encounters are the grouping of objects
@@ -120,17 +120,19 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
                             ) {
                             var existing = scope.display._vaccineAdministrations[antigenId][model.doseSequence];
 
-                            if(existing && model.creationTime > existing.creationTime  || !existing)
+                            if (existing && model.creationTime > existing.creationTime || !existing)
                                 scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
                         }
                     }
-                    
+
                     ;;
-                   
+
                 }
 
             }
         }
+        else if (newValue == null)
+            $scope.display._vaccineAdministrations = {};
     };
 
     function showVaccineTab() {

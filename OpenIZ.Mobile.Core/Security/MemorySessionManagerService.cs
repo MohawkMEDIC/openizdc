@@ -111,10 +111,17 @@ namespace OpenIZ.Mobile.Core.Security
                 throw new SecurityException(Strings.locale_sessionError);
             else
             {
-                this.m_session.Remove(session.Key.Value);
-                session = new SessionInfo(principal);
-                session.Key = Guid.NewGuid();
-                this.m_session.Add(session.Key.Value, session);
+                var newSession = new SessionInfo(principal);
+                if (!this.m_session.ContainsKey(session.Key.Value))
+                {
+                    newSession.Key = Guid.NewGuid();
+                    this.m_session.Add(newSession.Key.Value, newSession);
+                }
+                else
+                {
+                    newSession.Key = session.Key;
+                    this.m_session[session.Key.Value] = newSession;
+                }
                 return session;
             }
         }
