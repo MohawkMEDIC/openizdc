@@ -408,6 +408,8 @@
     <string key="locale.debug.reproductionPlaceholder">Enter the steps that you performed prior to encountering the bug/issue</string>
     <string key="locale.debug.sendLogs">Attach application information (versions, log files, settings, etc.)</string>
     <string key="locale.debug.submit">Send Report</string>
+    <string key="locale.debug.errors.submitterRequired">Please select the reporter</string>
+    <string key="locale.debug.errors.stepsRequired">Please enter the steps to reproduce the bug</string>
     <!-- End Debug -->
 
     <!-- About -->
@@ -636,6 +638,8 @@
     <string key="locale.debug.reproductionPlaceholder">Nukulu hatua zilizochukuliwa kabla ya suala mkutano</string>
     <string key="locale.debug.sendLogs">Ambatanisha maelezo ya maombi (matoleo, kuingia faili, mipangilio, nk)</string>
     <string key="locale.debug.submit">Kuwasilisha</string>
+    <string key="locale.debug.errors.submitterRequired">Tafadhali chagua mwandishi wa mdudu</string>
+    <string key="locale.debug.errors.stepsRequired">Tafadhali ingiza hatua za kuunda mdudu</string>
 
     <string key="locale.dialog.wait.text">Tafadhali subiri</string>
 
