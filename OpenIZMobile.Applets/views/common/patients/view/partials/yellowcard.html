@@ -32,6 +32,7 @@
                     <th class="vaccine-table-column" style="text-align:center">1</th>
                     <th class="vaccine-table-column" style="text-align:center">2</th>
                     <th class="vaccine-table-column" style="text-align:center">3</th>
+                    <th ng-if="longestVaccineAdministration > 4" ng-repeat-n="{{longestVaccineAdministration - 4}}">{{4 + $index}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,7 +81,7 @@
                             </div>
                         </a>
                     </td>
-                    <td ng-if="event.length != 4" ng-repeat-n="{{4 - event.length}}"> </td>
+                    <td ng-if="longestVaccineAdministration > event.length" ng-repeat-n="{{longestVaccineAdministration - event.length}}"></td>
                 </tr>
             </tbody>
         </table>
