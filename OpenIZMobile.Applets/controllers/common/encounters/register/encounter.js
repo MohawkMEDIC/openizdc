@@ -68,7 +68,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     }
 
     /** Moves a record to overdue status */
-    scope.makeOverdue = scope.makeOverdue || function (bind) {
+    scope.makeOverdue = scope.makeOverdue || function (bind, afterfocus) {
         bind.targetModel.tag = bind.targetModel.tag || {};
         bind.targetModel.tag.backEntry = true;
         delete (bind.targetModel.participation.Consumable);
@@ -77,7 +77,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         delete (bind.targetModel.reasonConceptModel);
         bind._encounter.relationship.HasComponent.splice($.inArray(bind, bind._encounter.relationship.HasComponent), 1);
         bind._encounter.relationship._OverdueHasComponent.push(bind);
-
+        $scope.afterfocus = afterfocus;
         bind._enabled = true;
         // Call care planner to suggest the next item
         OpenIZ.App.showWait("#makeOvd_" + bind.targetModel.id);
@@ -109,6 +109,14 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             },
             finally: function () {
                 OpenIZ.App.hideWait("#makeOvd_" + bind.targetModel.id);
+                $("#overdueCollapse").collapse("show");
+                if ($scope.afterfocus) {
+                    $timeout(function () {
+                        $($scope.afterfocus).focus();
+                        delete $scope.afterfocus;
+                    }, 200);
+
+                };
             }
         });
     }
@@ -125,8 +133,9 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             bind.targetModel.actTime = bind._encounter.actTime;
             bind._encounter.relationship._OverdueHasComponent.splice($.inArray(bind, bind._encounter.relationship._OverdueHasComponent), 1);
             bind._encounter.relationship.HasComponent.push(bind);
-            if (afterFocus)
+            if (afterFocus){
                 $timeout(function () { $(afterFocus).focus() }, 200);
+            }
         };
 
         // Is there a previous or later step in the has component? if so warn
