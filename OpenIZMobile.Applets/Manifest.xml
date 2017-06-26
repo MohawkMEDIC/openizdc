@@ -317,6 +317,7 @@
     <string key="locale.settings.useProxy">Use a Proxy</string>
     <string key="locale.settings.useProxyDescription">Select this option to proxy all requests sent from the mobile device through an HTTP proxy.</string>
     <string key="locale.settings.proxyAddress">Proxy Address</string>
+    <string key="locale.settings.proxyAddress.help">URL the proxy runs through</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
 
     <string key="locale.settings.subscribe">Facility Subscription(s)</string>
@@ -848,7 +849,10 @@
     <string key="locale.settings.pollInterval.5">Kila dakika 5</string>
     <string key="locale.settings.pollInterval.push">Wakati takwimu mpya inapatikana</string>
 
+    <string key="locale.settings.useProxy">Tumia proksi</string>
+    <string key="locale.settings.useProxyDescription">Chagua chaguo hili ili kupata njia mpya maombi yote kutumwa kutoka kibao kupitia HTTP proksi</string>
     <string key="locale.settings.proxyAddress">mbadala ya mahali</string>
+    <string key="locale.settings.proxyAddress.help">Internet anwani ya wakala anaendesha kupitia</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
 
     <string key="locale.settings.save">kuokoa chaguzi</string>
@@ -873,9 +877,6 @@
     <string key="locale.settings.syncEvents.ip">Wakati badiliko hali ya mtandao</string>
     <string key="locale.settings.syncEvents.start">wakati maombi kuanza</string>
     <string key="locale.settings.syncEvents.stop">wakati maombi kufunga</string>
-
-    <string key="locale.settings.useProxy">Tumia proksi</string>
-    <string key="locale.settings.useProxyDescription">Chagua chaguo hili ili kupata njia mpya maombi yote kutumwa kutoka kibao kupitia HTTP proksi</string>
 
     <string key="locale.settings.security.audit">Weka ukaguzi</string>
     <string key="locale.settings.security.audit.none">wala kuweka ukaguzi (kufuta wakati programu kuanza)</string>
