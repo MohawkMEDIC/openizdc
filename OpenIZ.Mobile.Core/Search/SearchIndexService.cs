@@ -92,7 +92,7 @@ namespace OpenIZ.Mobile.Core.Search
         /// <summary>
         /// Create a connection
         /// </summary>
-        private SQLiteConnectionWithLock CreateConnection()
+        private LockableSQLiteConnection CreateConnection()
         {
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString("openIzSearch").Value);
         }

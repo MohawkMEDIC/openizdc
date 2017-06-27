@@ -51,7 +51,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// Create a connection
         /// </summary>
         /// <returns>The connection.</returns>
-        private SQLiteConnectionWithLock CreateConnection()
+        private LockableSQLiteConnection CreateConnection()
         {
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(
                 "openIzAudit"
@@ -149,7 +149,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// <summary>
         /// Convert a db audit to model 
         /// </summary>
-        private AuditData ToModelInstance(SQLiteConnectionWithLock context, DbAuditData.QueryResult res, bool summary = true)
+        private AuditData ToModelInstance(SQLiteConnection context, DbAuditData.QueryResult res, bool summary = true)
         {
             var retVal = new AuditData()
             {

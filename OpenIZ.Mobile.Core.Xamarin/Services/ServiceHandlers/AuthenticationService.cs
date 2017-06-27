@@ -70,10 +70,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
                 var sessionInfo = sessionService.Delete(value);
-                if(MiniImsServer.CurrentContext.Request.Cookies["_s"] == null)
+                if (MiniImsServer.CurrentContext.Request.Cookies["_s"] == null)
                     MiniImsServer.CurrentContext.Response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
 
-                AuditUtil.AuditLogout(sessionInfo.Principal);
+                if (sessionInfo != null)
+                {
+                    AuditUtil.AuditLogout(sessionInfo.Principal);
+                }
             }
 
             return new SessionInfo();

@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Data.Connection
 {
@@ -38,70 +39,140 @@ namespace OpenIZ.Mobile.Core.Data.Connection
     /// </summary>
     public class SQLiteConnectionManager : IDataConnectionManager
     {
+
+        // Connection pool
+        private List<LockableSQLiteConnection> m_connectionPool = new List<LockableSQLiteConnection>();
+
         /// <summary>
-        /// Represents a wrapper class which closes a connection when lock is released
+        /// Un-register a readonly connection
         /// </summary>
-        public class SQLiteConnectionWrapper : SQLiteConnection
+        internal void UnregisterReadonlyConnection(ReadonlySQLiteConnection conn)
         {
+            this.UnregisterConnection(conn);
+        }
 
-            public SQLiteConnectionWrapper(ISQLitePlatform sqlitePlatform, String databasePath, SQLiteOpenFlags openFlags, bool storeDateTimeAsTicks = true, IBlobSerializer serializer = null, IDictionary<String, TableMapping> tableMappings = null, IDictionary<Type, String> extraTypeMappings = null, IContractResolver resolver = null) :
-                base(sqlitePlatform, databasePath, openFlags, storeDateTimeAsTicks, serializer, tableMappings, extraTypeMappings, resolver)
+        /// <summary>
+        /// Unregister connection
+        /// </summary>
+        private void UnregisterConnection(LockableSQLiteConnection conn)
+        {
+            List<LockableSQLiteConnection> connections = this.GetOrRegisterConnections(conn.DatabasePath);
+            lock (s_lockObject)
             {
+                Monitor.Exit(conn);
+                connections.Remove(conn);
 
-            }
+                // Add connection back onto the pool
+                if (conn.Persistent)
+                    this.m_connectionPool.Add(conn);
 
-            /// <summary>
-            /// Wrapper lock
-            /// </summary>
-            private class SQLiteConnectionWrapperLock : IDisposable
-            {
-                // Connection
-                private SQLiteConnectionWrapper m_connection;
+                this.m_tracer.TraceVerbose("-- {0} ({1})", conn.DatabasePath, connections.Count);
 
-                /// <summary>
-                /// Wrapper with lock
-                /// </summary>
-                public SQLiteConnectionWrapperLock(SQLiteConnectionWrapper wrappedConnection)
-                {
-                    this.m_connection = wrappedConnection;
-                }
-
-                /// <summary>
-                /// Dispose
-                /// </summary>
-                public void Dispose()
-                {
-                    this.m_connection.Close();
-                    this.m_connection.Dispose();
-                    SQLiteConnectionManager.Current.UnregisterReadonlyConnection(this.m_connection);
-                }
-            }
-
-            /// <summary>
-            /// Fakes a lock on the database
-            /// </summary>
-            /// <returns></returns>
-            public IDisposable Lock()
-            {
-                return new SQLiteConnectionWrapperLock(this);
             }
         }
 
         /// <summary>
         /// Un-register a readonly connection
         /// </summary>
-        private void UnregisterReadonlyConnection(SQLiteConnectionWrapper conn)
+        internal void RegisterReadonlyConnection(ReadonlySQLiteConnection conn)
         {
+            List<LockableSQLiteConnection> connections = this.GetOrRegisterConnections(conn.DatabasePath);
+
+            // Are there other connections that this thread owns?
+            if (!connections.Any(o => Monitor.IsEntered(o))) // then we must adhere to traffic jams
+            {
+                var mre = this.GetOrRegisterResetEvent(conn.DatabasePath);
+                mre.WaitOne();
+                this.RegisterConnection(conn);
+
+            }
+        }
+
+        /// <summary>
+        /// Register connection
+        /// </summary>
+        private void RegisterConnection(LockableSQLiteConnection conn)
+        {
+            List<LockableSQLiteConnection> connections = this.GetOrRegisterConnections(conn.DatabasePath);
             lock (s_lockObject)
-                this.m_readonlyConnections.Remove(conn);
+            {
+                connections.Add(conn);
+                this.m_connectionPool.Remove(conn); // Just in-case
+                // Lock this connection so I know if I can bypass later
+                Monitor.Enter(conn);
+
+                this.m_tracer.TraceVerbose("++ {0} ({1})", conn.DatabasePath, connections.Count);
+            }
+        }
+
+        /// <summary>
+        /// Gets or registers a connection pool
+        /// </summary>
+        private List<LockableSQLiteConnection> GetOrRegisterConnections(String databasePath)
+        {
+            List<LockableSQLiteConnection> retVal = null;
+            if (!this.m_readonlyConnections.TryGetValue(databasePath, out retVal))
+            {
+                retVal = new List<LockableSQLiteConnection>();
+                lock (s_lockObject)
+                    if (!this.m_readonlyConnections.ContainsKey(databasePath))
+                        this.m_readonlyConnections.Add(databasePath, retVal);
+                    else
+                        retVal = this.m_readonlyConnections[databasePath];
+            }
+            return retVal;
+        }
+
+        /// <summary>
+        /// Un-register a readonly connection
+        /// </summary>
+        internal void UnregisterWriteConnection(WriteableSQLiteConnection conn)
+        {
+            var mre = this.GetOrRegisterResetEvent(conn.DatabasePath);
+            mre.Set();
+            this.UnregisterConnection(conn);
+        }
+
+        /// <summary>
+        /// Un-register a readonly connection
+        /// </summary>
+        internal void RegisterWriteConnection(WriteableSQLiteConnection conn)
+        {
+            var mre = this.GetOrRegisterResetEvent(conn.DatabasePath);
+            var connections = this.GetOrRegisterConnections(conn.DatabasePath);
+            mre.Reset();
+            // Wait for readonly connections to go to 0
+            while (connections.Count(o=>!Monitor.IsEntered(o)) > 0)
+                Task.Delay(100).Wait();
+
+            if(connections.Count == 0)
+                this.RegisterConnection(conn);
+
+        }
+
+        /// <summary>
+        /// Gets or sets the reset event for the particular database
+        /// </summary>
+        private ManualResetEvent GetOrRegisterResetEvent(string databasePath)
+        {
+            ManualResetEvent retVal = null;
+            if (!this.m_connections.TryGetValue(databasePath, out retVal))
+            {
+                retVal = new ManualResetEvent(true);
+                lock (s_lockObject)
+                    if (!this.m_connections.ContainsKey(databasePath))
+                        this.m_connections.Add(databasePath, retVal);
+                    else
+                        retVal = this.m_connections[databasePath];
+            }
+            return retVal;
         }
 
         // connections
-        private Dictionary<String, SQLiteConnectionWithLock> m_connections = new Dictionary<string, SQLiteConnectionWithLock>();
+        private Dictionary<String, ManualResetEvent> m_connections = new Dictionary<string, ManualResetEvent>();
 
         // Readonly connections
-        private List<SQLiteConnectionWrapper> m_readonlyConnections = new List<SQLiteConnectionWrapper>();
-        private ManualResetEvent m_readonlyConnectionMre = new ManualResetEvent(true);
+        private Dictionary<String, List<LockableSQLiteConnection>> m_readonlyConnections = new Dictionary<string, List<LockableSQLiteConnection>>();
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(SQLiteConnectionManager));
@@ -166,84 +237,104 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// <summary>
         /// Get a readonly connection
         /// </summary>
-        public SQLiteConnectionWithLock GetReadonlyConnection(String dataSource)
+        public LockableSQLiteConnection GetReadonlyConnection(String dataSource)
         {
-            return this.GetConnection(dataSource);
-            /*
+            //return this.GetConnection(dataSource);
+
             if (!this.IsRunning)
                 throw new InvalidOperationException("Cannot get connection before daemon is started");
-            this.m_readonlyConnectionMre.WaitOne(); // ask if we're allowed to create new threads
 
+            // Are there any connections that are open by this source and thread?
             try
             {
-                lock (s_lockObject)
-                {
-                    ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
-                    var retVal = new SQLiteConnectionWrapper(platform, dataSource, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.FullMutex);
-                    this.m_readonlyConnections.Add(retVal);
-                    this.m_tracer.TraceInfo("Readonly connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
+                var retVal = this.GetOrCreatePooledConnection(dataSource, true);
+                this.m_tracer.TraceInfo("Readonly connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
+                
 #if DEBUG_SQL
                 conn.TraceListener = new TracerTraceListener();
 #endif
-                    return retVal;
-                }
+                return retVal;
             }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error getting connection: {0}", e);
                 throw;
             }
-            */
+
+        }
+
+        /// <summary>
+        /// Get or create a pooled connection
+        /// </summary>
+        private LockableSQLiteConnection GetOrCreatePooledConnection(string dataSource, bool isReadonly)
+        {
+            // First is there a connection already?
+            var connections = this.GetOrRegisterConnections(dataSource);
+            var conn = connections.FirstOrDefault(o => Monitor.IsEntered(o));
+            if (conn != null) return conn;
+
+            // Next is there a pooled connection that we can take off?
+            if (isReadonly)
+            {
+                var mre = this.GetOrRegisterResetEvent(dataSource);
+                mre.WaitOne();
+            }
+
+            ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
+            
+            lock(s_lockObject)
+            {
+                LockableSQLiteConnection retVal = null;
+                if (isReadonly)
+                    retVal = this.m_connectionPool.OfType<ReadonlySQLiteConnection>().FirstOrDefault(o => o.DatabasePath == dataSource);
+                else // Writeable connection can only have one in the pool so if it isn't there make sure it isn't in the current 
+                { 
+                    retVal = this.m_connectionPool.OfType<WriteableSQLiteConnection>().FirstOrDefault(o => o.DatabasePath == dataSource);
+                }
+
+                // Remove return value
+                if (retVal != null)
+                    this.m_connectionPool.Remove(retVal);
+                else if (isReadonly)
+                    retVal = new ReadonlySQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.FullMutex) { Persistent = true };
+                else
+                {
+                    // There aren't any open connections so we create one!
+                    retVal = connections.OfType<WriteableSQLiteConnection>().FirstOrDefault(o => o.DatabasePath == dataSource);
+                    if (retVal == null)
+                        retVal = new WriteableSQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex | SQLiteOpenFlags.Create) { Persistent = true };
+                    else // There is an active connection we should use it
+                        retVal.Persistent = true;
+                }
+                return retVal;
+            }
         }
 
         /// <summary>
         /// Get connection to the datafile
         /// </summary>
-        public SQLiteConnectionWithLock GetConnection(String dataSource)
+        public LockableSQLiteConnection GetConnection(String dataSource)
         {
-            SQLiteConnectionWithLock conn = null;
             if (!this.IsRunning)
                 throw new InvalidOperationException("Cannot get connection before daemon is started");
-
+            
             try
             {
-                if (!this.m_connections.TryGetValue(dataSource, out conn))
-                    lock (s_lockObject)
-                        if (!this.m_connections.TryGetValue(dataSource, out conn))
-                        {
-
-                            ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
-                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString(dataSource, true, openFlags: SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex));
-                            this.m_connections.Add(dataSource, conn);
-                            this.m_tracer.TraceInfo("Connection to {0} established, {1} active connections", dataSource, this.m_connections.Count);
+                ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
+                var retVal = this.GetOrCreatePooledConnection(dataSource, false);
+                this.m_tracer.TraceInfo("Write connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
 #if DEBUG_SQL
                 conn.TraceListener = new TracerTraceListener();
 #endif
-                        }
-                return conn;
+                return retVal;
             }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error getting connection: {0}", e);
-                if (conn != null)
-                    Monitor.Exit(conn);
                 throw;
             }
         }
 
-        /// <summary>
-        /// Close and remove connection
-        /// </summary>
-        public void Remove(SQLiteConnectionWithLock connection)
-        {
-            lock (s_lockObject)
-            {
-                var kvd = this.m_connections.FirstOrDefault(o => o.Value == connection);
-                this.m_connections.Remove(kvd.Key);
-                connection.Dispose();
-            }
-
-        }
 
         /// <summary>
         /// Start the connection manager
@@ -265,13 +356,18 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         {
             this.Stopping?.Invoke(this, EventArgs.Empty);
 
-            // disconnect all 
-            foreach (var itm in this.m_connections)
+            // Wait for all write connections to finish up
+            foreach (var mre in this.m_connections)
+                mre.Value.WaitOne();
+
+            // Close all readonly connections
+            foreach (var itm in this.m_readonlyConnections)
             {
-                this.m_tracer.TraceInfo("Closing connection {0}...", itm.Key);
-                using (itm.Value.Lock())
-                    itm.Value.Close();
+                this.m_tracer.TraceInfo("Waiting for connections to {0} to finish up...", itm.Key);
+                while (itm.Value.Count > 0)
+                    Task.Delay(100).Wait();
             }
+
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;
         }
@@ -281,33 +377,27 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// </summary>
         public void Compact()
         {
-            // Let other threads know they can't open a r/o connection
+            // Let other threads know they can't open a r/o connection for each db
             try
             {
-                m_readonlyConnectionMre.Reset();
-                while (this.m_readonlyConnections.Count > 0) ;
-                lock (s_lockObject)
+
+                for (var i = 0; i < this.m_connections.Count; i++)
                 {
-                    for (int i = 0; i < this.m_connections.Count; i++)
+                    var itm = this.m_connections.ElementAt(i);
+                    using (var conn = this.GetConnection(itm.Key))
+                    using (conn.Lock())
                     {
-                        var itm = this.m_connections[this.m_connections.Keys.ElementAt(i)];
-                        using (itm.Lock())
-                        {
-                            ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 0) / (this.m_connections.Count * 3.0f));
-                            itm.Execute("VACUUM");
-                            ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 1) / (this.m_connections.Count * 3.0f));
-                            itm.Execute("REINDEX");
-                            ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 2) / (this.m_connections.Count * 3.0f));
-                            itm.Execute("ANALYZE");
-
-                        }
+                        ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 0) / (this.m_connections.Count * 3.0f));
+                        conn.Execute("VACUUM");
+                        ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 1) / (this.m_connections.Count * 3.0f));
+                        conn.Execute("REINDEX");
+                        ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 2) / (this.m_connections.Count * 3.0f));
+                        conn.Execute("ANALYZE");
                     }
-
                 }
             }
             finally
             {
-                this.m_readonlyConnectionMre.Set();
             }
         }
     }

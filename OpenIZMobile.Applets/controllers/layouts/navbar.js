@@ -40,10 +40,12 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
 
     // Session was expired on a background thread
     OpenIZ.Authentication.$sessionExpiredHandler = function () {
-        $rootScope.isLoading = true;
-        $rootScope.session = null;
-        $templateCache.removeAll();
-        $state.reload();
+        if ($rootScope.session) {
+            $rootScope.isLoading = true;
+            $rootScope.session = null;
+            $templateCache.removeAll();
+            $state.reload();
+        }
     }
 
     // Perform a logout of the session

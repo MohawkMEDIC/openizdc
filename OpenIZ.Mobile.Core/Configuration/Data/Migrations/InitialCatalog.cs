@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
         /// </summary>
         /// <param name="db"></param>
         /// <returns></returns>
-        public bool Install(SQLiteConnectionWithLock db, bool silent)
+        public bool Install(SQLiteConnection db, bool silent)
         {
             var tracer = Tracer.GetTracer(this.GetType());
             try

@@ -179,7 +179,7 @@ namespace OpenIZ.Mobile.Core.Data
                             data = this.Insert(context, data);
                             context.Connection.Commit();
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit)
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
                                 ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
                         }
                         catch (Exception e)
@@ -243,7 +243,7 @@ namespace OpenIZ.Mobile.Core.Data
                             context.Connection.Commit();
 
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit)
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
                                 ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
 
                         }
@@ -306,7 +306,7 @@ namespace OpenIZ.Mobile.Core.Data
                             context.Connection.Commit();
 
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit)
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
                                 ApplicationContext.Current.GetService<IDataCachingService>().Remove(itm.Key.Value);
 
                         }
@@ -341,11 +341,13 @@ namespace OpenIZ.Mobile.Core.Data
             if (key == Guid.Empty) return null;
             var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(key);
             if ((existing as IdentifiedData)?.LoadState <= LoadState.FullLoad) {
-                var conn = this.CreateConnection();
                 using (var context = this.CreateConnection())
                     try
                     {
-                        (existing as IdentifiedData).LoadAssociations(context);
+                        using (context.LockConnection())
+                        {
+                            (existing as IdentifiedData).LoadAssociations(context);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -443,7 +445,7 @@ namespace OpenIZ.Mobile.Core.Data
                     totalResults = postData.TotalResults;
 
                     // Remove from the cache
-                    foreach (var itm in context.CacheOnCommit)
+                    foreach (var itm in context.CacheOnCommit.AsParallel())
                         ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
                     return postData.Results;
@@ -559,7 +561,7 @@ namespace OpenIZ.Mobile.Core.Data
 
 
                     // Remove from the cache
-                    foreach (var itm in context.CacheOnCommit)
+                    foreach (var itm in context.CacheOnCommit.AsParallel())
                         ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
 
                     return postArgs.Results;

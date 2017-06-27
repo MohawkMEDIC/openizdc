@@ -1350,7 +1350,7 @@ var OpenIZ = OpenIZ || {
          */
         $sessionExpiredHandler : function() {
             window.location.reload();
-        }
+        },
         /** 
          * @summary Send a TFA secret
          * @method

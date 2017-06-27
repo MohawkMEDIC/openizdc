@@ -39,7 +39,10 @@
   <ItemGroup>
     <Compile Include="Configuration\Data\Migrations\InitialAuditCatalog.cs" />
     <Compile Include="DataModelExtensions.cs" />
+    <Compile Include="Data\Connection\LockableSQLiteConnection.cs" />
+    <Compile Include="Data\Connection\ReadonlySQLiteConnection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionExtensions.cs" />
+    <Compile Include="Data\Connection\WriteableSQLiteConnection.cs" />
     <Compile Include="Data\ILocalPersistenceService.cs" />
     <Compile Include="Data\LocalDataContext.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />

@@ -133,7 +133,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// Create a connection
 		/// </summary>
 		/// <returns>The connection.</returns>
-		private SQLiteConnectionWithLock CreateConnection()
+		private LockableSQLiteConnection CreateConnection()
 		{
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString (
 				ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection> ().MessageQueueConnectionStringName

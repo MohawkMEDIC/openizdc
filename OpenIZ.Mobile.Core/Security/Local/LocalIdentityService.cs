@@ -366,7 +366,7 @@ namespace OpenIZ.Mobile.Core.Security
         /// Creates a connection to the local database
         /// </summary>
         /// <returns>The connection.</returns>
-        private SQLiteConnectionWithLock CreateConnection()
+        private LockableSQLiteConnection CreateConnection()
         {
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
         }

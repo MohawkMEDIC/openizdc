@@ -294,9 +294,18 @@ namespace OpenIZ.Mobile.Core.Security
             if (ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().OnlySubscribedFacilities)
             {
                 var subFacl = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities;
-                var isInSubFacility = this.m_entity?.Relationships.Any(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation && subFacl.Contains(o.TargetEntityKey.ToString())) == true;
+                var isInSubFacility = this.m_entity?.LoadCollection<EntityRelationship>("Relationships").Any(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation && subFacl.Contains(o.TargetEntityKey.ToString())) == true;
                 if (!isInSubFacility && ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
+                {
+                    if (this.m_entity == null)
+                        this.m_tracer.TraceError("User facility check could not be done : entity null");
+                    else
+                        this.m_tracer.TraceError("User is in facility {0} but tablet only allows login from {1}",
+                            String.Join(",", this.m_entity?.LoadCollection<EntityRelationship>("Relationships").Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).Select(o => o.TargetEntityKey).ToArray()),
+                            String.Join(",", subFacl)
+                            );
                     throw new SecurityException(Strings.locale_loginFromUnsubscribedFacility);
+                }
             }
 
         }

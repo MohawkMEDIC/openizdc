@@ -67,63 +67,63 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Bundle Insert(Bundle data)
         {
             // first, are we just doing a normal insert?
-            if (data.Item.Count <= 15000)
+            //if (data.Item.Count <= 15000)
                 return base.Insert(data);
-            else
-            { // It is cheaper to open a mem-db and let other threads access the main db for the time being
+            //else
+            //{ // It is cheaper to open a mem-db and let other threads access the main db for the time being
 
-                base.FireInserting(new DataPersistencePreEventArgs<Bundle>(data));
+            //    base.FireInserting(new DataPersistencePreEventArgs<Bundle>(data));
 
-                // Memory connection
-                using (var memConnection = new SQLiteConnectionWithLock(ApplicationContext.Current.GetService<ISQLitePlatform>(), new SQLiteConnectionString(":memory:", true)))
-                {
-                    try
-                    {
-                        // We want to apply the initial schema
-                        new OpenIZ.Mobile.Core.Configuration.Data.Migrations.InitialCatalog().Install(memConnection, true);
+            //    // Memory connection
+            //    using (var memConnection = new SQLiteConnectionWithLock(ApplicationContext.Current.GetService<ISQLitePlatform>(), new SQLiteConnectionString(":memory:", true)))
+            //    {
+            //        try
+            //        {
+            //            // We want to apply the initial schema
+            //            new OpenIZ.Mobile.Core.Configuration.Data.Migrations.InitialCatalog().Install(memConnection, true);
 
-                        // We insert in the memcontext now
-                        using (var memContext = new LocalDataContext(memConnection))
-                            this.InsertInternal(memContext, data);
+            //            // We insert in the memcontext now
+            //            using (var memContext = new LocalDataContext(memConnection))
+            //                this.InsertInternal(memContext, data);
 
-                        var columnMapping = memConnection.TableMappings.Where(o => o.MappedType.Namespace.StartsWith("OpenIZ")).ToList();
+            //            var columnMapping = memConnection.TableMappings.Where(o => o.MappedType.Namespace.StartsWith("OpenIZ")).ToList();
 
-                        // Now we attach our local file based DB by requesting a lock so nobody else touches it!
-                        using (var fileContext = this.CreateConnection())
-                        using (fileContext.LockConnection())
-                        {
-                            memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db");
+            //            // Now we attach our local file based DB by requesting a lock so nobody else touches it!
+            //            using (var fileContext = this.CreateConnection())
+            //            using (fileContext.LockConnection())
+            //            {
+            //                memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db");
 
-                            try
-                            {
-                                memConnection.BeginTransaction();
+            //                try
+            //                {
+            //                    memConnection.BeginTransaction();
 
-                                // Copy copy!!!
-                                foreach (var tbl in columnMapping)
-                                {
-                                    // insert new first
-                                    memConnection.Execute($"INSERT OR REPLACE INTO file_db.{tbl.TableName} SELECT * FROM {tbl.TableName}");
-                                }
+            //                    // Copy copy!!!
+            //                    foreach (var tbl in columnMapping)
+            //                    {
+            //                        // insert new first
+            //                        memConnection.Execute($"INSERT OR REPLACE INTO file_db.{tbl.TableName} SELECT * FROM {tbl.TableName}");
+            //                    }
 
-                                memConnection.Commit();
-                            }
-                            catch
-                            {
-                                memConnection.Rollback();
-                                throw;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceError("Error inserting bundle: {0}", e);
-                        throw new LocalPersistenceException(Synchronization.Model.DataOperationType.Insert, data, e);
-                    }
-                }
+            //                    memConnection.Commit();
+            //                }
+            //                catch
+            //                {
+            //                    memConnection.Rollback();
+            //                    throw;
+            //                }
+            //            }
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            this.m_tracer.TraceError("Error inserting bundle: {0}", e);
+            //            throw new LocalPersistenceException(Synchronization.Model.DataOperationType.Insert, data, e);
+            //        }
+            //    }
 
-                base.FireInserted(new DataPersistenceEventArgs<Bundle>(data));
-                return data;
-            }
+            //    base.FireInserted(new DataPersistenceEventArgs<Bundle>(data));
+            //    return data;
+            //}
         }
 
         /// <summary>
