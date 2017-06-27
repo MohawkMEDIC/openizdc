@@ -93,6 +93,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 #else
             this.Settings.CacheMode = CacheModes.Default;
 #endif
+
+            this.ClearCache(true);
             WebView.SetWebContentsDebuggingEnabled(true);
             this.Settings.JavaScriptEnabled = true;
             this.Settings.BlockNetworkLoads = false;

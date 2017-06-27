@@ -256,7 +256,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 // Copy
                 if (!Directory.Exists(appletSection.AppletDirectory))
                     Directory.CreateDirectory(appletSection.AppletDirectory);
-
+                
                 if (File.Exists(appletPath))
                 {
                     if (!isUpgrade)
@@ -284,9 +284,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 // Now export all the binary files out
                 var assetDirectory = Path.Combine(appletSection.AppletDirectory, "assets", mfst.Info.Id);
                 if (!Directory.Exists(assetDirectory))
-                {
                     Directory.CreateDirectory(assetDirectory);
-                }
+                else
+                    Directory.Delete(assetDirectory, true);
 
                 for (int i = 0; i < mfst.Assets.Count; i++)
                 {
