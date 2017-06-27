@@ -2370,7 +2370,10 @@ var OpenIZ = OpenIZ || {
          * @returns The ISO language code of the current UI 
          */
         getLocale: function () {
-            return OpenIZApplicationService.GetLocale(); //(navigator.language || navigator.userLanguage).substring(0, 2);
+            if (!OpenIZ.Localization.$locale)
+                OpenIZ.Localization.$locale = OpenIZApplicationService.GetLocale();
+
+            return OpenIZ.Localization.$locale; //(navigator.language || navigator.userLanguage).substring(0, 2);
         },
         /**
          * @summary Sets the current user interface locale
@@ -2382,6 +2385,7 @@ var OpenIZ = OpenIZ || {
         setLocale: function (locale) {
             if (OpenIZApplicationService.SetLocale !== undefined)
                 return OpenIZApplicationService.SetLocale(locale);
+            delete (OpenIZ.Localization.$locale);
         },
         /**
          * @memberof OpenIZ.Localization

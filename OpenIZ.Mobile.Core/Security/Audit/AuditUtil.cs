@@ -302,9 +302,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 NetworkAccessPointId = configService.DeviceName,
                 UserName = principal?.Identity?.Name ?? identityName,
                 UserIsRequestor = true,
-                ActorRoleCode = principal == null ? null : ApplicationContext.Current.GetService<IRoleProviderService>()?.GetAllRoles(principal.Identity.Name).Select(o=>
-                    new AuditCode(o, null)
-                ).ToList()
+                ActorRoleCode = (principal as ClaimsPrincipal)?.Claims.Where(o=>o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o=>new AuditCode(o.Value, "OizRoles")).ToList()
             });
             //AddDeviceActor(audit);
 
