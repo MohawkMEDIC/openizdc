@@ -398,6 +398,7 @@ angular.module('openiz', [])
                                 filter[searchProperty] = "~" + params.term;
                                 filter["_count"] = 5;
                                 filter["_offset"] = 0;
+                                filter["_viewModel"] = "min";
                                 return filter;
                             },
                             processResults: function (data, params) {
@@ -493,9 +494,13 @@ angular.module('openiz', [])
                                 var scope = result;
                                 return eval(displayString);
                             }
-                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord)
-                                return "<div class='label label-default'>" +
+                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord) {
+                                retVal = "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                                if (result.address)
+                                    retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(result.address) + ")</small>";
+                                return retVal;
+                            }
                             else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned)
                                 return "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.Assigned);

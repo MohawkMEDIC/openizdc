@@ -3385,8 +3385,6 @@ $.ajaxSetup({
             data.setRequestHeader("Authorization", "BASIC " +
                 btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
         }
-        else if (OpenIZ.Authentication.$session)
-            data.setRequestHeader("Authorization", "BEARER " + OpenIZ.Authentication.$session.id);
         if (!OpenIZ.App.magic)
             OpenIZ.App.magic = OpenIZApplicationService.GetMagic();
         data.setRequestHeader("X-OIZMagic", OpenIZ.App.magic);

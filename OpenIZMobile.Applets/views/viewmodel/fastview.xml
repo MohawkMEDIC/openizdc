@@ -179,6 +179,10 @@
         <property name="relationshipType"/>
         <property name="source"/>
         <property name="target"/>
+        <property name="targetModel" behavior="always">
+          <property name="name" behavior="always" ref="EntityName"/>
+          <property name="telecom" behavior="always"/>
+        </property>
       </property>
     </property>
     <property name="participation" all="false">

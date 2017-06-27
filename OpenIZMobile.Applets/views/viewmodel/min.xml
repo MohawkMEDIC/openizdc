@@ -243,7 +243,10 @@
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
-    <property name="typeConceptModel" behavior="always"/>
+    <property name="typeConceptModel" behavior="always">
+      <property name="mnemonic"/>
+      <property name="name" behavior="always" ref="ConceptName"/>
+    </property>
     <property name="relationship" all="true" behavior="always">
       <property name="*" all="true">
         <property name="source" behavior="never"/>
