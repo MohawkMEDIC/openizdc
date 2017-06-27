@@ -276,7 +276,6 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
         $rootScope.OpenIZ = OpenIZ;
     });
 
-
 /**
  * @summary The queryUrlParameterService is used to get url parameters.
  *
@@ -336,8 +335,22 @@ layoutApp.service('uiHelperService', [function () {
         }
     }
 
+    function initializePopups(direction) {
+        $('[data-toggle="popover"]').popover({
+            placement: direction
+        });
+
+        $('[data-toggle="popover"]').on('shown.bs.popover', function (event) {
+            var offset = $('div.popover').offset().top - $(document).scrollTop();
+            if (offset < 10) {
+                $('div.popover').css('top', parseInt($('div.popover').css('top')) + 10 - offset);
+            }
+        });
+    }
+
     var uiHelperService = {
-        setDropdownPosition: setDropdownPosition
+        setDropdownPosition: setDropdownPosition,
+        initializePopups: initializePopups
     }
 
     return uiHelperService;
