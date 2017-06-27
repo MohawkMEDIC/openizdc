@@ -262,7 +262,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 patient.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.IncidentalServiceDeliveryLocation, Guid.Parse(facilityId)));
                 imsiIntegrationService.Update(patient);
             }
-
+            var personBundle = new Bundle();
+            foreach( var rel in patient.Relationships)
+            {
+                var person = imsiIntegrationService.Get<Entity>(rel.TargetEntityKey.Value, null);
+                if(person != null && person.Type == "Person")
+                {
+                    personBundle.Add(person as Person);
+                }
+            }
+            if(personBundle.Item.Count > 0)
+            {
+                pdp.Insert(personBundle);
+            }
             int tr = 1,
                 ofs = 0;
             Guid qid = Guid.NewGuid();

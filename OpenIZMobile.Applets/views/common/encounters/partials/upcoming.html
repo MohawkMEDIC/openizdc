@@ -82,7 +82,7 @@
     <div class="container-fluid" ng-if="appointments &amp;&amp; appointments.length > 0 &amp;&amp; !isLoading">
         <div class="row" ng-repeat="apt in appointments track by $index">
             <div class="col-sm-12 panel panel-success" ng-if="apt.relationship.HasComponent">
-                <div class="margin-top-10">
+                <div>
                     <div class="row encounter-group-title panel-heading" data-toggle="collagpse" data-target="appointment-{{$index}}">
                         <label class="col-xs-12 control-label"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> {{ 'locale.encounters.schedule.recommenddate' | i18n }} - {{ apt.startTime | datePrecisionFormat:'D' }}</label>
                     </div>

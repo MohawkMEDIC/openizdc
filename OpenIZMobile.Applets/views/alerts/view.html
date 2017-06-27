@@ -37,7 +37,7 @@
                      ui-sref="org-openiz-core.alert({alertId: message.id})"
                      ng-class="{'alerts-tile-selected' : message.id == selectedMessageID}">
                     <div class="col-xs-2 alerts-icon-container">
-                        <img class="alerts-icon" src="/org.openiz.core/img/msg/{{message.flags}}.png" />
+                        <img class="alerts-icon" src="/org.openiz.core/img/msg/{{::message.flags}}.png" />
                     </div>
                     <div class="col-xs-10">
                         <div class="subject ellipsis">{{message.subject}}</div>
@@ -74,7 +74,7 @@
 
                     <div class="row">
                         <div class="col-xs-1 message-content-icon">
-                            <img class="navbar-icon" src="/org.openiz.core/img/msg/{{alert.flags}}.png" />
+                            <img class="navbar-icon" src="/org.openiz.core/img/msg/{{::alert.flags}}.png" />
                         </div>
                         <div class="col-xs-11">
                             <h3 class="no-margin-bottom" style="font-size:20px;">{{ alert.subject }}</h3>
