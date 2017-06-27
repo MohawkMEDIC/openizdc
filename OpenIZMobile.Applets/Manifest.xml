@@ -320,7 +320,7 @@
     <string key="locale.settings.proxyAddress.help">URL the proxy runs through</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
 
-    <string key="locale.settings.subscribe">Facility Subscription(s)</string>
+    <string key="locale.settings.subscribe">Facility Subscription</string>
     <string key="locale.settings.subscribe.help">This setting controls the subscribed facility for this tablet</string>
     <string key="locale.settings.subscribe.error.required">Please subscribe to a facility</string>
 
@@ -870,7 +870,7 @@
     <string key="locale.settings.status.joinRealm">Maombi yako sasa alijiunga uwanja huu</string>
     <string key="locale.settings.status.duplicateName">Jina hili tayari kusajiliwa kifaa. Je, unataka kubadilisha kifaa usajili kwenye kompyuta? (Kama ni hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
 
-    <string key="locale.settings.subscribe">kituo michango</string>
+    <string key="locale.settings.subscribe">Usajili wa Kituo</string>
     <string key="locale.settings.subscribe.help">chaguzi Hii utapata mabadiliko kituo ambayo imekuwa kusajiliwa kwenye kompyuta hii</string>
     <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
     <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu tu katika vituo kusajiliwa kujiunga</string>
