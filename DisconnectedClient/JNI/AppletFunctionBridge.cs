@@ -201,7 +201,8 @@ namespace DisconnectedClient.JNI
         /// <summary>Close the applet</summary>
         public void Close()
         {
-            this.m_context.Close();
+            Action doClose = () => { this.m_context.Close(); };
+            this.m_context.Invoke(doClose);
         }
 
         /// <summary>

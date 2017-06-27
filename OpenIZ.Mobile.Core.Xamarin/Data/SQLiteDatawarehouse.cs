@@ -445,7 +445,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                 {
                     parm.DbType = System.Data.DbType.Int64;
                     if (itm is DateTime)
-                        parm.Value = ((DateTime)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
+                    {
+                        DateTime dt = (DateTime)itm;
+                        switch(dt.Kind)
+                        {
+                            case DateTimeKind.Local:
+                                parm.Value = ((DateTime)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
+                                break;
+                            default:
+                                parm.Value = ((DateTime)itm).Subtract(this.m_epoch).TotalSeconds;
+                                break;
+                        }
+                    }
                     else
                         parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
                 }
