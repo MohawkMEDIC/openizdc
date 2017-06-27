@@ -121,7 +121,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
                     amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), e.Progress);
-                    amiClient.Client.Description.Endpoint[0].Timeout = 1000;
+                    amiClient.Client.Description.Endpoint[0].Timeout = 2000;
                     // Fetch the applet package
                     using (var ms = amiClient.DownloadApplet(packageId))
                     {
@@ -158,6 +158,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                     amiClient.Client.Description.Endpoint[0].Timeout = 1000;
                     if (amiClient.Ping())
                     {
+                        amiClient.Client.Description.Endpoint[0].Timeout = 5000;
                         foreach (var i in amiClient.GetApplets().CollectionItem)
                         {
                             var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletInfo.Id);

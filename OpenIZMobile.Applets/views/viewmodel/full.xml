@@ -310,8 +310,11 @@
     <property name="protocol" behavior="always"/>
     <property name="siteModel" behavior="always"  ref="Concept"/>
     <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
-    <property name="relationship" all="true" behavior="always">
-      <property name="*" ref="ActRelationship"/>
+    <property name="relationship" behavior="always" >
+      <property name="*" ref="ActRelationship">
+        <property name="target"/>
+        <property name="targetModel"/>
+      </property>
     </property>
     <property name="participation" all="true" behavior="always">
       <property name="RecordTarget" behavior="never">

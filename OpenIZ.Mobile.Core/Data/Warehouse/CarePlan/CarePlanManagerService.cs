@@ -175,7 +175,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                                     queryId = Guid.NewGuid();
                                     tr = 1;
                                     ofs = 0;
-                                    var syncFilter = patientSync?.LastSync ?? DateTime.MinValue;
+                                    var syncFilter = patientSync?.LastSync ?? new DateTime(1900, 01, 01);
                                     while (ofs < tr)
                                     {
                                         ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
