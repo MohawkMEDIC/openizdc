@@ -91,6 +91,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 if ($rootScope.confirmNavigation && !hasSavedState && !$rootScope.confirmNavigation(event, fromState)) {
                     event.preventDefault();
                     $state.go(fromState.name);
+                    $rootScope.isLoading = false;
                 }
                 else {
                     if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
