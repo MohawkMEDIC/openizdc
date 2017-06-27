@@ -1346,6 +1346,12 @@ var OpenIZ = OpenIZ || {
          */
         $elevationCredentials: {},
         /** 
+         * @summary HAndler for when the session is expired
+         */
+        $sessionExpiredHandler : function() {
+            window.location.reload();
+        }
+        /** 
          * @summary Send a TFA secret
          * @method
          * @memberof OpenIZ.Authentication
@@ -3401,6 +3407,7 @@ $(document).ajaxError(function (e, data, setting, err) {
         if (OpenIZ.Authentication.$session && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined && (OpenIZ.Authentication.$session && OpenIZ.Authentication.$session.exp < new Date() || document.cookie == "") &&
             window.location.hash != "/corelogin") {
             console.error("Unauthorized Access:> " + e);
+            OpenIZ.Authentication.$sessionExpiredHandler();
         }
         else if(OpenIZ.Authentication.$elevationCredentials.continueWith) // The session is active
             OpenIZ.Authentication.showElevationDialog();

@@ -179,7 +179,7 @@ namespace OpenIZ.Mobile.Core.Data
                             data = this.Insert(context, data);
                             context.Connection.Commit();
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit.AsParallel())
+                            foreach (var itm in context.CacheOnCommit)
                                 ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
                         }
                         catch (Exception e)
@@ -243,7 +243,7 @@ namespace OpenIZ.Mobile.Core.Data
                             context.Connection.Commit();
 
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit.AsParallel())
+                            foreach (var itm in context.CacheOnCommit)
                                 ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
 
                         }
@@ -306,7 +306,7 @@ namespace OpenIZ.Mobile.Core.Data
                             context.Connection.Commit();
 
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit.AsParallel())
+                            foreach (var itm in context.CacheOnCommit)
                                 ApplicationContext.Current.GetService<IDataCachingService>().Remove(itm.Key.Value);
 
                         }
@@ -443,7 +443,7 @@ namespace OpenIZ.Mobile.Core.Data
                     totalResults = postData.TotalResults;
 
                     // Remove from the cache
-                    foreach (var itm in context.CacheOnCommit.AsParallel())
+                    foreach (var itm in context.CacheOnCommit)
                         ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
                     return postData.Results;
@@ -559,7 +559,7 @@ namespace OpenIZ.Mobile.Core.Data
 
 
                     // Remove from the cache
-                    foreach (var itm in context.CacheOnCommit.AsParallel())
+                    foreach (var itm in context.CacheOnCommit)
                         ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
 
                     return postArgs.Results;
