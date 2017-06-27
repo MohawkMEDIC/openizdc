@@ -42,6 +42,8 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
         { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' },
         { title: OpenIZ.Localization.getString('locale.legend.appointment'), color: '#31708f', icon: 'glyphicon-calendar' }
     ];
+
+    $scope.longestVaccineAdministration = 0;
     
     // for patient dob
     scope.$watch('encounters', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
@@ -120,15 +122,15 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
                             ) {
                             var existing = scope.display._vaccineAdministrations[antigenId][model.doseSequence];
 
-                            if (existing && model.creationTime > existing.creationTime || !existing)
+                            if (existing && model.creationTime > existing.creationTime || !existing) {
                                 scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
+                                if ((model.doseSequence + 1) > $scope.longestVaccineAdministration) {
+                                    $scope.longestVaccineAdministration = model.doseSequence + 1;
+                                }
+                            }
                         }
                     }
-
-                    ;;
-
                 }
-
             }
         }
         else if (newValue == null)

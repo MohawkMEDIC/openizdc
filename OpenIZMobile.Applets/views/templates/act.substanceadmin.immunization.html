@@ -160,7 +160,7 @@
                 <div ng-if="$index % 2 == 1" class="clearfix"></div>
             </div>
             <div class="col-xs-2" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                <a class="btn btn-lg btn-info margin-top-10" ng-click="makeOverdue(act)" id="makeOvd_{{act.targetModel.id}}">
+                <a class="btn btn-lg btn-info margin-top-10" ng-click="makeOverdue(act, '#enable_' + act.targetModel.id)" id="makeOvd_{{act.targetModel.id}}">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                         <span class="hidden-xs">{{ 'locale.action.backEnter' | i18n }}</span>
