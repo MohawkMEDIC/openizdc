@@ -60,6 +60,7 @@ Source: ".\bin\x86\SignedRelease\libcef.dll"; DestDir: "{app}"; Flags: ignorever
 Source: ".\bin\x86\SignedRelease\libEGL.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\libGLESv2.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\MARC.HI.EHRS.SVC.Auditing.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\MohawkCollege.Util.Console.Parameters.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\Mono.Data.Sqlite.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\natives_blob.bin"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -93,7 +94,7 @@ Name: "{commonprograms}\Open Immunize\{#MyAppName}"; Filename: "{app}\{#MyAppExe
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Parameters: "--reset"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 

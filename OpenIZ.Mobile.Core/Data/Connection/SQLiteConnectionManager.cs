@@ -400,7 +400,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 for (var i = 0; i < this.m_connections.Count; i++)
                 {
                     var itm = this.m_connections.ElementAt(i);
-                    using (var conn = this.GetConnection(itm.Key))
+                    var conn = this.GetConnection(itm.Key);
                     using (conn.Lock())
                     {
                         ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 0) / (this.m_connections.Count * 3.0f));
@@ -411,6 +411,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                         conn.Execute("ANALYZE");
                     }
                 }
+                
             }
             finally
             {
