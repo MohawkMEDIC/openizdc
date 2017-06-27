@@ -43,6 +43,9 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         // Connection pool
         private List<LockableSQLiteConnection> m_connectionPool = new List<LockableSQLiteConnection>();
 
+        // Write connections
+        private Dictionary<String, WriteableSQLiteConnection> m_writeConnections = new Dictionary<string, WriteableSQLiteConnection>();
+
         /// <summary>
         /// Un-register a readonly connection
         /// </summary>
@@ -79,12 +82,16 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             List<LockableSQLiteConnection> connections = this.GetOrRegisterConnections(conn.DatabasePath);
 
             // Are there other connections that this thread owns?
-            if (!connections.Any(o => Monitor.IsEntered(o))) // then we must adhere to traffic jams
+            bool skipTrafficStop = false;
+            WriteableSQLiteConnection writerConnection = null;
+            lock (s_lockObject)
+                skipTrafficStop = this.m_writeConnections.TryGetValue(conn.DatabasePath, out writerConnection) && Monitor.IsEntered(writerConnection) ||
+                    connections.Any(o => Monitor.IsEntered(o));
+            if (!skipTrafficStop) // then we must adhere to traffic jams
             {
                 var mre = this.GetOrRegisterResetEvent(conn.DatabasePath);
                 mre.WaitOne();
                 this.RegisterConnection(conn);
-
             }
         }
 
@@ -130,7 +137,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         {
             var mre = this.GetOrRegisterResetEvent(conn.DatabasePath);
             mre.Set();
-            this.UnregisterConnection(conn);
+           
         }
 
         /// <summary>
@@ -142,11 +149,8 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             var connections = this.GetOrRegisterConnections(conn.DatabasePath);
             mre.Reset();
             // Wait for readonly connections to go to 0
-            while (connections.Count(o=>!Monitor.IsEntered(o)) > 0)
+            while (connections.Count > 0)
                 Task.Delay(100).Wait();
-
-            if(connections.Count == 0)
-                this.RegisterConnection(conn);
 
         }
 
@@ -270,16 +274,16 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         {
             // First is there a connection already?
             var connections = this.GetOrRegisterConnections(dataSource);
-            var conn = connections.FirstOrDefault(o => Monitor.IsEntered(o));
-            if (conn != null) return conn;
-
-            // Next is there a pooled connection that we can take off?
-            if (isReadonly)
+            WriteableSQLiteConnection writeConnection = null;
+            lock (s_lockObject)
             {
-                var mre = this.GetOrRegisterResetEvent(dataSource);
-                mre.WaitOne();
+                if (this.m_writeConnections.TryGetValue(dataSource, out writeConnection))
+                    if (Monitor.IsEntered(writeConnection)) return writeConnection;
+                var conn = connections.FirstOrDefault(o => Monitor.IsEntered(o));
+                if (conn != null) return conn;
             }
 
+           
             ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
             
             lock(s_lockObject)
@@ -287,9 +291,15 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 LockableSQLiteConnection retVal = null;
                 if (isReadonly)
                     retVal = this.m_connectionPool.OfType<ReadonlySQLiteConnection>().FirstOrDefault(o => o.DatabasePath == dataSource);
-                else // Writeable connection can only have one in the pool so if it isn't there make sure it isn't in the current 
-                { 
-                    retVal = this.m_connectionPool.OfType<WriteableSQLiteConnection>().FirstOrDefault(o => o.DatabasePath == dataSource);
+                else {
+
+                    if (!this.m_writeConnections.TryGetValue(dataSource, out writeConnection)) // Writeable connection can only have one in the pool so if it isn't there make sure it isn't in the current 
+                    {
+                        writeConnection = new WriteableSQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex | SQLiteOpenFlags.Create) { Persistent = true };
+                        this.m_writeConnections.Add(dataSource, writeConnection);
+                    }
+
+                    retVal = writeConnection;
                 }
 
                 // Remove return value
@@ -298,14 +308,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 else if (isReadonly)
                     retVal = new ReadonlySQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.FullMutex) { Persistent = true };
                 else
-                {
-                    // There aren't any open connections so we create one!
-                    retVal = connections.OfType<WriteableSQLiteConnection>().FirstOrDefault(o => o.DatabasePath == dataSource);
-                    if (retVal == null)
-                        retVal = new WriteableSQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex | SQLiteOpenFlags.Create) { Persistent = true };
-                    else // There is an active connection we should use it
-                        retVal.Persistent = true;
-                }
+                    throw new InvalidOperationException("Should not be here");
                 return retVal;
             }
         }
@@ -358,7 +361,10 @@ namespace OpenIZ.Mobile.Core.Data.Connection
 
             // Wait for all write connections to finish up
             foreach (var mre in this.m_connections)
+            {
                 mre.Value.WaitOne();
+                mre.Value.Reset();
+            }
 
             // Close all readonly connections
             foreach (var itm in this.m_readonlyConnections)
@@ -366,6 +372,16 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 this.m_tracer.TraceInfo("Waiting for connections to {0} to finish up...", itm.Key);
                 while (itm.Value.Count > 0)
                     Task.Delay(100).Wait();
+            }
+            foreach(var itm in this.m_connectionPool)
+            {
+                itm.Close();
+                itm.Dispose();
+            }
+            foreach (var itm in this.m_writeConnections)
+            {
+                itm.Value.Close();
+                itm.Value.Dispose();
             }
 
             this.Stopped?.Invoke(this, EventArgs.Empty);

@@ -18,5 +18,11 @@ namespace DisconnectedClient
         /// </summary>
         [Parameter("debug")]
         public bool Debug { get; set; }
+
+        /// <summary>
+        /// Reset configuration
+        /// </summary>
+        [Parameter("reset")]
+        public bool Reset { get; set; }
     }
 }

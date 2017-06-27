@@ -114,6 +114,8 @@ namespace OpenIZ.Mobile.Core.Data
         {
             if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value) && data.Key.HasValue)
                 this.m_cacheCommit.Add(data.Key.Value, data);
+            else if (data.Key.HasValue)
+                this.m_cacheCommit[data.Key.Value] = data;
         }
 
         /// <summary>

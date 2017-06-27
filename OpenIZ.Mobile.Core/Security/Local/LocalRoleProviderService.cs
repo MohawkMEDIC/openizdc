@@ -230,7 +230,7 @@ namespace OpenIZ.Mobile.Core.Security
             if (userName == null)
                 throw new ArgumentNullException(nameof(userName));
 
-            var conn = this.CreateConnection();
+            var conn = this.CreateReadonlyConnection();
             using (conn.Lock())
             {
                 return conn.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) INNER JOIN security_user ON (security_user.uuid = security_user_role.user_id) WHERE security_user.username = ?", userName)
@@ -262,6 +262,15 @@ namespace OpenIZ.Mobile.Core.Security
         private LockableSQLiteConnection CreateConnection()
         {
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
+        }
+
+        /// <summary>
+        /// Creates a connection to the local database
+        /// </summary>
+        /// <returns>The connection.</returns>
+        private LockableSQLiteConnection CreateReadonlyConnection()
+        {
+            return SQLiteConnectionManager.Current.GetReadonlyConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
         }
     }
 }

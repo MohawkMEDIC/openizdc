@@ -232,7 +232,7 @@ namespace DisconnectedClient
                     new TraceWriterConfiguration () {
                         Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, String.Format("..{1}{0}{1}log{1}{2}", "OpenIZDC", Path.DirectorySeparatorChar, "OpenIZ"))
                     }
                 }
             };

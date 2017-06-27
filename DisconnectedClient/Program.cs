@@ -37,6 +37,13 @@ namespace DisconnectedClient
             Program.Parameters = new ParameterParser<ConsoleParameters>().Parse(args);
             if (Program.Parameters.Debug)
                 Console.WriteLine("Will start in debug mode...");
+            if(Program.Parameters.Reset)
+            {
+                var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
+                var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
+                if (Directory.Exists(appData)) Directory.Delete(cData, true);
+                if (Directory.Exists(appData)) Directory.Delete(appData, true);
+            }
             String[] directory = {
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC"),
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC")

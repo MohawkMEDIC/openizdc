@@ -49,6 +49,10 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 }
 
                 Monitor.Enter(lockObject);
+
+                if(this.m_connection.m_lockCount == 0)
+                    Monitor.Enter(this.m_connection);
+
                 SQLiteConnectionManager.Current.RegisterWriteConnection(this.m_connection);
                 this.m_connection.m_lockCount++;
             }
@@ -67,10 +71,13 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                         this.m_connection.Dispose();
                     }
                     SQLiteConnectionManager.Current.UnregisterWriteConnection(this.m_connection);
+                    Monitor.Exit(this.m_connection);
                 }
 
                 var lockObject = m_lockBox[this.m_connection.DatabasePath];
                 Monitor.Exit(lockObject);
+                
+
             }
         }
 
