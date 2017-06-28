@@ -25,11 +25,11 @@ using Android.App;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle ("OpenIZ Disconnected Client")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("Open Immunize Disconnected Client Xamarin Android Version")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("Open IZ Community")]
+[assembly: AssemblyCompany ("Mohawk College of Applied Arts and Technology")]
+[assembly: AssemblyProduct ("Open Immunize")]
+[assembly: AssemblyCopyright ("(C) 2015-2017 Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -37,7 +37,7 @@ using Android.App;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("0.7.17.*")]
+[assembly: AssemblyVersion ("0.9.4.*")]
 [assembly: AssemblyInformationalVersion("Dalhousie")]
 
 // The following attributes are used to specify the signing key for the assembly,
