@@ -254,5 +254,4 @@
       copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
     </PreBuildEvent>
   </PropertyGroup>
-
 </Project>
