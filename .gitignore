@@ -57,3 +57,4 @@ Thumbs.db
 *.psess
 *.mdb
 /DisconnectedClient/dist/setup-openiz-disconnected-client.exe
+*.exe

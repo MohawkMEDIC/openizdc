@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
+#if !IE
 using CefSharp;
+#endif
 
 namespace DisconnectedClient
 {
+
+#if !IE
     /// <summary>
     /// Disconnected client request handler
     /// </summary>
@@ -86,4 +90,5 @@ namespace DisconnectedClient
             return false;
         }
     }
+#endif
 }

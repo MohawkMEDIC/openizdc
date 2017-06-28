@@ -21,6 +21,7 @@ using MohawkCollege.Util.Console.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +38,29 @@ namespace Minims
         /// Applet directory 
         /// </summary>
         [Parameter("applet")]
+        [Description("Identifies the source code directories to debug")]
         public StringCollection AppletDirectories { get; set; }
 
+        /// <summary>
+        /// Applet directory 
+        /// </summary>
+        [Parameter("ref")]
+        [Description("Adds a reference to the current IMS session")]
+        public StringCollection References { get; set; }
+
+
+        /// <summary>
+        /// Show help and exit
+        /// </summary>
+        [Parameter("help")]
+        [Description("Shows help and exits")]
+        public bool Help { get; set; }
+
+        /// <summary>
+        /// Instructs the minims to remove itself
+        /// </summary>
+        [Parameter("reset")]
+        [Description("Deletes all configuration data restoring the MiniIMS to its default state")]
+        public bool Reset { get; set; }
     }
 }

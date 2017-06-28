@@ -28,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -76,25 +77,44 @@ namespace Minims
 
             // Start up!!!
             var consoleArgs = new ParameterParser<ConsoleParameters>().Parse(args);
-            XamarinApplicationContext.ProgressChanged += (o, e) =>
-            {
-                Console.WriteLine(">>> PROGRESS >>> {0} : {1:#0%}", e.ProgressText, e.Progress);
-            };
 
-            if (!MiniApplicationContext.Start(consoleArgs))
-            {
-                MiniApplicationContext.StartTemporary(consoleArgs);
-                // Forward
-                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
-            }
+            Console.WriteLine("OpenIZ Mini IMS - Disconnected Client Debugging Tool");
+            Console.WriteLine("Version {0}", Assembly.GetEntryAssembly().GetName().Version);
+
+            if (consoleArgs.Help)
+                new ParameterParser<ConsoleParameters>().WriteHelp(Console.Out);
             else
             {
-                var appletConfig = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
-                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/index.html#/");
 
+                if (consoleArgs.Reset)
+                {
+                    var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MINIMS");
+                    var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MINIMS");
+                    if (Directory.Exists(appData)) Directory.Delete(cData, true);
+                    if (Directory.Exists(appData)) Directory.Delete(appData, true);
+                    return;
+                }
+
+                XamarinApplicationContext.ProgressChanged += (o, e) =>
+                {
+                    Console.WriteLine(">>> PROGRESS >>> {0} : {1:#0%}", e.ProgressText, e.Progress);
+                };
+
+                if (!MiniApplicationContext.Start(consoleArgs))
+                {
+                    MiniApplicationContext.StartTemporary(consoleArgs);
+                    // Forward
+                    Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                }
+                else
+                {
+                    var appletConfig = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
+                    Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/index.html#/");
+
+                }
+                Console.WriteLine("Press [Enter] key to close...");
+                Console.ReadLine();
             }
-            Console.WriteLine("Press [Enter] key to close...");
-            Console.ReadLine();
         }
     }
 }

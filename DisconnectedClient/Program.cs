@@ -1,8 +1,11 @@
-﻿using CefSharp;
+﻿#if !IE
+using CefSharp;
+#endif
 using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Security;
+using OpenIZ.Mobile.Core.Xamarin.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,12 +40,13 @@ namespace DisconnectedClient
             Program.Parameters = new ParameterParser<ConsoleParameters>().Parse(args);
             if (Program.Parameters.Debug)
                 Console.WriteLine("Will start in debug mode...");
-            if(Program.Parameters.Reset)
+            if (Program.Parameters.Reset)
             {
                 var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
                 var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
                 if (Directory.Exists(appData)) Directory.Delete(cData, true);
                 if (Directory.Exists(appData)) Directory.Delete(appData, true);
+                return;
             }
             String[] directory = {
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC"),
@@ -79,19 +83,20 @@ namespace DisconnectedClient
             // Start up!!!
             try
             {
+#if IE
+#else
                 uint x, y;
                 Screen.PrimaryScreen.GetDpi(DpiType.Angular, out x, out y);
                 if (x > 120 || y > 120)
                     Cef.EnableHighDPISupport();
                 var settings = new CefSettings();
                 Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
-
+#endif
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
                 frmSplash splash = new frmSplash();
                 splash.Show();
-
 
                 bool started = false;
                 EventHandler startHandler = (o, e) =>
@@ -103,15 +108,23 @@ namespace DisconnectedClient
                 if (!DcApplicationContext.StartContext())
                 {
                     DcApplicationContext.StartTemporary();
-                    XamarinApplicationContext.Current.Started += startHandler;
-                    while (!started)
-                        Application.DoEvents();
+                    var minims = XamarinApplicationContext.Current.GetService<MiniImsServer>();
+
+                    DateTime start = new DateTime();
+
+                    if (!minims.IsRunning)
+                    {
+                        minims.Started += startHandler;
+                        while (!started && DateTime.Now.Subtract(start).TotalSeconds < 20)
+                            Application.DoEvents();
+                    }
 
                     main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
                 }
                 else
                 {
-                    XamarinApplicationContext.Current.Started += startHandler;
+
+                    DcApplicationContext.Current.Started += startHandler;
                     while (!started)
                         Application.DoEvents();
                     main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/splash.html");

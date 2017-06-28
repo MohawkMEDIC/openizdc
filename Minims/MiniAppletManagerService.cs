@@ -158,13 +158,16 @@ namespace Minims
         /// </summary>
         public override bool LoadApplet(AppletManifest applet)
         {
-            var baseDirectory = this.m_appletBaseDir[applet];
-            if (!baseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                baseDirectory += Path.DirectorySeparatorChar.ToString();
-            applet.Assets.AddRange(this.ProcessDirectory(baseDirectory, baseDirectory));
-            applet.Initialize();
-            if (applet.Info.Version.Contains("*"))
-                applet.Info.Version = applet.Info.Version.Replace("*", "0000");
+            if (applet.Assets.Count == 0)
+            {
+                var baseDirectory = this.m_appletBaseDir[applet];
+                if (!baseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    baseDirectory += Path.DirectorySeparatorChar.ToString();
+                applet.Assets.AddRange(this.ProcessDirectory(baseDirectory, baseDirectory));
+                applet.Initialize();
+                if (applet.Info.Version.Contains("*"))
+                    applet.Info.Version = applet.Info.Version.Replace("*", "0000");
+            }
             return base.LoadApplet(applet);
         }
 

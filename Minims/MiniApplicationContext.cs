@@ -212,6 +212,31 @@ namespace Minims
                     var appService = retVal.GetService<IAppletManagerService>();
 
                     retVal.SetProgress("Loading configuration", 0.2f);
+
+                    // Load references
+                    foreach (var appletInfo in consoleParms.References)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
+                        try
+                        {
+                            retVal.m_tracer.TraceInfo("Loading applet {0}", appletInfo);
+                            String appletPath = appletInfo;
+                            if (!Path.IsPathRooted(appletInfo))
+                                appletPath = Path.Combine(Environment.CurrentDirectory, appletPath);
+                            using (var fs = File.OpenRead(appletPath))
+                            {
+                                AppletManifest manifest = AppletManifest.Load(fs);
+                                // Is this applet in the allowed applets
+
+                                appService.LoadApplet(manifest);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
+                            throw;
+                        }
+
+
+
                     // Load all user-downloaded applets in the data directory
                     foreach (var appletDir in consoleParms.AppletDirectories)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                         try
