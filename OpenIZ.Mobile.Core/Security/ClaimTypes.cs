@@ -96,6 +96,10 @@ namespace OpenIZ.Mobile.Core.Security
 		/// Email address claim
 		/// </summary>
 		public const string Email = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
-	}
+        /// <summary>
+        /// Telephone address claim
+        /// </summary>
+        public const string Telephone = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone";
+    }
 }
 

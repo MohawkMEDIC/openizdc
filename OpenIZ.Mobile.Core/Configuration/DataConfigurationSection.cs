@@ -42,11 +42,11 @@ namespace OpenIZ.Mobile.Core.Configuration
 			this.ConnectionString = new List<OpenIZ.Mobile.Core.Configuration.ConnectionString> ();
 		}
 
-		/// <summary>
-		/// Gets or sets connection strings
-		/// </summary>
-		/// <value>My property.</value>
-		[XmlElement("connectionString")]
+        /// <summary>
+        /// Gets or sets connection strings
+        /// </summary>
+        /// <value>My property.</value>
+        [XmlElement("connectionString")]
 		public List<ConnectionString> ConnectionString {
 			get;
 			set;

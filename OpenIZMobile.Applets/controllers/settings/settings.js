@@ -21,7 +21,7 @@
 
 /// <reference path="../../js/openiz.js"/>
 
-layoutApp.controller('SettingsController', ['$scope', function ($scope) {
+layoutApp.controller('SettingsController', ['$scope', 'uiHelperService', function ($scope, uiHelperService) {
 
     if (OpenIZ.Authentication.$session == null)
         OpenIZ.Authentication.$session = {};
@@ -37,7 +37,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 dataCollapsed: true,
                 securityCollapsed: true
             };
-
+ 
             $scope.config.data.mode = "sync"; //OpenIZ.App.getService("SynchronizationManagerService") == null ?
             //OpenIZ.App.getService("ImsiPersistenceService") == null ? "offline" : "online" : "sync";
             $scope.config.data.sync = {
@@ -49,7 +49,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
             $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService") || "SHA256PasswordHasher";
 
             $scope.config.security.offline = {
-                enable: false
+                enable: true
             };
             $scope.$apply();
         },
@@ -64,20 +64,23 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
         }
     });
     
+    uiHelperService.initializePopups('top');
     
     $scope.master = {};
 
     // leave realm
     $scope.leaveRealm = function (realm) {
         if (confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm")))
-            OpenIZ.Configuration.leaveRealmAsync();
+            OpenIZ.Configuration.leaveRealm();
     };
 
     // join realm
     $scope.joinRealm = function (realm) {
 
         var doJoin = function (force) {
-            OpenIZ.App.showWait('#joinRealmButton');
+            if (!$('#joinRealmButton')[0].hasAttribute('disabled')) {
+                OpenIZ.App.showWait('#joinRealmButton');
+            }
 
             var backupCredentials = {
                 continueWith: OpenIZ.Authentication.$elevationCredentials.continueWith,
@@ -90,15 +93,15 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 domain: realm.domain,
                 deviceName: realm.deviceName,
                 enableTrace: realm.enableTrace,
-                enableSSL : realm.enableSSL,
+                enableSSL: realm.enableSSL,
+                port : realm.port,
                 force: force,
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;
                     alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
-                    OpenIZ.App.hideWait('#joinRealmButton');
                 },
                 onException: function (error) {
-                    if (error.type == 'DuplicateNameException')
+                    if (error.type == 'DuplicateNameException') {
                         if (confirm(OpenIZ.Localization.getString('locale.settings.status.duplicateName'))) {
                             OpenIZ.Authentication.$elevationCredentials = backupCredentials;
 
@@ -110,9 +113,13 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                             else
                                 console.log(error);
                         }
+                    }
+                    else if (error.type != "UnauthorizedAccessException")
+                        alert(OpenIZ.Localization.getString("locale.settings.status.generalRealmError"))
                 },
                 finally: function () {
                     OpenIZ.App.hideWait('#joinRealmButton');
+                    $scope.$apply();
                 }
             });
         };
@@ -122,7 +129,16 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 
     // Save config
     $scope.save = function (config) {
-        
+        $scope.settingsForm.$setSubmitted();
+
+        // Check if the form is valid
+        if (!$scope.settingsForm.$valid) {
+            // Focus any required field
+            console.log($('[name=' + $scope.settingsForm.$error.required[0].$name + ']'));
+            $('[name=' + $scope.editPatientForm.$error.required[0].$name + ']').focus();
+            return;
+        }
+
         if ($scope.config.realmName == null)
             alert(OpenIZ.Localization.getString("locale.settings.error.noRealm"));
         else {

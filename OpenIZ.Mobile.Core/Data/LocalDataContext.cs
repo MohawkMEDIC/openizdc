@@ -19,20 +19,38 @@
  */
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Mobile.Core.Data.Connection;
 using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SQLite.Net.Interop;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data
 {
     /// <summary>
     /// Local data context
     /// </summary>
-    public class LocalDataContext
+    public class LocalDataContext : IDisposable
     {
+
+        /// <summary>
+        /// Partial load mode
+        /// </summary>
+        public LocalDataContext()
+        {
+            this.DelayLoadMode = LoadState.PartialLoad;
+        }
+
+        // Prepared
+        private Dictionary<String, IDbStatement> m_prepared = new Dictionary<string, IDbStatement>();
+
+        // Cached query
+        private Dictionary<String, IEnumerable<Object>> m_cachedQuery = new Dictionary<string, IEnumerable<object>>();
+        
         /// <summary>
         /// Cache commit
         /// </summary>
@@ -42,18 +60,31 @@ namespace OpenIZ.Mobile.Core.Data
         private Dictionary<String, Object> m_dataDictionary = new Dictionary<string, object>();
 
         /// <summary>
+        /// Associations to be be forcably loaded
+        /// </summary>
+        public String[] LoadAssociations { get; set; }
+
+        /// <summary>
         /// Local data context
         /// </summary>
-        public LocalDataContext(SQLiteConnectionWithLock connection)
+        public LocalDataContext(LockableSQLiteConnection connection)
         {
             this.Connection = connection;
             this.m_cacheCommit = new Dictionary<Guid, IdentifiedData>();
         }
 
         /// <summary>
+        /// Lock connection
+        /// </summary>
+        public IDisposable LockConnection()
+        {
+            return this.Connection.Lock();
+        }
+
+        /// <summary>
         /// Local data connection
         /// </summary>
-        public SQLiteConnectionWithLock Connection { get; set; }
+        public LockableSQLiteConnection Connection { get; set; }
 
         /// <summary>
         /// Cache on commit
@@ -72,12 +103,19 @@ namespace OpenIZ.Mobile.Core.Data
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
 
         /// <summary>
+        /// The data loading mode
+        /// </summary>
+        public OpenIZ.Core.Model.LoadState DelayLoadMode { get; set; }
+
+        /// <summary>
         /// Add cache commit
         /// </summary>
         public void AddCacheCommit(IdentifiedData data)
         {
             if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value) && data.Key.HasValue)
                 this.m_cacheCommit.Add(data.Key.Value, data);
+            else if (data.Key.HasValue)
+                this.m_cacheCommit[data.Key.Value] = data;
         }
 
         /// <summary>
@@ -90,6 +128,80 @@ namespace OpenIZ.Mobile.Core.Data
                     this.m_dataDictionary.Add(key, value);
         }
 
+        /// <summary>
+        /// Try get cache item
+        /// </summary>
+        public IdentifiedData TryGetCacheItem(Guid key)
+        {
+            IdentifiedData retVal = null;
+            this.m_cacheCommit.TryGetValue(key, out retVal);
+            return retVal;
+        }
 
+        /// <summary>
+        /// Get or create prepared statement
+        /// </summary>
+        internal IDbStatement GetOrCreatePrepared(string cmdText)
+        {
+            IDbStatement prepared = null;
+            if(!this.m_prepared.TryGetValue(cmdText, out prepared))
+            {
+                prepared = this.Connection.Prepare(cmdText);
+                lock (this.m_prepared)
+                    if (!this.m_prepared.ContainsKey(cmdText))
+                        this.m_prepared.Add(cmdText, prepared);
+            }
+            return prepared;
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var stmt in this.m_prepared.Values)
+                stmt.Finalize();
+        }
+
+        /// <summary>
+        /// Query
+        /// </summary>
+        public String GetQueryLiteral(SqlStatement query)
+        {
+            return query.ToString();
+        }
+
+      
+        /// <summary>
+        /// Add a cached set of query results
+        /// </summary>
+        public void AddQuery(SqlStatement domainQuery, IEnumerable<object> results)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            lock (this.m_cachedQuery)
+                if (!this.m_cachedQuery.ContainsKey(key))
+                    this.m_cachedQuery.Add(key, results);
+        }
+
+        /// <summary>
+        /// Cache a query 
+        /// </summary>
+        public IEnumerable<Object> CacheQuery(SqlStatement domainQuery)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            IEnumerable<Object> retVal = null;
+            this.m_cachedQuery.TryGetValue(key, out retVal);
+            return retVal;
+        }
+
+        /// <summary>
+        /// Try to get data from data array
+        /// </summary>
+        public Object TryGetData(String key)
+        {
+            Object data = null;
+            this.Data.TryGetValue(key, out data);
+            return data;
+        }
     }
 }

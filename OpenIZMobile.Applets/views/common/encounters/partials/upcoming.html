@@ -1,33 +1,34 @@
 ﻿<!--
  - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  -
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
  - the License.
- - 
+ -
  - User: justi
  - Date: 2017-3-31
  -->
 <div id="upcomingAppointments" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-     xmlns:bind="http://openiz.org/applet/binding" ng-controller="AppointmentSchedulerController" >
-    <oiz:script>~/controllers/common/encounters/partials/scheduler.js</oiz:script>
-    <div class="container-fluid" ng-if="encounterFactory.appointments &amp;&amp; !isLoading">
-        <div class="row" ng-repeat="apt in encounterFactory.appointments track by $index">
+     xmlns:bind="http://openiz.org/applet/binding" ng-controller="UpcomingAppointmentController" class="container-fluid margin-top-15">
+    <oiz:script>~/controllers/common/encounters/partials/upcoming.js</oiz:script>
+    <div class="container-fluid" ng-if="encounters &amp;&amp; !isLoading">
+        <div class="row" ng-repeat="apt in encounters track by $index" ng-if="apt.moodConcept == 'c46eee70-5612-473f-8d24-595ea15c9c39' &amp;&amp; apt.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
             <div class="col-sm-12 panel" ng-if="apt.relationship.HasComponent">
-                <div class="margin-top-10">
-                    <div class="row encounter-group-title panel-heading" data-toggle="collagpse" data-target="appointment-{{$index}}">
-                        <label class="col-xs-4 control-label">{{ 'locale.encounters.schedule.recommenddate' | i18n }}</label>
-                        <div class="col-xs-8">
-                            {{ apt.startTime | date: 'yyyy-MM-dd' }}
+                    <div class="row encounter-group-title panel-heading">
+                        <label class="col-xs-10"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> {{ 'locale.encounters.schedule.appointment' | i18n }} - {{ apt.actTime | datePrecisionFormat:'D' }}
+                        
+                        </label>
+                        <div class="col-xs-2">
+                            <button ng-click="startAppointment(apt)" class="btn btn-info" ng-if="canStartAppointment(apt)">{{ 'locale.action.start' | i18n }}</button>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -40,38 +41,93 @@
                                             <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="action.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
                                             <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
                                             <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
-                                            {{ action.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ action.targetModel.doseSequence }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                            {{ action.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ action.targetModel.doseSequence }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                         </span>
                                         <span ng-switch-when="QuantityObservation">
                                             <img src="/org.openiz.core/img/appbar.scale.png" style="height:24px" ng-if="action.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
                                             <img src="/org.openiz.core/img/appbar.eye.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                         </span>
                                         <span ng-switch-default="ng-switch-default">
                                             <img src="/org.openiz.core/img/appbar.blank.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                         </span>
                                     </span>
                                 </div>
                             </div>
                             <div ng-if="!Array.isArray(apt.relationship.HasComponent) &amp;&amp; !(apt.relationship.HasComponent.length &gt; 0)">
-                                    <span ng-switch="apt.relationship.HasComponent.targetModel.$type">
+                                <span ng-switch="apt.relationship.HasComponent.targetModel.$type">
+                                    <span ng-switch-when="SubstanceAdministration">
+                                        <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
+                                        <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; apt.relationship.HasComponent.targetModel.$type != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                        <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; apt.relationship.HasComponent.targetModel.$type == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                        {{ apt.relationship.HasComponent.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ apt.relationship.HasComponent.targetModel.doseSequence }} ({{ apt.relationship.HasComponent.targetModel.startTime | datePrecisionFormat:'D' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | datePrecisionFormat:'D' }})
+                                    </span>
+                                    <span ng-switch-when="QuantityObservation">
+                                        <img src="/org.openiz.core/img/appbar.scale.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        <img src="/org.openiz.core/img/appbar.eye.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        {{ apt.relationship.HasComponent.targetModel.typeConceptModel | oizConcept }} ({{ apt.relationship.HasComponent.targetModel.startTime | datePrecisionFormat:'D' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | datePrecisionFormat:'D' }})
+                                    </span>
+                                    <span ng-switch-default="ng-switch-default">
+                                        <img src="/org.openiz.core/img/appbar.blank.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        {{ apt.relationship.HasComponent.targetModel.typeConceptModel | oizConcept }} ({{ apt.relationship.HasComponent.targetModel.startTime | datePrecisionFormat:'D' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | datePrecisionFormat:'D' }})
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="container-fluid" ng-if="appointments &amp;&amp; appointments.length > 0 &amp;&amp; !isLoading">
+        <div class="row" ng-repeat="apt in appointments track by $index">
+            <div class="col-sm-12 panel panel-success" ng-if="apt.relationship.HasComponent">
+                <div>
+                    <div class="row encounter-group-title panel-heading" data-toggle="collagpse" data-target="appointment-{{$index}}">
+                        <label class="col-xs-12 control-label"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> {{ 'locale.encounters.schedule.recommenddate' | i18n }} - {{ apt.startTime | datePrecisionFormat:'D' }}</label>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-12 col-sm-2 control-label">{{ 'locale.encounters.schedule.due' | i18n }}</label>
+                        <div class="col-xs-12 col-sm-10">
+                            <div ng-if="apt.relationship.HasComponent.length &gt; 0">
+                                <div ng-repeat="action in apt.relationship.HasComponent">
+                                    <span ng-switch="action.targetModel.$type">
                                         <span ng-switch-when="SubstanceAdministration">
-                                            <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
-                                            <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; apt.relationship.HasComponent.targetModel.$type != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
-                                            <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; apt.relationship.HasComponent.targetModel.$type == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
-                                            {{ apt.relationship.HasComponent.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ apt.relationship.HasComponent.targetModel.doseSequence }} ({{ apt.relationship.HasComponent.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                            <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="action.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
+                                            <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                            <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                            {{ action.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ action.targetModel.doseSequence }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                         </span>
                                         <span ng-switch-when="QuantityObservation">
-                                            <img src="/org.openiz.core/img/appbar.scale.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                            <img src="/org.openiz.core/img/appbar.eye.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                            {{ apt.relationship.HasComponent.targetModel.typeConceptModel | oizConcept }} ({{ apt.relationship.HasComponent.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                            <img src="/org.openiz.core/img/appbar.scale.png" style="height:24px" ng-if="action.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                            <img src="/org.openiz.core/img/appbar.eye.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                         </span>
                                         <span ng-switch-default="ng-switch-default">
-                                            <img src="/org.openiz.core/img/appbar.blank.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                            {{ apt.relationship.HasComponent.targetModel.typeConceptModel | oizConcept }} ({{ apt.relationship.HasComponent.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                            <img src="/org.openiz.core/img/appbar.blank.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                         </span>
                                     </span>
+                                </div>
+                            </div>
+                            <div ng-if="!Array.isArray(apt.relationship.HasComponent) &amp;&amp; !(apt.relationship.HasComponent.length &gt; 0)">
+                                <span ng-switch="apt.relationship.HasComponent.targetModel.$type">
+                                    <span ng-switch-when="SubstanceAdministration">
+                                        <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
+                                        <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; apt.relationship.HasComponent.targetModel.$type != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                        <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; apt.relationship.HasComponent.targetModel.$type == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                        {{ apt.relationship.HasComponent.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ apt.relationship.HasComponent.targetModel.doseSequence }} ({{ apt.relationship.HasComponent.targetModel.startTime | datePrecisionFormat:'D' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | datePrecisionFormat:'D' }})
+                                    </span>
+                                    <span ng-switch-when="QuantityObservation">
+                                        <img src="/org.openiz.core/img/appbar.scale.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        <img src="/org.openiz.core/img/appbar.eye.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        {{ apt.relationship.HasComponent.targetModel.typeConceptModel | oizConcept }} ({{ apt.relationship.HasComponent.targetModel.startTime | datePrecisionFormat:'D' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | datePrecisionFormat:'D' }})
+                                    </span>
+                                    <span ng-switch-default="ng-switch-default">
+                                        <img src="/org.openiz.core/img/appbar.blank.png" style="height:24px" ng-if="apt.relationship.HasComponent.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        {{ apt.relationship.HasComponent.targetModel.typeConceptModel | oizConcept }} ({{ apt.relationship.HasComponent.targetModel.startTime | datePrecisionFormat:'D' }} - {{ apt.relationship.HasComponent.targetModel.stopTime | datePrecisionFormat:'D' }})
+                                    </span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -80,13 +136,13 @@
         </div>
         <div class="row panel-body">
             <div class="btn-group pull-right">
-                <a class="btn btn-primary" ng-click="patientEdit.appointment()">
+                <a class="btn btn-primary" ng-click="patientController.appointment()">
                     <span class="glyphicon glyphicon-calendar"></span> {{ 'locale.patient.action.appointment' | i18n }}
                 </a>
             </div>
         </div>
     </div>
-    <div ng-if="!encounterFactory.appointments &amp;&amp; !isLoading">
+    <div ng-if="(!appointments || appointments.length &lt;= 0) &amp;&amp; !isLoading">
         <div class="text-center">
             <h4>
                 {{'locale.patient.schedule.none' | i18n}}
@@ -94,8 +150,6 @@
         </div>
     </div>
     <div class="progress" ng-if="isLoading">
-        <div class="progress-bar ng-cloak progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-            {{ 'locale.dialog.wait.text' | i18n }}
-        </div>
+        <div class="progress-bar ng-cloak progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
     </div>
 </div>

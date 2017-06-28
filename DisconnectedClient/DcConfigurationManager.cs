@@ -26,7 +26,6 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Diagnostics;
-using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Search;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services.Impl;
@@ -44,6 +43,12 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
+using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Protocol.Xml;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Reporting;
+using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace DisconnectedClient
 
@@ -105,6 +110,10 @@ namespace DisconnectedClient
                     new ConnectionString () {
                         Name = "openIzWarehouse",
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC","OpenIZ.warehouse.sqlite")
+                    },
+                    new ConnectionString () {
+                        Name = "openIzAudit",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC", "OpenIZ.audit.sqlite")
                     }
                 }
             };
@@ -120,7 +129,11 @@ namespace DisconnectedClient
                     "Administration"
                 },
                 StartupAsset = "org.openiz.core",
-                AuthenticationAsset = "/org/openiz/core/views/security/login.html"
+                Security = new AppletSecurityConfiguration()
+                {
+                    AllowUnsignedApplets = true,
+                    TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
+                }
             };
 
             // Initial applet style
@@ -144,6 +157,8 @@ namespace DisconnectedClient
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(SQLiteDatawarehouse).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
+                    typeof(LocalTagPersistenceService).AssemblyQualifiedName,
+                    typeof(MemoryTickleService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
                     typeof(CarePlanManagerService).AssemblyQualifiedName,
                     typeof(BusinessRulesDaemonService).AssemblyQualifiedName,
@@ -154,11 +169,16 @@ namespace DisconnectedClient
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
-                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(AppletClinicalProtocolRepository).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
+                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(DcAppletManagerService).AssemblyQualifiedName,
+                                        typeof(SQLiteReportDatasource).AssemblyQualifiedName,
+                    typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -174,7 +194,8 @@ namespace DisconnectedClient
             // Security configuration
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
-                DeviceName = Environment.MachineName
+                DeviceName = Environment.MachineName,
+                AuditRetention = new TimeSpan(30, 0, 0, 0, 0)
             };
 
             // Device key
@@ -211,7 +232,7 @@ namespace DisconnectedClient
                     new TraceWriterConfiguration () {
                         Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, String.Format("..{1}{0}{1}log{1}{2}", "OpenIZDC", Path.DirectorySeparatorChar, "OpenIZ"))
                     }
                 }
             };
@@ -257,7 +278,7 @@ namespace DisconnectedClient
                 {
                     this.m_configuration = OpenIZConfiguration.Load(fs);
                 }
-            
+
         }
 
 
@@ -268,6 +289,7 @@ namespace DisconnectedClient
         {
             this.Save(this.m_configuration);
         }
+
         /// <summary>
         /// Save the specified configuration
         /// </summary>
@@ -302,5 +324,7 @@ namespace DisconnectedClient
                 return this.m_configuration;
             }
         }
+
+
     }
 }

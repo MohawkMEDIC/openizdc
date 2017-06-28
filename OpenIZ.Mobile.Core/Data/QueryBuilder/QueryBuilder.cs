@@ -75,7 +75,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
     public class QueryBuilder
     {
         // Regex to extract property, guards and cast
-        private const string m_extractionRegex = @"^(\w*?)(\[(\w*)\])?(\@(\w*))?(\.(.*))?$";
+        private const string m_extractionRegex = @"^(\w*?)(\[(.*?)\])?(\@(\w*))?(\.(.*))?$";
 
         // Join cache
         private Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>> s_joinCache = new Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>>();
@@ -208,7 +208,10 @@ namespace OpenIZ.Core.Data.QueryBuilder
                     subProperty = matches.Groups[SubPropertyRegexGroup].Value;
 
                 // Next, we want to construct the 
-                var otherParms = workingParameters.Where(o => re.Match(o.Key).Groups[PropertyRegexGroup].Value == propertyPath).ToArray();
+                var otherParms = workingParameters.Where(o => {
+                    var sm = re.Match(o.Key);
+                    return sm.Groups[PropertyRegexGroup].Value == propertyPath && sm.Groups[CastRegexGroup].Value == castAs;
+                }).ToArray();
 
                 // Remove the working parameters if the column is FK then all parameters
                 if (otherParms.Any() || !String.IsNullOrEmpty(guard) || !String.IsNullOrEmpty(subProperty))
@@ -272,7 +275,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
                                     if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(clsModel.GetTypeInfo()))
                                         guardCondition.Append(".");
                                 }
-                                subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key));
+                                subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key.Split('|')));
                             }
 
                             // Generate method
@@ -316,9 +319,22 @@ namespace OpenIZ.Core.Data.QueryBuilder
                         var fkColumnDef = fkTableDef.GetColumn(linkColumn.ForeignKey.Column);
 
                         // Create the sub-query
-                        var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
-                        SqlStatement subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                        SqlStatement subQueryStatement = null;
+                        if (String.IsNullOrEmpty(castAs))
+                        {
+                            var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
+                            subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                        }
+                        else // we need to cast!
+                        {
+                            var castAsType = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType("OpenIZ.Core.Model", castAs);
+
+                            var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { castAsType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
+                            subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                        }
+
                         cteStatements.Add(new SqlStatement($"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
+
                         //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
 
                         selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
@@ -451,7 +467,9 @@ namespace OpenIZ.Core.Data.QueryBuilder
         private static object CreateParameterValue(object value, Type toType)
         {
             object retVal = null;
-            if (value.GetType() == toType ||
+            if (value is Guid)
+                return ((Guid)value).ToByteArray();
+            else if (value.GetType() == toType ||
                 value.GetType() == toType.StripNullable())
                 return value;
             else if (MapUtil.TryConvert(value, toType, out retVal))

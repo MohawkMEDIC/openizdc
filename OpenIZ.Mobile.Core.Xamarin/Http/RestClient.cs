@@ -36,73 +36,101 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Query;
+using System.Net.Security;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
-	/// <summary>
-	/// Represents an android enabled rest client
-	/// </summary>
-	public class RestClient : RestClientBase
-	{
+    /// <summary>
+    /// Represents an android enabled rest client
+    /// </summary>
+    public class RestClient : RestClientBase
+    {
 
-		// Config section
-		private ServiceClientConfigurationSection m_configurationSection;
-		// Tracer
-		private Tracer m_tracer;
+        // Config section
+        private ServiceClientConfigurationSection m_configurationSection;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Xamarin.Http.RestClient"/> class.
-		/// </summary>
-		public RestClient () : base()
-		{
-			this.m_tracer = Tracer.GetTracer (this.GetType ());
-			this.m_configurationSection = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection> ();
+        // Tracer
+        private Tracer m_tracer;
 
-		}
+        // Trusted certificates
+        private static HashSet<String> m_trustedCerts = new HashSet<String>();
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Xamarin.Http.RestClient"/> class.
-		/// </summary>
-		public RestClient (ServiceClientDescription config) : base(config)
-		{
-			this.m_configurationSection = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection> ();
-			this.m_tracer = Tracer.GetTracer (this.GetType ());
-			// Find the specified certificate
-			if (config.Binding.Security.ClientCertificate != null) {
-				this.ClientCertificates = new X509Certificate2Collection ();
-				var cert = X509CertificateUtils.FindCertificate (config.Binding.Security.ClientCertificate.FindType, 
-					          config.Binding.Security.ClientCertificate.StoreLocation,
-					          config.Binding.Security.ClientCertificate.StoreName,
-					          config.Binding.Security.ClientCertificate.FindValue);
-				if (cert == null)
-					throw new SecurityException (String.Format("Certificate described by {0} could not be found in {1}/{2}", 
-						config.Binding.Security.ClientCertificate.FindValue,
-						config.Binding.Security.ClientCertificate.StoreLocation,
-						config.Binding.Security.ClientCertificate.StoreName));
-				this.ClientCertificates.Add (cert);
-			}
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Xamarin.Http.RestClient"/> class.
+        /// </summary>
+        public RestClient() : base()
+        {
+            this.m_tracer = Tracer.GetTracer(this.GetType());
+            this.m_configurationSection = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
 
-		/// <summary>
-		/// Create HTTP Request object
-		/// </summary>
-		protected override WebRequest CreateHttpRequest (string url, NameValueCollection query)
-		{
-			var retVal = (HttpWebRequest)base.CreateHttpRequest (url, query);
+        }
 
-			// Certs?
-			if(this.ClientCertificates != null)
-				retVal.ClientCertificates.AddRange(this.ClientCertificates);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Xamarin.Http.RestClient"/> class.
+        /// </summary>
+        public RestClient(ServiceClientDescription config) : base(config)
+        {
+            this.m_configurationSection = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
+            this.m_tracer = Tracer.GetTracer(this.GetType());
+            // Find the specified certificate
+            if (config.Binding.Security?.ClientCertificate != null)
+            {
+                this.ClientCertificates = new X509Certificate2Collection();
+                var cert = X509CertificateUtils.FindCertificate(config.Binding.Security.ClientCertificate.FindType,
+                              config.Binding.Security.ClientCertificate.StoreLocation,
+                              config.Binding.Security.ClientCertificate.StoreName,
+                              config.Binding.Security.ClientCertificate.FindValue);
+                if (cert == null)
+                    throw new SecurityException(String.Format("Certificate described by {0} could not be found in {1}/{2}",
+                        config.Binding.Security.ClientCertificate.FindValue,
+                        config.Binding.Security.ClientCertificate.StoreLocation,
+                        config.Binding.Security.ClientCertificate.StoreName));
+                this.ClientCertificates.Add(cert);
+            }
+        }
 
-			// Compress?
-			if(this.Description.Binding.Optimize)
-				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate,gzip");
+        /// <summary>
+        /// Create HTTP Request object
+        /// </summary>
+        protected override WebRequest CreateHttpRequest(string url, NameValueCollection query)
+        {
+            var retVal = (HttpWebRequest)base.CreateHttpRequest(url, query);
+
+            // Certs?
+            if (this.ClientCertificates != null)
+                retVal.ClientCertificates.AddRange(this.ClientCertificates);
+
+            // Compress?
+            if (this.Description.Binding.Optimize)
+                retVal.Headers.Add(HttpRequestHeader.AcceptEncoding, "deflate"); // use deflate as it appears to be a little faster
 
             // Proxy?
             if (!String.IsNullOrEmpty(this.m_configurationSection.ProxyAddress))
                 retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
-			return retVal;
-		}
+
+            retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Remote certificate validation errors
+        /// </summary>
+        private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            lock (m_trustedCerts)
+            {
+                if (m_trustedCerts.Contains(certificate.Subject))
+                    return true;
+                else if (ApplicationContext.Current.Confirm(String.Format(Strings.locale_certificateValidation, certificate.Subject, certificate.Issuer)))
+                {
+                    m_trustedCerts.Add(certificate.Subject);
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
 
         /// <summary>
         /// Invokes the specified method against the url provided
@@ -144,6 +172,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             requestObj.Headers.Add(hdr, additionalHeaders[hdr]);
                     }
 
+#if PERFMON
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+#endif
                 // Body was provided?
                 try
                 {
@@ -158,6 +190,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                         try
                         {
+
+
                             //requestStream = requestObj.GetRequestStream();
                             var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
                             {
@@ -173,13 +207,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             }
                             else if (requestException != null) throw requestException;
 
-                            if (contentType == null && typeof(TResult) != typeof(Object) )
+                            if (contentType == null && typeof(TResult) != typeof(Object))
                                 throw new ArgumentNullException(nameof(contentType));
 
                             serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
-                            (body as IdentifiedData)?.SetDelayLoad(false);
                             // Serialize and compress with deflate
-                            using(MemoryStream ms = new MemoryStream())
+                            using (MemoryStream ms = new MemoryStream())
                             {
                                 if (this.Description.Binding.Optimize)
                                 {
@@ -191,7 +224,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                     serializer.Serialize(ms, body);
 
                                 // Trace
-                                if(this.Description.Trace)
+                                if (this.Description.Trace)
                                     this.m_tracer.TraceVerbose("HTTP >> {0}", Convert.ToBase64String(ms.ToArray()));
 
                                 using (var nms = new MemoryStream(ms.ToArray()))
@@ -235,6 +268,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             }
                         }
 
+#if PERFMON
+                        sw.Stop();
+                        ApplicationContext.Current.PerformanceLog(nameof(RestClient), "InvokeInternal", $"{nameof(TBody)}-RCV", sw.Elapsed);
+                        sw.Reset();
+                        sw.Start();
+#endif
+
                         responseHeaders = response.Headers;
                         var validationResult = this.ValidateResponse(response);
                         if (validationResult != ServiceClientErrorType.Valid)
@@ -246,7 +286,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         // No content - does the result want a pointer maybe?
                         if (response.StatusCode == HttpStatusCode.NoContent)
                         {
-
                             return default(TResult);
                         }
                         else
@@ -272,6 +311,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                     this.m_tracer.TraceVerbose("Received response {0} : {1} bytes", response.ContentType, response.ContentLength);
 
                                 response.GetResponseStream().CopyTo(ms);
+
+#if PERFMON
+                                sw.Stop();
+                                ApplicationContext.Current.PerformanceLog(nameof(RestClient), "InvokeInternal", $"{nameof(TBody)}-INT", sw.Elapsed);
+                                sw.Reset();
+                                sw.Start();
+#endif
+
                                 ms.Seek(0, SeekOrigin.Begin);
 
                                 // Trace
@@ -295,7 +342,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                             }
 
-                            (retVal as IdentifiedData)?.SetDelayLoad(true);
+#if PERFMON
+                            sw.Stop();
+                            ApplicationContext.Current.PerformanceLog(nameof(RestClient), "InvokeInternal", $"{nameof(TBody)}-RET", sw.Elapsed);
+                            sw.Reset();
+                            sw.Start();
+#endif
+
                             return retVal;
                         }
                     }
@@ -305,15 +358,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             response.Dispose();
                     }
                 }
-                catch(TimeoutException e)
+                catch (TimeoutException e)
                 {
-                    this.m_tracer.TraceError("Request timed out:{0}", e);
+                    this.m_tracer.TraceError("Request timed out:{0}", e.Message);
                     throw;
                 }
                 catch (WebException e)
                 {
 
-                    this.m_tracer.TraceError(e.ToString());
+                    this.m_tracer.TraceError("Error executing {0} {1} : {2}", method, url, e.Message);
 
                     // status
                     switch (e.Status)
@@ -344,9 +397,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                         break;
                                 }
                             }
-                            catch(Exception dse)
+                            catch (Exception dse)
                             {
-                                this.m_tracer.TraceError("Could not de-serialize error response! {0}", dse);
+                                this.m_tracer.TraceError("Could not de-serialize error response! {0}", dse.Message);
                             }
 
                             switch (errorResponse.StatusCode)
@@ -378,21 +431,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             throw;
                     }
                 }
-               
+
             }
 
             responseHeaders = new WebHeaderCollection();
             return default(TResult);
         }
 
-		/// <summary>
-		/// Gets or sets the client certificate
-		/// </summary>
-		/// <value>The client certificate.</value>
-		public X509Certificate2Collection ClientCertificates {
-			get;
-			set;
-		}
-	}
+        /// <summary>
+        /// Gets or sets the client certificate
+        /// </summary>
+        /// <value>The client certificate.</value>
+        public X509Certificate2Collection ClientCertificates
+        {
+            get;
+            set;
+        }
+    }
 }
 

@@ -81,10 +81,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return this.FindConcepts(o => o.ConceptNames.Any(n => n.Name == name && n.Language == language));
 		}
 
-		/// <summary>
-		/// Find concepts by a reference term
-		/// </summary>
-		public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemOid)
+        public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, Uri codeSystem)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Find concepts by a reference term
+        /// </summary>
+        public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemOid)
 		{
 			return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == codeSystemOid && r.ReferenceTerm.Mnemonic == code));
 		}
@@ -257,6 +262,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
         }
 
+        public ReferenceTerm ObsoleteReferenceTerm(Guid key)
+        {
+            throw new NotImplementedException();
+        }
+
         public Concept SaveConcept(Concept concept)
 		{
 			throw new NotImplementedException();
@@ -282,7 +292,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-        Concept IConceptRepositoryService.ObsoleteConcept(Guid key)
+		public ReferenceTerm GetConceptReferenceTerm(Guid conceptId, string codeSystem)
+		{
+			throw new NotImplementedException();
+		}
+
+		Concept IConceptRepositoryService.ObsoleteConcept(Guid key)
         {
             throw new NotImplementedException();
         }

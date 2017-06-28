@@ -110,6 +110,7 @@
          domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="VersionKey" domainName="VersionUuid"/>
+    <property modelName="TemplateKey" domainName="TemplateUuid"/>
     <property modelName="PreviousVersionKey" domainName="PreviousVersionUuid"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptUuid"/>
     <property modelName="ClassConceptKey" domainName="ClassConceptUuid"/>
@@ -299,6 +300,7 @@
          domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbAct, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="VersionKey" domainName="VersionUuid"/>
+    <property modelName="TemplateKey" domainName="TemplateUuid"/>
     <property modelName="PreviousVersionKey" domainName="PreviousVersionUuid"/>
     <property modelName="StatusConceptKey" domainName="StatusConceptUuid"/>
     <property modelName="ClassConceptKey" domainName="ClassConceptUuid"/>

@@ -34,6 +34,11 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Data.Model;
+using OpenIZ.Mobile.Core.Data.Model.Roles;
+using OpenIZ.Core.Model;
+using OpenIZ.Mobile.Core.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -42,6 +47,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityPersistenceService : VersionedDataPersistenceService<Entity, DbEntity>
     {
+        // Unique assigning authorities
+        private HashSet<Guid> m_uniqueAssigningAuthorites = null;
+
         private const String Entity = "E29FCFAD-EC1D-4C60-A055-039A494248AE";
         private const String ManufacturedMaterial = "FAFEC286-89D5-420B-9085-054ACA9D1EEF";
         private const String Animal = "61FCBF42-B5E0-4FB5-9392-108A5C6DBEC7";
@@ -62,14 +70,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private const String CountyOrParish = "D9489D56-DDAC-4596-B5C6-8F41D73D8DC5";
         private const String Country = "48B2FFB3-07DB-47BA-AD73-FC8FB8502471";
         private const String NonLivingSubject = "9025E5C9-693B-49D4-973C-D7010F3A23EE";
-        
+
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, LocalDataContext context, bool loadFast) where TEntityType : Entity, new()
+        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, LocalDataContext context) where TEntityType : Entity, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance, useCache: !context.Connection.IsInTransaction);
-            
+
             // Has this been updated? If so, minimal information about the previous version is available
             if (dbInstance.UpdatedTime != null)
             {
@@ -86,8 +94,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 };
             }
 
-            // Now we want to load the relationships inversed!
-            retVal.LoadAssociations(context);
+
+            retVal.LoadAssociations(context,
+                // Exclude
+                nameof(OpenIZ.Core.Model.Entities.Entity.Extensions),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Notes),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Participations),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Telecoms),
+                nameof(OpenIZ.Core.Model.Entities.UserEntity.SecurityUser)
+                );
 
             //if (!loadFast)
             //{
@@ -115,39 +130,188 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Entity ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Entity ToModelInstance(object dataInstance, LocalDataContext context)
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as DbEntity;
-            switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
-            {
-                case Device:
-                    return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case NonLivingSubject:
-                    return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Person:
-                    return new PersonPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Patient:
-                    return new PatientPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Provider:
-                    return new ProviderPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Place:
-                case CityOrTown:
-                case Country:
-                case CountyOrParish:
-                case State:
-                case ServiceDeliveryLocation:
-                    return new PlacePersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Organization:
-                    return new OrganizationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Material:
-                    return new MaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case ManufacturedMaterial:
-                    return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                default:
-                    return this.ToModelInstance<Entity>(dbEntity, context, loadFast);
+            if (dbEntity != null)
+                switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
+                {
+                    case Device:
+                        return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context);
+                    case NonLivingSubject:
+                        return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context);
+                    case Person:
+                        return new PersonPersistenceService().ToModelInstance(dataInstance, context);
+                    case Patient:
+                        return new PatientPersistenceService().ToModelInstance(dataInstance, context);
+                    case Provider:
+                        return new ProviderPersistenceService().ToModelInstance(dataInstance, context);
+                    case Place:
+                    case CityOrTown:
+                    case Country:
+                    case CountyOrParish:
+                    case State:
+                    case ServiceDeliveryLocation:
+                        return new PlacePersistenceService().ToModelInstance(dataInstance, context);
+                    case Organization:
+                        return new OrganizationPersistenceService().ToModelInstance(dataInstance, context);
+                    case Material:
+                        return new MaterialPersistenceService().ToModelInstance(dataInstance, context);
+                    case ManufacturedMaterial:
+                        return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context);
+                    default:
+                        return this.ToModelInstance<Entity>(dbEntity, context);
 
+                }
+            else if (dataInstance is DbDeviceEntity)
+                return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbApplicationEntity)
+                return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbPerson)
+                return new PersonPersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbPatient)
+                return new PatientPersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbProvider)
+                return new ProviderPersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbPlace)
+                return new PlacePersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbOrganization)
+                return new OrganizationPersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbMaterial)
+                return new MaterialPersistenceService().ToModelInstance(dataInstance, context);
+            else if (dataInstance is DbManufacturedMaterial)
+                return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context);
+            else
+                return null;
+
+        }
+
+        /// <summary>
+        /// Convert entity into a dbentity
+        /// </summary>
+        public override object FromModelInstance(Entity modelInstance, LocalDataContext context)
+        {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            return new DbEntity()
+            {
+                ClassConceptUuid = modelInstance.ClassConceptKey?.ToByteArray(),
+                CreatedByUuid = modelInstance.CreatedByKey?.ToByteArray(),
+                CreationTime = modelInstance.CreationTime,
+                DeterminerConceptUuid = modelInstance.DeterminerConceptKey?.ToByteArray(),
+                ObsoletedByUuid = modelInstance.ObsoletedByKey?.ToByteArray(),
+                ObsoletionTime = modelInstance.ObsoletionTime,
+                PreviousVersionUuid = modelInstance.PreviousVersionKey?.ToByteArray(),
+                StatusConceptUuid = modelInstance.StatusConceptKey?.ToByteArray(),
+                TemplateUuid = modelInstance.TemplateKey?.ToByteArray(),
+                TypeConceptUuid = modelInstance.TypeConceptKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray() ,
+                VersionSequenceId = (int)modelInstance.VersionSequence.GetValueOrDefault(),
+                VersionUuid = modelInstance.VersionKey?.ToByteArray()
+            };
+        }
+
+        /// <summary>
+        /// Conversion based on type
+        /// </summary>
+        protected override Entity CacheConvert(DbIdentified dataInstance, LocalDataContext context)
+        {
+            return this.DoCacheConvert(dataInstance, context);
+        }
+
+        /// <summary>
+        /// Perform the cache convert
+        /// </summary>
+        internal Entity DoCacheConvert(DbIdentified dataInstance, LocalDataContext context)
+        {
+            if (dataInstance == null)
+                return null;
+            // Alright first, which type am I mapping to?
+            var dbEntity = dataInstance as DbEntity;
+            Entity retVal = null;
+            IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
+
+            if(dbEntity != null)
+                switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
+                {
+                    case Device:
+                        retVal = cache?.GetCacheItem<DeviceEntity>(dbEntity.Key);
+                        break;
+                    case NonLivingSubject:
+                        retVal = cache?.GetCacheItem<ApplicationEntity>(dbEntity.Key);
+                        break;
+                    case Person:
+                        retVal = cache?.GetCacheItem<UserEntity>(dbEntity.Key);
+                        if(retVal == null)
+                            retVal = cache?.GetCacheItem<Person>(dbEntity.Key);
+                        break;
+                    case Patient:
+                        retVal = cache?.GetCacheItem<Patient>(dbEntity.Key);
+                        break;
+                    case Provider:
+                        retVal = cache?.GetCacheItem<Provider>(dbEntity.Key);
+
+                        break;
+                    case Place:
+                    case CityOrTown:
+                    case Country:
+                    case CountyOrParish:
+                    case State:
+                    case ServiceDeliveryLocation:
+                        retVal = cache?.GetCacheItem<Place>(dbEntity.Key);
+
+                        break;
+                    case Organization:
+                        retVal = cache?.GetCacheItem<Organization>(dbEntity.Key);
+
+                        break;
+                    case Material:
+                        retVal = cache?.GetCacheItem<Material>(dbEntity.Key);
+
+                        break;
+                    case ManufacturedMaterial:
+                        retVal = cache?.GetCacheItem<ManufacturedMaterial>(dbEntity.Key);
+
+                        break;
+                    default:
+                        retVal = cache?.GetCacheItem<Entity>(dbEntity.Key);
+                        break;
+                }
+            else if (dataInstance is DbDeviceEntity)
+                retVal = cache?.GetCacheItem<DeviceEntity>(dataInstance.Key);
+            else if (dataInstance is DbApplicationEntity)
+                retVal = cache?.GetCacheItem<ApplicationEntity>(dataInstance.Key);
+            else if (dataInstance is DbPerson)
+                retVal = cache?.GetCacheItem<UserEntity>(dataInstance.Key);
+            else if (dataInstance is DbPatient)
+                retVal = cache?.GetCacheItem<Patient>(dataInstance.Key);
+            else if (dataInstance is DbProvider)
+                retVal = cache?.GetCacheItem<Provider>(dataInstance.Key);
+            else if (dataInstance is DbPlace)
+                retVal = cache?.GetCacheItem<Place>(dataInstance.Key);
+            else if (dataInstance is DbOrganization)
+                retVal = cache?.GetCacheItem<Organization>(dataInstance.Key);
+            else if (dataInstance is DbMaterial)
+                retVal = cache?.GetCacheItem<Material>(dataInstance.Key);
+            else if (dataInstance is DbManufacturedMaterial)
+                retVal = cache?.GetCacheItem<ManufacturedMaterial>(dataInstance.Key);
+
+            // Return cache value
+            if (retVal != null)
+            {
+                if (retVal.LoadState < context.DelayLoadMode)
+                    retVal.LoadAssociations(context,
+                        // Exclude
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Extensions),
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Notes),
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Participations),
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Telecoms),
+                        nameof(OpenIZ.Core.Model.Entities.UserEntity.SecurityUser)
+                        );
+                return retVal;
             }
+            else
+                return base.CacheConvert(dataInstance, context);
         }
 
         /// <summary>
@@ -161,31 +325,49 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept.EnsureExists(context);
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+            if (data.Template != null) data.Template = data.Template.EnsureExists(context);
+
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
-
+            data.TemplateKey = data.Template?.Key ?? data.TemplateKey;
             data.StatusConceptKey = data.StatusConceptKey.GetValueOrDefault() == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.InsertInternal(context, data);
 
-
             // Identifiers
             if (data.Identifiers != null)
-                base.UpdateAssociatedItems<EntityIdentifier, Entity>(
+            {
+				// Validate unique values for IDs
+				var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.AuthorityKey.Value)?.IsUnique == true);
+				byte[] entId = data.Key.Value.ToByteArray();
+
+				foreach (var itm in uniqueIds)
+				{
+					byte[] authId = itm.Authority.Key.Value.ToByteArray();
+					if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
+						throw new DuplicateKeyException(itm.Value);
+				}
+
+				base.UpdateAssociatedItems<EntityIdentifier, Entity>(
                     new List<EntityIdentifier>(),
                     data.Identifiers,
                     retVal.Key,
                     context);
 
+            }
+
             // Relationships
             if (data.Relationships != null)
+            {
+                data.Relationships.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     new List<EntityRelationship>(),
-                    data.Relationships.Where(o=>!o.InversionIndicator).ToList(),
+                    data.Relationships.Where(o => o.SourceEntityKey == null || o.SourceEntityKey == data.Key || o.TargetEntityKey == data.Key || !o.TargetEntityKey.HasValue ).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
+            }
 
             // Telecoms
             if (data.Telecoms != null)
@@ -281,19 +463,41 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Identifiers
             if (data.Identifiers != null)
+            {
+                // Validate unique values for IDs
+                if (this.m_uniqueAssigningAuthorites == null) {
+                    this.m_uniqueAssigningAuthorites = new HashSet<Guid>(context.Connection.Table<DbAssigningAuthority>().Where(o => o.IsUnique).ToArray().Select(o => new Guid(o.Uuid)));
+                }
+
+                var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => this.m_uniqueAssigningAuthorites.Contains(o.Authority.Key.Value));
+                byte[] entId = data.Key.Value.ToByteArray();
+
+                foreach (var itm in uniqueIds)
+                {
+                    byte[] authId = itm.Key.Value.ToByteArray();
+                    if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
+                        throw new DuplicateKeyException(itm.Value);
+                }
+
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(
                     context.Connection.Table<DbEntityIdentifier>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityIdentifier, EntityIdentifier>(o)).ToList(),
                     data.Identifiers,
                     retVal.Key,
                     context);
 
+            }
+
             // Relationships
             if (data.Relationships != null)
+            {
+                data.Relationships.RemoveAll(o => o.IsEmpty());
+
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
-                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid== entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
-                    data.Relationships.Where(o => !o.InversionIndicator).ToList(),
+                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
+                    data.Relationships.Where(o => o.SourceEntityKey == null || o.SourceEntityKey == data.Key || o.TargetEntityKey == data.Key || !o.TargetEntityKey.HasValue).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
+            }
 
             // Telecoms
             if (data.Telecoms != null)

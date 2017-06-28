@@ -45,6 +45,8 @@ using OpenIZ.Mobile.Core.Security;
 using System.Reflection;
 using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Applets.Services;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -77,6 +79,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             IBatchRepositoryService bundleService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
             return bundleService.Insert(bundleToInsert);
         }
+
+		/// <summary>
+		/// Creates the entity relationship.
+		/// </summary>
+		/// <param name="entityRelationship">The entity relationship.</param>
+		/// <returns>Returns the created entity relationship.</returns>
+		[RestOperation(Method = "POST", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+	    [Demand(PolicyIdentifiers.WriteClinicalData)]
+		public EntityRelationship CreateEntityRelationship([RestMessage(RestMessageFormat.SimpleJson)] EntityRelationship entityRelationship)
+	    {
+			var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
+
+		    return erRepositoryService.Insert(entityRelationship);
+	    }
 
         /// <summary>
         /// Gets an entity
@@ -115,6 +131,29 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         }
 
         /// <summary>
+        /// Deletes the act
+        /// </summary>
+        [RestOperation(Method = "DELETE", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.DeleteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public EntityRelationship DeleteEntityRelationship()
+        {
+            var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
+
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            if (search.ContainsKey("_id"))
+            {
+                // Force load from DB
+                var keyid = Guid.Parse(search["_id"].FirstOrDefault());
+                return erRepositoryService.Obsolete(keyid);
+            }
+            else
+                throw new ArgumentNullException("_id");
+        }
+
+
+        /// <summary>
         /// Get entity internal
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
@@ -126,7 +165,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var entityId = Guid.Parse(search["_id"].FirstOrDefault());
                 var entity = entityService.Get(entityId);
                 return entity;
@@ -195,7 +234,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                MemoryCache.Current.RemoveObject(typeof(Provider), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var provider = providerService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 // Ensure expanded
                 //JniUtil.ExpandProperties(patient, search);
@@ -271,32 +310,35 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         private String GetTemplateString()
         {
+
+            var appletManagerService = ApplicationContext.Current.GetService<IAppletManagerService>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             // The template to construct
             List<String> templateId = search["templateId"];
 
             // Attempt to get the template definition
-            var template = XamarinApplicationContext.Current.LoadedApplets.GetTemplateDefinition(templateId.First());
+            var template = appletManagerService.Applets.GetTemplateDefinition(templateId.First());
 
             // Load and replace constants
             var templateBytes = template.DefinitionContent;
             if (templateBytes == null)
-                templateBytes = XamarinApplicationContext.Current.ResolveAppletAsset(XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(template.Definition)) as byte[];
+                templateBytes = appletManagerService.Applets.Resolver?.Invoke(appletManagerService.Applets.ResolveAsset(template.Definition)) as byte[];
 
             var templateString = Encoding.UTF8.GetString(templateBytes);
 
             //if (templateString.StartsWith(c_utf8bom))
             //    templateString = templateString.Remove(0, c_utf8bom.Length);
+            var regex = new Regex(@"\{\{uuid\}\}");
 
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityUser = AuthenticationContext.Current.Session.SecurityUser;
             var userEntity = AuthenticationContext.Current.Session.UserEntity;
-            templateString = templateString.Replace("{{today}}", DateTime.Today.ToUniversalTime().ToString("o"))
-                .Replace("{{uuid}}", Guid.NewGuid().ToString())
-                .Replace("{{now}}", DateTime.Now.ToUniversalTime().ToString("o"))
+            templateString = templateString.Replace("{{today}}", DateTime.Today.ToString("o"))
+                .Replace("{{now}}", DateTime.Now.ToString("o"))
                 .Replace("{{userId}}", securityUser.Key.ToString())
                 .Replace("{{userEntityId}}", userEntity?.Key.ToString())
                 .Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.TargetEntityKey.ToString());
+            templateString = regex.Replace(templateString, (o)=> Guid.NewGuid().ToString() );
             this.m_tracer.TraceVerbose("Template {0} (Post-Populated): {1}", templateId, templateString);
             return templateString;
         }
@@ -317,7 +359,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                MemoryCache.Current.RemoveObject(typeof(Provider), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var provider = securityService.GetUserEntity(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 // Ensure expanded
                 //JniUtil.ExpandProperties(patient, search);
@@ -351,12 +393,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         public ErrorResult ImsiFault(Exception e)
         {
-            return new ErrorResult()
-            {
-                Error = e is TargetInvocationException ? e.InnerException.Message : e.Message,
-                ErrorDescription = e.InnerException?.ToString(),
-                ErrorType = e.GetType().Name
-            };
+            return new ErrorResult(e);
         }
 
         /// <summary>
@@ -425,13 +462,66 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return repository.Save(entityToUpdate).GetLocked() as Entity;
         }
 
-
         /// <summary>
-        /// Updates a manufactured material.
+        /// Updates an entity.
         /// </summary>
-        /// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
-        /// <returns>Returns the updated manufactured material.</returns>
-        [RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+        /// <param name="entityToUpdate">The entity to be updated.</param>
+        /// <returns>Returns the updated entity.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/EntityExtension", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Entity UpdateEntityExtension([RestMessage(RestMessageFormat.SimpleJson)]EntityExtension extensionToSave)
+        {
+            var entityRepository = ApplicationContext.Current.GetService<IRepositoryService<Entity>>();
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            Guid entityKey = Guid.Empty;
+
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out entityKey))
+            {
+                var entity = entityRepository.Get(entityKey).Copy() as Entity;
+                if(entity != null)
+                {
+
+                    // Add extension if not already exists
+                    entity.Extensions.RemoveAll(o => o == null);
+                    var extension = entity.Extensions.FirstOrDefault(o => o.LoadProperty<ExtensionType>("ExtensionType").Name == extensionToSave.ExtensionType.Name);
+                    if (extension != null)
+                        entity.Extensions.Remove(extension);
+                    entity.Extensions.Add(extensionToSave);
+                    return entityRepository.Save(entity);
+
+                }
+                else
+                    throw new ArgumentException("Entity not found");
+
+            }
+            else
+            {
+                throw new ArgumentException("Entity not found");
+            }
+        }
+        /// <summary>
+        /// Updates the entity relationship.
+        /// </summary>
+        /// <param name="entityRelationship">The entity relationship.</param>
+        /// <returns>Returns the updated entity relationship.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+	    [Demand(PolicyIdentifiers.WriteClinicalData)]
+	    public EntityRelationship UpdateEntityRelationship([RestMessage(RestMessageFormat.SimpleJson)] EntityRelationship entityRelationship)
+	    {
+		    var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
+
+		    return erRepositoryService.Save(entityRelationship);
+	    }
+
+
+		/// <summary>
+		/// Updates a manufactured material.
+		/// </summary>
+		/// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
+		/// <returns>Returns the updated manufactured material.</returns>
+		[RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)

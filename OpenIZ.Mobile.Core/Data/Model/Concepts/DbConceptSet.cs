@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the oid of the concept set
         /// </summary>
-        [Column("oid"), Indexed]
+        [Column("oid")]
         public String Oid { get; set; }
 
         /// <summary>

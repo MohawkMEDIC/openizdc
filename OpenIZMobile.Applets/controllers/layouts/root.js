@@ -23,7 +23,7 @@
 /// <reference path="~/lib/toastr.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', 'angular.filter'])
-    .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', function ($compileProvider, $stateProvider, $urlRouterProvider) {
+    .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', '$httpProvider', function ($compileProvider, $stateProvider, $urlRouterProvider, $httpProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 
@@ -40,131 +40,242 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 }
             });
 
+        //$httpProvider.interceptors.push('authInterceptor');
         //$urlRouterProvider.otherwise('/');
 
     }])
-    .run(function ($rootScope) {
+    .run(function ($rootScope, $state, $templateCache) {
 
-        $rootScope.isLoading = true;
-        $rootScope.extendToast = null;
+        angular.element(document).ready(init);
 
-        // HACK: Sometimes HASH is empty ... ugh... 
-        // Once we fix the panels and tabs in BS this can be removed
-        if (window.location.hash == "")
-            window.location.hash = "#/";
-
-        OpenIZ.Configuration.getConfigurationAsync({
-            continueWith: function (config) {
-                $rootScope.system = {};
-                $rootScope.system.config = config;
-                $rootScope.$apply();
-            }
-        });
-
-        $rootScope.$on("$stateChangeError", console.log.bind(console));
-        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-            if ($('.modal.in').length > 0) {
-                $('.modal-open').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-            }
-            window.scrollTo(0, 0);
+        function init() {
             $rootScope.isLoading = true;
-        });
-        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-            OpenIZ.App.hideWait();
-            $rootScope.isLoading = false;
-        });
+            $rootScope.extendToast = null;
+            $rootScope.$$oizStateDataList = [];
 
-        $rootScope.page = {
-            title: OpenIZ.App.getCurrentAssetTitle(),
-            loadTime: new Date(),
-            maxEventTime: new Date().tomorrow(), // Dislike Javascript
-            minEventTime: new Date().yesterday(), // quite a bit
-            locale: OpenIZ.Localization.getLocale(),
-            onlineState: OpenIZ.App.getOnlineState()
-        };
+            // HACK: Sometimes HASH is empty ... ugh... 
+            // Once we fix the panels and tabs in BS this can be removed
+            if (window.location.hash == "")
+                window.location.hash = "#/";
 
-        setInterval(function () {
-            $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+            OpenIZ.Configuration.getConfigurationAsync({
+                continueWith: function (config) {
+                    $rootScope.system = {};
+                    $rootScope.system.config = config;
+                    $rootScope.$apply();
+                }
+            });
 
-            if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000))
-            {
-                var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
-                var mins = Math.trunc(expiry / 60),
-                    secs = expiry % 60;
-                if (("" + secs).length < 2)
-                    secs = "0" + secs;
-                expiryStr = mins + ":" + secs;
-                var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + expiryStr + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
+            $rootScope.$on("$stateChangeError", function () {
+                console.log.bind(console);
+                OpenIZ.App.hideWait();
+                $rootScope.isLoading = false;
+            });
+            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
 
-                if(expiry < 0)
-                    window.location.reload(true);
-                else if (!$rootScope.extendToast)
-                    $rootScope.extendToast = toastr.error(authString, OpenIZ.Localization.getString("locale.session.expiration"),  {
-                        closeButton: false,
-                        preventDuplicates: true,
-                        onclick: function () {
-                            OpenIZ.Authentication.refreshSessionAsync({
-                                continueWith: function (s) {
-                                    $rootScope.session = s;
-                                },
-                                onException: function (e) {
-                                    if (e.message) OpenIZ.App.toast(e.message);
-                                    else console.error(e);
-                                }
-                            });
-                            $rootScope.extendToast = null;
-                            toastr.clear();
-                        },
-                        positionClass: "toast-bottom-center",
-                        timeOut: 0,
-                        extendedTimeOut: 0
-                    });
-                else
-                    $($rootScope.extendToast).children('.toast-message').html(authString);
-                    //$rootScope.extendToast.show();
-            }
-            else {
-                
-            }
-            $rootScope.$applyAsync();
-        }, 10000);
-
-
-        // Get current session
-        OpenIZ.Authentication.getSessionAsync({
-            continueWith: function (session) {
-                $rootScope.session = session;
-                if (session != null && session.entity != null) {
-                    session.entity.telecom = session.entity.telecom || {};
-                    if (Object.keys(session.entity.telecom).length == 0)
-                        session.entity.telecom.MobilePhone = { value: "" };
+                // Update ages of preserve states and set state if needed
+                var hasSavedState = false;
+                delete (event.targetScope.$$oizState);
+                for (var v in $rootScope.$$oizStateDataList) {
+                    hasSavedState |= $rootScope.$$oizStateDataList[v].state == fromState.name;
+                    $rootScope.$$oizStateDataList[v].age = ($rootScope.$$oizStateDataList[v].age || 0) + 1;
+                    if ($rootScope.$$oizStateDataList[v].state == toState.name) {
+                        event.targetScope.$$oizState = $rootScope.$$oizStateDataList[v];
+                        $rootScope.$$oizStateDataList.splice(v, 1);
+                    }
                 }
 
-                OpenIZ.Configuration.getUserPreferencesAsync({
-                    continueWith: function (prefs) {
-                        $rootScope.session.prefs = {};
-                        for (var p in prefs.application.setting) {
-                            var set = prefs.application.setting[p];
-                            $rootScope.session.prefs[set.key] = set.value;
+                $rootScope.isLoading = true;
+                toastr.clear();
+                $rootScope.extendToast = null;
+                if ($rootScope.confirmNavigation && !hasSavedState && !$rootScope.confirmNavigation(event, fromState)) {
+                    event.preventDefault();
+                    $state.go(fromState.name);
+                    $rootScope.isLoading = false;
+                }
+                else {
+                    if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
+                        $('.modal-open').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $('body').css('padding-right', '');
+                    }
+                    $('.select2-container').remove();
+
+                    window.scrollTo(0, 0);
+                    $rootScope.isLoading = true;
+                }
+            });
+            $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+                OpenIZ.App.hideWait();
+                $rootScope.isLoading = false;
+
+                // Refresh the session ?
+                if ($rootScope.session && ($rootScope.session.exp - new Date() < 240000)) { // The session is about to expire so let's extend it!
+                    OpenIZ.Authentication.refreshSessionAsync({
+                        continueWith: function (s) {
+                            $rootScope.session = s;
+                        },
+                        onException: function (e) {
+                            console.error(e);
                         }
+                    });
+                }
+            });
+
+            $rootScope.page = {
+                title: OpenIZ.App.getCurrentAssetTitle(),
+                loadTime: new Date(),
+                maxEventTime: new Date(), // Dislike Javascript
+                minEventTime: new Date().yesterday(), // quite a bit
+                locale: OpenIZ.Localization.getLocale(),
+                onlineState: OpenIZ.App.getOnlineState()
+            };
+
+            $rootScope.page.maxEventTime.setHours(23);
+            $rootScope.page.maxEventTime.setMinutes(59);
+            $rootScope.page.maxEventTime.setSeconds(59);
+            $rootScope.page.maxEventTime.setMilliseconds(999);
+
+            // Interval to refresh online state and to check session
+            setInterval(function () {
+                $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+                if ($rootScope.page.onlineState)
+                    $("#onlineStateIndicator")[0].style.display = 'none';
+                else
+                    $("#onlineStateIndicator")[0].style.display = 'inline-block';
+
+                if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000)) {
+                    var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
+                    var mins = Math.trunc(expiry / 60),
+                        secs = expiry % 60;
+                    if (("" + secs).length < 2)
+                        secs = "0" + secs;
+                    expiryStr = mins + ":" + secs;
+                    var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + " " + expiryStr + " " + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
+
+                    if (expiry < 0) {
+                        OpenIZ.Authentication.abandonSession({
+                            continueWith:function() {
+                                $rootScope.session = null;
+                                $templateCache.removeAll();
+                                $state.reload();
+                                toastr.clear();
+                            }
+                        });
+                    }
+                    else if (!$rootScope.extendToast)
+                        $rootScope.extendToast = toastr.error(authString, OpenIZ.Localization.getString("locale.session.expiration"), {
+                            closeButton: false,
+                            preventDuplicates: true,
+                            onclick: function () {
+                                OpenIZ.Authentication.refreshSessionAsync({
+                                    continueWith: function (s) {
+                                        $rootScope.session = s;
+                                    },
+                                    onException: function (e) {
+                                        if (e.message) OpenIZ.App.toast(e.message);
+                                        else console.error(e);
+                                    }
+                                });
+                                $rootScope.extendToast = null;
+                                toastr.clear();
+                            },
+                            positionClass: "toast-bottom-center",
+                            timeOut: 0,
+                            extendedTimeOut: 0
+                        });
+                    else {
+                        $($rootScope.extendToast).children('.toast-message').html(authString);
+                    }
+                }
+                else {
+                    toastr.clear();
+                }
+                //$rootScope.$apply();
+            }, 10000);
+
+
+            // Get current session
+
+            $rootScope.changeInputType = function (controlId, type) {
+                $(controlId).attr('type', type);
+                if ($(controlId).attr('data-max-' + type) != null) {
+                    $(controlId).attr('max', $(controlId).attr('data-max-' + type));
+                }
+            };
+
+            $rootScope.initSessionVars = function () {
+                OpenIZ.Authentication.getSessionAsync({
+                    continueWith: function (session) {
+                        $rootScope.session = session;
+                        if (session != null && session.entity != null) {
+                            session.entity.telecom = session.entity.telecom || {};
+                            if (Object.keys(session.entity.telecom).length == 0)
+                                session.entity.telecom.MobilePhone = { value: "" };
+                        }
+
+                        OpenIZ.Configuration.getUserPreferencesAsync({
+                            continueWith: function (prefs) {
+                                $rootScope.session.prefs = {};
+                                for (var p in prefs.application.setting) {
+                                    var set = prefs.application.setting[p];
+                                    $rootScope.session.prefs[set.key] = set.value;
+                                }
+                                $rootScope.$apply();
+                            },
+                            onException: function (ex) { console.error(ex); }
+                        });
                         $rootScope.$apply();
+                    },
+                    onException: function (ex) {
+                        console.error(ex);
                     }
                 });
-                $rootScope.$apply();
-            }
-        });
+            };
 
-        $rootScope.changeInputType = function (controlId, type) {
-            $(controlId).attr('type', type);
-            if ($(controlId).attr('data-max-' + type) != null) {
-                $(controlId).attr('max', $(controlId).attr('data-max-' + type));
-            }
-        };
+            $rootScope.initSessionVars();
 
+            $rootScope.$watch('session', function (nv, ov) {
+                if (nv) {
+                    OpenIZ.App.getInfoAsync({
+                        includeUpdates: true,
+                        continueWith: function (data) {
+
+                            if (data.update && data.update.length > 0) {
+                                toastr.info(OpenIZ.Localization.getString("locale.about.updateToast.text"), OpenIZ.Localization.getString("locale.about.updateToast.title"), {
+                                    closeButton: false,
+                                    preventDuplicates: true,
+                                    onclick: function () {
+                                        window.location.hash = "/core/about";
+                                    },
+                                    positionClass: "toast-bottom-center",
+                                    timeOut: 4000,
+                                    extendedTimeOut: 0
+                                });
+                            }
+                        },
+                        onException: function (ex) {
+                            console.error(ex);
+                        }
+                    });
+
+                }
+            });
+
+            // Set the language for select2 localization
+            var locale = OpenIZ.Localization.getLocale();
+
+            // HACK: With the current version of select2 we cannot re-define the en locale, so lets change english to en-ca
+            // so the english localization can be used and we can fix the unicode character issues
+            if (locale === "en") {
+                locale = "en-ca";
+            }
+
+            $.fn.select2.defaults.set('language', locale);
+
+        }
         $rootScope.OpenIZ = OpenIZ;
     });
-
 
 /**
  * @summary The queryUrlParameterService is used to get url parameters.
@@ -213,88 +324,43 @@ angular.element(document).ready(function () {
     //OpenIZ.locale = OpenIZ.Localization.getLocale();
 });
 
-
-layoutApp.factory('encounterFactory', ['$q', function ($q) {
-    var encounterFactory = { appointments: null, patientId: null, pageTime: null, gettingUpcoming: false };
-
-    encounterFactory.setPageTime = function (value) {
-        encounterFactory.pageTime = value;
-    };
-
-    encounterFactory.setPatientId = function (value) {
-        encounterFactory.patientId = value;
-    };
-
-    encounterFactory.getUpcoming = function () {
-        var deferred = $q.defer();
-        if (!encounterFactory.gettingUpcoming) {
-            encounterFactory.gettingUpcoming = true;
-            OpenIZ.CarePlan.getCarePlanAsync({
-                query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
-                onDate: new Date(),
-                /** @param {OpenIZModel.Bundle} proposals */
-                continueWith: function (proposalsToday) {
-                    OpenIZ.CarePlan.getCarePlanAsync({
-                        query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full",
-                        minDate: new Date().tomorrow(),
-                        maxDate: new Date().addDays(90),
-                        continueWith: function (proposals) {
-                            console.log(proposals)
-                            if (proposals) {
-                                if (Array.isArray(proposalsToday.item))
-                                    for (var i = 0; i < proposals.item.length; i++) {
-                                        proposalsToday.item.push(proposals.item[i]);
-                                    }
-                                else
-                                    proposalsToday = proposals;
-
-                                // Grab the first appointment
-                                encounterFactory.appointments = proposalsToday.item;
-                                if (encounterFactory.appointments) {
-                                    encounterFactory.appointments.sort(
-                                              function (a, b) {
-                                                  return a.actTime > b.actTime ? 1 : -1;
-                                              }
-                                            );
-
-                                    for (var i in encounterFactory.appointments)
-                                        if (encounterFactory.appointments[i].startTime < encounterFactory.pageTime) {
-                                            encounterFactory.appointments[i].startTime = encounterFactory.pageTime
-                                        }
-                                    if (!Array.isArray(encounterFactory.appointments[i]) && !Array.isArray(encounterFactory.appointments[i].relationship.HasComponent))
-                                        encounterFactory.appointments[i].relationship.HasComponent = [encounterFactory.appointments[i].relationship.HasComponent];
-                                    deferred.resolve(encounterFactory.appointments);
-                                    encounterFactory.gettingUpcoming = false;
-                                }
-                            }
-                        },
-                        onException: function (ex) {
-                            if (ex.message)
-                                alert(ex.message);
-                            else
-                                console.error(ex);
-                            deferred.reject(ex);
-                        }
-                    });
-                },
-                onException: function (ex) {
-                    if (ex.message)
-                        alert(ex.message);
-                    else
-                        console.error(ex);
-                }
-            });
-
-        }
-        else if (encounterFactory.appointments !== null && encounterFactory.appointments !== undefined) {
-            deferred.resolve(encounterFactory.appointments);
+layoutApp.service('uiHelperService', [function () {
+    function setDropdownPosition(dropdownButton, dropdownMenu) {
+        if (dropdownMenu.outerWidth() > (dropdownButton.parent().width() + dropdownButton.offset().left)) {
+            dropdownMenu.addClass('dropdown-menu-left');
+            dropdownMenu.removeClass('dropdown-menu-right');
         }
         else {
-            deferred.reject("In Progress");
+            dropdownMenu.addClass('dropdown-menu-right');
+            dropdownMenu.removeClass('dropdown-menu-left');
         }
-        return deferred.promise;
-
     }
 
-    return encounterFactory;
+    function initializePopups(direction) {
+        $('[data-toggle="popover"]').popover({
+            placement: direction
+        });
+
+        $('[data-toggle="popover"]').on('shown.bs.popover', function (event) {
+            var offset = $('div.popover').offset().top - $(document).scrollTop();
+            if (offset < 10) {
+                $('div.popover').css('top', parseInt($('div.popover').css('top')) + 10 - offset);
+            }
+        });
+    }
+
+    var uiHelperService = {
+        setDropdownPosition: setDropdownPosition,
+        initializePopups: initializePopups
+    }
+
+    return uiHelperService;
+}]);
+
+layoutApp.service('regexService', [function () {
+    var regexService = {
+        passwordRegex: /^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d]{8,}$/
+    };
+
+    return regexService;
 }]);

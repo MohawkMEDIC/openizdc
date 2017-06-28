@@ -33,7 +33,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="relationGivenName">{{ 'locale.patient.realtive.givenName' | i18n }}</label>
+        <label class="col-xs-2 control-label" for="relationGivenName">{{ 'locale.patient.relative.givenName' | i18n }}</label>
         <div class="col-xs-10">
             <div class="input-group">
                 <input type="text" name="relationGivenName" id="relationGivenName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.$other.targetModel.name.OfficialRecord.component.Given" />
@@ -49,13 +49,13 @@
             <div class="input-group">
                 <input type="text" name="relationFamilyName" id="relationFamilyName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.$other.targetModel.name.OfficialRecord.component.Family" />
                 <span class="input-group-btn">
-                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.familyName.type' | i18n }}" data-content="{{ 'locale.patient.relative.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.relative.familyName' | i18n }}" data-content="{{ 'locale.patient.relative.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
+        <label class="col-xs-2 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.contact' | i18n }}</label>
         <div class="col-xs-4">
             <div class="input-group">
                 <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-model="patient.relationship.$other.targetModel.telecom.$other.use"
@@ -66,7 +66,7 @@
             <div class="input-group">
                 <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="patient.relationship.$other.targetModel.telecom.$other.value" class="form-control" />
                 <span class="input-group-btn">
-                    <a class="btn btn-default" data-toggle="popover" tabindex="3" data-trigger="focus" title="{{ 'locale.patient.telephone.type' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="3" data-trigger="focus" title="{{ 'locale.patient.telephone.type' | i18n }}" data-content="{{ 'locale.patient.relative.contact.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
 
             </div>

@@ -84,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Instructs the service to compact all databases
         /// </summary>
         [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "POST", UriPath = "/data")]
-        [Demand(PolicyIdentifiers.UnrestrictedAdministration)]
+        [Demand(PolicyIdentifiers.Login)]
         public void Compact()
         {
 
@@ -95,7 +95,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // Iterate compact open connections
             conmgr.Compact();
-            
+
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             if (conmgr == null)
                 throw new InvalidOperationException(Strings.err_purgeNotPermitted);
-                
+
             conmgr.Stop();
             (warehouse as IDaemonService)?.Stop();
 
@@ -127,6 +127,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 File.Delete(itm.Value);
             }
             ApplicationContext.Current.SaveConfiguration();
+        }
+
+        /// <summary>
+        /// Force a re-synchronization
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "POST", UriPath = "/queue")]
+        [return: RestMessage(RestMessageFormat.Json)]
+        [Demand(PolicyIdentifiers.Login)]
+        public void ForceSync()
+        {
+            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustOutboundQueue();
+            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustAdminQueue();
+
+            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, ""), 0);
+            var targets = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o => o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange)).ToList();
+            for(var i = 0; i < targets.Count(); i++)
+            {
+                var itm = targets[i];
+                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, itm.ResourceType.Name), (float)i / targets.Count);
+
+                if (itm.Filters.Count > 0)
+                    foreach (var f in itm.Filters)
+                        ApplicationContext.Current.GetService<RemoteSynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f), itm.Always);
+                else
+                    ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType);
+            }
+            
         }
 
         /// <summary>
@@ -144,15 +171,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             switch (queue)
             {
                 case "inbound":
+                case "inbound_queue":
                     SynchronizationQueue.Inbound.Delete(id);
                     break;
                 case "outbound":
+                case "outbound_queue":
                     SynchronizationQueue.Outbound.Delete(id);
                     break;
                 case "dead":
+                case "dead_queue":
                     SynchronizationQueue.DeadLetter.Delete(id);
                     break;
                 case "admin":
+                case "admin_queue":
                     SynchronizationQueue.Admin.Delete(id);
                     break;
             }
@@ -175,12 +206,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             switch (queueItem.OriginalQueue)
             {
                 case "inbound":
+                case "inbound_queue":
                     SynchronizationQueue.Inbound.EnqueueRaw(new InboundQueueEntry(queueItem));
                     break;
                 case "outbound":
+                case "outbound_queue":
                     SynchronizationQueue.Outbound.EnqueueRaw(new OutboundQueueEntry(queueItem));
                     break;
                 case "admin":
+                case "admin_queue":
                     SynchronizationQueue.Admin.EnqueueRaw(new OutboundAdminQueueEntry(queueItem));
                     break;
                 default:
@@ -201,51 +235,109 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             int offset = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_offset"] ?? "0"),
-                count = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_count"] ?? "10"),
+                count = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_count"] ?? "100"),
                 totalResults = 0;
 
-            // Get the queue
-            switch (MiniImsServer.CurrentContext.Request.QueryString["_queue"])
+            var explId = MiniImsServer.CurrentContext.Request.QueryString["_id"];
+            if (!String.IsNullOrEmpty(explId))
             {
-                case "inbound":
-                    {
-                        var predicate = QueryExpressionParser.BuildLinqExpression<InboundQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Inbound.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
-                        {
-                            Size = totalResults,
-                            Offset = offset
-                        };
-                    }
-                case "outbound":
-                    {
-                        var predicate = QueryExpressionParser.BuildLinqExpression<OutboundQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Outbound.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
-                        {
-                            Size = totalResults,
-                            Offset = offset
-                        };
-                    }
-                case "admin":
-                    {
-                        var predicate = QueryExpressionParser.BuildLinqExpression<OutboundAdminQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Admin.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
-                        {
-                            Size = totalResults,
-                            Offset = offset
-                        };
-                    }
-                case "dead":
-                    {
-                        var predicate = QueryExpressionParser.BuildLinqExpression<DeadLetterQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.DeadLetter.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
-                        {
-                            Size = totalResults,
-                            Offset = offset
-                        };
-                    }
-                default:
-                    throw new KeyNotFoundException();
+                SynchronizationQueueEntry retVal = null;
+                // Get the queue
+                switch (MiniImsServer.CurrentContext.Request.QueryString["_queue"])
+                {
+                    case "inbound":
+                        retVal = SynchronizationQueue.Inbound.Get(Int32.Parse(explId));
+                        break;
+                    case "outbound":
+                        retVal = SynchronizationQueue.Outbound.Get(Int32.Parse(explId));
+                        break;
+                    case "admin":
+                        retVal = SynchronizationQueue.Admin.Get(Int32.Parse(explId));
+                        break;
+                    case "dead":
+                        retVal = SynchronizationQueue.DeadLetter.Get(Int32.Parse(explId));
+                        break;
+                    default:
+                        throw new KeyNotFoundException();
+                }
+
+                retVal.Data = Convert.ToBase64String(ApplicationContext.Current.GetService<IQueueFileProvider>().GetQueueData(retVal.Data));
+
+                return new AmiCollection<SynchronizationQueueEntry>() { CollectionItem = new List<SynchronizationQueueEntry>() { retVal } };
             }
+            else
+                // Get the queue
+                switch (MiniImsServer.CurrentContext.Request.QueryString["_queue"])
+                {
+                    case "inbound":
+                        {
+                            var predicate = QueryExpressionParser.BuildLinqExpression<InboundQueueEntry>(search);
+                            return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Inbound.Query(predicate, offset, count, out totalResults)
+                                .Select(o => new InboundQueueEntry()
+                                {
+                                    Id = o.Id,
+                                    CreationTime = o.CreationTime,
+                                    Operation = o.Operation,
+                                    Type = o.Type
+                                })
+                                .OfType<SynchronizationQueueEntry>()
+                                .ToList())
+                            {
+                                Size = totalResults,
+                                Offset = offset
+                            };
+                        }
+                    case "outbound":
+                        {
+                            var predicate = QueryExpressionParser.BuildLinqExpression<OutboundQueueEntry>(search);
+                            return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Outbound.Query(predicate, offset, count, out totalResults)
+                                .Select(o => new OutboundQueueEntry()
+                                {
+                                    Id = o.Id,
+                                    CreationTime = o.CreationTime,
+                                    Operation = o.Operation,
+                                    Type = o.Type
+                                })
+                                .OfType<SynchronizationQueueEntry>().ToList())
+                            {
+                                Size = totalResults,
+                                Offset = offset
+                            };
+                        }
+                    case "admin":
+                        {
+                            var predicate = QueryExpressionParser.BuildLinqExpression<OutboundAdminQueueEntry>(search);
+                            return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Admin.Query(predicate, offset, count, out totalResults).Select(o => new OutboundAdminQueueEntry()
+                            {
+                                Id = o.Id,
+                                CreationTime = o.CreationTime,
+                                Operation = o.Operation,
+                                Type = o.Type
+                            }).OfType<SynchronizationQueueEntry>().ToList())
+                            {
+                                Size = totalResults,
+                                Offset = offset
+                            };
+                        }
+                    case "dead":
+                        {
+                            var predicate = QueryExpressionParser.BuildLinqExpression<DeadLetterQueueEntry>(search);
+                            return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.DeadLetter.Query(predicate, offset, count, out totalResults).Select(o => new DeadLetterQueueEntry()
+                            {
+                                Id = o.Id,
+                                CreationTime = o.CreationTime,
+                                Operation = o.Operation,
+                                Type = o.Type,
+                                OriginalQueue = o.OriginalQueue
+                            }).OfType<SynchronizationQueueEntry>().ToList())
+                            {
+                                Size = totalResults,
+                                Offset = offset
+                            };
+                        }
+                    default:
+                        throw new KeyNotFoundException();
+                }
 
         }
 

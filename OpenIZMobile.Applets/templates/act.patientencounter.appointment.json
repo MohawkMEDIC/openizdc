@@ -1,6 +1,6 @@
 ﻿{
   "$type": "PatientEncounter",
-  "template": {
+  "templateModel": {
     "mnemonic": "act.patientencounter.appointment"
   },
   "moodConcept": "C46EEE70-5612-473F-8D24-595EA15C9C39",

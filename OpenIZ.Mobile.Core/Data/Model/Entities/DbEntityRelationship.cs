@@ -64,6 +64,6 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// Quantity 
         /// </summary>
         [Column("quantity")]
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
     }
 }

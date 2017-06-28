@@ -37,6 +37,9 @@ using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Threading;
+using OpenIZ.Mobile.Core.Configuration;
+using System.Security;
+using OpenIZ.Mobile.Core.Resources;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -97,7 +100,7 @@ namespace OpenIZ.Mobile.Core.Security
         {
             get
             {
-                if (this.m_entity != null)
+                if (this.m_entity != null || this.Principal == null)
                     return this.m_entity;
 
                 // HACK: Find a better way
@@ -211,7 +214,7 @@ namespace OpenIZ.Mobile.Core.Security
                     return this.Principal != null;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error extending session: {0}", e);
                 return false;
@@ -241,6 +244,18 @@ namespace OpenIZ.Mobile.Core.Security
                 this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToList();
                 this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod)?.Value;
 
+                var subKey = Guid.Empty;
+                if (cp.HasClaim(o => o.Type == ClaimTypes.Sid))
+                    Guid.TryParse(cp.FindClaim(ClaimTypes.Sid)?.Value, out subKey);
+
+            }
+            else if (principal is SQLitePrincipal)
+            {
+                var sqlPrincipal = principal as SQLitePrincipal;
+                this.Issued = sqlPrincipal.IssueTime;
+                this.Expiry = sqlPrincipal.Expires;
+                IRoleProviderService rps = ApplicationContext.Current.GetService<IRoleProviderService>();
+                this.Roles = rps.GetAllRoles(this.UserName).ToList();
             }
             else
             {
@@ -257,11 +272,42 @@ namespace OpenIZ.Mobile.Core.Security
                 var securityUser = userService.GetUser(principal.Identity);
                 this.SecurityUser = securityUser;
 
+                // User entity available?
+                this.m_entity = userService.GetUserEntity(principal.Identity);
+
+                // Attempt to download if the user entity is null
+                // Or if there are no relationships of type dedicated service dedicated service delivery location to force a download of the user entity 
+                var amiService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
+                if (amiService != null && amiService.IsAvailable() || this.m_entity == null || this.m_entity?.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation) == true)
+                {
+                    int t = 0;
+                    var sid = Guid.Parse((principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Sid)?.Value ?? ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().QueryFast(o => o.UserName == principal.Identity.Name, 0, 1, out t, Guid.Empty).FirstOrDefault()?.Key.ToString());
+                    this.m_entity = amiService.Find<UserEntity>(o => o.SecurityUser.Key == sid, 0, 1, null).Item?.OfType<UserEntity>().FirstOrDefault();
+                }
             }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error getting extended session information: {0}", e);
             }
+
+            // Only subscribed faciliites
+            if (ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().OnlySubscribedFacilities)
+            {
+                var subFacl = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities;
+                var isInSubFacility = this.m_entity?.LoadCollection<EntityRelationship>("Relationships").Any(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation && subFacl.Contains(o.TargetEntityKey.ToString())) == true;
+                if (!isInSubFacility && ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
+                {
+                    if (this.m_entity == null)
+                        this.m_tracer.TraceError("User facility check could not be done : entity null");
+                    else
+                        this.m_tracer.TraceError("User is in facility {0} but tablet only allows login from {1}",
+                            String.Join(",", this.m_entity?.LoadCollection<EntityRelationship>("Relationships").Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).Select(o => o.TargetEntityKey).ToArray()),
+                            String.Join(",", subFacl)
+                            );
+                    throw new SecurityException(Strings.locale_loginFromUnsubscribedFacility);
+                }
+            }
+
         }
     }
 }

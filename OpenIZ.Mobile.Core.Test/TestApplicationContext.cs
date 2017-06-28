@@ -50,6 +50,10 @@ namespace OpenIZ.Mobile.Core.Test
         private OpenIZConfiguration m_configuration;
         private TestContext m_context;
 
+        public override void ShowToast(string subject)
+        {
+        }
+
         /// <summary>
         /// Gets or sets the unit test context
         /// </summary>
@@ -228,12 +232,17 @@ namespace OpenIZ.Mobile.Core.Test
             throw new NotImplementedException();
         }
 
-        public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
+        public override bool Confirm(string confirmText)
         {
             throw new NotImplementedException();
         }
 
-        public override object ResolveAppletAsset(AppletAsset navigateAsset)
+        public override void Alert(string alertText)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
         {
             throw new NotImplementedException();
         }

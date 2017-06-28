@@ -17,26 +17,24 @@
  - User: justi
  - Date: 2017-3-31
  -->
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel._overdue}">
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel.tag.backEntry}">
     <div class="row">
         <div class="control-label col-xs-12">
             <label class="control-label">
-                {{ 'locale.encounters.supplement.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}
-
+                {{ 'locale.encounters.supplement.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} #{{ act.targetModel.doseSequence }}
             </label><br />
-            <span ng-if="act.targetModel._overdue">
-                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.stopTime | date: 'yyyy-MMM-dd' }})</small>
+            <span ng-if="act.targetModel.tag.backEntry &amp;&amp; !act.targetModel.relationship.Fulfills">
+                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
             </span>
-            <span ng-if="!act.targetModel._overdue &amp;&amp; act.targetModel.relationship.Fulfills">
-                <small>
-                    ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
-                </small>
+            <span ng-if="act.targetModel.tag.backEntry &amp;&amp; act.targetModel.relationship.Fulfills">
+                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
             </span>
         </div>
-        <div ng-if="!act.targetModel._overdue">
+        <div ng-if="!act.targetModel.tag.backEntry">
             <div ng-class="!act._created ? 'col-xs-11':'col-xs-12'">
                 <label ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.supplement.drug' | i18n }}</label>
-                <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~Supplement&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value">
+                <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~Supplement&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value"
+                        ng-change="act.targetModel.doseSequence = getNextDoseSequence(act.targetModel.participation.Product.player)">
                     <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.supplement.drug' | i18n }}</option>
                 </select>
                 <select class="form-control" disabled="disabled" ng-if="act._enabled &amp;&amp; !act._created">
@@ -49,7 +47,7 @@
                     <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.lot' | i18n }}</option>
                 </select>-->
                 <label ng-if="!act._enabled">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</label>
-                <select ng-if="!act._enabled" name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.negationReason" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
+                <select ng-if="!act._enabled" name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
                     <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
                 </select>
             </div>
@@ -63,12 +61,12 @@
                 </label>
             </div>
         </div>
-        <div ng-if="act.targetModel._overdue">
+        <div ng-if="act.targetModel.tag.backEntry">
             <div class="col-xs-11">
                 <label ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</label>
                 <input ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$invalid}" ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
             </div>
-            <div class="col-xs-1">
+            <div class="col-xs-1" ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                 <label ng-if="!act._created" class="control control--checkbox">
                     <input type="checkbox"
                            ng-model="act._enabled"
@@ -81,18 +79,18 @@
        
     </div>
     <div class="row form-group">
-        <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid">
+        <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingProduct' | i18n }}
         </div>
         <!--
             TODO: Do we track supplements for stock?
-            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid">
+            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
         </div>-->
-        <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['site_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['site_' + act.targetModel.id].$invalid">
+        <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['site_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['site_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingSite' | i18n }}
         </div>
-        <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="!act._enabled &amp;&amp; (editEncounterForm['reason_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['reason_' + act.targetModel.id].$invalid">
+        <div class="col-xs-12 help-block text-danger" ng-if="!act._enabled &amp;&amp; (editEncounterForm['reason_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['reason_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
         </div>
     </div>

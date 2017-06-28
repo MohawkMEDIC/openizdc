@@ -50,12 +50,12 @@ namespace OpenIZ.Mobile.Core.Configuration
         {
             get
             {
-                return this.PollInterval?.ToString();
+                return this.PollInterval.ToString();
             }
             set
             {
                 if (value == null)
-                    this.PollInterval = null;
+                    this.PollInterval = TimeSpan.MinValue;
                 else
                     this.PollInterval = TimeSpan.Parse(value);
             }
@@ -65,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// Poll interval
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public TimeSpan? PollInterval { get; set; }
+        public TimeSpan PollInterval { get; set; }
 
         /// <summary>
         /// Gets or sets the list of synchronization queries
@@ -125,7 +125,7 @@ namespace OpenIZ.Mobile.Core.Configuration
             }
             set
             {
-                this.ResourceType = typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes.First(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == value);
+                this.ResourceType = typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == value);
             }
         }
 
@@ -134,6 +134,12 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlElement("filter")]
         public List<string> Filters { get; set; }
+
+        /// <summary>
+        /// Always pull?
+        /// </summary>
+        [XmlAttribute("ignoreModifiedOn")]
+        public bool Always { get; set; }
     }
 
 

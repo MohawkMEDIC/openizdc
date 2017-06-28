@@ -42,59 +42,13 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-xs-3 control-label ng-cloak" for="dobInput">
-        {{ 'locale.patient.demographics.dateOfBirth' | i18n }}*
-        </label>
-        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid }">
-            <div class="input-group">
-                <input ng-disabled="patientBackup.tag.hasBirthCertificate || patient.hasVaccines"
-                       ng-readonly="patient.readonly.dateOfBirth" type="date" 
-                       name="dateOfBirth" id="dobInput" 
-                       class="form-control" 
-                       ng-model="patient.dateOfBirth" 
-                       max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" 
-                       ng-required="true"/>
-                <span class="input-group-addon input-group-addon-approx">
-                    <label class="control control--checkbox">
-                        <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
-                        <input type="checkbox"
-                               ng-disabled="patient.tag.hasBirthCertificate"
-                               ng-model="patient.dateOfBirthPrecision"
-                               value="1"
-                               name="approximateDob" />
-                        <div class="control__indicator" style="top: 8px;"></div>
-                    </label>
-                </span>
-                <span class="input-group-btn">
-                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
-                </span>
-            </div>
-            <p ng-if="patientBackup.tag.hasBirthCertificate || patient.hasVaccines">
-                {{ 'locale.patient.demographics.dateOfBirth.hasCertificateOrVaccines' | i18n }}
-            </p>
-            <p ng-if="(editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid">
-                <span ng-show="editPatientForm.dateOfBirth.$error.required"
-                   class="help-block text-danger">
-                    {{ 'locale.patient.errors.dob.required' | i18n }}
-                </span>
-                <span ng-show="editPatientForm.dateOfBirth.$error.date"
-                   class="help-block text-danger">
-                    {{ 'locale.patient.errors.dob.date' | i18n }}
-                </span>
-                <span ng-show="editPatientForm.dateOfBirth.$error.max"
-                   class="help-block text-danger">
-                    {{ 'locale.patient.errors.dob.max' | i18n }}
-                </span>
-            </p>
-        </div>
-    </div>
+    <!-- #include virtual="/org.openiz.core/views/common/patients/register/demographics-birthdate.html" -->
 
-    <div class="form-group" ng-show="patient.version">
+    <div class="form-group" ng-show="patient.statusConcept == 'c34fcbf1-e0fe-4989-90fd-0dc49e1b9685'">
         <label class="col-xs-3 control-label ng-cloak" for="deathDate">
         {{ 'locale.patient.demographics.deceasedDate' | i18n }}*
         </label>
-        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.deceasedDate.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.deceasedDate.$invalid }">
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.deceasedDate.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.deceasedDate.$invalid }">
             <div class="input-group">
                 <span class="input-group-addon input-group-addon-no-label">
                     <label class="control control--checkbox">
@@ -127,7 +81,7 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="3" data-trigger="focus" title="{{ 'locale.patient.demographics.deceasedDate' | i18n }}" data-content="{{ 'locale.patient.demographics.deceasedDate.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-if="(editPatientForm.deceasedDate.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.deceasedDate.$invalid">
+            <p ng-if="(editPatientForm.deceasedDate.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.deceasedDate.$invalid">
                 <span ng-show="editPatientForm.deceasedDate.$error.required"
                       class="help-block text-danger">
                     {{ 'locale.patient.errors.deceasedDate.required' | i18n }}
@@ -152,9 +106,9 @@
         <label class="col-xs-3 control-label ng-cloak" 
                for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}*
         </label>
-        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.gender.$touched||editPatientForm.$submitted) &amp;&amp; editPatientForm.gender.$invalid }">
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.gender.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.gender.$invalid }">
             <div class="input-group">
-                <select ng-disabled="patient.readonly.genderConcept || patientBackup.tag.hasBirthCertificate || patient.hasVaccines" name="gender" 
+                <select ng-disabled="patient.readonly.genderConcept || patientBackup.tag.hasBirthCertificate === 'True' || patient.hasVaccines" name="gender" 
                         ng-model="patient.genderConcept" 
                         ng-required="true" id="genderSelect" 
                         class="form-control"
@@ -167,10 +121,10 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="4" data-trigger="focus" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-if="patientBackup.tag.hasBirthCertificate || patient.hasVaccines">
+            <p ng-if="patientBackup.tag.hasBirthCertificate === 'True' || patient.hasVaccines">
                 {{ 'locale.patient.demographics.gender.hasCertificateOrVaccines' | i18n }}
             </p>
-            <p ng-show="(editPatientForm.gender.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
+            <p ng-show="(editPatientForm.gender.$touched||(editPatientForm.$submitted || formSubmitted))&amp;&amp;editPatientForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
         </div>
     </div>
 

@@ -24,11 +24,13 @@
     var rvalidescape = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g;
     var rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
     var rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
-    var dateISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[.,]\d+)?[Z\-\+]?.*?$/i;
+    var dateTimeISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[.,]\d+)?[Z\-\+]?.*?$/i;
+    var dateISO = /^\d{4}-\d{2}-\d{2}$/i;
     var dateNet = /\/Date\((\d+)(?:-\d+)?\)\//i;
 
     // replacer RegExp
     var replaceISO = /"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:[.,](\d+))?[Z\-].*?"/i;
+    var replaceDateISO = /"(\d{4})-(\d{2})-(\d{2})"/i;
     var replaceNet = /"\\\/Date\((\d+)(?:-\d+)?\)\\\/"/i;
 
     // determine JSON native support
@@ -38,6 +40,9 @@
     var jsonDateConverter = function (key, value) {
         if (typeof (value) === "string") {
             if (dateISO.test(value)) {
+                return new Date(value + "T00:00:00");
+            }
+            if (dateTimeISO.test(value)) {
                 return new Date(value);
             }
             if (dateNet.test(value)) {
@@ -73,6 +78,7 @@
                 else {
                     data = 
                         data.replace(replaceISO, "new Date(parseInt('$1',10),parseInt('$2',10)-1,parseInt('$3',10),parseInt('$4',10),parseInt('$5',10),parseInt('$6',10),(function(s){return parseInt(s,10)||0;})('$7'))")
+                            .replace(replaceDateISO, "new Date(parseInt('$1',10),parseInt('$2',10)-1,parseInt('$3',10))")
                             .replace(replaceNet, "new Date($1)");
                     return (new Function("return " + data))();
                 }

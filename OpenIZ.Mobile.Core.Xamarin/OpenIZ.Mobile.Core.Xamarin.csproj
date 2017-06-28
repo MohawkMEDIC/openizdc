@@ -26,9 +26,18 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;PERFMON</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
@@ -39,6 +48,10 @@
     </Reference>
     <Reference Include="jint">
       <HintPath>..\Solution Items\jint.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\Solution Items\Net45\Mono.Data.Sqlite.dll</HintPath>
@@ -93,26 +106,31 @@
   <ItemGroup>
     <Compile Include="Configuration\AmiUpdateManager.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
+    <Compile Include="Data\SQLiteReportDatasource.cs" />
     <Compile Include="Diagnostics\FileTraceWriter.cs" />
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Net\NetworkInformationService.cs" />
     <Compile Include="Rules\BusinessRulesDaemonService.cs" />
+    <Compile Include="Security\HttpBasicIdentityProvider.cs" />
+    <Compile Include="Security\HttpBasicTokenCredentialProvider.cs" />
     <Compile Include="Security\TokenValidationManager.cs" />
     <Compile Include="Services\Attributes\AnonymousAttribute.cs" />
     <Compile Include="Services\Attributes\DemandAttribute.cs" />
+    <Compile Include="Services\Model\ApplicationHealthInfo.cs" />
     <Compile Include="Services\Model\ApplicationInfo.cs" />
     <Compile Include="Services\Model\BugReport.cs" />
     <Compile Include="Services\Model\ErrorResult.cs" />
     <Compile Include="Services\Model\MenuInformation.cs" />
     <Compile Include="Services\ServiceHandlers\AdhocWarehouseService.cs" />
     <Compile Include="Services\ServiceHandlers\ApplicationService.Data.cs" />
+    <Compile Include="Services\ServiceHandlers\AuditService.cs" />
     <Compile Include="Services\ServiceHandlers\ConfigurationService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Acts.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Concept.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Patient.cs" />
+    <Compile Include="Services\ServiceHandlers\RisiService.cs" />
     <Compile Include="Services\ServiceHandlers\UserInterface.cs" />
-    <Compile Include="Services\SimpleClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\Attributes\RestMessageAttribute.cs" />
     <Compile Include="Services\Attributes\RestOperationAttribute.cs" />
     <Compile Include="Services\Attributes\RestServiceAttribute.cs" />
@@ -121,7 +139,9 @@
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
     <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
-    <Compile Include="Warehouse\SQLiteDatawarehouse.cs" />
+    <Compile Include="Services\LocalAppletManagerService.cs" />
+    <Compile Include="Services\SimpleQueueFileProvider.cs" />
+    <Compile Include="Data\SQLiteDatawarehouse.cs" />
     <Compile Include="XamarinApplicationContext.cs" />
     <Compile Include="Exceptions\SecurityTokenException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -149,6 +169,10 @@
       <Project>{554df209-7744-433f-993a-783e2a2803ef}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Mobile.Reporting\OpenIZ.Mobile.Reporting.csproj">
+      <Project>{39A382D5-A4A1-415A-8CEB-618177E23FAC}</Project>
+      <Name>OpenIZ.Mobile.Reporting</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Strings.resx">
@@ -166,7 +190,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Warehouse\InitWarehouse.sql" />
+    <EmbeddedResource Include="Data\InitWarehouse.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

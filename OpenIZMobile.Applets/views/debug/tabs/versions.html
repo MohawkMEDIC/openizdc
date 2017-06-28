@@ -38,8 +38,10 @@
                     <th>{{ 'locale.about.versions.author' | i18n }}</th>
                     <th>{{ 'locale.about.versions.id' | i18n }}</th>
                 </tr>
-                <tr ng-repeat="app in about.applet">
-                    <td><img src="{{ app.icon }}" alt="logo" /></td>
+                <tr ng-repeat="app in about.applet" ng-class="{ 'success': app.PublicKeyToken &amp;&amp; app.PublicKeyToken != '' }">
+                    <td><img src="{{ app.icon }}" alt="logo" />
+                        <span ng-if="app.PublicKeyToken &amp;&amp; app.PublicKeyToken != ''" class="label label-success"><span class="glyphicon glyphicon-certificate"></span>{{ 'locale.about.versions.verified' | i18n }}</span>
+                    </td>
                     <td>{{ app.name[0].value }} </td>
                     <td>v.{{app.version}} 
                         <a id="btnUpdate{{app.id}}" ng-show="app.update" ng-click="update(app.id)" class="btn btn-primary">{{ 'locale.about.versions.update' | i18n }} v.{{app.update.version}}</a>

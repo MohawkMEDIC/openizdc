@@ -147,4 +147,13 @@
   <data name="err_unauthenticated_principal" xml:space="preserve">
     <value>Cannot set context to unauthenticated principal</value>
   </data>
+  <data name="locale_cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="locale_confirm" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="locale_restartRequired" xml:space="preserve">
+    <value>There was a problem with your device's configuration. The application has attempted to recover from this error and will restart.</value>
+  </data>
 </root>

@@ -34,6 +34,7 @@ using System.IO;
 using OpenIZ.Mobile.Core.Services;
 using System.IO.Compression;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Configuration
 {
@@ -44,6 +45,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
     {
         // Cached credential
         private IPrincipal m_cachedCredential = null;
+
+        private bool m_checkedForUpdates = false;
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(AmiUpdateManager));
@@ -100,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             }
             catch (Exception ex)
             {
-                this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
+                this.m_tracer.TraceError("Error contacting AMI: {0}", ex.Message);
                 throw;
             }
         }
@@ -114,18 +117,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             {
                 if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
                 {
+
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_updating, packageId), e.Progress);
+                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), e.Progress);
+                    amiClient.Client.Description.Endpoint[0].Timeout = 2000;
                     // Fetch the applet package
-                    var applet = amiClient.Client.Get($"/pak/{packageId}");
-                    using (var ms = new MemoryStream(applet))
-                    using (var gzs = new GZipStream(ms, CompressionMode.Decompress))
+                    using (var ms = amiClient.DownloadApplet(packageId))
                     {
-                        var package = AppletPackage.Load(gzs);
+                        var package = AppletPackage.Load(ms);
                         this.m_tracer.TraceInfo("Upgrading {0}...", package.Meta.ToString());
-                        ApplicationContext.Current.InstallApplet(package);
-                        //ApplicationContext.Current.Exit(); // restart
+                        ApplicationContext.Current.GetService<IAppletManagerService>().Install(package, true);
+                        // ApplicationContext.Current.Exit(); // restart
                     }
                 }
                 else
@@ -133,11 +136,46 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             }
             catch (Exception ex)
             {
-                this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
-                throw;
+                this.m_tracer.TraceError("Error contacting AMI: {0}", ex.Message);
+                throw new InvalidOperationException(Strings.err_updateFailed);
             }
         }
 
+        /// <summary>
+        /// Check for updates
+        /// </summary>
+        public void AutoUpdate()
+        {
+            // Check for updates
+            if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
+                try
+                {
+                    ApplicationContext.Current.SetProgress(Strings.locale_updateCheck, 0.5f);
+
+                    // Check for new applications
+                    var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                    amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+                    amiClient.Client.Description.Endpoint[0].Timeout = 1000;
+                    if (amiClient.Ping())
+                    {
+                        amiClient.Client.Description.Endpoint[0].Timeout = 5000;
+                        foreach (var i in amiClient.GetApplets().CollectionItem)
+                        {
+                            var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletInfo.Id);
+                            if (installed == null ||
+                                new Version(installed.Info.Version) < new Version(i.AppletInfo.Version) &&
+                                ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets &&
+                                ApplicationContext.Current.Confirm(String.Format(Strings.locale_upgradeConfirm, i.AppletInfo.Names[0].Value, i.AppletInfo.Version, installed.Info.Version)))
+                                this.Install(i.AppletInfo.Id);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.m_tracer.TraceError("Error checking for updates: {0}", ex.Message);
+                };
+            this.m_checkedForUpdates = true;
+        }
         /// <summary>
         /// Application startup
         /// </summary>
@@ -145,31 +183,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
         {
             this.Starting?.Invoke(this, EventArgs.Empty);
 
-            // Check for updates
-            try
-            {
-                if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
-                {
-                    ApplicationContext.Current.SetProgress(Strings.locale_updateCheck, 0.5f);
-
-                    // Check for new applications
-                    var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
-                    amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-
-                    foreach (var i in amiClient.GetApplets().CollectionItem) {
-                        var installed = XamarinApplicationContext.Current.GetApplet(i.AppletManifest.Info.Id);
-                        if (installed == null || new Version(installed.Info.Version) < new Version(i.AppletManifest.Info.Version) &&
-                            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets)
-                            this.Install(i.AppletManifest.Info.Id);
-
-
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error checking for updates: {0}", e);
-            }
+            if (!this.m_checkedForUpdates)
+                this.AutoUpdate();
 
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;

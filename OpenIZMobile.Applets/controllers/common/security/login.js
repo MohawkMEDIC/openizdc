@@ -24,11 +24,14 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/bootstrap.min.js"/>
 
-layoutApp.controller('LoginPartController', ['$scope', '$window', function ($scope, $window) {
+layoutApp.controller('LoginPartController', ['$scope', '$window', '$stateParams', '$rootScope', '$templateCache', '$state', function ($scope, $window, $stateParams, $rootScope, $templateCache, $state) {
         // Get the current scope that we're in
 
         $scope.showPasswordReset = $scope.showPasswordReset || function () {
-            $('#passwordResetDialog').modal('show');
+            $('#passwordResetDialog').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
         };
 
         $scope.login = $scope.login || function (form, username, password) {
@@ -47,9 +50,12 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                         alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
                     else {
-                        if(window.location.hash == "")
-                            window.location.hash = "#/";
-                        $window.location.reload();
+                        $rootScope.initSessionVars();
+                        $templateCache.removeAll();
+                        $state.reload();
+                        //$window.location.reload();
+                        //$state.go($stateParams.redirectUrl, $stateParams.params)
+
                     }
                 },
                 onException: function (ex) {
@@ -58,8 +64,11 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
 
                 if (typeof (ex) == "string")
                     console.log(ex);
-                else if (ex.message != undefined)
+
+                else if (ex.message && ex.details)
                     alert("" + OpenIZ.Localization.getString(ex.message) + " - " + OpenIZ.Localization.getString(ex.details.statusText || ex.details));
+                else if (ex.message )
+                    alert(OpenIZ.Localization.getString(ex.message));
                 else
                     console.log(ex);
                 },

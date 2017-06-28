@@ -48,7 +48,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
-            data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey;
+            if(data.VersionKey.GetValueOrDefault() == Guid.Empty)
+                data.VersionKey = Guid.NewGuid();
             return base.InsertInternal(context, data);
         }
 
@@ -57,13 +58,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TModel UpdateInternal(LocalDataContext context, TModel data)
         {
-            data.PreviousVersionKey = data.VersionKey;
             var key = data.Key?.ToByteArray();
             if (!data.VersionKey.HasValue)
                 data.VersionKey = Guid.NewGuid();
             else if (context.Connection.Table<TDomain>().Where(o => o.Uuid == key).ToList().FirstOrDefault()?.VersionKey == data.VersionKey)
                 data.VersionKey = Guid.NewGuid();
-            data.VersionSequence++;
+            data.VersionSequence = null;
             return base.UpdateInternal(context, data);
         }
 
@@ -74,6 +74,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             data.PreviousVersionKey = data.VersionKey;
             data.VersionKey = Guid.NewGuid();
+            data.VersionSequence = null;
             return base.ObsoleteInternal(context, data);
         }
     }

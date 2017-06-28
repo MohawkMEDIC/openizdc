@@ -22,13 +22,13 @@
         <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
             <div class="col-xs-4">
-                <span ng-model="patient.name.OfficialRecord.given" oiz-editor="tag">
+                <span ng-model="patient.name.OfficialRecord.component.Given" oiz-editor="tag">
                     {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
                 </span>
             </div>
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.familyName' | i18n }}:</label>
             <div class="col-xs-4">
-                <span ng-model="patient.name.OfficialRecord.family" oiz-editor="tag">
+                <span ng-model="patient.name.OfficialRecord.component.Family" oiz-editor="tag">
                     {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
                 </span>
             </div>
@@ -37,7 +37,7 @@
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}:</label>
             <div class="col-xs-4">
                 <span ng-model="patient.dateOfBirth" oiz-editor="date">
-                    {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                    {{ patient.dateOfBirth | datePrecisionFormat:patient.dateOfBirthPrecision }}
                 </span>
             </div>
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
@@ -54,14 +54,13 @@
             </div>
         </div>
         <div class="row">
-            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
-            <div class="col-xs-4">
-                <span>
-                    <span ng-repeat="(dmn, id) in patient.identifier">
-                        <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers." + dmn))}}</span></span>
-                        <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers." + dmn))}}</span><br /></span>
-                    </span>
-                </span>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}:</label>
+            <div class="col-xs-4 padding-id-header">
+                <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
+                    <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
+                    <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ i.authority.name}}</span><br /></span>
+                </div>
+                <span ng-if="patient.identifier.length &gt; 2">...</span>
 
             </div>
             
@@ -70,17 +69,17 @@
         </div>
         <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}:</label>
-            <div class="col-xs-4 padding-left-30">
+            <div class="col-xs-4 padding-left-30 hide-text-header">
                 <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
             </div>
 
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
-            <div class="col-xs-4">
+            <div class="col-xs-4  hide-text-header">
                 <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
-                    <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
-                    <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+                    <span class="list-group-item-heading">{{ 'locale.patient.mother.names' | i18n }}: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
+                    <small ng-if="rel.targetModel.identifier">{{ 'locale.patient.mother.identifiers' | i18n }}: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
                     <span ng-repeat="contact in rel.targetModel.telecom">
-                        <small>Contact: {{contact.value}}</small>
+                        <small>{{ 'locale.patient.mother.contact' | i18n }}: {{contact.value}}</small>
                     </span>
                 </span>
             </div>
@@ -96,17 +95,18 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li role="presentation" ng-if="patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientEdit.download()">
+                    <a ng-click="patientController.download()">
                         <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
                     </a>
                 </li>
                 <li role="presentation" ng-if="!patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientEdit.showPatient()">
+                    <a ng-click="patientController.showPatient()">
                         <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
+                        <span ng-if="patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null">({{ 'locale.patient.status.patientDeceased' | i18n }})</span>
                     </a>
                 </li>
                 <li role="presentation" ng-if="!patient.tag.onlineResult &amp;&amp; encounterFactory.appointments.length &gt; 0" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientEdit.appointment()">
+                    <a ng-click="patientController.appointment()">
                         <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                     </a>
                 </li>

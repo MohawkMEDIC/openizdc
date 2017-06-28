@@ -67,7 +67,10 @@ namespace OpenIZ.Mobile.Core.Alerting
 				if (args.Ignore)
 					return;
 
-				this.Save(msg);
+                if (msg.Flags == AlertMessageFlags.Transient)
+                    ApplicationContext.Current.ShowToast(msg.Subject);
+                else
+				    this.Save(msg);
 
 				// Committed
 				this.Committed?.BeginInvoke(this, args, null, null);
@@ -90,12 +93,21 @@ namespace OpenIZ.Mobile.Core.Alerting
 				var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
 				using (conn.Lock())
 				{
-					var dbPredicate = s_mapper.MapModelExpression<AlertMessage, DbAlertMessage>(predicate);
+					var dbPredicate = s_mapper.MapModelExpression<AlertMessage, DbAlertMessage>(predicate, false);
 
-					var results = conn.Table<DbAlertMessage>().Where(dbPredicate).Skip(offset).Take(count ?? 100).OrderByDescending(o => o.TimeStamp).ToList().Select(o => o.ToAlert());
-					totalCount = results.Count();
+                    if (dbPredicate == null)
+                    {
+                        this.m_tracer.TraceError("Cannot map query to DB");
+                        totalCount = 0;
+                        return null;
+                    }
+                    else
+                    {
+                        var results = conn.Table<DbAlertMessage>().Where(dbPredicate).Skip(offset).Take(count ?? 100).OrderByDescending(o => o.TimeStamp).ToList().Select(o => o.ToAlert());
+                        totalCount = results.Count();
 
-					return results;
+                        return results;
+                    }
 				}
 			}
 			catch (Exception e)

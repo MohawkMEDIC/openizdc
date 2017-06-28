@@ -1,13 +1,17 @@
-﻿using OpenIZ.Mobile.Core.Configuration;
+﻿using CefSharp;
+using MohawkCollege.Util.Console.Parameters;
+using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,11 +23,27 @@ namespace DisconnectedClient
         private static List<String> s_trustedCerts = new List<string>();
 
         /// <summary>
+        /// Console parameters
+        /// </summary>
+        public static ConsoleParameters Parameters { get; set; }
+
+        /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+
+            Program.Parameters = new ParameterParser<ConsoleParameters>().Parse(args);
+            if (Program.Parameters.Debug)
+                Console.WriteLine("Will start in debug mode...");
+            if(Program.Parameters.Reset)
+            {
+                var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
+                var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
+                if (Directory.Exists(appData)) Directory.Delete(cData, true);
+                if (Directory.Exists(appData)) Directory.Delete(appData, true);
+            }
             String[] directory = {
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC"),
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC")
@@ -57,20 +77,56 @@ namespace DisconnectedClient
             };
 
             // Start up!!!
-            if (!DcApplicationContext.StartContext())
+            try
             {
-                DcApplicationContext.StartTemporary();
-                // Forward
-                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
-            }
-            else
-            {
-                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/index.html#/");
-            }
+                uint x, y;
+                Screen.PrimaryScreen.GetDpi(DpiType.Angular, out x, out y);
+                if (x > 120 || y > 120)
+                    Cef.EnableHighDPISupport();
+                var settings = new CefSettings();
+                Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmDisconnectedClient());
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                frmSplash splash = new frmSplash();
+                splash.Show();
+
+
+                bool started = false;
+                EventHandler startHandler = (o, e) =>
+                {
+                    started = true;
+                };
+
+                frmDisconnectedClient main = null;
+                if (!DcApplicationContext.StartContext())
+                {
+                    DcApplicationContext.StartTemporary();
+                    XamarinApplicationContext.Current.Started += startHandler;
+                    while (!started)
+                        Application.DoEvents();
+
+                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                }
+                else
+                {
+                    XamarinApplicationContext.Current.Started += startHandler;
+                    while (!started)
+                        Application.DoEvents();
+                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/splash.html");
+                }
+
+                splash.Close();
+                Application.Run(main);
+
+
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
     }
 }

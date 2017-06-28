@@ -26,13 +26,13 @@
                         {{encounterFactory.appointments.length}}
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
                         <div class="col-xs-4">
-                            <span ng-model="patient.name.OfficialRecord.given" oiz-editor="tag">
+                            <span ng-model="patient.name.OfficialRecord.Given" oiz-editor="tag">
                                 {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
                             </span>
                         </div>
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.familyName' | i18n }}:</label>
                         <div class="col-xs-4">
-                            <span ng-model="patient.name.OfficialRecord.family" oiz-editor="tag">
+                            <span ng-model="patient.name.OfficialRecord.Family" oiz-editor="tag">
                                 {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
                             </span>
                         </div>
@@ -42,7 +42,7 @@
                         <div class="col-xs-4">
                             <span>
                                 <span ng-repeat="(dmn, id) in patient.identifier">
-                                    {{ id.value }} <span class="label label-info">{{ dmn }}</span>
+                                    {{ id.value }} <span class="label label-info">{{ id.authority.name }}</span>
                                 </span>
                             </span>
 
@@ -68,12 +68,11 @@
                             <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
                         </div>
 
-                        <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
-                        <label class="col-xs-2 header-dock-labels">Mothers Info</label>
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
                         <div class="col-xs-4">
                             <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
-                                <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
-                                <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+                                <span class="list-group-item-heading">{{ 'locale.patient.demographics.mothersName' | i18n }}: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
+                                <small ng-if="rel.targetModel.identifier">{{ 'locale.patient.demographics.mothersId' | i18n }}: {{rel.targetModel.identifier[0] | oizEntityIdentifier}}</small>
                                 <span ng-repeat="contact in rel.targetModel.telecom">
                                     <small>Contact: {{contact.value}}</small>
                                 </span>
@@ -98,18 +97,18 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li role="presentation" ng-if="patient.tag.onlineResult">
-                                <a ng-click="patientEdit.download()">
+                                <a ng-click="patientController.download()">
                                     <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
                                 </a>
                             </li>
                             <li role="presentation" ng-if="!patient.tag.onlineResult">
-                                <a ng-click="patientEdit.showPatient()">
+                                <a ng-click="patientController.showPatient()">
                                     <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
                                 </a>
                             </li>
                             
                             <li role="presentation" ng-if="!patient.tag.onlineResult &amp;&amp; encounterFactory.appointments.length">
-                                <a ng-click="patientEdit.appointment()">
+                                <a ng-click="patientController.appointment()">
                                     <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                                 </a>
                             </li>
@@ -130,13 +129,13 @@
                     <div class="row">
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
                         <div class="col-xs-4">
-                            <span ng-model="patient.name.OfficialRecord.given" oiz-editor="tag">
+                            <span ng-model="patient.name.OfficialRecord.Given" oiz-editor="tag">
                                 {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
                             </span>
                         </div>
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.familyName' | i18n }}:</label>
                         <div class="col-xs-4">
-                            <span ng-model="patient.name.OfficialRecord.family" oiz-editor="tag">
+                            <span ng-model="patient.name.OfficialRecord.Family" oiz-editor="tag">
                                 {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
                             </span>
                         </div>
@@ -200,18 +199,17 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li role="presentation" ng-if="patient.tag.onlineResult">
-                                <a ng-click="patientEdit.download()">
+                                <a ng-click="patientController.download()">
                                     <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
                                 </a>
                             </li>
                             <li role="presentation" ng-if="!patient.tag.onlineResult">
-                                <a ng-click="patientEdit.showPatient()">
+                                <a ng-click="patientController.showPatient()">
                                     <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
                                 </a>
                             </li>
                             <li role="presentation" ng-if="!patient.tag.onlineResult">
-                                {{patientEdit}}
-                                <a ng-click="patientEdit.appointment()">
+                                <a ng-click="patientController.appointment()">
                                     <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                                 </a>
                             </li>

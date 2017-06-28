@@ -32,6 +32,8 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Interfaces;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -77,6 +79,10 @@ namespace OpenIZ.Mobile.Core
         // Fired when application wishes to show progress of some sort
         public static event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
 
+        /// <summary>
+        /// Shows a toast on the application context
+        /// </summary>
+        public abstract void ShowToast(string subject);
 
         /// <summary>
         /// Fired when the application is starting
@@ -123,12 +129,17 @@ namespace OpenIZ.Mobile.Core
 			return (TService)this.GetService (typeof(TService));
 		}
 
-		/// <summary>
-		/// Gets the service object of the specified type.
-		/// </summary>
-		/// <returns>The service.</returns>
-		/// <param name="serviceType">Service type.</param>
-		public object GetService (Type serviceType)
+        /// <summary>
+        /// Performance log handler
+        /// </summary>
+        public abstract void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter);
+
+        /// <summary>
+        /// Gets the service object of the specified type.
+        /// </summary>
+        /// <returns>The service.</returns>
+        /// <param name="serviceType">Service type.</param>
+        public object GetService (Type serviceType)
 		{
 			
 			Object candidateService = null;
@@ -146,7 +157,17 @@ namespace OpenIZ.Mobile.Core
 			return candidateService;
 		}
 
-		#endregion
+        #endregion
+
+        /// <summary>
+        /// Confirmation dialog
+        /// </summary>
+        public abstract bool Confirm(String confirmText);
+
+        /// <summary>
+        /// Alert dialog
+        /// </summary>
+        public abstract void Alert(String alertText);
 
 		/// <summary>
 		/// Gets the current application context
@@ -231,18 +252,30 @@ namespace OpenIZ.Mobile.Core
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
             this.Starting?.Invoke(this, EventArgs.Empty);
 
+
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
             Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));
             var nonChangeDaemons = daemons.Distinct().ToArray();
             foreach (var d in nonChangeDaemons)
             {
-                tracer.TraceInfo("Starting {0}", d.GetType().Name);
-                if (!d.Start())
-                    tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
+                try
+                {
+                    tracer.TraceInfo("Starting {0}", d.GetType().Name);
+                    if (!d.Start())
+                        tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
+                }
+                catch(Exception e)
+                {
+                    tracer.TraceError("Daemon {0} did not start up successully!: {1}", d, e);
+                    throw new TypeLoadException($"{d} failed startup: {e.Message}", e);
+                }
             }
-            
-            this.Started?.Invoke(this, EventArgs.Empty);
+
+            this.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
+            {
+                this.Started?.Invoke(this, EventArgs.Empty);
+            }, null);
 
         }
 
@@ -271,12 +304,7 @@ namespace OpenIZ.Mobile.Core
         /// Close the application
         /// </summary>
         public abstract void Exit();
-
-        /// <summary>
-        /// Perform platform specific installation
-        /// </summary>
-        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
-
+        
         /// <summary>
         /// Add service 
         /// </summary>
@@ -284,6 +312,24 @@ namespace OpenIZ.Mobile.Core
         {
             ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
             appSection.Services.Add(Activator.CreateInstance(serviceType));
+        }
+
+        /// <summary>
+        /// Get all services
+        /// </summary>
+        public IEnumerable<object> GetServices()
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            return appSection.Services;
+        }
+
+        /// <summary>
+        /// Remove a service provider
+        /// </summary>
+        public void RemoveServiceProvider(Type serviceType)
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            appSection.Services.RemoveAll(o=>o.GetType() == serviceType);
         }
     }
 }

@@ -40,6 +40,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 	/// </summary>
 	public static class SynchronizationQueue
 	{
+        
 		/// <summary>
 		/// Gets the current inbound queue
 		/// </summary>
@@ -132,7 +133,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// Create a connection
 		/// </summary>
 		/// <returns>The connection.</returns>
-		private SQLiteConnectionWithLock CreateConnection()
+		private LockableSQLiteConnection CreateConnection()
 		{
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString (
 				ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection> ().MessageQueueConnectionStringName
@@ -147,23 +148,16 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		public TQueueEntry Enqueue(IdentifiedData data, DataOperationType operation)
 		{
 
-			// Serialize object
-			XmlSerializer xsz = new XmlSerializer (data.GetType ());
-			using (MemoryStream ms = new MemoryStream ()) {
-				xsz.Serialize (ms, data.GetLocked());
-				ms.Flush ();
+            // Serialize object
+            TQueueEntry queueEntry = new TQueueEntry() {
+                Data = ApplicationContext.Current.GetService<IQueueFileProvider>().SaveQueueData(data),
+				CreationTime = DateTime.Now,
+				Operation = operation,
+				Type = data.GetType ().AssemblyQualifiedName
+			};
 
-				// Create queue entry
-				TQueueEntry queueEntry = new TQueueEntry () {
-					Data = ms.ToArray (),
-					CreationTime = DateTime.Now,
-					Operation = operation,
-					Type = data.GetType ().AssemblyQualifiedName
-				};
-
-				// Enqueue the object
-				return this.EnqueueRaw (queueEntry);
-			}
+			// Enqueue the object
+			return this.EnqueueRaw (queueEntry);
 		}
 
 		/// <summary>
@@ -214,12 +208,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// </summary>
 		public IdentifiedData DeserializeObject(TQueueEntry entry)
 		{
-			using(MemoryStream ms = new MemoryStream(entry.Data))
-			{
-				this.m_tracer.TraceVerbose ("Will deserialize entry {0} of type {1}", entry.Id, entry.Type);
-				XmlSerializer serializer = new XmlSerializer (Type.GetType (entry.Type));
-				return serializer.Deserialize (ms) as IdentifiedData;
-			}
+            return ApplicationContext.Current.GetService<IQueueFileProvider>().GetQueueData(entry.Data, Type.GetType(entry.Type));
 		}
 
 		/// <summary>
@@ -247,14 +236,19 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 try
                 {
-                    // Fetch the object
-                    var queueItem = conn.Table<TQueueEntry>().Where(o=>o.Id >= 0).OrderBy(i => i.Id).First();
-
                     // Delete the object
                     using (conn.Lock())
-                        conn.Delete(queueItem);
+                    {
+                        // Fetch the object
+                        var queueItem = conn.Table<TQueueEntry>().Where(o => o.Id >= 0).OrderBy(i => i.Id).FirstOrDefault();
+                        if (queueItem != null)
+                        {
+                            ApplicationContext.Current.GetService<IQueueFileProvider>().RemoveQueueData(queueItem.Data);
+                            conn.Delete(queueItem);
+                        }
+                        return queueItem;
+                    }
 
-                    return queueItem;
                 }
                 catch (Exception e)
                 {
@@ -288,14 +282,14 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// Peeks a raw row entry from the database.
         /// </summary>
         /// <returns>The raw.</returns>
-        public TQueueEntry PeekRaw(){
+        public TQueueEntry PeekRaw(int skip = 0){
             var conn = this.CreateConnection();
             using (conn.Lock())
             {
                 try
                 {
                     using (conn.Lock())
-                        return conn.Table<TQueueEntry>().OrderBy(i => i.Id).FirstOrDefault();
+                        return conn.Table<TQueueEntry>().OrderBy(i => i.Id).Skip(skip).FirstOrDefault();
                 }
                 catch (Exception e)
                 {
@@ -344,8 +338,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 try
                 {
+                    
                     using(conn.Lock())
-                        return conn.Table<TQueueEntry>().Count();
+                        return conn.ExecuteScalar<Int32>($"SELECT COUNT(*) FROM {conn.GetMapping<TQueueEntry>().TableName}");
                 }
                 catch (Exception e)
                 {
@@ -366,7 +361,16 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 try
                 {
                     using (conn.Lock())
-                        conn.Table<TQueueEntry>().Delete(o => o.Id == id);
+                    {
+                        var tdata = conn.Table<TQueueEntry>().Where(o => o.Id == id).FirstOrDefault();
+                        if (tdata != null)
+                        {
+                            conn.Delete(tdata);
+                            ApplicationContext.Current.GetService<IQueueFileProvider>().RemoveQueueData(tdata?.Data);
+                        }
+                        else
+                            this.m_tracer.TraceWarning("Could not find queue item {0} to be deleted", id);
+                    }
                 }
                 catch (Exception e)
                 {

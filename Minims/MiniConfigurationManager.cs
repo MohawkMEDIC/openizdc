@@ -26,7 +26,6 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Diagnostics;
-using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Search;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services.Impl;
@@ -44,6 +43,12 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
+using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Protocol.Xml;
+using OpenIZ.Mobile.Reporting;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace Minims
 {
@@ -104,6 +109,10 @@ namespace Minims
                     new ConnectionString () {
                         Name = "openIzWarehouse",
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS","OpenIZ.warehouse.sqlite")
+                    },
+                    new ConnectionString () {
+                        Name = "openIzAudit",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS", "OpenIZ.audit.sqlite")
                     }
                 }
             };
@@ -119,7 +128,10 @@ namespace Minims
                     "Administration"
                 },
                 StartupAsset = "org.openiz.core",
-                AuthenticationAsset = "/org/openiz/core/views/security/login.html"
+                Security = new AppletSecurityConfiguration()
+                {
+                    TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
+                }
             };
 
             // Initial applet style
@@ -132,7 +144,7 @@ namespace Minims
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalPlaceService).AssemblyQualifiedName,
-                    //typeof(LocalAlertService).AssemblyQualifiedName,
+                    typeof(LocalAlertService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalEntityRepositoryService).AssemblyQualifiedName,
                     typeof(LocalOrganizationService).AssemblyQualifiedName,
@@ -153,11 +165,18 @@ namespace Minims
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
-                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(AppletClinicalProtocolRepository).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
+                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(MiniAppletManagerService).AssemblyQualifiedName,
+                    typeof(MemoryTickleService).AssemblyQualifiedName,
+                    typeof(LocalTagPersistenceService).AssemblyQualifiedName,
+                    typeof(SQLiteReportDatasource).AssemblyQualifiedName,
+                    typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -179,7 +198,8 @@ namespace Minims
 
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
-                DeviceName = String.Format("MINI-IMS-{0}", macAddress).Replace(" ", "")
+                DeviceName = String.Format("MINI-IMS-{0}", macAddress).Replace(" ", ""),
+                AuditRetention = new TimeSpan(30, 0, 0, 0, 0)
             };
 
             // Device key
@@ -267,7 +287,7 @@ namespace Minims
                 {
                     this.m_configuration = OpenIZConfiguration.Load(fs);
                 }
-            
+
         }
 
 

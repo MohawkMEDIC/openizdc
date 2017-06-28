@@ -80,7 +80,43 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calculating Care-plans ({0} remaining)....
+        ///   Looks up a localized string similar to &lt;p&gt;The server encountered an internal error while processing your request. Please contact the system administrator for more information. Include the following diagnostic error data:&lt;/p&gt;&lt;pre&gt;{0}&lt;/pre&gt;.
+        /// </summary>
+        internal static string InternalServerError {
+            get {
+                return ResourceManager.GetString("InternalServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account is locked.
+        /// </summary>
+        internal static string locale_accountLocked {
+            get {
+                return ResourceManager.GetString("locale_accountLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account is deleted.
+        /// </summary>
+        internal static string locale_accountObsolete {
+            get {
+                return ResourceManager.GetString("locale_accountObsolete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing imported data....
+        /// </summary>
+        internal static string locale_calculateImportedCareplan {
+            get {
+                return ResourceManager.GetString("locale_calculateImportedCareplan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calculating Appointment Proposals ({0} remaining)....
         /// </summary>
         internal static string locale_calculatingCarePlan {
             get {
@@ -89,7 +125,16 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error Downloading Remote Data.
+        ///   Looks up a localized string similar to Optimizing Databases....
+        /// </summary>
+        internal static string locale_compacting {
+            get {
+                return ResourceManager.GetString("locale_compacting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remote downloads are temporarily not working.
         /// </summary>
         internal static string locale_downloadError {
             get {
@@ -163,7 +208,52 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;.
+        ///   Looks up a localized string similar to Invalid Username / Password.
+        /// </summary>
+        internal static string locale_invalidUserNamePassword {
+            get {
+                return ResourceManager.GetString("locale_invalidUserNamePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance..
+        /// </summary>
+        internal static string locale_loginFromUnsubscribedFacility {
+            get {
+                return ResourceManager.GetString("locale_loginFromUnsubscribedFacility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing {0} from bundle ({1} of {2})....
+        /// </summary>
+        internal static string locale_processBundle {
+            get {
+                return ResourceManager.GetString("locale_processBundle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing to update facility plan....
+        /// </summary>
+        internal static string locale_refreshCarePlan {
+            get {
+                return ResourceManager.GetString("locale_refreshCarePlan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your facility plan is over a week old, do you want to recalculate it?.
+        /// </summary>
+        internal static string locale_refreshCarePlanPrompt {
+            get {
+                return ResourceManager.GetString("locale_refreshCarePlanPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;&lt;p&gt;The message has been quarantined, you can view the message in the sync centre.&lt;/p&gt;&lt;a href=&quot;#/core/sync&quot; class=&quot;btn btn-lg btn-info&quot;&gt;Visit Sync Centre&lt;/a&gt;.
         /// </summary>
         internal static string locale_rejectionBody {
             get {
@@ -177,6 +267,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         internal static string locale_rejectionSubject {
             get {
                 return ResourceManager.GetString("locale_rejectionSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your online session couldn&apos;t be extended, you are now operating in disconnected mode..
+        /// </summary>
+        internal static string locale_securitySwitchedMode {
+            get {
+                return ResourceManager.GetString("locale_securitySwitchedMode", resourceCulture);
             }
         }
         
@@ -244,7 +343,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initiating pull request....
+        ///   Looks up a localized string similar to Executing pull request....
         /// </summary>
         internal static string locale_startingPoll {
             get {
@@ -253,7 +352,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloading {0}s....
+        ///   Looks up a localized string similar to Downloading {0} ({1} of {2})....
         /// </summary>
         internal static string locale_sync {
             get {

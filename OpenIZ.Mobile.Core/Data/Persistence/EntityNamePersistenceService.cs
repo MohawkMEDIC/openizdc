@@ -30,6 +30,10 @@ using System.Collections;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Interfaces;
+using SQLite.Net.Interop;
+using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -38,6 +42,48 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>, ILocalAssociativePersistenceService
     {
+
+        private readonly Dictionary<Guid, String> m_nameUseMap = new Dictionary<Guid, String>() {
+            { Guid.Parse("71D1C07C-6EE6-4240-8A95-19F96583512E"), "Alphabetic" },
+            { Guid.Parse("95E6843A-26FF-4046-B6F4-EB440D4B85F7"), "Anonymous" },
+            { Guid.Parse("4A7BF199-F33B-42F9-8B99-32433EA67BD7"), "Artist" },
+            { Guid.Parse("A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1"), "Assigned" },
+            { Guid.Parse("09000479-4672-44F8-BB4A-72FB25F7356A"), "Ideographic" },
+            { Guid.Parse("A3FB2A05-5EBE-47AE-AFD0-4C1B22336090"), "Indigenous" },
+            { Guid.Parse("EFFE122D-8D30-491D-805D-ADDCB4466C35"), "Legal" },
+            { Guid.Parse("48075D19-7B29-4CA5-9C73-0CBD31248446"), "License" },
+            { Guid.Parse("0674C1C8-963A-4658-AFF9-8CDCD308FA68"), "MaidenName" },
+            { Guid.Parse("1EC9583A-B019-4BAA-B856-B99CAF368656"), "OfficialRecord" },
+            { Guid.Parse("2B085D38-3308-4664-9F89-48D8EF4DABA7"), "Phonetic" },
+            { Guid.Parse("C31564EF-CA8D-4528-85A8-88245FCEF344"), "Pseudonym" },
+            { Guid.Parse("15207687-5290-4672-A7DF-2880A23DCBB5"), "Religious" },
+            { Guid.Parse("87964BFF-E442-481D-9749-69B2A84A1FBE"), "Search" },
+            { Guid.Parse("E5794E3B-3025-436F-9417-5886FEEAD55A"), "Soundex" },
+            { Guid.Parse("B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF"), "Syllabic" }
+            };
+
+        /// <summary>
+        /// Represent as a model instance
+        /// </summary>
+        public override EntityName ToModelInstance(object dataInstance, LocalDataContext context)
+        {
+            var dbEntName = dataInstance as DbEntityName;
+            var compPersister = new EntityNameComponentPersistenceService();
+
+            return new EntityName()
+            {
+                Key = new Guid(dbEntName.Uuid),
+                NameUseKey = dbEntName.UseConceptUuid == null ? null : (Guid?)new Guid(dbEntName.UseConceptUuid),
+                SourceEntityKey = new Guid(dbEntName.SourceUuid),
+                NameUse = new Concept()
+                {
+                    Key = new Guid(dbEntName.UseConceptUuid),
+                    Mnemonic = this.m_nameUseMap[new Guid(dbEntName.UseConceptUuid)]
+                },
+                LoadState = OpenIZ.Core.Model.LoadState.FullLoad,
+                Component = compPersister.GetFromSource(context, new Guid(dbEntName.Uuid), null).OfType<EntityNameComponent>().ToList()
+            };
+        }
 
         /// <summary>
         /// Get from source
@@ -54,7 +100,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
-            return base.FromModelInstance(modelInstance, context);
+
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            return new DbEntityName()
+            {
+                Uuid = modelInstance.Key?.ToByteArray(),
+                SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                UseConceptUuid = modelInstance.NameUseKey?.ToByteArray()
+            };
         }
 
         /// <summary>
@@ -64,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure exists
-            if(data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context);
+            if (data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context);
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
             var retVal = base.InsertInternal(context, data);
 
@@ -72,8 +125,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Component != null)
                 base.UpdateAssociatedItems<EntityNameComponent, EntityName>(
                     new List<EntityNameComponent>(),
-                    data.Component, 
-                    data.Key, 
+                    data.Component,
+                    data.Key,
                     context);
 
             return retVal;
@@ -111,10 +164,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<EntityNameComponent, DbEntityNameComponent, DbEntityNameComponent.QueryResult>, ILocalAssociativePersistenceService
     {
 
+        // Existing 
+        private Dictionary<String, byte[]> m_existingNames = new Dictionary<string, byte[]>();
+
         /// <summary>
         /// To model instance
         /// </summary>
-        public override EntityNameComponent ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override EntityNameComponent ToModelInstance(object dataInstance, LocalDataContext context)
         {
             if (dataInstance == null) return null;
 
@@ -122,10 +178,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var nameValue = (dataInstance as DbEntityNameComponent.QueryResult)?.GetInstanceOf<DbPhoneticValue>() ?? context.Connection.Table<DbPhoneticValue>().Where(o => o.Uuid == entName.ValueUuid).FirstOrDefault();
             return new EntityNameComponent()
             {
-                ComponentTypeKey = new Guid(entName.ComponentTypeUuid ?? Guid.Empty.ToByteArray() ),
+                ComponentTypeKey = new Guid(entName.ComponentTypeUuid ?? Guid.Empty.ToByteArray()),
                 Value = nameValue.Value,
                 Key = entName.Key,
-                PhoneticAlgorithmKey = new Guid(nameValue.PhoneticAlgorithmUuid ?? Guid.Empty.ToByteArray() ),
+                PhoneticAlgorithmKey = new Guid(nameValue.PhoneticAlgorithmUuid ?? Guid.Empty.ToByteArray()),
                 PhoneticCode = nameValue.PhoneticCode,
                 SourceEntityKey = new Guid(entName.NameUuid)
             };
@@ -136,24 +192,41 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(EntityNameComponent modelInstance, LocalDataContext context)
         {
-            var retVal = base.FromModelInstance(modelInstance, context) as DbEntityNameComponent;
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            var retVal = new DbEntityNameComponent()
+            {
+                NameUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
 
             // Address component already exists?
-            var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
-            if (existing != null && existing.Key != retVal.Key)
-                retVal.ValueUuid = existing.Uuid;
-            else if(!String.IsNullOrEmpty(modelInstance.Value))
+            byte[] existingKey = null;
+            if (String.IsNullOrEmpty(modelInstance.Value)) return retVal;
+            if (!this.m_existingNames.TryGetValue(modelInstance.Value, out existingKey))
             {
-                var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
-                retVal.ValueUuid = Guid.NewGuid().ToByteArray();
-                context.Connection.Insert(new DbPhoneticValue()
+                var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
+                if (existing != null && existing.Key != retVal.Key)
+                    retVal.ValueUuid = existing.Uuid;
+                else if (!String.IsNullOrEmpty(modelInstance.Value))
                 {
-                    Uuid = retVal.ValueUuid,
-                    Value = modelInstance.Value,
-                    PhoneticAlgorithmUuid = (phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None).ToByteArray(),
-                    PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Value)
-                });
+                    var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
+                    retVal.ValueUuid = Guid.NewGuid().ToByteArray();
+                    context.Connection.Insert(new DbPhoneticValue()
+                    {
+                        Uuid = retVal.ValueUuid,
+                        Value = modelInstance.Value,
+                        PhoneticAlgorithmUuid = (phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None).ToByteArray(),
+                        PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Value)
+                    });
+                }
+
+                lock (this.m_existingNames)
+                    if (!this.m_existingNames.ContainsKey(modelInstance.Value))
+                        this.m_existingNames.Add(modelInstance.Value, retVal.ValueUuid);
             }
+            else
+                retVal.ValueUuid = existingKey;
             return retVal;
         }
 

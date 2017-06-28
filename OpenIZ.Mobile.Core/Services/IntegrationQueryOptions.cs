@@ -59,6 +59,16 @@ namespace OpenIZ.Mobile.Core.Services
         public bool Lean { get; set; }
 
         /// <summary>
+        /// Gets or sets the query identifier for the query
+        /// </summary>
+        public Guid QueryId { get; set; }
+
+        /// <summary>
+        /// Objects which should be expanded
+        /// </summary>
+        public string[] Expand { get; set; }
+
+        /// <summary>
         /// Generates an event hander for the integration options
         /// </summary>
         public static EventHandler<RestRequestEventArgs> CreateRequestingHandler(IntegrationQueryOptions options)
@@ -72,6 +82,8 @@ namespace OpenIZ.Mobile.Core.Services
                     e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options?.IfNoneMatch;
                 if (options?.Lean == true)
                     e.Query.Add("_lean", "true");
+                if (options?.Expand != null)
+                    e.Query.Add("_expand", options?.Expand.ToList());
                 if (options?.InfrastructureOptions?.Count > 0)
                     foreach (var inf in options?.InfrastructureOptions)
                         e.Query.Add(inf.Key, inf.Value);

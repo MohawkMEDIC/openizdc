@@ -149,5 +149,32 @@ namespace OpenIZ.Mobile.Core.Android.Resources {
                 return ResourceManager.GetString("err_unauthenticated_principal", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string locale_cancel {
+            get {
+                return ResourceManager.GetString("locale_cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        internal static string locale_confirm {
+            get {
+                return ResourceManager.GetString("locale_confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was a problem with your device&apos;s configuration. The application has attempted to recover from this error and will restart..
+        /// </summary>
+        internal static string locale_restartRequired {
+            get {
+                return ResourceManager.GetString("locale_restartRequired", resourceCulture);
+            }
+        }
     }
 }

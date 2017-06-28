@@ -28,35 +28,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Local place service
 	/// </summary>
-	public class LocalPlaceService : IPlaceRepositoryService, IRepositoryService<Place>
+	public class LocalPlaceService : EntityRepositoryBase, IPlaceRepositoryService, IRepositoryService<Place>
 	{
-		/// <summary>
-		/// Find the specified place
-		/// </summary>
-		public IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate)
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Query(predicate);
-		}
-
-		/// <summary>
-		/// Searches the place service for the specified place matching the
-		/// given predicate
-		/// </summary>
-		/// <param name="predicate">The predicate function to search by.</param>
-		/// <returns>Returns a list of places.</returns>
-		public IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate, int offset, int? count, out int totalCount)
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
-		}
-        
         /// <summary>
-        /// Get place by id
+        /// Gets the specified data
         /// </summary>
         public Place Get(Guid key)
         {
@@ -64,54 +39,55 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         }
 
         /// <summary>
+        /// Find the specified place
+        /// </summary>
+        public IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate)
+        {
+            int t = 0;
+            return this.Find(predicate, 0, null, out t);
+        }
+
+        /// <summary>
+        /// Searches the place service for the specified place matching the
+        /// given predicate
+        /// </summary>
+        /// <param name="predicate">The predicate function to search by.</param>
+        /// <returns>Returns a list of places.</returns>
+        public IEnumerable<Place> Find(Expression<Func<Place, bool>> predicate, int offset, int? count, out int totalCount)
+        {
+            return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
+        }
+
+        /// <summary>
         /// Gets the specified place
         /// </summary>
         public Place Get(Guid id, Guid versionId)
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Get(id);
-		}
+        {
+            return base.Get<Place>(id, versionId);
+        }
 
-		/// <summary>
-		/// Inserts the specified place
-		/// </summary>
-		public Place Insert(Place plc)
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Insert(plc);
-		}
+        /// <summary>
+        /// Inserts the specified place
+        /// </summary>
+        public Place Insert(Place plc)
+        {
+            return base.Insert(plc);
+        }
 
-		/// <summary>
-		/// Obsoletes the specified data
-		/// </summary>
-		public Place Obsolete(Guid id)
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Obsolete(new Place() { Key = id });
-		}
+        /// <summary>
+        /// Obsoletes the specified data
+        /// </summary>
+        public Place Obsolete(Guid id)
+        {
+            return base.Obsolete<Place>(id);
+        }
 
-		/// <summary>
-		/// Inserts or updates the specified place
-		/// </summary>
-		public Place Save(Place plc)
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No persistence service found");
-			try
-			{
-				return persistenceService.Update(plc);
-			}
-			catch (KeyNotFoundException)
-			{
-				return persistenceService.Insert(plc);
-			}
-		}
-	}
+        /// <summary>
+        /// Inserts or updates the specified place
+        /// </summary>
+        public Place Save(Place plc)
+        {
+            return base.Save(plc);
+        }
+    }
 }

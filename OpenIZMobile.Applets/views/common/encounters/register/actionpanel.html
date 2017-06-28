@@ -20,20 +20,20 @@
 <div class="panel panel-info oiz-encounter-action-panel" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
     <div class="panel-heading"><span class="panel-title">{{ 'locale.encounters.actionsPerformed.title' | i18n }}</span></div>
     <table class="panel-body table table-striped table-responsive">
-        <tr class="patient-encounter-row-scope" ng-repeat="act in encounter.relationship.HasComponent" ng-if="act.targetModel.moodConcept == 'ec74541f-87c4-4327-a4b9-97f325501747'">
+        <tr class="patient-encounter-row-scope" ng-repeat="act in encounter.relationship.HasComponent" ng-if="act.targetModel.moodConcept == 'ec74541f-87c4-4327-a4b9-97f325501747' &amp;&amp; (!encounter._filter || encounter._filter.indexOf(act.targetModel.classConcept) >= 0)">
             <td>
                 <div class="container-fluid">
-                    <div class="row flex-container" ng-if="act._created">
+                    <div class="row flex-container" ng-if="act._created || act.targetModel.classConcept === '1987c53c-7ab8-4461-9ebc-0d428744a8c0'">
                         <div class="col-xs-11" >
-                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.templateModel.mnemonic)"></div>
                         </div>
                         <div class="col-xs-1 flex-item-center" >
                             <button type="button" class="btn btn-icon" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" ><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </div>
-                    <div class="row" ng-if="!act._created">
+                    <div class="row" ng-if="!act._created &amp;&amp; act.targetModel.classConcept !== '1987c53c-7ab8-4461-9ebc-0d428744a8c0'">
                         <div class="col-xs-12">
-                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.templateModel.mnemonic)"></div>
                         </div>
                     </div>
                 </div>
@@ -45,15 +45,15 @@
             </td>
         </tr>
     </table>
-    <div class="panel-body">
-        <div class="btn-group pull-right dropdown">
-            <button type="button" class="btn btn-primary" data-toggle="dropdown"><span class="glyphicon glyphicon-plus-sign"></span><span class="caret"></span> {{ 'locale.encounters.addEntry' | i18n }}</button>
+    <div class="panel-body" ng-if="!encounter._filter">
+        <div class="btn-group pull-right dropup">
+            <button type="button" class="btn btn-primary" data-toggle="dropdown" id="actionPanelButton"><span class="glyphicon glyphicon-plus-sign"></span><span class="caret"></span> {{ 'locale.encounters.addEntry' | i18n }}</button>
             <ul class="dropdown-menu">
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.substanceadmin.immunization')">{{ 'locale.encounter.action.immunization' | i18n }}</a></li>
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.weight')">{{ 'locale.encounter.action.weight' | i18n }}</a></li>
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.substanceadmin.supplement')">{{ 'locale.encounter.action.supplement' | i18n }}</a></li>
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.concern.aefi')">{{ 'locale.encounter.action.aefi' | i18n }}</a></li>
-                <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath')">{{ 'locale.encounter.action.death' | i18n }}</a></li>
+                <li><a ng-class="{'disabled' : hasCauseOfDeath(encounter)}" ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath')">{{ 'locale.encounter.action.death' | i18n }}</a></li>
             </ul>
         </div>
     </div>

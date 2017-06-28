@@ -54,19 +54,19 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// Identifies the time that the act occurred
         /// </summary>
         [Column("actTime")]
-        public DateTime? ActTime { get; set; }
+        public DateTimeOffset? ActTime { get; set; }
 
         /// <summary>
         /// Identifies the start time of the act
         /// </summary>
         [Column("startTime")]
-        public DateTime? StartTime { get; set; }
+        public DateTimeOffset? StartTime { get; set; }
 
         /// <summary>
         /// Identifies the stop time of the act
         /// </summary>
         [Column("stopTime")]
-        public DateTime? StopTime { get; set; }
+        public DateTimeOffset? StopTime { get; set; }
 
         /// <summary>
         /// Identifies the class concept

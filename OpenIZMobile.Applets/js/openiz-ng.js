@@ -26,6 +26,18 @@
  */
 
 angular.module('openiz', [])
+    //.factory('authInterceptor', ['$log', function ($log) {
+    //    return {
+    //        request: function (config) {
+    //            if (OpenIZ.Authentication.$session)
+    //                config.headers['Authorization'] = 'BEARER ' + OpenIZ.Authentication.$session.id;
+    //            if (!OpenIZ.App.magic)
+    //                OpenIZ.App.magic = OpenIZApplicationService.GetMagic();
+    //            config.headers["X-OIZMagic"] = OpenIZ.App.magic;
+    //            return config;
+    //        }
+    //    };
+    //}])
     // Localization service
     .provider('localize', function localizeProvider() {
 
@@ -156,24 +168,31 @@ angular.module('openiz', [])
 
             switch (format) {
                 case 1:   // Year     "Y"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatYear;
+                case 'Y':
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatYear;
                     break;
                 case 2:   // Month    "m"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatMonth;
+                case 'm':
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatMonth;
                     break;
                 case 3:   // Day      "D"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatDay;
+                case 'D':
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatDay;
                     break;
                 case 4:   // Hour     "H"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatHour;
+                case 'H':
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatHour;
                     break;
                 case 5:   // Minute   "M"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatMinute;
+                case 'M':
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatMinute;
                     break;
                 case 6:   // Second   "S"
+                case 'S':
                 case 0:   // Full     "F"
+                case 'F':
                 default:
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatSecond;
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatSecond;
                     break;
             }
 
@@ -262,7 +281,7 @@ angular.module('openiz', [])
                                 var currentValue = $(element).val();
                                 var options = $(element)[0].options;
                                 $('option', element[0]).remove(); // clear existing 
-                                
+
 
                                 if (!data.item || !defaultFirst) {
                                     if (defaultKey)
@@ -303,10 +322,11 @@ angular.module('openiz', [])
                                 if (currentValue && currentValue.indexOf("? string:") == 0) {
                                     $(element).val(currentValue.substring(9, currentValue.length - 2));
                                 }
-                                if (defaultValue) {
+                                else if (defaultValue) {
                                     $(element).val(defaultValue);
-                                    $(element).trigger('change');
                                 }
+                                $(element).trigger('change');
+
                             }
                         });
                     };
@@ -336,23 +356,31 @@ angular.module('openiz', [])
                     var modelType = attrs.oizEntitysearch;
                     var filterString = attrs.filter;
                     var displayString = attrs.display;
+                    var searchProperty = attrs.searchfield || "name.component.value";
                     var defaultResults = attrs.default;
                     var groupString = attrs.groupBy;
                     var groupDisplayString = attrs.groupDisplay;
-
+                    var resultProperty = attrs.resultfield || "id";
                     var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
-                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
+
+                    if (modelType != "SecurityUser" && modelType != "SecurityRole")
+                        filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
 
+
                     // Bind select 2 search
                     $(element).select2({
-                        defaultResults: function() {
+                        defaultResults: function () {
                             var s = scope;
                             if (defaultResults != null) {
-                                return eval(defaultResults);
+                                try {
+                                    return eval(defaultResults);
+                                } catch (e) {
+
+                                }
                             }
                             else {
                                 return $.map($('option', element[0]), function (o) {
@@ -362,14 +390,15 @@ angular.module('openiz', [])
                         },
                         dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
                         ajax: {
-                            url: "/__ims/" + modelType,
+                            url: ((modelType == "SecurityUser" || modelType == "SecurityRole") ? "/__auth/" : "/__ims/") + modelType,
                             dataType: 'json',
                             delay: 500,
                             method: "GET",
                             data: function (params) {
-                                filter["name.component.value"] = "~" + params.term;
+                                filter[searchProperty] = "~" + params.term;
                                 filter["_count"] = 5;
                                 filter["_offset"] = 0;
+                                filter["_viewModel"] = "min";
                                 return filter;
                             },
                             processResults: function (data, params) {
@@ -380,7 +409,11 @@ angular.module('openiz', [])
                                     return {
                                         results: $.map(data, function (o) {
                                             var text = "";
-                                            if (o.name !== undefined) {
+                                            if (displayString) {
+                                                scope = o;
+                                                text = eval(displayString);
+                                            }
+                                            else if (o.name !== undefined) {
                                                 if (o.name.OfficialRecord) {
                                                     text = OpenIZ.Util.renderName(o.name.OfficialRecord);
                                                 } else if (o.name.Assigned) {
@@ -388,6 +421,7 @@ angular.module('openiz', [])
                                                 }
                                             }
                                             o.text = o.text || text;
+                                            o.id = o[resultProperty];
                                             return o;
                                         })
                                     };
@@ -457,11 +491,16 @@ angular.module('openiz', [])
                             if (result.loading) return result.text;
 
                             if (displayString != null) {
+                                var scope = result;
                                 return eval(displayString);
                             }
-                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord)
-                                return "<div class='label label-default'>" +
+                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord) {
+                                retVal = "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                                if (result.address)
+                                    retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(result.address) + ")</small>";
+                                return retVal;
+                            }
                             else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned)
                                 return "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.Assigned);

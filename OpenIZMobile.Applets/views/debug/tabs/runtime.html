@@ -29,7 +29,7 @@
                 </tr>
                 <tr>
                     <th>{{ 'locale.about.environment.cpu' | i18n }}</th>
-                    <td>{{ about.environment.processorCount }}</td>
+                    <td>{{ about.environment.processorCount }} ({{ health.utilization }} {{ 'locale.about.workLoad' | i18n }})</td>
                 </tr>
                 <tr>
                     <th>{{ 'locale.about.environment.runtimeVersion' | i18n }}</th>
@@ -56,7 +56,7 @@
                 </tr>
                 <tr ng-repeat="s in about.syncInfo">
                     <td>{{ s.resource }}</td>
-                    <td>{{ s.lastSync | date: 'yyyy-MMM-dd HH:mm' }} <small>{{ s.etag }}</small></td>
+                    <td>{{ s.lastSync | datePrecisionFormat:'M' }} <small>{{ s.etag }}</small></td>
                     <td>{{ s.filter }}</td>
                 </tr>
             </table>

@@ -47,10 +47,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
         {
             NetworkChange.NetworkAvailabilityChanged += (o, e) =>
             {
+                ApplicationContext.Current.GetService<ITickleService>()?.SendTickle(new Tickler.Tickle(Guid.Empty, Tickler.TickleType.Information | Tickler.TickleType.Toast, "Your network status changed", DateTime.Now.AddSeconds(20)));
                 this.m_networkAvailable = e.IsAvailable;
                 this.NetworkStatusChanged?.Invoke(this, e);
             };
-
             // TODO: Discuss the ramifications of this
 			// this.NetworkStatusChanged += NetworkInformationService_NetworkStatusChanged;
         }
@@ -79,6 +79,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
 			//}
 		}
 
+        /// <summary>
+        /// Returns true if the network is wifi
+        /// </summary>
+        public virtual bool IsNetworkWifi
+        {
+            get
+            {
+                return NetworkInterface.GetAllNetworkInterfaces().Any(o => o.OperationalStatus == OperationalStatus.Up &&
+                    (o.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || o.NetworkInterfaceType == NetworkInterfaceType.Ethernet));
+            }
+        }
 		/// <summary>
 		/// Return whether the network is available
 		/// </summary>
@@ -86,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
         {
             get
             {
-                return this.m_networkAvailable;
+                return NetworkInterface.GetIsNetworkAvailable();
 			}
         }
 
@@ -113,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
         {
      
             return NetworkInterface.GetAllNetworkInterfaces().Select(o => new NetworkInterfaceInfo(
-                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, o.Description
+                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, o.Description, o.GetIPProperties().UnicastAddresses.FirstOrDefault()?.ToString()
             ));
 
         }

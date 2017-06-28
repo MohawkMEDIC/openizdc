@@ -42,12 +42,13 @@
                                             {{ 'locale.encounters.schedule.description' | i18n }}
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-xs-12 col-sm-2 control-label">{{ 'locale.encounters.schedule.date' | i18n }}</label>
-                                        <div class="col-xs-12 col-sm-10">
+                                    <div class="form-group row xs-form-group">
+                                        <label class="col-sm-2 control-label">{{ 'locale.encounters.schedule.date' | i18n }}</label>
+                                        <div class="col-sm-10">
                                             <input class="form-control" ng-class="{'has-error': (appointmentForm.appointmentDate.$touched||appointmentForm.$submitted) &amp;&amp; (appointmentForm.appointmentDate.$invalid || appointment.actTime > appointment.stopTime)}"
                                                    required="required"
-                                                   type="date" min="{{ appointment.startTime | date: 'yyyy-MM-dd' }}" name="appointmentDate"
+                                                   type="date"
+                                                   min="{{ (appointment.startTime || $root.page.loadTime) | date: 'yyyy-MM-dd' }}" name="appointmentDate"
                                                    ng-model="appointment.actTime" />
                                             <div class="col-xs-10 help-block text-danger" ng-if="(appointmentForm.appointmentDate.$touched||appointmentForm.$submitted) &amp;&amp; (appointmentForm.appointmentDate.$invalid)">
                                                 {{ 'locale.encounters.schedule.errors.missingTime' | i18n }}
@@ -57,40 +58,40 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-xs-12 col-sm-2 control-label">{{ 'locale.encounters.schedule.due' | i18n }}</label>
-                                        <div class="col-xs-12 col-sm-10">
+                                    <div class="form-group row xs-form-group">
+                                        <label class="col-sm-2 control-label">{{ 'locale.encounters.schedule.due' | i18n }}</label>
+                                        <div class="col-sm-10">
                                             <div class="checkbox" ng-repeat="action in appointment.relationship.HasComponent">
                                                 <label>
                                                     <input type="checkbox" ng-model="action._enabled" />
                                                     <span ng-switch="action.targetModel.$type">
                                                         <span ng-switch-when="SubstanceAdministration">
-                                                            <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="action.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
-                                                            <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
-                                                            <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
-                                                            {{ action.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ action.targetModel.doseSequence }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                                            <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="action.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1' || action.targetModel.participation.Product.playerModel.formConcept == '9902267c-8f77-4233-bfd3-e6b068ab326a'" />
+                                                            <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="(action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || action.targetModel.participation.Product.playerModel.formConcept == '66cbce3a-2e77-401d-95d8-ee0361f4f076') &amp;&amp; action.targetModel.typeConcept != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                                            <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="(action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || action.targetModel.participation.Product.playerModel.formConcept == 'aa02267c-8f77-4233-bfd3-e6b068ab326a')&amp;&amp; action.targetModel.typeConcept == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                                            {{ action.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ action.targetModel.doseSequence }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                                         </span>
                                                         <span ng-switch-when="QuantityObservation">
                                                             <img src="/org.openiz.core/img/appbar.scale.png" style="height:24px" ng-if="action.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
                                                             <img src="/org.openiz.core/img/appbar.eye.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                                         </span>
                                                         <span ng-switch-default="ng-switch-default">
                                                             <img src="/org.openiz.core/img/appbar.blank.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                                            {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | datePrecisionFormat:'D' }} - {{ action.targetModel.stopTime | datePrecisionFormat:'D' }})
                                                         </span>
                                                     </span>
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
-                                        <label class="col-xs-12 col-sm-2 control-label">{{ 'locale.encounters.notes' | i18n }}</label>
-                                        <div class="col-xs-12 col-sm-10">
+                                    <!--<div class="form-group row xs-form-group">
+                                        <label class="col-sm-2 control-label">{{ 'locale.encounters.notes' | i18n }}</label>
+                                        <div class="col-sm-10">
                                             <textarea ng-model="appointment.note" placeholder="{{ 'locale.encounters.notes.placeholder' | i18n }}"
                                                       class="form-control"></textarea>
                                         </div>
-                                    </div>
+                                    </div>-->
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="schedulingAssistant">
                                     <div id="schedulingAssistantCalendar" style="min-height:80%;" />
@@ -105,7 +106,7 @@
                                 <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
                             </span>
                         </button>
-                        <button type="submit" class="btn btn-lg btn-success">
+                        <button id="saveAppointmentButton" type="submit" class="btn btn-lg btn-success">
                             <span>
                                 <span class="glyphicon glyphicon-check"></span> {{ 'locale.action.save' | i18n }}
                             </span>

@@ -31,10 +31,13 @@ using System.Reflection;
 using System.Security.Principal;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model.AMI.Security;
+using OpenIZ.Mobile.Core.Security.Audit;
 
 namespace OpenIZ.Mobile.Core.Interop.AMI
 {
@@ -54,16 +57,23 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
         /// </summary>
         private Credentials GetCredentials(IRestClient client)
         {
-            var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+            try
+            {
+                var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
-            AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
+                AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
 
-            // TODO: Clean this up - Login as device account
-            if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
-                ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
-                AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
-            this.m_cachedCredential = AuthenticationContext.Current.Principal;
-            return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+                // TODO: Clean this up - Login as device account
+                if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
+                    ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
+                    AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
+                this.m_cachedCredential = AuthenticationContext.Current.Principal;
+                return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -93,6 +103,8 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                 amiClient.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+
+                if (amiClient.Client.Credentials == null) return null;
 
                 switch (typeof(TModel).Name)
                 {
@@ -147,6 +159,7 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                 amiClient.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+                if (amiClient.Client.Credentials == null) return null;
 
                 switch (typeof(TModel).Name)
                 {
@@ -168,7 +181,32 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
         /// </summary>
         public void Insert(IdentifiedData data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+                if (amiClient.Client.Credentials == null) return;
+
+                switch (data.GetType().Name)
+                {
+                    case "AuditInfo":
+                        // Only send audits over wifi
+                        if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkWifi)
+                        {
+                            foreach(var a in (data as AuditInfo).Audit)
+                                AuditUtil.AddDeviceActor(a);
+                            amiClient.SubmitAudit(data as AuditInfo);
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException($"AMI servicing not supported for {data.GetType().Name}");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -179,9 +217,17 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
         {
             try
             {
+                //var restClient = ApplicationContext.Current.GetRestClient("imsi");
                 var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
-
-                return networkInformationService.IsNetworkAvailable;
+                if (networkInformationService.IsNetworkAvailable)
+                {
+                    var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                    amiClient.Client.Credentials = new NullCredentials();
+                    amiClient.Client.Description.Endpoint[0].Timeout = 1000;
+                    return amiClient.Ping();
+                }
+                else
+                    return false;
             }
             catch (Exception e)
             {
@@ -206,6 +252,8 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
             {
                 var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                 amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+                if (amiClient.Client.Credentials == null) return;
+
                 switch (data.GetType().Name)
                 {
                     case "SecurityUser":
@@ -221,5 +269,27 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 throw;
             }
         }
+
+		/// <summary>
+		/// Gets the security user.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the security user for the given key or null if no security user is found.</returns>
+		public SecurityUser GetSecurityUser(Guid key)
+	    {
+		    try
+		    {
+			    var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+			    amiClient.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(null);
+			    amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+
+			    return amiClient.GetUser(key.ToString())?.User;
+		    }
+		    catch (Exception ex)
+		    {
+			    this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
+			    throw;
+		    }
+		}
     }
 }

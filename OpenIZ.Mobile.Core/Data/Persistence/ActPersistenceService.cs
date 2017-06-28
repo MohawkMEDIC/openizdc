@@ -30,6 +30,8 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
 using OpenIZ.Core.Model.Map;
+using OpenIZ.Mobile.Core.Data.Model;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -53,15 +55,90 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private const String Supply = "A064984F-9847-4480-8BEA-DDDF64B3C77C";
 
         /// <summary>
+        /// Cache convert an act version
+        /// </summary>
+        protected override Act CacheConvert(DbIdentified dataInstance, LocalDataContext context)
+        {
+            if (dataInstance == null) return null;
+            DbAct dbAct = dataInstance as DbAct;
+            Act retVal = null;
+            IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
+            if (dbAct != null)
+                switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
+                {
+                    case ControlAct:
+                        retVal = cache?.GetCacheItem<ControlAct>(dbAct.Key);
+                        break;
+                    case SubstanceAdministration:
+                        retVal = cache?.GetCacheItem<SubstanceAdministration>(dbAct.Key);
+                        break;
+                    case Observation:
+                        var dbObs = context.Connection.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
+                        if (dbObs != null)
+                            switch (dbObs.ValueType)
+                            {
+                                case "ST":
+                                    retVal = cache?.GetCacheItem<TextObservation>(dbAct.Key);
+                                    break;
+                                case "CD":
+                                    retVal = cache?.GetCacheItem<CodedObservation>(dbAct.Key);
+                                    break;
+                                case "PQ":
+                                    retVal = cache?.GetCacheItem<QuantityObservation>(dbAct.Key);
+                                    break;
+                            }
+                        break;
+                    case Encounter:
+                        retVal = cache?.GetCacheItem<PatientEncounter>(dbAct.Key);
+                        break;
+                    case Condition:
+                    default:
+                        retVal = cache?.GetCacheItem<Act>(dbAct.Key);
+                        break;
+                }
+            else if (dataInstance is DbControlAct)
+                retVal = cache?.GetCacheItem<ControlAct>(dataInstance.Key);
+            else if (dataInstance is DbSubstanceAdministration)
+                retVal = cache?.GetCacheItem<SubstanceAdministration>(dataInstance.Key);
+            else if (dataInstance is DbTextObservation)
+                retVal = cache?.GetCacheItem<TextObservation>(dataInstance.Key);
+            else if (dataInstance is DbCodedObservation)
+                retVal = cache?.GetCacheItem<CodedObservation>(dataInstance.Key);
+            else if (dataInstance is DbQuantityObservation)
+                retVal = cache?.GetCacheItem<QuantityObservation>(dataInstance.Key);
+            else if (dataInstance is DbPatientEncounter)
+                retVal = cache?.GetCacheItem<PatientEncounter>(dataInstance.Key);
+
+            // Return cache value
+            if (retVal != null)
+            {
+                if (retVal.LoadState < context.DelayLoadMode)
+                    retVal.LoadAssociations(context,
+                // Exclude
+                nameof(OpenIZ.Core.Model.Acts.Act.Extensions),
+                nameof(OpenIZ.Core.Model.Acts.Act.Tags),
+                nameof(OpenIZ.Core.Model.Acts.Act.Identifiers),
+                nameof(OpenIZ.Core.Model.Acts.Act.Notes),
+                nameof(OpenIZ.Core.Model.Acts.Act.Policies)
+                );
+                return retVal;
+            }
+            else
+                return base.CacheConvert(dataInstance, context);
+        }
+
+        /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, LocalDataContext context, bool loadFast) where TActType : Act, new()
+        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, LocalDataContext context) where TActType : Act, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbAct, TActType>(dbInstance);
 
             if (dbInstance.TemplateUuid != null)
-                retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(context.Connection.Get<DbTemplateDefinition>(dbInstance.TemplateUuid), true);
-
+            {
+                var tpl = context.Connection.Table<DbTemplateDefinition>().Where(o => o.Uuid == dbInstance.TemplateUuid).FirstOrDefault();
+                retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(tpl, true);
+            }
             // Has this been updated? If so, minimal information about the previous version is available
             if (dbInstance.UpdatedTime != null)
             {
@@ -78,14 +155,22 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 };
             }
 
-            retVal.LoadAssociations(context);
+            retVal.LoadAssociations(context,
+                // Exclude
+                nameof(OpenIZ.Core.Model.Acts.Act.Extensions),
+                nameof(OpenIZ.Core.Model.Acts.Act.Tags),
+                nameof(OpenIZ.Core.Model.Acts.Act.Identifiers),
+                nameof(OpenIZ.Core.Model.Acts.Act.Notes),
+                nameof(OpenIZ.Core.Model.Acts.Act.Policies)
+                );
+
             return retVal;
         }
 
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Act ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Act ToModelInstance(object dataInstance, LocalDataContext context)
         {
             // Alright first, which type am I mapping to?
             var dbAct = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct;
@@ -93,15 +178,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
             {
                 case ControlAct:
-                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context);
                 case SubstanceAdministration:
-                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context);
                 case Observation:
                     var dbObs = context.Connection.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
 
                     if (dbObs == null)
                     {
-                        return base.ToModelInstance(dataInstance, context, loadFast);
+                        return base.ToModelInstance(dataInstance, context);
                     }
 
                     switch (dbObs.ValueType)
@@ -111,29 +196,26 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                 context.Connection.Table<DbTextObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
                                 dbAct,
                                 dbObs,
-                                context,
-                                loadFast);
+                                context);
                         case "CD":
                             return new CodedObservationPersistenceService().ToModelInstance(
                                 context.Connection.Table<DbCodedObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
                                 dbAct,
                                 dbObs,
-                                context,
-                                loadFast);
+                                context);
                         case "PQ":
                             return new QuantityObservationPersistenceService().ToModelInstance(
                                 context.Connection.Table<DbQuantityObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
                                 dbAct,
                                 dbObs,
-                                context,
-                                loadFast);
+                                context);
                         default:
-                            return base.ToModelInstance(dataInstance, context, loadFast);
+                            return base.ToModelInstance(dataInstance, context);
                     }
                 case Encounter:
-                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context);
                 default:
-                    return this.ToModelInstance<Act>(dbAct, context, loadFast);
+                    return this.ToModelInstance<Act>(dbAct, context);
 
             }
         }
@@ -143,13 +225,27 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Act modelInstance, LocalDataContext context)
         {
-            var domainInstance = base.FromModelInstance(modelInstance, context) as DbAct;
-            if (modelInstance.Template != null)
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            return new DbAct()
             {
-                modelInstance.Template = modelInstance.Template.EnsureExists(context);
-                domainInstance.TemplateUuid = modelInstance.Template.Key.Value.ToByteArray();
-            }
-            return domainInstance;
+                ActTime = modelInstance.ActTime,
+                ClassConceptUuid = modelInstance.ClassConceptKey?.ToByteArray(),
+                CreatedByUuid = modelInstance.CreatedByKey?.ToByteArray(),
+                CreationTime = modelInstance.CreationTime,
+                IsNegated = modelInstance.IsNegated,
+                MoodConceptUuid = modelInstance.MoodConceptKey?.ToByteArray(),
+                ObsoletedByUuid = modelInstance.ObsoletedByKey?.ToByteArray(),
+                ObsoletionTime = modelInstance.ObsoletionTime,
+                PreviousVersionUuid = modelInstance.PreviousVersionKey?.ToByteArray(),
+                ReasonConceptUuid = modelInstance.ReasonConceptKey?.ToByteArray(),
+                StartTime = modelInstance.StartTime,
+                StatusConceptUuid = modelInstance.StatusConceptKey?.ToByteArray(),
+                StopTime = modelInstance.StopTime,
+                TemplateUuid = modelInstance.TemplateKey?.ToByteArray(),
+                TypeConceptUuid = modelInstance.TypeConceptKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray(),
+                VersionUuid = modelInstance.VersionKey?.ToByteArray()
+            };
         }
 
         /// <summary>
@@ -163,12 +259,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept.EnsureExists(context);
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+            if (data.Template != null) data.Template = data.Template.EnsureExists(context);
 
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
             data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+            data.TemplateKey = data.Template?.Key ?? data.TemplateKey;
 
             // Do the insert
             var retVal = base.InsertInternal(context, data);
@@ -195,18 +293,25 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context);
 
             if (retVal.Participations != null)
+            {
+                // Remove all empty participations
+                retVal.Participations.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<ActParticipation, Act>(
                     new List<ActParticipation>(),
-                    retVal.Participations,
+                    retVal.Participations.Distinct(new ActParticipationPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Relationships != null)
+            {
+                retVal.Relationships.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<ActRelationship, Act>(
                     new List<ActRelationship>(),
-                    retVal.Relationships,
+                    retVal.Relationships.Distinct(new ActRelationshipPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Tags != null)
                 base.UpdateAssociatedItems<ActTag, Act>(
@@ -220,8 +325,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     new List<ActProtocol>(),
                     retVal.Protocols,
                     retVal.Key,
-
                     context);
+
             return retVal;
         }
 
@@ -240,7 +345,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
             data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
-//            data.TypeConcept?.EnsureExists(context);
+            //            data.TypeConcept?.EnsureExists(context);
 
             // Do the update
             var retVal = base.UpdateInternal(context, data);
@@ -282,18 +387,26 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context);
 
             if (retVal.Participations != null)
+            {
+                retVal.Participations.RemoveAll(o => o.IsEmpty());
+
                 base.UpdateAssociatedItems<ActParticipation, Act>(
                     context.Connection.Table<DbActParticipation>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList(),
-                    retVal.Participations,
+                    retVal.Participations.Distinct(new ActParticipationPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Relationships != null)
+            {
+                retVal.Relationships.RemoveAll(o => o.IsEmpty());
+
                 base.UpdateAssociatedItems<ActRelationship, Act>(
                     context.Connection.Table<DbActRelationship>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActRelationship, ActRelationship>(o)).ToList(),
-                    retVal.Relationships,
+                    retVal.Relationships.Distinct(new ActRelationshipPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Tags != null)
                 base.UpdateAssociatedItems<ActTag, Act>(

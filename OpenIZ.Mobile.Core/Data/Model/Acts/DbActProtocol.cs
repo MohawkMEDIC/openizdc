@@ -43,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// <summary>
         /// Gets or sets the protocol uuid
         /// </summary>
-        [Column("proto_uuid"), MaxLength(16), Indexed]
+        [Column("proto_uuid"), MaxLength(16)]
         public byte[] ProtocolUuid { get; set; }
 
         /// <summary>

@@ -50,6 +50,7 @@ using System.IO.Compression;
 using OpenIZ.Mobile.Core.Services;
 using System.Xml.Serialization;
 using System.Security.Cryptography;
+using OpenIZ.Core.Applets.Services;
 
 namespace DisconnectedClient
 {
@@ -85,6 +86,14 @@ namespace DisconnectedClient
             {
                 return this.m_configurationManager;
             }
+        }
+
+        /// <summary>
+        /// Show toast
+        /// </summary>
+        public override void ShowToast(string subject)
+        {
+            
         }
 
         /// <summary>
@@ -145,9 +154,12 @@ namespace DisconnectedClient
 
                 ApplicationContext.Current = retVal;
                 ApplicationServiceContext.Current = ApplicationContext.Current;
+                ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
 
                 retVal.m_tracer = Tracer.GetTracer(typeof(DcApplicationContext));
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
+
+                var appletService = retVal.GetService<IAppletManagerService>();
 
                 retVal.SetProgress("Loading configuration", 0.2f);
                 // Load all user-downloaded applets in the data directory
@@ -157,10 +169,9 @@ namespace DisconnectedClient
 
                         retVal.m_tracer.TraceInfo("Installing applet {0}", appPath);
                         using (var fs = File.OpenRead(appPath))
-                        using (var gzs = new GZipStream(fs, CompressionMode.Decompress))
                         {
-                            AppletPackage package = AppletPackage.Load(gzs);
-                            retVal.InstallApplet(package, true);
+                            AppletPackage package = AppletPackage.Load(fs);
+                            appletService.Install(package, true);
                         }
                     }
                     catch (Exception e)
@@ -168,10 +179,9 @@ namespace DisconnectedClient
                         retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appPath, e.ToString());
                         throw;
                     }
-                retVal.LoadedApplets.CachePages = true;
-                retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
                 retVal.Start();
+                
                 return true;
             }
             catch (Exception e)
@@ -200,7 +210,6 @@ namespace DisconnectedClient
                 try
                 {
                     retVal.ConfigurationManager.Load();
-                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
                     // Set master application context
                     ApplicationContext.Current = retVal;
@@ -209,6 +218,8 @@ namespace DisconnectedClient
                     retVal.SetProgress("Loading configuration", 0.2f);
                     // Load all user-downloaded applets in the data directory
                     var configuredApplets = retVal.Configuration.GetSection<AppletConfigurationSection>().Applets;
+
+                    var appletService = retVal.GetService<IAppletManagerService>();
 
                     foreach (var appletInfo in configuredApplets)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                         try
@@ -221,14 +232,13 @@ namespace DisconnectedClient
                                 // Is this applet in the allowed applets
 
                                 // public key token match?
-                                if (appletInfo.PublicKeyToken != manifest.Info.PublicKeyToken ||
-                                    !retVal.VerifyManifest(manifest, appletInfo))
+                                if (appletInfo.PublicKeyToken != manifest.Info.PublicKeyToken)
                                 {
                                     retVal.m_tracer.TraceWarning("Applet {0} failed validation", appletInfo);
                                     ; // TODO: Raise an error
                                 }
 
-                                retVal.LoadApplet(manifest);
+                                appletService.LoadApplet(manifest);
                             }
                         }
                         catch (Exception e)
@@ -258,6 +268,8 @@ namespace DisconnectedClient
                         // Prepare clinical protocols
                         //retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
                         ApplicationServiceContext.Current = ApplicationContext.Current;
+                        ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
+
                     }
                     catch (Exception e)
                     {
@@ -268,13 +280,11 @@ namespace DisconnectedClient
                     {
                         retVal.ConfigurationManager.Save();
                     }
-                    retVal.LoadedApplets.CachePages = true;
-
 
                     // Set the tracer writers for the PCL goodness!
                     foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
                     {
-                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter);
+                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter, itm.Filter);
                     }
 
                     // Start daemons
@@ -412,221 +422,14 @@ namespace DisconnectedClient
             return value?.ToLower().Replace("\\", "/");
         }
 
-        /// <summary>
-        /// Resolve asset
-        /// </summary>
-        public override object ResolveAppletAsset(AppletAsset navigateAsset)
-        {
-
-            String itmPath = System.IO.Path.Combine(
-                                        ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
-                                        "assets",
-                                        navigateAsset.Manifest.Info.Id,
-                                        navigateAsset.Name);
-
-            if (navigateAsset.MimeType == "text/javascript" ||
-                        navigateAsset.MimeType == "text/css" ||
-                        navigateAsset.MimeType == "application/json" ||
-                        navigateAsset.MimeType == "text/xml")
-            {
-                var script = File.ReadAllText(itmPath);
-                if (itmPath.Contains("openiz.js"))
-                    script += this.GetShimMethods();
-                return script;
-            }
-            else
-                using (MemoryStream response = new MemoryStream())
-                using (var fs = File.OpenRead(itmPath))
-                {
-                    int br = 8096;
-                    byte[] buffer = new byte[8096];
-                    while (br == 8096)
-                    {
-                        br = fs.Read(buffer, 0, 8096);
-                        response.Write(buffer, 0, br);
-                    }
-
-                    return response.ToArray();
-                }
-        }
-
-        /// <summary>
-        /// Get the SHIM methods
-        /// </summary>
-        /// <returns></returns>
-        private String GetShimMethods()
-        {
-            // Load the default SHIM
-            // Write the generated shims
-            using (StringWriter tw = new StringWriter())
-            {
-                tw.WriteLine("/// START OPENIZ MINI IMS SHIM");
-                // Version
-                tw.WriteLine("OpenIZApplicationService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
-                tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
-                tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
-                tw.WriteLine("\tswitch(key) {");
-                foreach (var itm in this.LoadedApplets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
-                {
-                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value.Replace("'", "\\'"));
-                }
-                tw.WriteLine("\t}");
-                tw.WriteLine("}");
-
-                tw.WriteLine("OpenIZApplicationService._CUUID = 0;");
-                tw.WriteLine("OpenIZApplicationService._UUIDS = [");
-                for (int i = 0; i < 2000; i++)
-                    tw.WriteLine("\t'{0}',", Guid.NewGuid());
-                tw.WriteLine("\t''];");
-
-                tw.WriteLine("OpenIZApplicationService.NewGuid = function() { return OpenIZApplicationService._UUIDS[OpenIZApplicationService._CUUID++]; }");
-
-                tw.WriteLine("OpenIZApplicationService.GetTemplateForm = function(templateId) {");
-                tw.WriteLine("\tswitch(templateId) {");
-                foreach (var itm in this.LoadedApplets.SelectMany(o => o.Templates))
-                {
-                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Mnemonic.ToLowerInvariant(), itm.Form);
-                }
-                tw.WriteLine("\t}");
-                tw.WriteLine("}");
-
-                tw.WriteLine("OpenIZApplicationService.GetDataAsset = function(assetId) {");
-                tw.WriteLine("\tswitch(assetId) {");
-                foreach (var itm in this.LoadedApplets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("data/")))
-                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Name.Replace("data/", ""), Convert.ToBase64String(this.LoadedApplets.RenderAssetContent(itm)).Replace("'", "\\'"));
-                tw.WriteLine("\t}");
-                tw.WriteLine("}");
-                // Read the static shim
-                using (StreamReader shim = new StreamReader(typeof(DcApplicationContext).Assembly.GetManifestResourceStream("DisconnectedClient.lib.shim.js")))
-                    tw.Write(shim.ReadToEnd());
-
-                return tw.ToString();
-            }
-        }
-
-        /// <summary>
-        /// Install an applet
-        /// </summary>
-        public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
-        {
-            // Desearialize an prep for install
-            var appletSection = this.Configuration.GetSection<AppletConfigurationSection>();
-            String appletPath = Path.Combine(appletSection.AppletDirectory, package.Meta.Id);
-
-            try
-            {
-                this.m_tracer.TraceInfo("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
-
-                this.SetProgress(package.Meta.GetName("en"), 0.0f);
-                // TODO: Verify the package
-
-                // Copy
-                if (!Directory.Exists(appletSection.AppletDirectory))
-                    Directory.CreateDirectory(appletSection.AppletDirectory);
-
-                if (File.Exists(appletPath))
-                {
-                    if (!isUpgrade)
-                        throw new InvalidOperationException("Duplicate package name!");
-
-                    // Unload the loaded applet version
-                    var existingApplet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
-                    if (existingApplet != null)
-                        this.LoadedApplets.Remove(existingApplet);
-                    appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
-                }
-
-                // Save the applet
-                XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
-
-                AppletManifest mfst;
-
-                // Install Database stuff
-                using (MemoryStream ms = new MemoryStream(package.Manifest))
-                {
-                    mfst = xsz.Deserialize(ms) as AppletManifest;
-                    // Migrate data.
-                    if (mfst.DataSetup != null)
-                    {
-                        foreach (var itm in mfst.DataSetup.Action)
-                        {
-                            Type idpType = typeof(IDataPersistenceService<>);
-                            idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
-                            var svc = ApplicationContext.Current.GetService(idpType);
-                            idpType.GetMethod(itm.ActionName).Invoke(svc, new object[] { itm.Element });
-                        }
-                    }
-
-                    // Now export all the binary files out
-                    var assetDirectory = Path.Combine(appletSection.AppletDirectory, "assets", mfst.Info.Id);
-                    if (!Directory.Exists(assetDirectory))
-                    {
-                        Directory.CreateDirectory(assetDirectory);
-                    }
-
-                    for (int i = 0; i < mfst.Assets.Count; i++)
-                    {
-                        var itm = mfst.Assets[i];
-                        var itmPath = Path.Combine(assetDirectory, itm.Name);
-                        this.SetProgress(package.Meta.GetName("en"), 0.1f + (float)(0.8 * (float)i / mfst.Assets.Count));
-
-                        // Get dir name and create
-                        if (!Directory.Exists(Path.GetDirectoryName(itmPath)))
-                            Directory.CreateDirectory(Path.GetDirectoryName(itmPath));
-
-                        // Extract content
-                        if (itm.Content is byte[])
-                        {
-                            File.WriteAllBytes(itmPath, itm.Content as byte[]);
-                            itm.Content = null;
-                        }
-                        else if (itm.Content is String)
-                        {
-                            File.WriteAllText(itmPath, itm.Content as String);
-                            itm.Content = null;
-                        }
-                    }
-
-                    // Serialize the data to disk
-                    using (FileStream fs = File.Create(appletPath))
-                        xsz.Serialize(fs, mfst);
-                }
-
-                // TODO: Sign this with my private key
-                // For now sign with SHA256
-                SHA256 sha = SHA256.Create();
-                package.Meta.Hash = sha.ComputeHash(File.ReadAllBytes(appletPath));
-                appletSection.Applets.Add(package.Meta.AsReference());
-
-                this.SetProgress(package.Meta.GetName("en"), 0.98f);
-
-                if (this.ConfigurationManager.IsConfigured)
-                    this.ConfigurationManager.Save();
-
-                mfst.Initialize();
-
-                this.LoadApplet(mfst);
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error installing applet {0} : {1}", package.Meta.ToString(), e);
-
-                // Remove
-                if (File.Exists(appletPath))
-                {
-                    File.Delete(appletPath);
-                }
-
-                throw;
-            }
-        }
-
+        
         /// <summary>
         /// Save configuration
         /// </summary>
         public override void SaveConfiguration()
         {
-            this.m_configurationManager.Save();
+            if(this.m_configurationManager.IsConfigured)
+                this.m_configurationManager.Save(); 
         }
 
         /// <summary>
@@ -635,6 +438,30 @@ namespace DisconnectedClient
         public override void Exit()
         {
             Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Confirmation
+        /// </summary>
+        public override bool Confirm(string confirmText)
+        {
+            return System.Windows.Forms.MessageBox.Show(confirmText, String.Empty, System.Windows.Forms.MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK;
+        }
+
+        /// <summary>
+        /// Show an alert
+        /// </summary>
+        public override void Alert(string alertText)
+        {
+            System.Windows.Forms.MessageBox.Show(alertText);
+        }
+
+
+        /// <summary>
+        /// Performance log!
+        /// </summary>
+        public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
+        {
         }
     }
 }

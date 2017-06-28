@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Interop
         {
 
             var configSection = me.GetSection<ServiceClientConfigurationSection>();
-            return configSection.Client.Find(o => clientName == o.Name);
+            return configSection.Client.Find(o => clientName == o.Name)?.Clone() ;
 
         }
 
@@ -57,6 +57,7 @@ namespace OpenIZ.Mobile.Core.Interop
             var description = me.Configuration.GetServiceDescription(clientName);
             if (description == null)
                 return null;
+
             IRestClient client = Activator.CreateInstance(configSection.RestClientType, description) as IRestClient;
             return client;
         }

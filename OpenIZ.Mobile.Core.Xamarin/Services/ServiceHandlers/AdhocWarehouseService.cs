@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Data.Warehouse;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System;
@@ -38,6 +39,29 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     [RestService("/__zombo")]
     public class AdhocWarehouseService
     {
+
+        /// <summary>
+        /// Performs an ad-hoc query against the datawarehouse
+        /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/adhocQuery", FaultProvider = nameof(AdhocWarehouseFaultProvider))]
+        public object AdHocQuery()
+        {
+            var warehouseSvc = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            int totalResults = 0,
+                   offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                   count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+
+            if (!search.ContainsKey("martId")) throw new ArgumentNullException("Missing datamart identifier");
+            else
+            {
+                var dataMart = warehouseSvc.GetDatamart(search["martId"][0]);
+                search.Remove("martId");
+                search.Remove("_");
+                return warehouseSvc.AdhocQuery(dataMart.Id, search);
+            }
+        }
 
         /// <summary>
         /// Performs an ad-hoc query against the datawarehouse
@@ -61,7 +85,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 search.Remove("martId");
                 search.Remove("queryId");
                 search.Remove("_");
-                return warehouseSvc.StoredQuery(dataMart.Id, queryName, search);
+                var results = warehouseSvc.StoredQuery(dataMart.Id, queryName, search);
+
+                // HACK: Sometimes the mart needs to be refreshed
+                if (dataMart.Name == "oizcp" && results.Count() == 0)
+                {
+                    ApplicationContext.Current.GetService<CarePlanManagerService>().RefreshCarePlan(true);
+                    throw new Exception("locale.careplan.refreshing");
+                }
+                return results;
             }
         }
 
@@ -73,7 +105,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return new ErrorResult()
             {
                 Error = e.Message,
-                ErrorDescription = e.ToString(),
+                ErrorDescription = e.InnerException?.Message,
                 ErrorType = e.GetType().Name
             };
         }

@@ -1,19 +1,19 @@
 ﻿<!--
  - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  -
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
  - the License.
- - 
+ -
  - User: justi
  - Date: 2016-7-23
  -->
@@ -30,17 +30,12 @@
             <a href="#/" class="navbar-brand">
                 <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span>
                 <span class="navbar-brand-text">{{ ::$root.page.title }}</span>
-                <span ng-if="$root.page.onlineState">
-
-                    <span ng-if="$root.page.onlineState &amp;&amp; $root.session.method != 'LOCAL'">
-                        <span class="circle-online"></span>
-                        {{ 'locale.network.online' | i18n }}
-                    </span>
-                    <span ng-if="!$root.page.onlineState || $root.session.method == 'LOCAL'">
-                        <span class="circle-offline"></span>
-                        {{ 'locale.network.offline' | i18n }}
-                    </span>
-                </span>
+                <div id="online-indicator">
+                    <div>
+                        <i class="fa fa-plug" aria-hidden="true"></i>
+                        <i id="onlineStateIndicator" style="display:none" class="fa fa-ban" aria-hidden="true"></i>
+                    </div>
+                </div>
             </a>
         </div>
         <div class="navbar-collapse collapse" ng-class="{'navbar-collapse-small' : windowWidth &lt; 768}">
@@ -59,6 +54,7 @@
                                 <img class="navbar-icon" ng-if="::c.icon" ng-src="{{::c.icon}}" ng-alt="{{::c.text}}" ng-title="{{::c.text}}" />
                                 <img class="navbar-icon" ng-if="::!c.icon" src="/org.openiz.core/img/appbar.blank.png" />
                                 {{::c.text}}
+                                <span ng-if="c.action == '#/encounter/search/test'">({{ 'locale.common.underDevelopment' | i18n }})</span>
                             </a>
                         </li>
                     </ul>
@@ -80,7 +76,7 @@
                         </li>
                     </ul>
                 </li>
-                <li ng-show="$root.session.user">
+                <li ng-show="$root.session">
                     <a href="#" ui-sref="org-openiz-core.alert()"
                        class="dropdown-toggle" role="button"
                        data-toggle="collapse" data-target=".navbar-collapse-small"
@@ -91,14 +87,17 @@
                         </span>
                     </a>
                 </li>
-                <li id="syncCtrDropDown" ng-show="$root.session.user">
-                    <a ui-sref="org-openiz-core.sync()">
-                        <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon"/> <span class="oiz-menu-text">{{ 'locale.sync.title' | i18n }}</span>
+                <li id="syncCtrDropDown" ng-show="$root.session">
+                    <a ui-sref="org-openiz-core.sync()"
+                       class="dropdown-toggle" role="button"
+                       data-toggle="collapse" data-target=".navbar-collapse-small"
+                       aria-haspopup="true" aria-expanded="false">
+                        <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.sync.title' | i18n }}</span>
                         <span ng-if="conflicts.Size > 0" class="glyphicon glyphicon-exclamation-sign"></span>
                     </a>
                 </li>
-                <li class="dropdown" ng-show="$root.session.user">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <li class="dropdown" ng-show="$root.session">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <img src="/org.openiz.core/img/appbar.user.png" class="navbar-icon" /> {{ $root.session.user.userName }}  <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
@@ -116,6 +115,13 @@
                 </li>
 
             </ul>
+        </div>
+    </div>
+    <div class="container-fluid" ng-if="tickles">
+        <div class="alert alert-dismissible" ng-repeat="t in tickles" ng-if="!(t.type &amp; 4)" ng-class="{'alert-info' : (t.type &amp; 1), 'alert-danger' : (t.type &amp; 2)}">
+            <button type="button" ng-click="dismissTickle(t.id)" class="close" data-dismiss="alert" aria-label="Close"><span class="glyphicon glyphicon-remove"></span></button>
+            <i class="fa" ng-class="{'fa-shield' : (t.type &amp; 16), 'fa-list' : (t.type &amp; 8), 'fa-info' : !(t.type &amp; 16) || !(t.type &amp; 8)}"></i>
+            {{t.text}}
         </div>
     </div>
     <div class="container-fluid">

@@ -53,7 +53,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                MemoryCache.Current.RemoveObject(typeof(Concept), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var concept = conceptRepositoryService.GetConcept(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 return concept;
             }
@@ -91,7 +91,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                MemoryCache.Current.RemoveObject(typeof(Concept), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var concept = conceptRepositoryService.GetConceptSet(Guid.Parse(search["_id"].FirstOrDefault()));
                 return concept;
             }

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://openiz.org/mobile/reporting" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://microsoft.com/wsdl/types/" targetNamespace="http://openiz.org/mobile/reporting" elementFormDefault="qualified">
+	<xs:import namespace="http://microsoft.com/wsdl/types/" schemaLocation="BaseTypes.xsd"/>
+	<xs:complexType name="ReportDatasetDefinition">
+		<xs:sequence>
+			<xs:element name="property" type="tns:ReportPropertyDefinition" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="sql" type="tns:ReportSqlDefinition" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ReportPropertyDefinition">
+		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="type" type="tns:ReportPropertyType" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="ReportPropertyType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="string"/>
+			<xs:enumeration value="date"/>
+			<xs:enumeration value="dateTime"/>
+			<xs:enumeration value="uuid"/>
+			<xs:enumeration value="decimal"/>
+			<xs:enumeration value="bytea"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="ReportSqlDefinition">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="provider" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="Report" type="tns:ReportDefinition" nillable="true"/>
+	<xs:complexType name="ReportDefinition">
+		<xs:sequence>
+			<xs:element name="info" type="tns:ReportDescriptionDefinition" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="connection" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="format" type="tns:ReportFormatDefinition" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="parameter" type="tns:ReportParameterDefinition" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="dataset" type="tns:ReportDatasetDefinition" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="view" type="tns:ReportViewDefinition" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ReportDescriptionDefinition">
+		<xs:sequence>
+			<xs:element name="author" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="q1:guid" use="required"/>
+		<xs:attribute name="title" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ReportFormatDefinition">
+		<xs:sequence>
+			<xs:element name="date" type="xs:string" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="dateTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReportParameterDefinition" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:ReportPropertyDefinition">
+				<xs:sequence>
+					<xs:element name="valueSet" type="tns:ReportDatasetDefinition" minOccurs="0" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="label" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ReportViewDefinition">
+		<xs:sequence>
+			<xs:element namespace="http://www.w3.org/1999/xhtml" name="body" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:any processContents="lax"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="label" type="xs:string"/>
+	</xs:complexType>
+</xs:schema>

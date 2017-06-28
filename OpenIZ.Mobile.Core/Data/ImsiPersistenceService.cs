@@ -31,6 +31,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Collections;
+using OpenIZ.Core.Http;
+using System.Security.Principal;
+using OpenIZ.Mobile.Core.Security;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -81,10 +84,29 @@ namespace OpenIZ.Mobile.Core.Data
 			// Service client
 			private ImsiServiceClient m_client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
 
-			/// <summary>
-			/// Inserted data
-			/// </summary>
-			public event EventHandler<DataPersistenceEventArgs<TModel>> Inserted;
+            private IPrincipal m_cachedCredential = null;
+
+            /// <summary>
+            /// Gets current credentials
+            /// </summary>
+            private Credentials GetCredentials()
+            {
+                var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+
+                AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
+
+                // TODO: Clean this up - Login as device account
+                if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
+                    ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
+                    AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
+                this.m_cachedCredential = AuthenticationContext.Current.Principal;
+                return this.m_client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+            }
+
+            /// <summary>
+            /// Inserted data
+            /// </summary>
+            public event EventHandler<DataPersistenceEventArgs<TModel>> Inserted;
 
 			/// <summary>
 			/// Inserting data
@@ -126,6 +148,7 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public int Count(Expression<Func<TModel, bool>> predicate)
 			{
+                this.GetCredentials();
 				var retVal = this.m_client.Query(predicate);
 				return (retVal as Bundle)?.TotalResults ?? ((retVal as IdentifiedData != null) ? 1 : 0);
 			}
@@ -135,8 +158,10 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public TModel Get(Guid key)
 			{
-				// Gets the specified data
-				return this.m_client.Get<TModel>(key, null) as TModel;
+                this.GetCredentials();
+
+                // Gets the specified data
+                return this.m_client.Get<TModel>(key, null) as TModel;
 			}
 
 			/// <summary>
@@ -160,9 +185,9 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public TModel Insert(TModel data)
 			{
-				data.SetDelayLoad(false);
-				var retVal = this.m_client.Create(data);
-				retVal.SetDelayLoad(true);
+                this.GetCredentials();
+
+                var retVal = this.m_client.Create(data);
 				return retVal;
 			}
 
@@ -179,9 +204,9 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public TModel Obsolete(TModel data)
 			{
-				data.SetDelayLoad(false);
-				var retVal = this.m_client.Obsolete(data);
-				retVal.SetDelayLoad(true);
+                this.GetCredentials();
+
+                var retVal = this.m_client.Obsolete(data);
 				return retVal;
 			}
 
@@ -207,15 +232,14 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
 			{
-				var data = this.m_client.Query(query, offset, count);
+                this.GetCredentials();
+
+                var data = this.m_client.Query(query, offset, count, false, queryId);
 				(data as Bundle)?.Reconstitute();
 				offset = (data as Bundle)?.Offset ?? offset;
 				count = (data as Bundle)?.Count ?? count;
 				totalResults = (data as Bundle)?.TotalResults ?? 1;
 
-				// Set delay load
-				foreach (var i in (data as Bundle)?.Item.OfType<IdentifiedData>())
-					i.SetDelayLoad(true);
 
 				return (data as Bundle)?.Item.OfType<TModel>() ?? new List<TModel>() { data as TModel };
 			}
@@ -241,9 +265,9 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public TModel Update(TModel data)
 			{
-				data.SetDelayLoad(false);
-				var retVal = this.m_client.Update(data);
-				retVal.SetDelayLoad(true);
+                this.GetCredentials();
+
+                var retVal = this.m_client.Update(data);
 				return retVal;
 			}
 
@@ -253,6 +277,22 @@ namespace OpenIZ.Mobile.Core.Data
             public IEnumerable Query(Expression query, int offset, int? count, out int totalResults)
             {
                 return this.Query((Expression<Func<TModel, bool>>)query, offset, count, out totalResults, Guid.Empty);
+            }
+
+            /// <summary>
+            /// Query fast (not implemented)
+            /// </summary>
+            public IEnumerable<TModel> QueryFast(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
+            {
+                return this.Query((Expression<Func<TModel, bool>>)query, offset, count, out totalResults, Guid.Empty);
+            }
+
+            /// <summary>
+            /// Expliciry load
+            /// </summary>
+            public IEnumerable<TModel> QueryExplicitLoad(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, Guid queryId, IEnumerable<string> expandProperties)
+            {
+                throw new NotImplementedException();
             }
         }
 	}

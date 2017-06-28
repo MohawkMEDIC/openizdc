@@ -46,6 +46,7 @@ using System.IO.Compression;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Protocol.Xml;
 using OpenIZ.Mobile.Core.Xamarin;
+using OpenIZ.Mobile.Core.Xamarin.Services;
 
 namespace OpenIZMobile
 {
@@ -71,6 +72,7 @@ namespace OpenIZMobile
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
             this.SetContentView(Resource.Layout.Splash);
         }
 
@@ -89,21 +91,31 @@ namespace OpenIZMobile
 
             Task startupWork = new Task(() =>
             {
-                if(XamarinApplicationContext.Current == null)
+                if (XamarinApplicationContext.Current == null)
                     if (!this.DoConfigure())
                         ctSource.Cancel();
             }, ct);
 
-            
+
             startupWork.ContinueWith(t =>
             {
                 if (!ct.IsCancellationRequested)
                 {
-                    Intent viewIntent = new Intent(this, typeof(AppletActivity));
-                    var appletConfig = AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
-                    viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/index.html#/");
-                    this.StartActivity(viewIntent);
-
+                    Action doStart = () =>
+                    {
+                        AndroidApplicationContext.ProgressChanged -= this.OnProgressUpdated;
+                        Intent viewIntent = new Intent(this, typeof(AppletActivity));
+                        var appletConfig = AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
+                        viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/splash.html#/");
+                        this.StartActivity(viewIntent);
+                    };
+                    if (AndroidApplicationContext.Current.GetService<MiniImsServer>().IsRunning)
+                        doStart();
+                    else
+                        AndroidApplicationContext.Current.GetService<MiniImsServer>().Started += (oo, oe) =>
+                        {
+                            doStart();
+                        };
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -127,7 +139,7 @@ namespace OpenIZMobile
                 if (AndroidApplicationContext.Current != null)
                     return true;
 
-                if (!AndroidApplicationContext.Start(this.ApplicationContext, this.Application))
+                if (!AndroidApplicationContext.Start(this, this.ApplicationContext, this.Application))
                 {
 
                     CancellationTokenSource ctSource = new CancellationTokenSource();
@@ -139,28 +151,9 @@ namespace OpenIZMobile
                         try
                         {
 
-                            if (AndroidApplicationContext.StartTemporary(this.ApplicationContext))
-                            {
-                                this.m_tracer = Tracer.GetTracer(typeof(SplashActivity));
-
-                                try
-                                {
-                                    using (var gzs = new GZipStream(Assets.Open("Applets/openiz.core.applet.pak"), CompressionMode.Decompress))
-                                    {
-                                        // Write data to assets directory
-                                        var package = AppletPackage.Load(gzs);
-                                        AndroidApplicationContext.Current.InstallApplet(package, true);
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    this.m_tracer.TraceError(e.ToString());
-                                    throw;
-                                }
-
-                            }
-                            else
+                            if (!AndroidApplicationContext.StartTemporary(this, this.ApplicationContext))
                                 throw new InvalidOperationException("Cannot start temporary authentication pricipal");
+
                         }
                         catch (Exception e)
                         {
@@ -179,11 +172,21 @@ namespace OpenIZMobile
                     {
                         if (!ct.IsCancellationRequested)
                         {
-                            Intent viewIntent = new Intent(this, typeof(AppletActivity));
-                            viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
-                            viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
-                            this.StartActivity(viewIntent);
-
+                           
+                            Action doStart = () =>
+                            {
+                                Intent viewIntent = new Intent(this, typeof(AppletActivity));
+                                viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                                viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
+                                this.StartActivity(viewIntent);
+                            };
+                            if (AndroidApplicationContext.Current.GetService<MiniImsServer>().IsRunning)
+                                doStart();
+                            else
+                                AndroidApplicationContext.Current.GetService<MiniImsServer>().Started += (oo, oe) =>
+                                {
+                                    doStart();
+                                };
                         }
                     }, TaskScheduler.Current);
 
@@ -193,46 +196,16 @@ namespace OpenIZMobile
                 else
                 {
 
-
                     this.m_tracer = Tracer.GetTracer(this.GetType());
-                    
-
-                    // Upgrade applets from our app manifest
-                    foreach (var itm in Assets.List("Applets"))
-                    {
-                        try
-                        {
-                            this.m_tracer.TraceVerbose("Loading {0}", itm);
-                            AppletPackage pkg = null;
-                            if (Path.GetExtension(itm) == ".pak")
-                            {
-                                using (var gzs = new GZipStream(Assets.Open(String.Format("Applets/{0}", itm)), CompressionMode.Decompress))
-                                    pkg = AppletPackage.Load(gzs);
-
-                            }
-                            else
-                            {
-                                AppletManifest manifest = AppletManifest.Load(Assets.Open(String.Format("Applets/{0}", itm)));
-                                pkg = manifest.CreatePackage();
-                            }
-
-                            // Write data to assets directory
-#if !DEBUG
-                            if(AndroidApplicationContext.Current.GetApplet(pkg.Meta.Id) == null ||
-                                new Version(AndroidApplicationContext.Current.GetApplet(pkg.Meta.Id).Info.Version) < new Version(pkg.Meta.Version))
-#endif       
-                            AndroidApplicationContext.Current.InstallApplet(pkg, true);
-                        }
-                        catch (Exception e)
-                        {
-                            this.m_tracer?.TraceError(e.ToString());
-                        }
-                    }
-                    AndroidApplicationContext.ProgressChanged -= this.OnProgressUpdated;
                 }
 
 
                 return true;
+            }
+            catch (AppDomainUnloadedException)
+            {
+                this.Finish();
+                return false;
             }
             catch (Exception e)
             {
@@ -242,6 +215,7 @@ namespace OpenIZMobile
             }
 
         }
+
 
 
         /// <summary>

@@ -1,19 +1,19 @@
 ﻿<!--
  - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  -
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
  - the License.
- - 
+ -
  - User: justi
  - Date: 2016-7-17
  -->
@@ -25,168 +25,164 @@
     <openiz:script>/org.openiz.core/controllers/settings/settings.js</openiz:script>
     <openiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.10</openiz:demand>
 
-    <div class="row">
-        <div class="col-md-12">
-            <form name="realmForm" novalidate="novalidate" class="form-horizontal">
+    <ng-form name="settingsForm">
+        <div class="row">
+            <div class="col-md-12">
+                <form name="realmForm" novalidate="novalidate" class="form-horizontal">
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">{{ 'locale.settings.realmTitle' | i18n }}</h3>
-                    </div>
-                    <div class="panel-collapse collapse in">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-2 col-xs-2">
-                                        <img src="~/img/appbar.network.home.png" alt="network" class="left" />
-                                    </div>
-                                    <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                                        <em>{{ 'locale.settings.realmDescription' | i18n }}</em>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="deviceName" id="deviceNameLabel">{{ 'locale.settings.deviceName' | i18n }}</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Za-z][A-Za-z.0-9-]+$/i" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
-                                                <span class="input-group-btn">
-                                                    <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.deviceName' | i18n }}" data-content="{{ 'locale.settings.deviceName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
-                                                </span>
-                                            </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ 'locale.settings.realmTitle' | i18n }}</h3>
+                        </div>
+                        <div class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-2 col-xs-2">
+                                            <img src="~/img/appbar.network.home.png" alt="network" class="left" />
+                                        </div>
+                                        <div class="col-md-10 col-xs-10" style="vertical-align:middle">
+                                            <em>{{ 'locale.settings.realmDescription' | i18n }}</em>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="realmName" id="realmServerLabel">{{ 'locale.settings.realmName' | i18n }}</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
-                                                <span class="input-group-btn">
-                                                    <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="2" data-trigger="focus" title="{{ 'locale.settings.realmName' | i18n }}" data-content="{{ 'locale.settings.realmName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
-                                                </span>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="deviceName" id="deviceNameLabel">{{ 'locale.settings.deviceName' | i18n }}</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Za-z][A-Za-z.0-9-]+$/i" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
+                                                    <span class="input-group-btn">
+                                                        <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.deviceName' | i18n }}" data-content="{{ 'locale.settings.deviceName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-10 col-sm-offset-2">
-                                            <input type="checkbox" ng-model="config.security.enableTrace"/>
-                                            {{ 'locale.settings.enableTracing' | i18n }}
-                                        </label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label" for="realmPort" id="realmPortLabel">{{ 'locale.settings.realmPort' | i18n }}</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <input ng-model="config.security.port" ng-required="true"  class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmPort" id="realmPort" aria-describedby="realmPortLabel" />
-                                                <span class="input-group-btn">
-                                                    <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="2" data-trigger="focus" title="{{ 'locale.settings.realmPort' | i18n }}" data-content="{{ 'locale.settings.realmPort.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
-                                                </span>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="realmName" id="realmServerLabel">{{ 'locale.settings.realmName' | i18n }}</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
+                                                    <span class="input-group-btn">
+                                                        <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="2" data-trigger="focus" title="{{ 'locale.settings.realmName' | i18n }}" data-content="{{ 'locale.settings.realmName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-10 col-sm-offset-2">
-                                            <input type="checkbox" ng-model="config.security.enableSSL" />
-                                            {{ 'locale.settings.enableSSL' | i18n }}
-                                        </label>
-                                    </div>
-                                    <div class="btn-group pull-right">
-                                        <button class="btn-danger btn btn-lg" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
-                                            <span>
-                                                <span class="glyphicon glyphicon-resize-full"></span> {{ 'locale.settings.leaveRealm' | i18n }}
-                                            </span>
-                                        </button>
-                                        <button class="btn-success btn btn-lg" id="joinRealmButton" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">
-                                            <span>
-                                                <span class="glyphicon glyphicon-resize-small"></span> {{ 'locale.settings.joinRealm' | i18n }}
-                                            </span>
-                                        </button>
+                                        <div class="form-group">
+                                            <label class="col-sm-10 col-sm-offset-2">
+                                                <input type="checkbox" ng-model="config.security.enableTrace" />
+                                                {{ 'locale.settings.enableTracing' | i18n }}
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" for="realmPort" id="realmPortLabel">{{ 'locale.settings.realmPort' | i18n }}</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input ng-model="config.security.port" ng-required="true" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmPort" id="realmPort" aria-describedby="realmPortLabel" />
+                                                    <span class="input-group-btn">
+                                                        <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="2" data-trigger="focus" title="{{ 'locale.settings.realmPort' | i18n }}" data-content="{{ 'locale.settings.realmPort.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-10 col-sm-offset-2">
+                                                <input type="checkbox" ng-model="config.security.enableSSL" />
+                                                {{ 'locale.settings.enableSSL' | i18n }}
+                                            </label>
+                                        </div>
+                                        <div class="btn-group pull-right">
+                                            <button class="btn-danger btn btn-lg" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
+                                                <span>
+                                                    <span class="glyphicon glyphicon-resize-full"></span> {{ 'locale.settings.leaveRealm' | i18n }}
+                                                </span>
+                                            </button>
+                                            <button class="btn-success btn btn-lg" id="joinRealmButton" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">
+                                                <span>
+                                                    <span class="glyphicon glyphicon-resize-small"></span> {{ 'locale.settings.joinRealm' | i18n }}
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <a href="#dataBody" data-toggle="collapse">
-                            <span class="glyphicon glyphicon-chevron-right" id="dataBodyIndicator"></span>{{ 'locale.settings.dataTitle' | i18n }}
-                        </a>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse" id="dataBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#dataBodyIndicator">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ 'locale.settings.dataTitle' | i18n }}</h3>
+                    </div>
+                    <div class="panel-collapse collapse in" id="dataBody">
 
-                    <div class="panel-body">
-                        <!-- #include virtual="~/views/settings/tabs/data.html" -->
+                        <div class="panel-body">
+                            <!-- #include virtual="~/views/settings/tabs/data.html" -->
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <a href="#logBody" data-toggle="collapse">
-                           <span class="glyphicon glyphicon-chevron-right" id="logBodyIndicator"></span> {{ 'locale.settings.logTitle' | i18n }}
-                        </a>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse" id="logBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#logBodyIndicator">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a href="#logBody" data-toggle="collapse">
+                                <span class="glyphicon glyphicon-chevron-right" id="logBodyIndicator"></span> {{ 'locale.settings.logTitle' | i18n }}
+                            </a>
+                        </h3>
+                    </div>
+                    <div class="panel-collapse collapse" id="logBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#logBodyIndicator">
 
-                    <div class="panel-body">
-                        <!-- #include virtual="~/views/settings/tabs/log.html" -->
+                        <div class="panel-body">
+                            <!-- #include virtual="~/views/settings/tabs/log.html" -->
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <a href="#securityBody" data-toggle="collapse">
-                            <span class="glyphicon glyphicon-chevron-right" id="securityBodyIndicator"></span> {{ 'locale.settings.securityTitle' | i18n }}
-                        </a>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse" id="securityBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#securityBodyIndicator">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a href="#securityBody" data-toggle="collapse">
+                                <span class="glyphicon glyphicon-chevron-right" id="securityBodyIndicator"></span> {{ 'locale.settings.securityTitle' | i18n }}
+                            </a>
+                        </h3>
+                    </div>
+                    <div class="panel-collapse collapse" id="securityBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#securityBodyIndicator">
 
-                    <div class="panel-body">
-                        <!-- #include virtual="~/views/settings/tabs/security.html" -->
-
+                        <div class="panel-body">
+                            <!-- #include virtual="~/views/settings/tabs/security.html" -->
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <a href="#networkBody" data-toggle="collapse">
-                            <span class="glyphicon glyphicon-chevron-right" id="networkBodyIndicator"></span> {{ 'locale.settings.networkTitle' | i18n }}
-                        </a>
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse" id="networkBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#networkBodyIndicator">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a href="#networkBody" data-toggle="collapse">
+                                <span class="glyphicon glyphicon-chevron-right" id="networkBodyIndicator"></span> {{ 'locale.settings.networkTitle' | i18n }}
+                            </a>
+                        </h3>
+                    </div>
+                    <div class="panel-collapse collapse" id="networkBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#networkBodyIndicator">
 
-                    <div class="panel-body">
-                        <!-- #include virtual="~/views/settings/tabs/network.html" -->
-
+                        <div class="panel-body">
+                            <!-- #include virtual="~/views/settings/tabs/network.html" -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="btn-group pull-right">
-                <button class="btn-danger btn btn-lg" ng-click="close()">
-                    <span>
-                        <span class="glyphicon glyphicon-remove"></span> {{ 'locale.settings.cancel' | i18n }}
-                    </span>
-                </button>
-                <button class="btn-success btn btn-lg" id="saveConfigButton" ng-click="save(config)">
-                    <span>
-                        <span class="glyphicon glyphicon-ok"></span> {{ 'locale.settings.apply' | i18n }}
-                    </span>
-                </button>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="btn-group pull-right">
+                    <button class="btn-danger btn btn-lg" ng-click="close()">
+                        <span>
+                            <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                        </span>
+                    </button>
+                    <button class="btn-success btn btn-lg" id="saveConfigButton" ng-click="save(config)" ng-disabled="!config.realmName">
+                        <span>
+                            <span class="glyphicon glyphicon-ok"></span> {{ 'locale.action.confirm' | i18n }}
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    </ng-form>
 </div>

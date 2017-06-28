@@ -18,6 +18,7 @@
  * Date: 2017-3-31
  */
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Interfaces;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
@@ -26,18 +27,63 @@ using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization;
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
 	/// <summary>
 	/// Local batch service
 	/// </summary>
-	public class LocalBatchService : IBatchRepositoryService
+	public class LocalBatchService : IBatchRepositoryService, IAuditEventSource, IRepositoryService<Bundle>
 	{
-		/// <summary>
-		/// Insert the bundle
-		/// </summary>
-		public Bundle Insert(Bundle data)
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+
+        /// <summary>
+        /// Find a bundle
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public IEnumerable<Bundle> Find(Expression<Func<Bundle, bool>> query)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Find bundle with control
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="offset"></param>
+        /// <param name="count"></param>
+        /// <param name="totalResults"></param>
+        /// <returns></returns>
+        public IEnumerable<Bundle> Find(Expression<Func<Bundle, bool>> query, int offset, int? count, out int totalResults)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Get a bundle
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public Bundle Get(Guid key)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Bundle Get(Guid key, Guid versionKey)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Insert the bundle
+        /// </summary>
+        public Bundle Insert(Bundle data)
 		{
 			data = this.Validate(data);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
@@ -45,21 +91,32 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException("Missing persistence service");
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
+            // Before insert or update?
             data = breService?.BeforeInsert(data) ?? data;
-
 			data = persistence.Insert(data);
-            breService?.AfterInsert(data) ;
+			data = breService?.AfterInsert(data) ?? data;
 
             // Insert bundle to the master queue
+            // If we have a patient we must remove the participations as those will mess with the persistence
+            foreach (var itm in data.Item.OfType<Patient>())
+                itm.Participations.Clear(); // we never send these up
+
             ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=> SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert));
+
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(data.Item));
 
             return data;
 		}
 
-		/// <summary>
-		/// Obsolete all the contents in the bundle
-		/// </summary>
-		public Bundle Obsolete(Bundle obsolete)
+        public Bundle Obsolete(Guid key)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Obsolete all the contents in the bundle
+        /// </summary>
+        public Bundle Obsolete(Bundle obsolete)
 		{
 			obsolete = this.Validate(obsolete);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
@@ -72,15 +129,28 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             obsolete = breService?.AfterObsolete(obsolete) ?? obsolete;
 
             SynchronizationQueue.Outbound.Enqueue(obsolete, Synchronization.Model.DataOperationType.Obsolete);
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(obsolete.Item));
+
             return obsolete;
 		}
 
-		/// <summary>
-		/// Update the specified data in the bundle
-		/// </summary>
-		/// <param name="data"></param>
-		/// <returns></returns>
-		public Bundle Update(Bundle data)
+        /// <summary>
+        /// Update
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Bundle Save(Bundle data)
+        {
+            return this.Update(data);
+        }
+
+        /// <summary>
+        /// Update the specified data in the bundle
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Bundle Update(Bundle data)
 		{
 			data = this.Validate(data);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
@@ -100,10 +170,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             data = breService?.BeforeUpdate(data) ?? data;
             data = persistence.Insert(data);
-            breService?.AfterUpdate(data);
+            data = breService?.AfterUpdate(data);
+
+            this.DataUpdated?.Invoke(this, new AuditDataEventArgs(data.Item));
 
             // Patch
-            if(old != null)
+            if (old != null)
             {
                 var diff = ApplicationContext.Current.GetService<IPatchService>()?.Diff(old, data.Entry);
                 if (diff != null)

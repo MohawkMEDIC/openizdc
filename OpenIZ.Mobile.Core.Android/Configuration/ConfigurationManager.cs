@@ -44,13 +44,19 @@ using OpenIZ.Core.Services.Impl;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Mobile.Core.Android.Net;
 using OpenIZ.Mobile.Core.Search;
-using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Xamarin.Rules;
 using OpenIZ.Mobile.Core.Xamarin.Warehouse;
+using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Mobile.Core.Android.Services;
+using OpenIZ.Protocol.Xml;
+using OpenIZ.Mobile.Reporting;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -112,6 +118,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     new ConnectionString () {
                         Name = "openIzWarehouse",
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZ.warehouse.sqlite")
+                    },
+                    new ConnectionString () {
+                        Name = "openIzAudit",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZ.audit.sqlite")
                     }
                 }
             };
@@ -127,7 +137,13 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     "Administration"
                 },
                 StartupAsset = "org.openiz.core",
-                AuthenticationAsset = "/org/openiz/core/views/security/login.html"
+                Security = new AppletSecurityConfiguration()
+                {
+#if DEV_MODE
+                    AllowUnsignedApplets = true,
+#endif
+                    TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
+                }
             };
 
             // Initial applet style
@@ -138,6 +154,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 ServiceTypes = new List<string>() {
                     
                     typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
+                    typeof(AndroidAppletManagerService).AssemblyQualifiedName,
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalPlaceService).AssemblyQualifiedName,
@@ -145,6 +162,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalEntityRepositoryService).AssemblyQualifiedName,
                     typeof(LocalOrganizationService).AssemblyQualifiedName,
+                    typeof(LocalTagPersistenceService).AssemblyQualifiedName,
                     typeof(LocalRoleProviderService).AssemblyQualifiedName,
                     typeof(LocalSecurityService).AssemblyQualifiedName,
                     typeof(LocalMaterialService).AssemblyQualifiedName,
@@ -153,6 +171,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(SQLiteDatawarehouse).AssemblyQualifiedName,
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
+                    typeof(MemoryTickleService).AssemblyQualifiedName,
                     typeof(AndroidNetworkInformationService).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(CarePlanManagerService).AssemblyQualifiedName,
@@ -163,10 +182,14 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
-                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(AppletClinicalProtocolRepository).AssemblyQualifiedName,
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
+                    typeof(SQLiteReportDatasource).AssemblyQualifiedName,
+                    typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -179,14 +202,15 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 
             // Security configuration
             var wlan = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(o => o.NetworkInterfaceType == NetworkInterfaceType.Ethernet && o.Description.StartsWith("wlan"));
-            String macAddress = Guid.NewGuid().ToString();
+            String macAddress = Guid.NewGuid().ToString().Substring(0, 6);
             if (wlan != null)
                 macAddress = wlan.GetPhysicalAddress().ToString();
             //else 
 
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
-                DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ", "")
+                DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ", ""),
+                AuditRetention = new TimeSpan(30, 0, 0, 0, 0)
             };
 
             // Device key

@@ -43,6 +43,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 			this.AppletConfiguration = new List<AppletConfiguration> ();
 			this.AppletGroupOrder = new List<string> ();
 			this.Applets = new List<AppletName> ();
+            this.Security = new AppletSecurityConfiguration();
 		}
 
         /// <summary>
@@ -103,12 +104,47 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlElement("autoUpdate"), JsonProperty("autoUpdate")]
         public bool AutoUpdateApplets { get; set; }
+
+        /// <summary>
+        /// Applet security section
+        /// </summary>
+        [XmlElement("security"), JsonProperty("security")]
+        public AppletSecurityConfiguration Security { get; set; }
     }
 
-	/// <summary>
-	/// Represents a configuration of an applet
-	/// </summary>
-	[JsonObject, XmlType(nameof(AppletConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
+    /// <summary>
+    /// Applet security configuration
+    /// </summary>
+    [XmlType(nameof(AppletSecurityConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
+    [JsonObject(nameof(AppletSecurityConfiguration))]
+    public class AppletSecurityConfiguration
+    {
+
+        /// <summary>
+        /// Create new security configuration
+        /// </summary>
+        public AppletSecurityConfiguration()
+        {
+            this.TrustedPublishers = new List<string>();
+        }
+
+        /// <summary>
+        /// Allow unsigned applets
+        /// </summary>
+        [XmlAttribute("allowUnsigned")]
+        public bool AllowUnsignedApplets { get; set; }
+
+        /// <summary>
+        /// Trusted publisher
+        /// </summary>
+        [XmlElement("trustedPublisher")]
+        public List<String> TrustedPublishers { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a configuration of an applet
+    /// </summary>
+    [JsonObject, XmlType(nameof(AppletConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
 	public class AppletConfiguration
 	{
 

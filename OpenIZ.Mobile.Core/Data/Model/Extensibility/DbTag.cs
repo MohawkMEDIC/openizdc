@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 		/// Gets or sets the key.
 		/// </summary>
 		/// <value>The key.</value>
-		[Column("key"), Indexed, NotNull]
+		[Column("key"),  NotNull]
 		public String TagKey {
 			get;
 			set;

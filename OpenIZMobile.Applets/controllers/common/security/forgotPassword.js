@@ -20,17 +20,38 @@
  */
 
 /// <reference path="~/js/openiz.js"/>
-layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function ($scope, $window) {
+layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexService', function ($scope, $window, regexService) {
+
+    var controller = this;
 
     $scope.resetRequest = {
         purpose: "PasswordReset"
     };
 
+    $scope.regexService = regexService;
     $scope.displayPage = "#usernameTab";
+    $scope.verificationPlaceholder = "";
 
     // Get mechanisms
     OpenIZ.Authentication.getTfaMechanisms({
         continueWith: function (data) {
+            
+            // HACK: the TFA mechanisms are stored in the database in english, get the locale string for it
+            for (var i = 0; i < data.length; i++) {
+                switch (data[i].id) {
+                    case 'd919457d-e015-435c-bd35-42e425e2c60c':
+                        data[i].name = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.email");
+                        data[i].challengeText = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.emailText");
+                        break;
+                    case '08124835-6c24-43c9-8650-9d605f6b5bd6':
+                        data[i].name = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.phone");
+                        data[i].challengeText = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.phoneText");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             $scope.tfaMechanisms = data;
             $scope.$apply();
         },
@@ -38,55 +59,50 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
             OpenIZ.App.toast(ex.message || ex);
         }
     });
-    
-    $("a[data-toggle='tab'][href='#changePasswordTab']").on('shown.bs.tab', function () {
-        $scope.onNext = function () {
-            if (!OpenIZ.App.getOnlineState()) {
-                console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
-                return false;
-            }
 
-            // Try to change the password
-            OpenIZ.App.showWait();
-            OpenIZ.Authentication.setPasswordAsync({
-                userName: $scope.resetRequest.userName,
-                password: $scope.resetRequest.password,
-                continueWith: function (data) {
-                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+    $(document).on('shown.bs.tab', 'a[data-toggle="tab"][href="#challengeTab"]', function () {
+        switch ($scope.resetRequest.mechanism) {
+            case 'd919457d-e015-435c-bd35-42e425e2c60c':
+                $scope.verificationPlaceholder = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.placeholderEmail");
+                break;
+            case '08124835-6c24-43c9-8650-9d605f6b5bd6':
+                $scope.verificationPlaceholder = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.placeholderPhone");
+                break;
+            default:
+                break;
+        }
+    });
 
-                    // Authenticate fully
-                    OpenIZ.Authentication.loginAsync({
-                        userName: $scope.resetRequest.userName,
-                        password: $scope.resetRequest.password,
-                        continueWith: function (session) {
-                            if (session == null) {
-                                console.log(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
-                            }
-                            else if (OpenIZ.urlParams["returnUrl"] != null)
-                                if (window.location.hash == "")
-                                    window.location.hash = "#/";
-                            $window.location.reload();
-                        },
-                        onException: function (exception) {
-                            console.log(exception.message || exception);
-                        },
-                        finally: function () {
-                            $("#forgotPasswordWizard").modal("hide");
-                            OpenIZ.App.hideWait()
-                        }
-                    });
-                },
-                onException: function (exception) {
-                    console.log(exception.message || exception);
-                },
-                finally: function () {
-                    OpenIZ.App.hideWait();
-                }
-            })
+    $(document).on('shown.bs.tab', 'a[data-toggle="tab"][href="#changePasswordTab"]', function () {
+        $('#submitButton').show();
+        $('#nextButton').hide();
+    });
 
-            return false;
+    /**
+     * Reset the forgot password wizard on close
+     */
+    $("#passwordResetDialog").on('hidden.bs.modal', function () {
+        $(':input', '#passwordResetDialog')
+            .not(':button, :submit, :reset')
+            .val('')
+            .removeAttr('selected')
+            .removeAttr('checked');
 
-        };
+        $('#submitButton').hide();
+        $('#nextButton').show();
+
+        // Remove dirty and touched from inputs
+        delete ($scope.resetRequest.mechanism);
+        delete ($scope.resetRequest.mechanismModel);
+        delete ($scope.resetRequest.tfaSecret);
+        controller.forgotPasswordForm.$setPristine();
+        controller.forgotPasswordForm.$setUntouched();
+
+        // Set to first tab and reset progress
+        $("#forgotPasswordWizard li:first a").tab('show');
+        $scope.nextEnabled(false);
+        $scope.onNext = null;
+        $scope.resetResponse = false;
     });
 
     /** 
@@ -127,25 +143,26 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
 
             // Online only
             if (!OpenIZ.App.getOnlineState()) {
-                alert(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
                 return false;
             }
 
             // Try to use the login code
-            OpenIZ.App.showWait();
             OpenIZ.Authentication.loginAsync({
                 userName: $scope.resetRequest.userName,
-                tfaSecret: $scope.resetRequest.tfaSecret,
+                tfaSecret: ('0000' + $scope.resetRequest.tfaSecret).slice(-4),
                 continueWith: function (data) {
                     // Set scope next
                     $scope.onNext = null;
                     $scope.nextWizard();
+
+                    // TODO: reset scope or hash window location here
                 },
                 onException: function (exception) {
+                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.invalidCode"));
                     console.log(exception.message || exception);
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait();
                 }
             });
             return false;
@@ -153,7 +170,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
 
         // Online only
         if (!OpenIZ.App.getOnlineState()) {
-            console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
             return false;
         }
 
@@ -165,12 +182,65 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                 $scope.$apply();
             },
             onException: function (ex) {
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.validation"));
                 console.log(ex.message || ex);
             },
             finally: function () {
                 OpenIZ.App.hideWait();
             }
         });
+    };
+
+    /**
+     * Submit the final password change
+     */
+    $scope.submitPasswordChange = function () {
+        if (!OpenIZ.App.getOnlineState()) {
+            console.log(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
+            return false;
+        }
+
+        // Try to change the password
+        OpenIZ.App.showWait();
+        OpenIZ.App.showWait('#submitButton');
+        OpenIZ.Authentication.setPasswordAsync({
+            userName: $scope.resetRequest.userName,
+            password: $scope.resetRequest.password,
+            continueWith: function (data) {
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+
+                // Authenticate fully
+                OpenIZ.Authentication.loginAsync({
+                    userName: $scope.resetRequest.userName,
+                    password: $scope.resetRequest.password,
+                    continueWith: function (session) {
+                        if (session == null) {
+                            OpenIZ.App.toast(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                        }
+                        else if (OpenIZ.urlParams["returnUrl"] != null)
+                            if (window.location.hash == "")
+                                window.location.hash = "#/";
+                        $window.location.reload();
+                    },
+                    onException: function (exception) {
+                        console.log(exception.message || exception);
+                    },
+                    finally: function () {
+                        $("#forgotPasswordWizard").modal("hide");
+                        OpenIZ.App.hideWait();
+                    }
+                });
+            },
+            onException: function (exception) {
+                OpenIZ.App.hideWait('#submitButton');
+                console.log(exception.message || exception);
+            },
+            finally: function () {
+                OpenIZ.App.hideWait();
+            }
+        });
+
+        return false;
     };
 
 }]);

@@ -72,6 +72,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                 db.CreateTable<DeadLetterQueueEntry>();
                 db.CreateTable<SynchronizationLogEntry>();
                 db.CreateTable<DbAlertMessage>();
+                db.CreateTable<SynchronizationQuery>();
 
 				var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 

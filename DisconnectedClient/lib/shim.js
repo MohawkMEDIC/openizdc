@@ -2,22 +2,42 @@
 
 
 OpenIZApplicationService.GetStatus = function () {
-    return '[ "Dummy Status", 0 ]';
+    return OpenIZApplicationServer.getStatus();
 }
 
 OpenIZApplicationService.ShowToast = function (string) {
-    console.info("TOAST: " + string);
+    return OpenIZApplicationService.showToast(string);
 }
 
 OpenIZApplicationService.GetOnlineState = function () {
-    return true;
+    return OpenIZApplicationService.getOnlineState();
+}
+
+OpenIZApplicationService.IsAdminAvailable = function () {
+    return OpenIZApplicationService.isAdminAvailable();
+}
+
+OpenIZApplicationService.IsClinicalAvailable = function () {
+    return OpenIZApplicationService.isClinicalAvailable();
 }
 
 OpenIZApplicationService.BarcodeScan = function () {
-    return OpenIZApplicationService.NewGuid().substring(0, 8);
+    return OpenIZApplicationService.barcodeScan();
 }
 
 OpenIZApplicationService.Close = function () {
-    alert("You need to restart the DisconnectedClient application for the changes to take effect");
-    window.close();
+    return OpenIZApplicationService.close();
+}
+
+OpenIZApplicationService.GetLocale = function () {
+    return OpenIZApplicationService.getLocale();
+}
+
+OpenIZApplicationService.SetLocale = function (lang) {
+    return OpenIZApplicationService.setLocale(lang);
+}
+
+
+OpenIZApplicationService.NewGuid = function () {
+    return OpenIZApplicationService.newGuid();
 }

@@ -78,7 +78,7 @@ namespace Minims
             var consoleArgs = new ParameterParser<ConsoleParameters>().Parse(args);
             XamarinApplicationContext.ProgressChanged += (o, e) =>
             {
-                Console.WriteLine(">>> PROGRESS >>> {0} : {1:00%}", e.ProgressText, e.Progress);
+                Console.WriteLine(">>> PROGRESS >>> {0} : {1:#0%}", e.ProgressText, e.Progress);
             };
 
             if (!MiniApplicationContext.Start(consoleArgs))

@@ -144,6 +144,9 @@
   <data name="err_login_invalidusername" xml:space="preserve">
     <value>Invalid Username/Password</value>
   </data>
+  <data name="err_moreThanOneApplication" xml:space="preserve">
+    <value>There is more than one instance of the application running. This may cause serious issues. Closing all instances of the application and restarting is recommended.</value>
+  </data>
   <data name="err_offline_use_cache_creds" xml:space="preserve">
     <value>The authentication server cannot be contacted. Use the credentials you last used to access this device</value>
   </data>
@@ -168,13 +171,43 @@
   <data name="err_unauthenticated_principal" xml:space="preserve">
     <value>Cannot set context to unauthenticated principal</value>
   </data>
+  <data name="err_updateFailed" xml:space="preserve">
+    <value>Update failed. Please try again at a later time.</value>
+  </data>
   <data name="flushing_logFile" xml:space="preserve">
     <value>Flusing diagnostics queue...</value>
+  </data>
+  <data name="locale_certificateExpired" xml:space="preserve">
+    <value>The certificate for publisher {0} is expired (expired on {1:yyyy-MMM-dd}). Do you want to ignore this error and continue?</value>
+  </data>
+  <data name="locale_certificateValidation" xml:space="preserve">
+    <value>The server responded with an invalid certificate: {0}. Do you want to trust this certificate?</value>
+  </data>
+  <data name="locale_checkForUpdates" xml:space="preserve">
+    <value>Would you like to check the server for updates?</value>
+  </data>
+  <data name="locale_downloading" xml:space="preserve">
+    <value>Downloading {0}...</value>
+  </data>
+  <data name="locale_downloadingExternalPatient" xml:space="preserve">
+    <value>Downloading external patient data...</value>
+  </data>
+  <data name="locale_invalidSignature" xml:space="preserve">
+    <value>The applet could not be installed because the verification stage failed.</value>
+  </data>
+  <data name="locale_unsignedAppletPrompt" xml:space="preserve">
+    <value>The applet {0} is not signed and its authenticity cannot be verified. Do you want to continue installation?</value>
+  </data>
+  <data name="locale_unsignedAppletsNotAllowed" xml:space="preserve">
+    <value>The applet {0} is not signed or contains an invalid header. Your security settings do not allow for unsigned applets to be executed.</value>
+  </data>
+  <data name="locale_untrustedPublisherPrompt" xml:space="preserve">
+    <value>The applet {0} published by {1} is not trusted. Do you want to continue to load / install this applet?</value>
   </data>
   <data name="locale_updateCheck" xml:space="preserve">
     <value>Checking for updates...</value>
   </data>
-  <data name="locale_updating" xml:space="preserve">
-    <value>Updating package {0}....</value>
+  <data name="locale_upgradeConfirm" xml:space="preserve">
+    <value>Would you like to upgrade {0} to version {1} from version {2}?</value>
   </data>
 </root>

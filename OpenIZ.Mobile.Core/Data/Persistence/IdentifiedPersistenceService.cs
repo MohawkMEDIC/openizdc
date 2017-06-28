@@ -36,6 +36,8 @@ using System.Reflection;
 using SQLite.Net.Attributes;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Data.QueryBuilder;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -58,6 +60,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     where TQueryResult : DbIdentified
     {
 
+        // Required properties
+        private Dictionary<Type, PropertyInfo[]> m_requiredProperties = new Dictionary<Type, PropertyInfo[]>();
+
         // Query persistence
         private IQueryPersistenceService m_queryPersistence = ApplicationContext.Current.GetService<IQueryPersistenceService>();
 
@@ -67,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public override TModel ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override TModel ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var retVal = m_mapper.MapDomainInstance<TDomain, TModel>(dataInstance as TDomain);
 
@@ -99,17 +104,31 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (domainObject.Uuid == null || domainObject.Key == Guid.Empty)
                 data.Key = domainObject.Key = Guid.NewGuid();
 
-#if DEBUG
-            foreach (var itm in typeof(TDomain).GetRuntimeProperties().Where(o => o.GetCustomAttribute<NotNullAttribute>() != null))
+#if DB_DEBUG
+            PropertyInfo[] properties = null;
+            if(!this.m_requiredProperties.TryGetValue(typeof(TDomain), out properties))
+            {
+                properties = typeof(TDomain).GetRuntimeProperties().Where(o => o.GetCustomAttribute<NotNullAttribute>() != null).ToArray();
+                lock (this.m_requiredProperties)
+                    if (this.m_requiredProperties.ContainsKey(typeof(TDomain)))
+                        this.m_requiredProperties.Add(typeof(TDomain), properties);
+            }
+            foreach (var itm in properties)
                 if (itm.GetValue(domainObject) == null)
                     throw new ArgumentNullException(itm.Name, "Requires a value");
 #endif
 
             // Does this already exist?
-            if (!context.Connection.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
+
+            //if(context.Connection.Get<TDomain>(domainObject.Uuid) == null)
+            try
+            {
                 context.Connection.Insert(domainObject);
-            else
+            }
+            catch // doubt this will even work
+            {
                 context.Connection.Update(domainObject);
+            }
 
             return data;
         }
@@ -147,21 +166,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Query has been registered?
-            if (this.m_queryPersistence?.IsRegistered(queryId) == true)
+            if (queryId != Guid.Empty && this.m_queryPersistence?.IsRegistered(queryId) == true)
             {
                 totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
                 return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p)).ToList();
             }
 
             SqlStatement queryStatement = null;
-            try
+            var expression = m_mapper.MapModelExpression<TModel, TDomain>(query, false);
+            if (expression != null)
             {
-                queryStatement = new SqlStatement<TDomain>().SelectFrom();
-                var expression = m_mapper.MapModelExpression<TModel, TDomain>(query);
-
                 if (typeof(TQueryResult) != typeof(TDomain))
                 {
+
                     var tableMap = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(typeof(TDomain));
+                    var resultMap = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(typeof(TQueryResult));
+                    queryStatement = new SqlStatement<TDomain>().SelectFrom(resultMap.Columns.Select(o=>$"{(typeof(TDomain).GetRuntimeProperty(o.SourceProperty.Name) != null? tableMap.TableName + "." : "")}{o.Name}").ToArray());
+
                     var fkStack = new Stack<OpenIZ.Core.Data.QueryBuilder.TableMapping>();
                     fkStack.Push(tableMap);
                     var scopedTables = new HashSet<Object>();
@@ -173,7 +194,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                         {
                             var fkTbl = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(jt.ForeignKey.Table);
                             var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
-                            queryStatement.InnerJoin(dt.OrmType,fkTbl.OrmType);
+                            queryStatement.InnerJoin(dt.OrmType, fkTbl.OrmType);
                             if (!scopedTables.Contains(fkTbl))
                                 fkStack.Push(fkTbl);
                             scopedTables.Add(fkAtt.Table);
@@ -182,18 +203,28 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
 
                 }
+                else
+                    queryStatement = new SqlStatement<TDomain>().SelectFrom();
 
                 //queryStatement = new SqlStatement<TDomain>().SelectFrom()
-                queryStatement = queryStatement.Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query)).Build();
+                queryStatement = queryStatement.Where<TDomain>(expression).Build();
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
-
             }
-            catch
+            else
             {
                 queryStatement = m_builder.CreateQuery(query).Build();
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
             }
 
+            // Is this a cached query?
+            var retVal = context.CacheQuery(queryStatement)?.OfType<TModel>();
+            if (retVal != null && !countResults)
+            {
+                totalResults = 0;
+                return retVal;
+            }
+
+            // Preare SQLite Args
             var args = queryStatement.Arguments.Select(o =>
             {
                 if (o is Guid || o is Guid?)
@@ -215,40 +246,50 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (countResults && queryId == Guid.Empty)
                 totalResults = context.Connection.ExecuteScalar<Int32>("SELECT COUNT(*) FROM (" + queryStatement.SQL + ")", args);
             else if (countResults)
+            {
                 totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
+                if (totalResults == 0)
+                    return new List<TModel>();
+            }
             else
                 totalResults = 0;
 
             if (count > 0)
-                queryStatement.Append($" LIMIT {count} ");
+                queryStatement.Limit(count);
             if (offset > 0)
             {
                 if (count == 0)
-                    queryStatement.Append($" LIMIT 100 OFFSET {offset} ");
+                    queryStatement.Limit(100).Offset(offset);
                 else
-                    queryStatement.Append($" OFFSET {offset} ");
+                    queryStatement.Offset(offset);
             }
 
-            var retVal = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args);
+            // Exec query
+            var domainList = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args).ToList();
+            var modelList = domainList.Select(o => this.CacheConvert(o, context)).ToList();
+            context.AddQuery(queryStatement, modelList);
 
-            var domainList = retVal.ToList();
-
-            return domainList.Select(o => this.CacheConvert(o, context, count > 1)).ToList();
+            //foreach (var i in modelList)
+            //    context.AddCacheCommit(i);
+            return modelList;
         }
 
         /// <summary>
         /// Try conversion from cache otherwise map
         /// </summary>
-        protected TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
+        protected virtual TModel CacheConvert(DbIdentified o, LocalDataContext context)
         {
             if (o == null) return null;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
             {
-                cacheItem = this.ToModelInstance(o, context, loadFast);
+                cacheItem = this.ToModelInstance(o, context);
                 if (!context.Connection.IsInTransaction)
                     ApplicationContext.Current.GetService<IDataCachingService>()?.Add(cacheItem);
             }
+            else if (cacheItem.LoadState <= context.DelayLoadMode)
+                cacheItem.LoadAssociations(context);
+
             return cacheItem;
         }
 
@@ -264,7 +305,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
 
             // Query has been registered?
-            if (this.m_queryPersistence.IsRegistered(queryId))
+            if (queryId != Guid.Empty && this.m_queryPersistence.IsRegistered(queryId))
             {
                 totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
                 return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p));
@@ -446,7 +487,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
 #endif
             //totalResults = retVal.Count;
-            return retVal.Skip(offset).Take(count < 0 ? 100 : count).Select(o => this.CacheConvert(o, context, true)).ToList();
+            return retVal.Skip(offset).Take(count < 0 ? 100 : count).Select(o => this.CacheConvert(o, context)).ToList();
         }
 
         /// <summary>
@@ -454,14 +495,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         internal override TModel Get(LocalDataContext context, Guid key)
         {
-            var existing = MemoryCache.Current.TryGetEntry(typeof(TModel), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(key);
             if (existing != null)
                 return existing as TModel;
             // Get from the database
             try
             {
-                var kuuid = key.ToByteArray();
-                return this.CacheConvert(context.Connection.Table<TDomain>().Where(o => o.Uuid == kuuid).FirstOrDefault(), context, true);
+                int t = 0;
+                if (typeof(TQueryResult) != typeof(TDomain)) // faster to join
+                    return this.QueryInternal(context, o => o.Key == key, 0, 1, out t, Guid.Empty, false).FirstOrDefault();
+                else
+                {
+                    var kuuid = key.ToByteArray();
+                    return this.CacheConvert(context.Connection.Table<TDomain>().Where(o => o.Uuid == kuuid).FirstOrDefault(), context);
+                }
             }
             catch (Exception e)
             {
@@ -491,7 +538,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in storage)
                 if (itm.SourceEntityKey == Guid.Empty || !itm.SourceEntityKey.HasValue)
                     itm.SourceEntityKey = sourceKey;
-                else if (!inversionInd && itm.SourceEntityKey != sourceKey) // ODD!!! This looks like a copy / paste job from a down-level serializer fix it
+                else if (!itm.SourceEntityKey.HasValue) // ODD!!! This looks like a copy / paste job from a down-level serializer fix it
                 {
                     itm.SourceEntityKey = sourceKey;
                     itm.Key = null;
@@ -512,7 +559,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var ins in insertRecords)
             {
                 if (ins.IsEmpty()) continue;
-                ins.SourceEntityKey = sourceKey;
+                if(!ins.SourceEntityKey.HasValue)
+                    ins.SourceEntityKey = sourceKey;
                 persistenceService.Insert(dataContext, ins);
             }
 

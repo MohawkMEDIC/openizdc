@@ -27,115 +27,110 @@
 
         <div class="search-results-container">
             <div class="row" style="padding: 0 10px;">
-                <div class="col-xs-6 search-results-tile-container" ng-repeat="patient in search.results.item track by $index">
-                    <div class="search-results-tile" ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
-                        <span class="search-results-tile-circle">
-                            <span class="search-results-tile-counter">
-                                {{$index + 1}}
+                <div ng-repeat="patient in search.results.item track by $index">
+                    <div class="col-xs-12 col-sm-6 search-results-tile-container">
+                        <div class="search-results-tile" ng-click="$root.isLoading=true; goResult(patient.id)">
+                            <span class="search-results-tile-circle">
+                                <span class="search-results-tile-counter">
+                                    {{$index + 1}}
+                                </span>
                             </span>
-                        </span>
 
-                        <div class="row" ng-if="patient.tag.onlineResult">
-                            <div class="col-xs-12">
-                                <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.patient.onlineResult' | i18n }}
+                            <div class="row" ng-if="patient.tag.onlineResult">
+                                <div class="col-xs-12">
+                                    <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.patient.onlineResult' | i18n }}
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.names' | i18n }}
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.names' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field search-results-name">
+                                    {{ patient.name.OfficialRecord | oizEntityName }}
+                                </div>
                             </div>
-                            <div class="col-xs-9">
-                                {{ patient.name.OfficialRecord | oizEntityName }}
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.mother' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field">
+                                    <span ng-if="patient.relationship.Mother.targetModel">
+                                        {{ patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }}
+                                    </span>
+                                    <span ng-if="!patient.relationship.Mother.targetModel">
+                                        {{ 'locale.common.na' | i18n }}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.mother' | i18n }}
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.identifier' | i18n }}
+                                </div>
+                                <div class="col-xs-9 no-padding-right search-result-field">
+                                    <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
+                                        <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
+                                        <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ i.authority.domainName}}</span><br /></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-xs-9">
-                                <span ng-if="patient.relationship.Mother.targetModel">
-                                    {{ patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }}
-                                </span>
-                                <span ng-if="!patient.relationship.Mother.targetModel">
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="patient.dateOfBirth">
+                                    {{ patient.dateOfBirth | datePrecisionFormat:'D'}}
+                                    <span class="label label-info" ng-if="isApproxDob(patient)">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="!patient.dateOfBirth">
                                     {{ 'locale.common.na' | i18n }}
-                                </span>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.identifier' | i18n }}
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.deceasedDate' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="patient.deceasedDate">
+                                    {{ patient.deceasedDate | datePrecisionFormat:'D' }}
+                                </div>
+                                <div class="col-xs-9 search-result-field" ng-if="!patient.deceasedDate">
+                                    {{ 'locale.common.na' | i18n }}
+                                </div>
                             </div>
-                            <div class="col-xs-9 no-padding-right no-wrap">
-                                <span ng-if="patient.identifier['TIMR-BARCODE'] &amp;&amp; !patient.identifier['NATID']">
-                                    <span >{{ patient.identifier['TIMR-BARCODE'].value ||  patient.identifier['TIMR-BARCODE'][0].value}} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TIMR-BARCODE"))}}</span></span>                                    
-                                </span>
-                                <span ng-if="patient.identifier['NATID']">
-                                    <span>{{ patient.identifier['NATID'].value || patient.identifier['NATID'][0].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.NATID"))}}</span></span>
-                                </span>
-                                <span ng-if="!patient.identifier['TIMR-BARCODE'] &amp;&amp; !patient.identifier['NATID'] &amp;&amp; patient.identifier['TEMP']">
-                                    <span>{{ patient.identifier['TEMP'].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TEMP"))}}</span></span>
-                                </span>
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.gender' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field">
+                                    {{ patient.genderConceptModel.name[$root.page.locale] }}
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
+                            <div class="clearfix"></div>
+                            <div class="row">
+                                <div class="col-xs-3 search-tile-label">
+                                    {{ 'locale.patient.search.header.cityVillage' | i18n }}
+                                </div>
+                                <div class="col-xs-9 search-result-field ellipsis">
+                                    {{ patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
+                                </div>
                             </div>
-                            <div class="col-xs-9" ng-if="patient.dateOfBirth">
-                                {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}} 
-                                <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                            <div class="clearfix"></div>
+                            <div class="row" style="height:auto;">
+                                <div class="col-xs-6" ng-repeat="act in OpenIZ.UserInterface.patientController.actions">
+                                    <button class="btn tile-btn" ng-disabled="patient.tag.onlineResult || patient.deceasedDate" ng-click="$event.stopPropagation(); act.action(patient.id)">
+                                        {{ act.label }}
+                                    </button>
+                                </div>
                             </div>
-                            <div class="col-xs-9" ng-if="!patient.dateOfBirth">
-                                {{ 'locale.common.na' | i18n }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.deceasedDate' | i18n }}
-                            </div>
-                            <div class="col-xs-9" ng-if="patient.deceasedDate">
-                                {{ patient.deceasedDate | date: 'yyyy-MMM-dd' }}
-                            </div>
-                            <div class="col-xs-9" ng-if="!patient.deceasedDate">
-                                {{ 'locale.common.na' | i18n }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.gender' | i18n }}
-                            </div>
-                            <div class="col-xs-9">
-                                {{ patient.genderConceptModel.name[$root.page.locale] }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-3 search-tile-label">
-                                {{ 'locale.patient.search.header.cityVillage' | i18n }}
-                            </div>
-                            <div class="col-xs-9 ellipsis">
-                                {{ patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
-                            </div>
-                        </div>
-
-                        <div class="row" style="height:auto;">
-                            <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId:patient.id, dashId: 'entry'})" ng-click="$event.stopPropagation();">
-                                    {{ 'locale.patient.action.startEncounter' | i18n }}
-                                </a>
-                            </div>
-                            <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId : patient.id, dashId: 'weight'})" ng-click="$event.stopPropagation();">
-                                    {{ 'locale.patient.action.weight' | i18n }}
-                                </a>
-                            </div>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
+                    <div class="clearfix" ng-if="$index % 2 === 1"></div>
                 </div>
             </div>
         </div>
@@ -149,10 +144,23 @@
             <tr>
                 <td colspan="2" class="no-border-all">{{ search.results.offset + 1 }} .. {{ search.results.offset + search.results.count }} of {{ search.results.totalResults }} </td>
                 <td colspan="5" class="no-border-all">
-                    <ul class="pagination" style="margin:0px; padding:0px" ng-if="search.paging.total > 1">
+                    <ul class="pagination" style="margin:0px; padding:0px" ng-if="search.paging.total &gt; 1">
                         <li><a ng-click="search.previous()">&lt;&lt;</a></li>
-                        <li ng-class="{'active' : i == search.paging.current}" ng-repeat="i in search.paging.pages"><a ng-click="search.goPage(i)">{{i}}</a></li>
-                        <li><a ng-click="search.next()">&gt;&gt;</a></li>
+                        <li ng-if="search.paging.current &gt; 5">
+                            <a ng-click="search.goPage(search.paging.pages[0])">{{search.paging.pages[0]}}<span ng-if="search.paging.current &gt; 6">...</span></a>
+                        </li>
+                        <li ng-class="{'active' : i == search.paging.current}" ng-repeat="i in search.paging.pages | limitTo: 10 : (search.paging.current &gt; 5 ? search.paging.current-5 : 0) ">
+                            <a ng-click="search.goPage(i)">{{i}}</a>
+                        </li>
+                        <li ng-if="search.paging.pages.length-5 &gt; search.paging.current &amp;&amp; search.paging.pages.length &gt; 10">
+                           <a ng-click="search.goPage(search.paging.pages[search.paging.pages.length-1])">
+                               <span ng-if="search.paging.pages.length-6 &gt; search.paging.current">...</span>
+                               {{search.paging.pages[search.paging.pages.length-1]}}
+                           </a>
+                        </li>
+                        <li>
+                            <a ng-click="search.next()">&gt;&gt;</a>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -160,7 +168,8 @@
         </table>
     </div>
     <div class="search-results-tile text-center margin-bottom-10" ng-if="!search.results.item.length &amp;&amp; search.isSearching == false">
-        <h4>{{ 'locale.patient.search.noresults' | i18n }}</h4>
+        <h4 ng-if="editPatientForm === undefined">{{ 'locale.patient.search.noresults' | i18n }}</h4>
+        <h4 ng-if="editPatientForm !== undefined">{{ 'locale.patient.search.noduplicates' | i18n }}</h4>
     </div>
     <div class="progress margin-top-10" ng-if="search.isSearching == true">
         <div class="progress-bar ng-cloak progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">

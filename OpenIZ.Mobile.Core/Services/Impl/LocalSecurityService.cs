@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-7-8
  */
+using OpenIZ.Core.Interfaces;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
@@ -33,12 +34,18 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents a security repository service that uses the direct local services
 	/// </summary>
-	public class LocalSecurityService : ISecurityRepositoryService
+	public class LocalSecurityService : ISecurityRepositoryService, ISecurityAuditEventSource
 	{
-		/// <summary>
-		/// Change user's password
-		/// </summary>
-		public SecurityUser ChangePassword(Guid userId, string password)
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<SecurityAuditDataEventArgs> SecurityAttributesChanged;
+
+        /// <summary>
+        /// Change user's password
+        /// </summary>
+        public SecurityUser ChangePassword(Guid userId, string password)
 		{
 			var securityUser = this.GetUser(userId);
 			var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
@@ -46,6 +53,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			// Create an admin queue entry that will change the password
 			SynchronizationQueue.Admin.Enqueue(new SecurityUser() { Key = userId, PasswordHash = password }, Synchronization.Model.DataOperationType.Update);
+
+            this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(securityUser, "password"));
 
 			return securityUser;
 		}
@@ -74,7 +83,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			if (pers == null)
 				throw new InvalidOperationException("Misisng role provider service");
 
-			return pers.Insert(roleInfo);
+			var role = pers.Insert(roleInfo);
+            this.DataUpdated?.Invoke(this, new AuditDataEventArgs(role));
+
+            return role;
 		}
 
 		/// <summary>
@@ -116,6 +128,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			commAdmin.PasswordHash = password;
 			SynchronizationQueue.Admin.Enqueue(commAdmin, Synchronization.Model.DataOperationType.Insert);
 
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(retVal));
+
 			// Return value
 			return retVal;
 		}
@@ -133,6 +147,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			userEntity = persistence.Insert(userEntity);
             breService?.AfterInsert(userEntity);
             SynchronizationQueue.Outbound.Enqueue(userEntity, Synchronization.Model.DataOperationType.Insert);
+
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(userEntity));
+
             return userEntity;
 		}
 
@@ -370,7 +387,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			var securityUser = this.GetUser(userId);
 			iids.SetLockout(securityUser.UserName, true);
-		}
+
+            this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(securityUser, "lock=true"));
+
+        }
 
         public SecurityApplication ObsoleteApplication(Guid applicationId)
         {
@@ -395,7 +415,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 			if (pers == null)
 				throw new InvalidOperationException("Missing role provider service");
-			return pers.Obsolete(this.GetRole(roleId));
+			var role= pers.Obsolete(this.GetRole(roleId));
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(role));
+
+            return role;
 		}
 
 		/// <summary>
@@ -413,6 +437,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			var retVal = pers.Obsolete(this.GetUser(userId));
 			iids.DeleteIdentity(retVal.UserName);
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(retVal));
 			return retVal;
 		}
 
@@ -424,7 +450,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service not found");
-			return persistence.Obsolete(new UserEntity() { Key = id });
+			var retVal = persistence.Obsolete(new UserEntity() { Key = id });
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(retVal));
+
+            return retVal;
 		}
 
         public SecurityApplication SaveApplication(SecurityApplication application)
@@ -450,7 +480,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 			if (pers == null)
 				throw new InvalidOperationException("Missing role persistence service");
-			return pers.Update(role);
+			var retVal = pers.Update(role);
+            this.DataUpdated?.Invoke(this, new AuditDataEventArgs(retVal));
+            return retVal; 
 		}
 
 		/// <summary>
@@ -468,8 +500,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			// Notify admin queue
 			var commUser = retVal.Clone() as SecurityUser;
 			commUser.PasswordHash = null; // Don't set password
-			//SynchronizationQueue.Admin.Enqueue(commUser, Synchronization.Model.DataOperationType.Update);
+                                          //SynchronizationQueue.Admin.Enqueue(commUser, Synchronization.Model.DataOperationType.Update);
 
+            this.DataUpdated?.Invoke(this, new AuditDataEventArgs(user));
 			return retVal;
 		}
 
@@ -498,13 +531,16 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, retVal);
 
+                this.DataUpdated?.Invoke(this, new AuditDataEventArgs(retVal));
                 SynchronizationQueue.Outbound.Enqueue(diff, Synchronization.Model.DataOperationType.Update);
             }
 			catch(KeyNotFoundException)
 			{
-                userEntity = breService?.BeforeUpdate(userEntity) ?? userEntity;
+                userEntity = breService?.AfterInsert(userEntity) ?? userEntity;
                 retVal = persistence.Insert(userEntity);
-                breService?.AfterUpdate(userEntity);
+                breService?.AfterInsert(userEntity);
+                this.DataCreated?.Invoke(this, new AuditDataEventArgs(retVal));
+
                 SynchronizationQueue.Outbound.Enqueue(retVal, Synchronization.Model.DataOperationType.Insert);
 
             }
@@ -521,8 +557,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                         user.PhoneNumber = cellPhone.Value;
                     if (email != null)
                         user.Email = email.Value;
+
+                    this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(user, $"email={email}", $"telephone={cellPhone}"));
+
                 }
                 this.SaveUser(user);
+
                 retVal.SecurityUser = user;
             }
 
@@ -540,6 +580,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			var securityUser = this.GetUser(userId);
 			iids.SetLockout(securityUser.UserName, false);
+            this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(securityUser, "lock=false"));
 		}
 	}
 }

@@ -45,6 +45,11 @@
             a dynamic object
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DatamartSchema.#ctor">
+            <summary>
+            Datamart schema
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchema.Id">
             <summary>
             Gets or sets the unique identifier for the schema itself
@@ -175,12 +180,32 @@
             Identifies the column is an object which has other data
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.DateTime">
+            <summary>
+            Identifies a column has a date and a time
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.TimeStamp">
+            <summary>
+            Represents a timestamp (with timezone)
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery">
             <summary>
             Represents a stored query creation statement
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.ProviderId">
+        <member name="M:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.#ctor">
+            <summary>
+            Stored query
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.DataSource">
+            <summary>
+            Attachments
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.Id">
             <summary>
             Gets or sets the provider identifier
             </summary>
@@ -190,9 +215,84 @@
             Definition of the query
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.Properties">
+            <summary>
+            Gets or sets the property names for the schema element
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.Definition">
             <summary>
             Definition of the query
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.DatamartStoredQueryDefinition">
+            <summary>
+            Represents the SQL for an actual query
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQueryDefinition.ProviderId">
+            <summary>
+            Provider identifier
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQueryDefinition.Query">
+            <summary>
+            The SQL 
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.DataWarehouseObjectPropertyValue">
+            <summary>
+            Warehouse object property value
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DataWarehouseObjectPropertyValue.#ctor">
+            <summary>
+            Creates a new warehouse object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DataWarehouseObjectPropertyValue.#ctor(System.Collections.Generic.KeyValuePair{System.String,System.Object})">
+            <summary>
+            Creates a new property value from kvp provided
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DataWarehouseObjectPropertyValue.Name">
+            <summary>
+            Gets or sets the name
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DataWarehouseObjectPropertyValue.Value">
+            <summary>
+            Value of the object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DataWarehouseObjectPropertyValue.Expand">
+            <summary>
+            Expand the value 
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.DataWarehouseObject">
+            <summary>
+            Data warehousing object wrapper 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DataWarehouseObject.#ctor">
+            <summary>
+            Data warehouse object wrapper
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DataWarehouseObject.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Data warehouse object
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DataWarehouseObject.Properties">
+            <summary>
+            Gets or sets the properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DataWarehouseObject.ToExpando">
+            <summary>
+            Create an expando object
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Data.Warehouse.IDatamartSchemaPropertyContainer">
@@ -220,7 +320,7 @@
             Represents a logger
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Diagnostics.Tracer.AddWriter(OpenIZ.Core.Diagnostics.TraceWriter)">
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.AddWriter(OpenIZ.Core.Diagnostics.TraceWriter,System.Diagnostics.Tracing.EventLevel)">
             <summary>
             Adds a writer to the trace stack
             </summary>
@@ -371,6 +471,11 @@
             Creates a new detected issue exception with the specified issue list
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Exceptions.DetectedIssueException.ToString">
+            <summary>
+            Write to string
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Exceptions.PatchException">
             <summary>
             Patch exception
@@ -414,6 +519,21 @@
         <member name="M:OpenIZ.Core.Exceptions.PatchAssertionException.#ctor(System.Object,System.Object,OpenIZ.Core.Model.Patch.PatchOperation)">
             <summary>
             Creates a new patch operation
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.BinaryBodySerializer">
+            <summary>
+            Binary body serializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.BinaryBodySerializer.DeSerialize(System.IO.Stream)">
+            <summary>
+            De-serialize to the desired type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.BinaryBodySerializer.Serialize(System.IO.Stream,System.Object)">
+            <summary>
+            Serialize
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Http.Credentials">
@@ -787,6 +907,11 @@
             <param name="url">URL.</param>
             <typeparam name="TResult">The 1st type parameter.</typeparam>
         </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Get(System.String)">
+            <summary>
+            Perform a raw get
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Http.IRestClient.Description">
             <summary>
             Gets the service client description
@@ -888,6 +1013,16 @@
             Fired on response
             </summary>
         </member>
+        <member name="E:OpenIZ.Core.Http.RestClientBase.ProgressChanged">
+            <summary>
+            Progress has changed
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.FireProgressChanged(System.Object,System.Single)">
+            <summary>
+            Fire that progress has changed
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Http.RestClientBase.#ctor">
             <summary>
             Initializes a new instance of the <see cref="!:OpenIZ.Core.Http.RestClient"/> class.
@@ -931,6 +1066,11 @@
             <typeparam name="T">The 1st type parameter.</typeparam>
             <param name="url">URL.</param>
             <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Get(System.String)">
+            <summary>
+            Gets the specified URL in raw format
+            </summary>
         </member>
         <member name="M:OpenIZ.Core.Http.RestClientBase.Invoke``2(System.String,System.String,System.String,``0)">
             <summary>
@@ -1172,6 +1312,132 @@
             Serialize the reply stream
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Interfaces.SecurityAuditDataEventArgs">
+            <summary>
+            Arguments that related to a security event
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interfaces.SecurityAuditDataEventArgs.ChangedProperties">
+            <summary>
+            Security properties that changed
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.SecurityAuditDataEventArgs.#ctor(System.Object,System.String[])">
+            <summary>
+            Creates new security data event args
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interfaces.ISecurityAuditEventSource">
+            <summary>
+            Security audit event source
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Interfaces.ISecurityAuditEventSource.SecurityAttributesChanged">
+            <summary>
+            Fired when security attributes related to an object change
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interfaces.AuditDataEventArgs">
+            <summary>
+            Event arguments for data disclosure
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interfaces.AuditDataEventArgs.Objects">
+            <summary>
+            Objects which were impacted
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interfaces.AuditDataEventArgs.Success">
+            <summary>
+            Indicates if the operation was successful
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.AuditDataEventArgs.#ctor(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Creates a new data event args
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.AuditDataEventArgs.#ctor(System.Object[])">
+            <summary>
+            Creates a new data event args
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interfaces.AuditDataDisclosureEventArgs">
+            <summary>
+            Audit the fact that data was dislcosed
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interfaces.AuditDataDisclosureEventArgs.Query">
+            <summary>
+            Gets the query that caused the data to be disclosed
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.AuditDataDisclosureEventArgs.#ctor(System.String,System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+            Audit disclosure 
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interfaces.IAuditEventSource">
+            <summary>
+            Represents a service which creates data event related audits
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Interfaces.IAuditEventSource.DataCreated">
+            <summary>
+            Indicates that data was imported
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Interfaces.IAuditEventSource.DataUpdated">
+            <summary>
+            Data was updated
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Interfaces.IAuditEventSource.DataObsoleted">
+            <summary>
+            Data was obsoleted
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Interfaces.IAuditEventSource.DataDisclosed">
+            <summary>
+            Indicates that data was disclosed
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interfaces.IPhoneticAlgorithmHandler">
+            <summary>
+            Phonetic algorithm handler
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interfaces.IPhoneticAlgorithmHandler.AlgorithmId">
+            <summary>
+            Gets the algorithm ID
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.IPhoneticAlgorithmHandler.GenerateCode(System.String)">
+            <summary>
+            Generate a phonetic code from the input data
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interfaces.IServiceManager">
+            <summary>
+            Represents a service manager
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.IServiceManager.AddServiceProvider(System.Type)">
+            <summary>
+            Add the specified service provider
+            </summary>
+            <param name="serviceType">Type of the service.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.IServiceManager.GetServices">
+            <summary>
+            Get all services
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interfaces.IServiceManager.RemoveServiceProvider(System.Type)">
+            <summary>
+            Removes a service provider
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Interop.Clients.ServiceClientBase">
             <summary>
             Represents a basic service client
@@ -1188,6 +1454,56 @@
             Initializes a new instance of the <see cref="!:OpenIZ.Mobile.Core.Interop.Clients.ServiceClientBase"/> class.
             </summary>
             <param name="clientName">Client name.</param>
+        </member>
+        <member name="T:OpenIZ.Core.Interop.ServiceEndpointType">
+            <summary>
+            Service endpoint type
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interop.ServiceEndpointCapabilities">
+            <summary>
+            Represents service capabilities
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.None">
+            <summary>
+            No options
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.BasicAuth">
+            <summary>
+            Basic auth
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.BearerAuth">
+            <summary>
+            Bearer auth
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.Compression">
+            <summary>
+            Endpoint supports compression
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interop.ServiceEndpointOptions">
+            <summary>
+            Service endpoint options
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceEndpointOptions.ServiceType">
+            <summary>
+            Gets or sets the service endpoint type
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceEndpointOptions.Capabilities">
+            <summary>
+            Capabilities
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceEndpointOptions.BaseUrl">
+            <summary>
+            Base URL type
+            </summary>
         </member>
         <member name="T:OpenIZ.Core.Interop.ServiceOptions">
             <summary>
@@ -1207,6 +1523,11 @@
         <member name="P:OpenIZ.Core.Interop.ServiceOptions.Services">
             <summary>
             Gets the service resource options
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceOptions.Endpoints">
+            <summary>
+            Gets or sets the endpoint options
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Interop.ServiceOptions.ModifiedOn">
@@ -1247,13 +1568,13 @@
             Represents a simple patch service which can calculate patches and apply them
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Diff(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Model.IdentifiedData)">
+        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Diff(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Model.IdentifiedData,System.String[])">
             <summary>
             Perform a diff using a simple .compare() method
             </summary>
             <remarks>This method only performs a diff on the root object passed and does not cascade to collections</remarks>
         </member>
-        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.DiffInternal(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Model.IdentifiedData,System.String)">
+        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.DiffInternal(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Model.IdentifiedData,System.String,System.String[])">
             <summary>
             Difference internal
             </summary>
@@ -1281,6 +1602,21 @@
         <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Test(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
             <summary>
             Test that a patch can be applied
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.Impl.RegexPasswordValidator">
+            <summary>
+            Represents a regular expression password validator
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.RegexPasswordValidator.#ctor(System.String)">
+            <summary>
+            Create regex password validator with specified expression
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.RegexPasswordValidator.Validate(System.String)">
+            <summary>
+            Validate the specified password
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.Impl.BaseBusinessRulesService`1">
@@ -1351,41 +1687,114 @@
             Generate the phonetic code
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Services.IActExtensionRepositoryService">
+            <summary>
+            Represents an act extension repository service.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IActExtensionRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ActExtension,System.Boolean}})">
+            <summary>
+            Finds an act extension for a specified expression.
+            </summary>
+            <param name="expression">The expression.</param>
+            <returns>Returns a list of act extensions.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IActExtensionRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ActExtension,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Finds an act extension for a specified expression.
+            </summary>
+            <param name="expression">The expression.</param>
+            <param name="offset">The offset.</param>
+            <param name="count">The count.</param>
+            <param name="totalCount">The total count.</param>
+            <returns>Returns a list of act extensions.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IActExtensionRepositoryService.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets the act extension.
+            </summary>
+            <param name="id">The identifier.</param>
+            <param name="versionId">The version identifier.</param>
+            <returns>Returns an act extension or null of no act extension is found.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IActExtensionRepositoryService.Insert(OpenIZ.Core.Model.DataTypes.ActExtension)">
+            <summary>
+            Inserts the specified act extension.
+            </summary>
+            <param name="actExtension">The act extension.</param>
+            <returns>Returns the inserted act extension.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IActExtensionRepositoryService.Obsolete(System.Guid)">
+            <summary>
+            Obsoletes the specified act extension.
+            </summary>
+            <param name="id">The identifier.</param>
+            <returns>Returns the obsoleted act extension.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IActExtensionRepositoryService.Save(OpenIZ.Core.Model.DataTypes.ActExtension)">
+            <summary>
+            Saves the specified act extension.
+            </summary>
+            <param name="actExtension">The act extension.</param>
+            <returns>Returns the saved act extension.</returns>
+        </member>
         <member name="T:OpenIZ.Core.Services.IActRepositoryService">
             <summary>
             Represents an act repository service.
             </summary>
-            TODO: Should the entire interface be genericised? 
+            TODO: Should the entire interface be genericised?
         </member>
         <member name="M:OpenIZ.Core.Services.IActRepositoryService.Find``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds acts based on a specific query.
             </summary>
+            <typeparam name="TAct">The type of the act.</typeparam>
+            <param name="query">The query.</param>
+            <param name="offset">The offset.</param>
+            <param name="count">The count.</param>
+            <param name="totalResults">The total results.</param>
+            <returns>Returns a list of acts which match the specific query.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IActRepositoryService.Get``1(System.Guid,System.Guid)">
             <summary>
-            Get the specified act
+            Get the specified act.
             </summary>
+            <typeparam name="TAct">The type of the act.</typeparam>
+            <param name="key">The key.</param>
+            <param name="versionId">The version identifier.</param>
+            <returns>Returns the act.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IActRepositoryService.Insert``1(``0)">
             <summary>
-            Insert the specified act
+            Insert the specified act.
             </summary>
+            <typeparam name="TAct">The type of the act.</typeparam>
+            <param name="act">The act.</param>
+            <returns>Returns the act.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IActRepositoryService.Obsolete``1(System.Guid)">
             <summary>
             Obsoletes a specific act.
             </summary>
+            <typeparam name="TAct">The type of the act.</typeparam>
+            <param name="key">The key.</param>
+            <returns>Returns the act.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IActRepositoryService.Save``1(``0)">
             <summary>
             Inserts or updates the specific act.
             </summary>
+            <typeparam name="TAct">The type of the act.</typeparam>
+            <param name="act">The act.</param>
+            <returns>Returns the act.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IActRepositoryService.Validate``1(``0)">
             <summary>
             Validates an act.
             </summary>
+            <typeparam name="TAct">The type of the act.</typeparam>
+            <param name="act">The act.</param>
+            <returns>Returns the act.</returns>
         </member>
         <member name="T:OpenIZ.Core.Services.IAssigningAuthorityRepositoryService">
             <summary>
@@ -1437,6 +1846,39 @@
             <param name="assigningAuthority">The assigning authority to be saved.</param>
             <returns>Returns the saved assigning authority.</returns>
         </member>
+        <member name="T:OpenIZ.Core.Services.IAuditRepositoryService">
+            <summary>
+            Represents a service which can persist and retrieve audits
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAuditRepositoryService.Insert(MARC.HI.EHRS.SVC.Auditing.Data.AuditData)">
+            <summary>
+            Insert an audit into the repository
+            </summary>
+            <param name="audit">The audit to be inserted</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAuditRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{MARC.HI.EHRS.SVC.Auditing.Data.AuditData,System.Boolean}})">
+            <summary>
+            Find an audit from the audit repository
+            </summary>
+            <param name="query">The query of audits to find</param>
+            <returns>The located audits</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAuditRepositoryService.Get(System.Object)">
+            <summary>
+            Get the specified audit
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAuditRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{MARC.HI.EHRS.SVC.Auditing.Data.AuditData,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Find an audit from the repository with the specified query controls
+            </summary>
+            <param name="query">Query to match</param>
+            <param name="offset">Offset within the result set</param>
+            <param name="count">Count of results in the current call </param>
+            <param name="totalResults">Total results matching query</param>
+            <returns>The located audits trimmed for offset and count</returns>
+        </member>
         <member name="T:OpenIZ.Core.Services.IBatchRepositoryService">
             <summary>
             Represents a simple repository service for storing batches (bundles)
@@ -1446,18 +1888,30 @@
             <summary>
             Inserts all the data in the provided bundle in one transaction
             </summary>
+            <param name="bundle">The bundle.</param>
+            <returns>Returns the created bundle.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IBatchRepositoryService.Obsolete(OpenIZ.Core.Model.Collection.Bundle)">
             <summary>
-            Obsoletes all data in the provided bundle in one transaction
+            Obsoletes all data in the provided bundle in one transaction.
             </summary>
+            <param name="bundle">The bundle.</param>
+            <returns>Returns the obsoleted bundle.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IBatchRepositoryService.Update(OpenIZ.Core.Model.Collection.Bundle)">
             <summary>
-            Updates all the data in the provided bundle in one transaction
+            Updates all the data in the provided bundle in one transaction.
             </summary>
+            <param name="bundle">The bundle.</param>
+            <returns>Returns the updated bundle.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:OpenIZ.Core.Services.IBatchRepositoryService.Validate(OpenIZ.Core.Model.Collection.Bundle)" -->
+        <member name="M:OpenIZ.Core.Services.IBatchRepositoryService.Validate(OpenIZ.Core.Model.Collection.Bundle)">
+            <summary>
+            Validates the specified bundle.
+            </summary>
+            <param name="bundle">The bundle.</param>
+            <returns>Returns the bundle.</returns>
+        </member>
         <member name="T:OpenIZ.Core.Services.DetectedIssuePriorityType">
             <summary>
             Detected issue priority
@@ -1559,7 +2013,12 @@
             Create a care plan controlling the creation of encounters
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Guid[])">
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Creates a care plan for the patient with the specified protocolsonly
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object},System.Guid[])">
             <summary>
             Creates a care plan for the patient with the specified protocolsonly
             </summary>
@@ -1643,7 +2102,7 @@
             <param name="language">The language of the concept.</param>
             <returns>Returns a list of concepts.</returns>
         </member>
-        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptsByReferenceTerm(System.String,System.String)">
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptsByReferenceTerm(System.String,System.Uri)">
             <summary>
             Finds a concept by reference term.
             </summary>
@@ -1811,6 +2270,13 @@
             <param name="key">The key of the concept set to be obsoleted.</param>
             <returns>Returns the obsoleted concept set.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.ObsoleteReferenceTerm(System.Guid)">
+            <summary>
+            Obsoletes the reference term.
+            </summary>
+            <param name="key">The key.</param>
+            <returns>Returns the obsoleted reference term.</returns>
+        </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.SaveConcept(OpenIZ.Core.Model.DataTypes.Concept)">
             <summary>
             Insert or updates a concept.
@@ -1846,10 +2312,46 @@
             <param name="referenceTerm">The reference term to be saved.</param>
             <returns>Returns a reference term.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptReferenceTerm(System.Guid,System.String)">
+            <summary>
+            Gets the concept reference term for the specified code system 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:OpenIZ.Core.Services.DataCacheEventArgs">
+            <summary>
+            Data cache event args
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Services.DataCacheEventArgs.Object">
+            <summary>
+            The object added or removed from the cache
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.DataCacheEventArgs.#ctor(System.Object)">
+            <summary>
+            Data cache event args ctor
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Services.IDataCachingService">
             <summary>
             Represents a data caching service which allows services to retrieve
             cached objects
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Services.IDataCachingService.Added">
+            <summary>
+            Item was added to cache
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Services.IDataCachingService.Updated">
+            <summary>
+            Item was updated from cache
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Services.IDataCachingService.Removed">
+            <summary>
+            Item was removed from cache
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem``1(System.Guid)">
@@ -1857,7 +2359,7 @@
             Get the specified cache item
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem(System.Type,System.Guid)">
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem(System.Guid)">
             <summary>
             Gets the specified cache item
             </summary>
@@ -1867,7 +2369,7 @@
             Adds the specified item to the cache
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IDataCachingService.Remove(System.Type,System.Guid)">
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.Remove(System.Guid)">
             <summary>
             Removes an object from the cache
             </summary>
@@ -1899,14 +2401,29 @@
             Gets the specified datamart
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.GetDatamart(System.Guid)">
+            <summary>
+            Gets the specified datamart
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.DeleteDatamart(System.Guid)">
             <summary>
             Deletes a datamart
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.Truncate(System.Guid)">
+            <summary>
+            Truncates (drops all data) the specified data mart
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.Get(System.Guid,System.Guid)">
             <summary>
             Gets data from an ad-hoc data mart
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.AdhocQuery(System.String)">
+            <summary>
+            Executes the specified query 
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.AdhocQuery(System.Guid,System.Object)">
@@ -1969,12 +2486,83 @@
             Query based on the expression given
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Services.IEntityExtensionRepositoryService">
+            <summary>
+            Represents an entity extension repository service.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IEntityExtensionRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.EntityExtension,System.Boolean}})">
+            <summary>
+            Finds an entity extension for a specified expression.
+            </summary>
+            <param name="expression">The expression.</param>
+            <returns>Returns a list of entity extensions.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IEntityExtensionRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.EntityExtension,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Finds an entity extension for a specified expression.
+            </summary>
+            <param name="expression">The expression.</param>
+            <param name="offset">The offset.</param>
+            <param name="count">The count.</param>
+            <param name="totalCount">The total count.</param>
+            <returns>Returns a list of entity extensions.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IEntityExtensionRepositoryService.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets the entity extension.
+            </summary>
+            <param name="id">The identifier.</param>
+            <param name="versionId">The version identifier.</param>
+            <returns>Returns an entity extension or null of no entity extension is found.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IEntityExtensionRepositoryService.Insert(OpenIZ.Core.Model.DataTypes.EntityExtension)">
+            <summary>
+            Inserts the specified entity extension.
+            </summary>
+            <param name="entityExtension">The entity extension.</param>
+            <returns>Returns the inserted entity extension.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IEntityExtensionRepositoryService.Obsolete(System.Guid)">
+            <summary>
+            Obsoletes the specified entity extension.
+            </summary>
+            <param name="id">The identifier.</param>
+            <returns>Returns the obsoleted entity extension.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IEntityExtensionRepositoryService.Save(OpenIZ.Core.Model.DataTypes.EntityExtension)">
+            <summary>
+            Saves the specified entity extension.
+            </summary>
+            <param name="entityExtension">The entity extension.</param>
+            <returns>Returns the saved entity extension.</returns>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IFastQueryRepositoryService">
+            <summary>
+            Represents a query repository service which can find lean queries
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IFastQueryRepositoryService.FindFast``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@,System.Guid)">
+            <summary>
+            Perform a quick search (instructs the data persistence layer not to load as many properties)
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IPasswordValidatorService">
+            <summary>
+            Represents a password validation service
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPasswordValidatorService.Validate(System.String)">
+            <summary>
+            Validate the password
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Services.IPatchService">
             <summary>
             Represents a patch service which can calculate and apply patches
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IPatchService.Diff(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Model.IdentifiedData)">
+        <member name="M:OpenIZ.Core.Services.IPatchService.Diff(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Model.IdentifiedData,System.String[])">
             <summary>
             Performs a DIFF and creates the related patch which can be used to update <paramref name="existing"/>
             to <paramref name="updated"/>
@@ -2046,6 +2634,31 @@
             <param name="person">The person to save.</param>
             <returns>Returns the saved person.</returns>
         </member>
+        <member name="P:OpenIZ.Core.Services.ProgressChangedEventArgs.Progress">
+            <summary>
+            Gets or sets the progress
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Services.ProgressChangedEventArgs.State">
+            <summary>
+            Display attached with the progress
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ProgressChangedEventArgs.#ctor(System.Single,System.Object)">
+            <summary>
+            Progress changed event args
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IReportProgressChanged">
+            <summary>
+            Represents a class which reports progress
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Services.IReportProgressChanged.ProgressChanged">
+            <summary>
+            Identifies that progress has changed
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Services.IRepositoryService`1">
             <summary>
             Represents a repository service base
@@ -2053,37 +2666,56 @@
         </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Get(System.Guid)">
             <summary>
-            Gets the specified data
+            Gets the specified model.
             </summary>
+            <param name="key">The key.</param>
+            <returns>Returns the model.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified model.
+            </summary>
+            <param name="key">The key.</param>
+            <param name="versionKey">The key of the version.</param>
+            <returns>Returns the model.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
             <summary>
-            Finds the specified data
+            Finds the specified data.
             </summary>
-            <returns></returns>
+            <param name="query">The query.</param>
+            <returns>Returns a list of identified data.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
-            Finds the specified data
+            Finds the specified data.
             </summary>
-            <returns></returns>
+            <param name="query">The query.</param>
+            <param name="offset">The offset.</param>
+            <param name="count">The count.</param>
+            <param name="totalResults">The total results.</param>
+            <returns>Returns a list of identified data.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Insert(`0)">
             <summary>
-            Inserts the specified data
+            Inserts the specified data.
             </summary>
+            <param name="data">The data.</param>
+            <returns>TModel.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Save(`0)">
             <summary>
-            Saves the specified data
+            Saves the specified data.
             </summary>
+            <param name="data">The data.</param>
+            <returns>Returns the model.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Obsolete(System.Guid)">
             <summary>
-            Obsoletes the specified data
+            Obsoletes the specified data.
             </summary>
-            <param name="key"></param>
-            <returns></returns>
+            <param name="key">The key.</param>
+            <returns>Returns the model.</returns>
         </member>
         <member name="T:OpenIZ.Core.Services.IEntityRepositoryService">
             <summary>
@@ -2192,22 +2824,22 @@
             Represents the repository handler for materials
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindManufacturedMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}})">
             <summary>
             Finds the specified ManufacturedMaterial
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindManufacturedMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds the specified ManufacturedMaterial with the specified restrictions
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}})">
             <summary>
             Finds the specified material
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds the specified material with the specified restrictions
             </summary>
@@ -2258,20 +2890,147 @@
             concept classes, etc.
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.CreateCodeSystem(OpenIZ.Core.Model.DataTypes.CodeSystem)">
+            <summary>
+            Creates the code system.
+            </summary>
+            <param name="codeSystem">The code system.</param>
+            <returns>Returns the created code system.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.DeleteCodeSystem(System.Guid)">
+            <summary>
+            Deletes the code system.
+            </summary>
+            <param name="key">The key.</param>
+            <returns>Returns the deleted code system.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.CreateExtensionType(OpenIZ.Core.Model.DataTypes.ExtensionType)">
+            <summary>
+            Creates the type of the extension.
+            </summary>
+            <param name="extensionType">Type of the extension.</param>
+            <returns>Returns the created extension type.s</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.DeleteExtensionType(System.Guid)">
+            <summary>
+            Deletes the type of the extension.
+            </summary>
+            <param name="id">The identifier.</param>
+            <returns>Returns the deleted extension type.</returns>
+        </member>
         <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.FindAssigningAuthority(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.AssigningAuthority,System.Boolean}})">
             <summary>
             Finds the specified assigning authority
             </summary>
-            <returns></returns>
+            <param name="expression">The expression.</param>
+            <returns>Returns a list of assigning authorities.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.FindAssigningAuthority(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.AssigningAuthority,System.Boolean}},System.Int32,System.Int32,System.Int32@)">
             <summary>
             Finds the specified assigning authority with restrictions
             </summary>
+            <param name="expression">The expression.</param>
+            <param name="offset">The offset.</param>
+            <param name="count">The count.</param>
+            <param name="totalCount">The total count.</param>
+            <returns>Returns a list of assigning authorities.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.FindCodeSystem(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.CodeSystem,System.Boolean}})">
+            <summary>
+            Finds the code system.
+            </summary>
+            <param name="expression">The expression.</param>
+            <returns>Returns a list of code systems which match the given expression.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.FindCodeSystem(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.CodeSystem,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Finds the code system.
+            </summary>
+            <param name="expression">The expression.</param>
+            <param name="offset">The offset.</param>
+            <param name="count">The count.</param>
+            <param name="totalCount">The total count.</param>
+            <returns>Returns a list of code systems which match the given expression.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.FindExtensionType(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ExtensionType,System.Boolean}})">
+            <summary>
+            Finds an extension type for a specified expression.
+            </summary>
+            <param name="expression">The expression.</param>
+            <returns>Returns a list of extension types.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.FindExtensionType(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ExtensionType,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Finds an extension type for a specified expression.
+            </summary>
+            <param name="expression">The expression.</param>
+            <param name="offset">The offset.</param>
+            <param name="count">The count.</param>
+            <param name="totalCount">The total count.</param>
+            <returns>Returns a list of extension types.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.FindTemplateDefinitions(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.TemplateDefinition,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Find template definitions matching the query
+            </summary>
         </member>
         <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.GetAssigningAuthority(System.Guid)">
             <summary>
             Gets an assigning authority
+            </summary>
+            <param name="id">The identifier.</param>
+            <returns>Returns an assigning authority.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.GetAssigningAuthority(System.Uri)">
+            <summary>
+            Get assigning authority from Uri value
+            </summary>
+            <param name="value">The value.</param>
+            <returns>Returns an assigning authority.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.GetCodeSystem(System.Guid)">
+            <summary>
+            Gets the code system.
+            </summary>
+            <param name="id">The identifier.</param>
+            <returns>Returns the code system, or null if no code system is found.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.GetExtensionType(System.Guid)">
+            <summary>
+            Gets the extension type.
+            </summary>
+            <param name="id">The identifier.</param>
+            <returns>Returns an extension type or null of no extension type is found.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.GetExtensionType(System.Uri)">
+            <summary>
+            Gets the extension type.
+            </summary>
+            <param name="value">The URI of the extension.</param>
+            <returns>Returns an extension type or null of no extension type is found.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.UpdateExtensionType(OpenIZ.Core.Model.DataTypes.ExtensionType)">
+            <summary>
+            Updates the type of the extension.
+            </summary>
+            <param name="extensionType">Type of the extension.</param>
+            <returns>Returns the updated extension type.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.UpdateCodeSystem(OpenIZ.Core.Model.DataTypes.CodeSystem)">
+            <summary>
+            Updates the code system.
+            </summary>
+            <param name="codeSystem">The code system.</param>
+            <returns>Returns the updated code system.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.GetTemplateDefinition(System.String)">
+            <summary>
+            Get tempate definition
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.CreateTemplateDefinition(OpenIZ.Core.Model.DataTypes.TemplateDefinition)">
+            <summary>
+            Create a template definition
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IClientRegistryNotificationService">
@@ -2314,8 +3073,8 @@
             Searches for a organization using a given query.
             </summary>
             <param name="query">The query to use for searching for the organization.</param>
-            <param name="count">The count of the organizations to return.</param>
             <param name="offset">The offset for the search results.</param>
+            <param name="count">The count of the organizations to return.</param>
             <param name="totalCount">The total count of the search results.</param>
             <returns>Returns a list of organizations who match the specified query.</returns>
         </member>
@@ -2413,14 +3172,14 @@
             Validate the specified patient, or rather ensure the patient is valid
             </summary>
         </member>
-        <member name="T:OpenIZ.Core.Services.IPersistableQueryProvider">
+        <member name="T:OpenIZ.Core.Services.IPersistableQueryRepositoryService">
             <summary>
             Persistable query provider is an extensable interface which can perform a query with state
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IPersistableQueryProvider.Query``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@,System.Guid)">
+        <member name="M:OpenIZ.Core.Services.IPersistableQueryRepositoryService.Find``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@,System.Guid)">
             <summary>
-            Performs a query which 
+            Performs a query which
             </summary>
             <typeparam name="TEntity">The underlying entity type which is being queried</typeparam>
             <param name="query">The query to be executed</param>
@@ -2428,21 +3187,6 @@
             <param name="count">The number of results</param>
             <param name="totalResults">The total results in the query</param>
             <param name="queryId">The unique identifier for the query</param>
-        </member>
-        <member name="T:OpenIZ.Core.Services.IPhoneticAlgorithmHandler">
-            <summary>
-            Phonetic algorithm handler
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Services.IPhoneticAlgorithmHandler.AlgorithmId">
-            <summary>
-            Gets the algorithm ID
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Services.IPhoneticAlgorithmHandler.GenerateCode(System.String)">
-            <summary>
-            Generate a phonetic code from the input data
-            </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IPlaceRepositoryService">
             <summary>
@@ -2540,7 +3284,7 @@
         </member>
         <member name="M:OpenIZ.Core.Services.IQueryPersistenceService.RegisterQuerySet(System.Guid,System.Collections.Generic.IEnumerable{System.Guid},System.Object)">
             <summary>
-            Register a query set 
+            Register a query set
             </summary>
             <param name="queryId">The unique identifier for the query</param>
             <param name="results">The results to be stored in the query</param>
@@ -2870,16 +3614,6 @@
             </summary>
             <param name="userId">The id of the user to be unlocked.</param>
         </member>
-        <member name="T:OpenIZ.Core.Services.IServiceManager">
-            <summary>
-            Represents a service manager
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Services.IServiceManager.AddServiceProvider(System.Type)">
-            <summary>
-            Add the specified service provider
-            </summary>
-        </member>
         <member name="T:OpenIZ.Core.Services.IStockManagementRepositoryService">
             <summary>
             Represents a stock management repository service.
@@ -2903,7 +3637,22 @@
         </member>
         <member name="M:OpenIZ.Core.Services.IStockManagementRepositoryService.FindAdjustments(System.Guid,System.Guid,System.Nullable{System.DateTimeOffset},System.Nullable{System.DateTimeOffset})">
             <summary>
-            Find adjustments matching the specified 
+            Find adjustments matching the specified
+            </summary>
+            <param name="manufacturedMaterialKey">The manufactured material key.</param>
+            <param name="placeKey">The place key.</param>
+            <param name="startPeriod">The start period.</param>
+            <param name="endPeriod">The end period.</param>
+            <returns>IEnumerable&lt;Act&gt;.</returns>
+        </member>
+        <member name="T:OpenIZ.Core.Services.ITagPersistenceService">
+            <summary>
+            Taggable persistence service
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ITagPersistenceService.Save(System.Guid,OpenIZ.Core.Model.Interfaces.ITag)">
+            <summary>
+            Save tag to source key
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IThreadPoolService">
@@ -2926,6 +3675,11 @@
             Queue a user work item
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.IThreadPoolService.QueueNonPooledWorkItem(System.Action{System.Object},System.Object)">
+            <summary>
+            Creates a normal thread which is not in the pool
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Protocol.IClinicalProtocol">
             <summary>
             Represents a clinical protocol
@@ -2936,7 +3690,7 @@
             Load the specified protocol data
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.GetProtcolData">
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.GetProtocolData">
             <summary>
             Get the protocol data
             </summary>
@@ -2951,7 +3705,7 @@
             Gets the name of the protocol
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Calculate(OpenIZ.Core.Model.Roles.Patient)">
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Calculate(OpenIZ.Core.Model.Roles.Patient,System.Collections.Generic.IDictionary{System.String,System.Object})">
             <summary>
             Calculate the clinical protocol for the given patient
             </summary>
@@ -2961,7 +3715,7 @@
             Update the care plan based on new data
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Initialize(OpenIZ.Core.Model.Roles.Patient)">
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Initialize(OpenIZ.Core.Model.Roles.Patient,System.Collections.Generic.IDictionary{System.String,System.Object})">
             <summary>
             Called prior to performing calculation of the care protocol allowing the object to prepare the object for whatever 
             pre-requisite data is needed for the protocol
@@ -2971,6 +3725,27 @@
             <summary>
             Represents a care plan service that can bundle protocol acts together 
             based on their start/stop times
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Protocol.SimpleCarePlanService.ParameterDictionary`2">
+            <summary>
+            Represents a parameter dictionary
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.ParameterDictionary`2.Add(`0,`1)">
+            <summary>
+            Add new item key
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.ParameterDictionary`2.Remove(`0)">
+            <summary>
+            Remove key
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="P:OpenIZ.Core.Protocol.SimpleCarePlanService.ParameterDictionary`2.Item(`0)">
+            <summary>
+            Indexer
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.#ctor">
@@ -2995,7 +3770,12 @@
             <param name="p"></param>
             <returns></returns>
         </member>
-        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Guid[])">
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Create a care plan
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object},System.Guid[])">
             <summary>
             Create a care plan with the specified protocols only
             </summary>

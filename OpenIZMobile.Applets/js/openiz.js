@@ -1,4 +1,3 @@
-/// <reference path="openiz-model.js"/>
 /*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
@@ -19,38 +18,22 @@
  * Date: 2016-7-17
  */
 
-/// <reference path="openiz-bre.js"/>
-
-/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
- * 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: justi
- * Date: 2016-7-17
- */
-
-/// <reference path="~/lib/select2.min.js"/>
-
 /**
  * @version 0.6.12 (Dalhouse)
  * @copyright (C) 2015-2016, Mohawk College of Applied Arts and Technology
  * @license Apache 2.0
  */
 
+window.alert_ = window.alert;
+window.alert = function () {
+    alert_.apply(window, arguments)
+};
 
+/// <reference path="openiz-bre.js"/>
+/// <reference path="openiz-model.js"/>
+/// <reference path="~/lib/select2.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
+
 // SHIM
 var OpenIZApplicationService = window.OpenIZApplicationService || {};
 
@@ -89,10 +72,96 @@ var OpenIZ = OpenIZ || {
      * @summary Provides a mechanism for user interface interaction with OpenIZ
      * @class
      * @static
+     * @property {OpenIZ.UserInterface.PatientControllerPrototype} patientController The patient controller which OpenIZ components can call  
      * @memberof OpenIZ
      */
     UserInterface: {
+        /**
+         * @class
+         * @summary A prototype patient controller which is called by OpenIZ core components
+         * @memberof OpenIZ.UserInterface
+         */
+        PatientControllerPrototype: function () {
 
+            /** 
+             * @summary Instructs the handler to open the patient view
+             * @method
+             * @param {uuid} patientId The patient to be shown
+             * @param {object} state The state provider
+             */
+            this.view = function (patientId) { alert("Default implementation, not implemented "); };
+            /** 
+             * @summary Instructs the handler to open the patient view
+             * @method
+             * @param {uuid} patientId The patient to be shown
+             * @param {object} state The state provider
+             */
+            this.download = function (patientId) { alert("Default implementation, not implemented "); };
+            /** 
+             * @summary Instructs the handler to open the patient view
+             * @method
+             * @param {OpenIZModel.Patient} patient The patient which is to be saved
+             */
+            this.save = function (patient, controlData) {
+                var controlData = {
+                    data: patient,
+                    id: patient.id,
+                    versionId: patient.version,
+                    continueWith: function (data) {
+                        console.log(data);
+                        switch (data.multipleBirthOrder) {
+                            case 1:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.first');
+                                break;
+                            case 2:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.second');
+                                break;
+                            case 3:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.third');
+                                break;
+                            case 0:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.unknown');
+                                break;
+                        };
+                        if (data.multipleBirthOrder != undefined && data.multipleBirthOrder != null) {
+                            data.multipleBirthOrder = data.multipleBirthOrder.toString();
+                        }
+                        OpenIZ.Patient.getAsync({
+                            id: patient.id,
+                            continueWith: controlData.continueWith,
+                            onException: controlData.onException
+                        })
+                    },
+                    onException: controlData.onException,
+                    finally: controlData.finally,
+                    state: 0
+                };
+
+                delete (patient.genderConceptModel);
+
+                if (patient.relationship && patient.relationship.DedicatedServiceDeliveryLocation && patient.relationship.DedicatedServiceDeliveryLocation.targetModel) {
+                    delete (patient.relationship.DedicatedServiceDeliveryLocation.targetModel);
+                }
+
+                // Address has changed, so let's change it!
+                if (patient.address.HomeAddress.villageId != null) {
+                    // Get the village
+                    OpenIZ.Place.findAsync({
+                        query: { _id: patient.address.HomeAddress.villageId, _viewModel: "min" },
+                        continueWith: function (data) {
+                            patient.address.HomeAddress.component = data.address.Direct.component;
+                            OpenIZ.Patient.updateAsync(controlData);
+
+                        },
+                        onException: controlData.onException
+                    });
+                }
+                else
+                    OpenIZ.Patient.updateAsync(controlData);
+            };
+
+        },
+        patientController: null
     },
     /**
      * @summary Provides operations for managing {@link OpenIZModel.Act} instances.
@@ -101,6 +170,29 @@ var OpenIZ = OpenIZ || {
      * @class
      */
     Act: {
+        /**
+         * @summary Asynchronously updates an encounter object in the IMS
+         * @memberof OpenIZ.Act
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the act that is to be updated
+         * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Act
+         */
+        updateAsync: function (controlData) {
+            OpenIZ.Ims.put({
+                resource: "Act",
+                data: controlData.data,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                id: controlData.id,
+                state: controlData.state
+            });
+        },
         /**
          * @summary Asynchronously deletes an encounter object in the IMS
          * @memberof OpenIZ.Act
@@ -120,6 +212,30 @@ var OpenIZ = OpenIZ || {
                 onException: controlData.onException,
                 finally: controlData.finally,
                 id: controlData.id,
+                data: controlData.data,
+                state: controlData.state
+            });
+        },
+        /**
+         * @summary Asynchronously nullifies an act object in the IMS
+         * @memberof OpenIZ.Act
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the act that is to be updated
+         * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Act
+         */
+        nullifyAsync: function (controlData) {
+            OpenIZ.Ims.nullify({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                id: controlData.id,
+                data: controlData.data,
                 state: controlData.state
             });
         },
@@ -160,7 +276,9 @@ var OpenIZ = OpenIZ || {
             }
 
             // Re-assign the identifier
-            fulfills._overdue = act.stopTime < new Date();
+            fulfills.tag = {};
+            if (act.stopTime < new Date())
+                fulfills.tag.backEntry = true;
             fulfills.id = OpenIZ.App.newGuid();
             fulfills.moodConcept = OpenIZModel.ActMoodKeys.Eventoccurrence;
             fulfills.moodConceptModel = null;
@@ -195,7 +313,7 @@ var OpenIZ = OpenIZ || {
                     })
             }
 
-            if (fulfills._overdue) {
+            if (fulfills.tag.backEntry) {
                 fulfills.actTime = act.actTime;
             }
             else {
@@ -252,7 +370,8 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 data: controlData.data,
-                state: controlData.state
+                state: controlData.state,
+                finally: controlData.finally
             });
         },
         /**
@@ -275,15 +394,98 @@ var OpenIZ = OpenIZ || {
         getActTemplateAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Act/Template",
-                query: { "templateId": controlData.templateId },
+                query: { "templateId": controlData.templateId, "_viewModel" : "full" },
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,
                 state: controlData.state
             });
+        },
+        /**
+          * @summary Perform a search of an act subtypes asynchronously
+          * @memberof OpenIZ.Act
+          * @method
+          * @param {Object} controlData An object containing search, offset, count and callback data
+          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+          * @param {object} controlData.query The query filters to apply to the search
+          * @param {int} controlData.query._count The limit of results to return from the ims
+          * @param {int} controlData.query._offset The offset of the search result window
+          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+          * @see {OpenIZ.IMS.get}
+          */
+        findClinicalActAsync: function (controlData) {
+            var actResources = [
+                "Act"
+            ];
+                /*
+                "SubstanceAdministration",
+                "QuantityObservation",
+                "CodedObservation",
+                "TextObservation",
+                "PatientEncounter"
+            ];*/
+
+            var doSearch = function (index, queryId, offset, count) {
+                
+                // Perform query
+                var query = controlData.query;
+                query._queryId = queryId;
+                query._offset = offset;
+                query._count = count;
+
+                OpenIZ.Ims.get({
+                    resource: actResources[index],
+                    /** @param {OpenIZModel.Bundle} data */
+                    continueWith: function(data) {
+
+                        controlData.intermediateResults(data);
+
+                        // Call the intermediary results function
+                        if (data.offset + data.count < data.totalResults) // More results
+                            doSearch(index, queryId, offset + count, count);
+                        else if (++index < actResources.length)
+                            doSearch(index, queryId, offset + count, count);
+                        else
+                            controlData.continueWith(data);
+                    },
+                    onException: controlData.onException,
+                    finally: function() {
+                        if(index >= actResources.length)
+                            controlData.finally
+                    },
+                    query: query,
+                    state: controlData.state
+                });
+            }
+
+            // Start the process
+            doSearch(0, OpenIZ.App.newGuid(), 0, 50);
+        },
+    },
+    /**
+     * @summary Provides interaction with the openiz audit console
+     * @see OpenIZAudit
+     * @static
+     * @class
+     * @memberof OpenIZ
+     */
+    Audit : {
+        /**
+         * @summary Query audit data from the local audit repository
+         * @memberof OpenIZ.Audit
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The audit query to be executed
+         * @method
+         */
+        getAuditAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__audit/audit", controlData);
         }
     },
-
     /**
      * @summary Interoperation with the IMS
      * @see OpenIZModel
@@ -332,7 +534,7 @@ var OpenIZ = OpenIZ || {
                     else if (error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
-                                null
+                                error.caused_by
                             ), controlData.state);
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
@@ -342,7 +544,8 @@ var OpenIZ = OpenIZ || {
 
                     if (controlData.finally !== undefined)
                         controlData.finally(controlData.state);
-                }
+                },
+                async: !(controlData.synchronous || false)
             });
         },
         /**
@@ -387,7 +590,7 @@ var OpenIZ = OpenIZ || {
                     else if (error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
-                                null
+                                error.caused_by
                             ), controlData.state);
 
                     else // unknown error
@@ -437,7 +640,7 @@ var OpenIZ = OpenIZ || {
                     else if (error != undefined && error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
-                                null
+                                error.caused_by
                             ), controlData.state);
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
@@ -470,6 +673,8 @@ var OpenIZ = OpenIZ || {
                 url: "/__ims/" + controlData.resource + "?_id=" + controlData.id,
                 accept: 'application/json',
                 contentType: 'application/json',
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
                 success: function (xhr, data) {
                     if (controlData.continueWith !== undefined)
                         controlData.continueWith(xhr, controlData.state);
@@ -484,7 +689,55 @@ var OpenIZ = OpenIZ || {
                     else if (error != undefined && error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
+                                error.caused_by
+                            ), controlData.state);
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
                                 null
+                            ), controlData.state);
+
+                    // Do finally
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+
+                }
+            });
+        },
+        /**
+         * @summary Nullifies data from the IMS
+         * @memberof OpenIZ.Ims
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.resource The IMSI resource id to be posted to
+         * @param {object} controlData.id The identifier of the object to delete from the IMS 
+         * @method
+         */
+        nullify: function (controlData) {
+            $.ajax({
+                method: 'NULLIFY',
+                url: "/__ims/" + controlData.resource + "?_id=" + controlData.id,
+                accept: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                success: function (xhr, data) {
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr, controlData.state);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === undefined)
+                        console.error(error);
+                    else if (error != undefined && error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                error.caused_by
                             ), controlData.state);
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
@@ -581,6 +834,90 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
+     * @summary Utility functions which assist in execution and listing of reports
+     * @static
+     * @class
+     * @memberof OpenIZ
+     */
+    Risi: {
+        /**
+         * @method
+         * @summary Search the RISI for reports matching the specified query
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.name The Query from which to use 
+         */
+        getReportsAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__risi/report", {
+                query: { _name: controlData.name },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
+        /**
+         * @method
+         * @summary Execute a report on the RISI 
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.name The name of the report to run
+         * @param {object} controlData.view The view of the report to fetch
+         * @param {object} controlData.query The view of the report to fetch
+         */
+        executeDatasetAsync: function (controlData) {
+            var query = controlData.query || {};
+            query._name = controlData.name;
+            query._report = controlData.report;
+
+            // Execute the report
+            OpenIZ.Util.simpleGet("/__risi/data", {
+                query: query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /**
+         * @method
+         * @summary Execute a report on the RISI 
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.name The name of the report to run
+         * @param {object} controlData.view The view of the report to fetch
+         * @param {object} controlData.query The view of the report to fetch
+         */
+        executeReportAsync: function (controlData) {
+            var query = {};
+            query._name = controlData.name;
+            query._view = controlData.view;
+
+            if (controlData.query)
+                for (var k in Object.keys(controlData.query)) {
+                    var key = Object.keys(controlData.query)[k];
+                    if (controlData.query[key] && controlData.query[key].toISOString)
+                        query[key] = controlData.query[key].toISOString();
+                    else
+                        query[key] = controlData.query[key];
+                }
+
+            // Execute the report
+            OpenIZ.Util.simpleGet("/__risi/report.htm", {
+                query: query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            }, true);
+        }
+    },
+    /**
      * @summary Utility functions which assist in the writing of other OpenIZ functions
      * @static
      * @class
@@ -588,19 +925,35 @@ var OpenIZ = OpenIZ || {
      */
     Util: {
         /** 
+         * @summary Renders the specified concept name from a DOM option
+         * @memberof OpenIZ.Util
+         * @method
+         * @param {OpenIZModel.ConceptName} name The concept name to be rendered
+         */
+        renderConceptFromDom: function (val) {
+            if(val)
+                return $("option[value=" + val + "]").first().text();
+        },
+        /** 
          * @summary Renders the specified concept name
          * @memberof OpenIZ.Util
          * @method
          * @param {OpenIZModel.ConceptName} name The concept name to be rendered
          */
         renderConceptName: function (name) {
+            var retVal = "";
             if (name == null)
-                return "";
-            else if (typeof (name) == "String") return name;
+                retVal = "";
+            else if (typeof (name) == "String") retVal = name;
             else if (name[OpenIZ.Localization.getLocale()] != null)
-                return name[OpenIZ.Localization.getLocale()];
+                retVal = name[OpenIZ.Localization.getLocale()];
             else
-                return name[Object.keys(name)[0]];
+                retVal = name[Object.keys(name)];
+
+            if (Array.isArray(retVal))
+                return retVal[0];
+            else
+                return retVal;
         },
         /**
          * @summary Perform a simple post of JSON data to the backend
@@ -637,7 +990,7 @@ var OpenIZ = OpenIZ || {
                     else if (error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
-                                null
+                                error.caused_by
                             ), controlData.state);
 
                     else // unknown error
@@ -652,7 +1005,7 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-         * @summary Perform a simple post of JSON data to the backend
+         * @summary Perform a simple PUT of JSON data to the backend
          * @method
          * @memberof
          * @param {object} controlData The control data
@@ -660,14 +1013,64 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {string} url The URL from which to post to 
+         * @param {object} controlData.query The query to be sent on the put
          * @param {object} controlData.data The query to be posted as JSON
+         */
+        simplePut: function (url, controlData) {
+            controlData.onException = controlData.onException || OpenIZ.Util.logException;
+
+            $.ajax({
+                method: 'PUT',
+                url: controlData == null || controlData.query == null ? url : url + "?" + controlData.query,
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr, controlData.state);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === null)
+                        console.error(error);
+                    else if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                error.caused_by
+                            ), controlData.state);
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
+                                null
+                            ), controlData.state);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                }
+            });
+        },
+        /**
+         * @summary Perform a simple delete of JSON data to the backend
+         * @method
+         * @memberof
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} url The URL from which to post to 
+         * @param {object} controlData.query The query to be sent on the DELETE
          */
         simpleDelete: function (url, controlData) {
             controlData.onException = controlData.onException || OpenIZ.Util.logException;
 
             $.ajax({
                 method: 'DELETE',
-                url: controlData == null ? url : url + "?" + controlData.query,
+                url: controlData == null || controlData.query == null ? url : url + "?" + controlData.query,
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
@@ -685,7 +1088,7 @@ var OpenIZ = OpenIZ || {
                     else if (error!== undefined && error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
-                                null
+                                error.caused_by
                             ), controlData.state);
 
                     else // unknown error
@@ -710,39 +1113,67 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {object} controlData.query The query to be included
          */
-        simpleGet: function (url, controlData) {
+        simpleGet: function (url, controlData, useRaw) {
             controlData.onException = controlData.onException || OpenIZ.Util.logException;
-            // Perform auth request
-            $.getJSON(url, controlData.query, function (data) {
+            if(!useRaw)
+                $.getJSON(url, controlData.query, function (data) {
 
-                if (data != null && data.error !== undefined)
-                    controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
-                    );
-                else if (data != null) {
-                    controlData.continueWith(data, controlData.state);
-                }
-                else
-                    controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
-                        data,
-                        null
-                    ), controlData.state);
-            }).error(function (data) {
-                var error = data.responseJSON;
-                if (error != null && error.error !== undefined) //  error
-                    controlData.onException(new OpenIZModel.Exception(error.type, error.error,
-                            error.error_description,
-                            null
-                        ), controlData.state);
-
-                else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                    if (data != null && data.error !== undefined)
+                        controlData.onException(new OpenIZModel.Exception(data.type, data.error, null, null), controlData.state
+                        );
+                    else if (data != null) {
+                        controlData.continueWith(data, controlData.state);
+                    }
+                    else
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                             data,
-                            null
+                               null
                         ), controlData.state);
-            }).always(function () {
-                if (controlData.finally !== undefined)
-                    controlData.finally(controlData.state);
-            });
+                }).error(function (data) {
+                    var error = data.responseJSON;
+                    if (error != null && error.error !== undefined) //  error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                error.caused_by
+                            ), controlData.state);
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
+                                null
+                            ), controlData.state);
+                }).always(function () {
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                });
+            else
+                $.get(url, controlData.query, function (data) {
+
+                    if (data != null && data.error !== undefined)
+                        controlData.onException(new OpenIZModel.Exception(data.type, data.error, null, null), controlData.state
+                        );
+                    else if (data != null) {
+                        controlData.continueWith(data, controlData.state);
+                    }
+                    else
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
+                            data, null
+                        ), controlData.state);
+                }).error(function (data) {
+                    var error = data.responseJSON;
+                    if (error != null && error.error !== undefined) //  error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description, error.caused_by
+                            ), controlData.state);
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data
+                            ), controlData.state);
+                }).always(function () {
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                });
         },
         /**
          * @summary Render address for display
@@ -851,8 +1282,10 @@ var OpenIZ = OpenIZ || {
                 }
                 return nameStr;
             }
-            else
+            else if(typeof (entityName) === "string")
                 return entityName;
+            else
+                return "";
         },
         /**
          * @summary Changes the specified date string into an appropriate ISO string
@@ -912,6 +1345,12 @@ var OpenIZ = OpenIZ || {
          * @summary Credentials to use for elevation in lieu of the current session
          */
         $elevationCredentials: {},
+        /** 
+         * @summary HAndler for when the session is expired
+         */
+        $sessionExpiredHandler : function() {
+            window.location.reload();
+        },
         /** 
          * @summary Send a TFA secret
          * @method
@@ -989,16 +1428,16 @@ var OpenIZ = OpenIZ || {
                  contentType: 'application/x-www-urlform-encoded',
                  success: function (data, status) {
                      if (data != null && data.error !== undefined)
-                         controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                         controlData.onException(new OpenIZModel.Exception(data.type, data.error, null), controlData.state
                          );
                      else if (data != null) {
+                         if (!controlData.scope || controlData.scope == "")
+                            OpenIZ.Authentication.$session = data;
                          controlData.continueWith(data, controlData.state);
-                         OpenIZ.Authentication.$session = data;
                      }
                      else
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
-                             data,
-                             null
+                             data
                          ), controlData.state);
 
                      if (controlData.finally !== undefined)
@@ -1008,14 +1447,12 @@ var OpenIZ = OpenIZ || {
                      var error = data.responseJSON;
                      if (error != null && error.error !== undefined) // oauth 2 error
                          controlData.onException(new OpenIZModel.Exception(error.type, error.error,
-                                 error.error_description,
-                                 null
+                                 error.error_description, error.caused_by
                              ), controlData.state);
                          
                      else // unknown error
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
-                                 data,
-                                 null
+                                 data
                              ), controlData.state);
                      if (controlData.finally !== undefined)
                          controlData.finally(controlData.state);
@@ -1054,14 +1491,13 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/x-www-urlform-encoded',
                 success: function (data, status) {
                     if (data != null && data.error !== undefined)
-                        controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                        controlData.onException(new OpenIZModel.Exception(data.type, data.error, null), controlData.state
                         );
                     else if (data != null)
                         controlData.continueWith(data, controlData.state);
                     else
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
-                            data,
-                            null
+                            data
                         ));
 
                     if (controlData.finally !== undefined)
@@ -1071,14 +1507,12 @@ var OpenIZ = OpenIZ || {
                     var error = data.responseJSON;
                     if (error != null && error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
-                                error.error_description,
-                                null
+                                error.error_description, data.caused_by
                             ), controlData.state);
 
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
-                                data,
-                                null
+                                data
                             ), controlData.state);
                     if (controlData.finally !== undefined)
                         controlData.finally(controlData.state);
@@ -1122,6 +1556,9 @@ var OpenIZ = OpenIZ || {
                 dataType: "json",
                 contentType: 'application/x-www-urlform-encoded',
                 success: function (data, status) {
+
+                    OpenIZ.Authentication.$session = null;
+
                     controlData.continueWith(data, controlData.state);
 
                     if (controlData.finally !== undefined) {
@@ -1173,16 +1610,17 @@ var OpenIZ = OpenIZ || {
                  contentType: 'application/x-www-urlform-encoded',
                  success: function (data, status) {
                      if (data != null && data.error !== undefined)
-                         controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                         controlData.onException(new OpenIZModel.Exception(data.type, data.error, null), controlData.state
                          );
                      else if (data != null) {
+                         OpenIZ.Authentication.$session = data;
+
                          controlData.continueWith(data, controlData.state);
                          OpenIZ.Authentication.$session = data;
                      }
                      else
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
-                             data,
-                             null
+                             data
                          ), controlData.state);
 
                      if (controlData.finally !== undefined)
@@ -1192,14 +1630,12 @@ var OpenIZ = OpenIZ || {
                      var error = data.responseJSON;
                      if (error != null && error.error !== undefined) // oauth 2 error
                          controlData.onException(new OpenIZModel.Exception(error.type, error.error,
-                                 error.error_description,
-                                 null
+                                 error.error_description, error.caused_by
                              ), controlData.state);
 
                      else // unknown error
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
-                                 data,
-                                 null
+                                 data
                              ), controlData.state);
                      if (controlData.finally !== undefined)
                          controlData.finally(controlData.state);
@@ -1279,7 +1715,7 @@ var OpenIZ = OpenIZ || {
             obs.interpretationConcept = postVal.interpretationConcept;
 
             obs.participation.RecordTarget.playerModel = null;
-
+            return postVal.interpretationConcept;
         },
         /**
          * @summary Generate a care plan for the specified patient
@@ -1343,11 +1779,11 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException !== undefined) {
                         if (error.error !== undefined) // error
                         {
-                            controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, null), controlData.state);
+                            controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, error.caused_by), controlData.state);
                         }
                         else {
                             // unknown error
-                            controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data, null), controlData.state);
+                            controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data), controlData.state);
                         }
                     }
                     if (controlData.finally !== undefined) {
@@ -1406,7 +1842,39 @@ var OpenIZ = OpenIZ || {
     * @memberof OpenIZ
     */
     App: {
+        // OpenIZ.Core.Model.Constants.DatePrecisionFormats, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+        /**
+         * @enum {String}
+         * @memberof OpenIZModel
+         * @public
+         * @readonly
+         * @summary Date formats for using date precision
+         */
+        DatePrecisionFormats: {
+            DateFormatYear: 'YYYY',
+            DateFormatMonth: 'YYYY-MM',
+            DateFormatDay: 'YYYY-MM-DD',
+            DateFormatHour: 'YYYY-MM-DD HH',
+            DateFormatMinute: 'YYYY-MM-DD HH:mm',
+            DateFormatSecond: 'YYYY-MM-DD HH:mm:ss'
+        },  // Date Precision Formats
         _originalText: {},
+        /**
+         * @summary Fetches active tickles from the service
+         * @memberof OpenIZ.App
+         * @method
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.appId The application identifier to be updated
+         */
+        getTicklesAsync : function(controlData) {
+            OpenIZ.Util.simpleGet("/__app/tickle", {
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
         /**
          * @summary Instructs the update service to perform the update of the software
          * @memberof OpenIZ.App
@@ -1528,7 +1996,22 @@ var OpenIZ = OpenIZ || {
          * @see {OpenIZModel.ApplicationInfo}
          */
         getInfoAsync: function (controlData) {
-            OpenIZ.Util.simpleGet('/__app/info', controlData);
+            if (controlData.includeUpdates)
+                OpenIZ.Util.simpleGet('/__app/info.max', controlData);
+            else
+                OpenIZ.Util.simpleGet('/__app/info', controlData);
+        },
+        /**
+        * @summary Get health information data using typical async information parameters
+        * @method
+        * @memberof OpenIZ.App
+        * @param {object} controlData The data which controls the asynchronous operation.
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        */
+        getHealthAsync: function (controlData) {
+            OpenIZ.Util.simpleGet('/__app/health', controlData);
         },
         /**
          * @summary Get the online state of the application
@@ -1541,6 +2024,26 @@ var OpenIZ = OpenIZ || {
             return OpenIZApplicationService.GetOnlineState();
         },
         /**
+         * @summary Get the online state of the application
+         * @method
+         * @memberof OpenIZ.App
+         * @return {bool} Indicator whether the application is online.
+         * @deprecated
+         */
+        isAdminAvailable: function () {
+            return OpenIZApplicationService.IsAdminAvailable();
+        },
+        /**
+         * @summary Get the online state of the application
+         * @method
+         * @memberof OpenIZ.App
+         * @return {bool} Indicator whether the application is online.
+         * @deprecated
+         */
+        isClinicalAvailable: function () {
+            return OpenIZApplicationService.IsClinicalAvailable();
+        },
+        /**
          * @summary Indicates whether the status dialog is shown
          * @memberof OpenIZ.App
          */
@@ -1551,7 +2054,8 @@ var OpenIZ = OpenIZ || {
          * @return {string} The URL of the form template which is to be used to capture data for the specified template
          */
         resolveTemplate: function (templateId) {
-            return OpenIZApplicationService.GetTemplateForm(templateId);
+            if(templateId)
+                return OpenIZApplicationService.GetTemplateForm(templateId);
         },
         /**
          * @summary Update the status of the status dialog
@@ -1779,8 +2283,7 @@ var OpenIZ = OpenIZ || {
                         console.error(error);
                     else if (error!==undefined &&  error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
-                                error.error_description,
-                                null
+                                error.error_description, error.caused_by
                             ), controlData.state);
 
                     else // unknown error
@@ -1867,7 +2370,10 @@ var OpenIZ = OpenIZ || {
          * @returns The ISO language code of the current UI 
          */
         getLocale: function () {
-            return (navigator.language || navigator.userLanguage).substring(0, 2);
+            if (!OpenIZ.Localization.$locale)
+                OpenIZ.Localization.$locale = OpenIZApplicationService.GetLocale();
+
+            return OpenIZ.Localization.$locale; //(navigator.language || navigator.userLanguage).substring(0, 2);
         },
         /**
          * @summary Sets the current user interface locale
@@ -1879,6 +2385,7 @@ var OpenIZ = OpenIZ || {
         setLocale: function (locale) {
             if (OpenIZApplicationService.SetLocale !== undefined)
                 return OpenIZApplicationService.SetLocale(locale);
+            delete (OpenIZ.Localization.$locale);
         },
         /**
          * @memberof OpenIZ.Localization
@@ -1997,7 +2504,9 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 data: controlData.data,
-                state: controlData.state
+                state: controlData.state,
+                finally: controlData.finally,
+                synchronous: controlData.synchronous
             });
         }
     },
@@ -2126,6 +2635,27 @@ var OpenIZ = OpenIZ || {
                 state: controlData.state
             });
         },
+        /**
+          * @summary Downloads a patient asynchronously
+         * @memberof OpenIZ.Patient
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the patient that is to be downloaded
+         * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Patient
+         */
+        downloadAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__ims/Patient.Download", {
+                query: { _id: controlData.id },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        }
     },
 
 
@@ -2452,13 +2982,14 @@ var OpenIZ = OpenIZ || {
                          deviceName: controlData.deviceName,
                          force: controlData.force,
                          enableTrace: controlData.enableTrace,
-                         enableSSL: controlData.enableSSL
+                         enableSSL: controlData.enableSSL,
+                         port: controlData.port
                      },
                      dataType: "json",
                      contentType: 'application/x-www-urlform-encoded',
                      success: function (xhr, data) {
                          if (data != null && data.error !== undefined)
-                             controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                             controlData.onException(new OpenIZModel.Exception(data.type, data.error, null, data.caused_by), controlData.state
                              );
                          else if (data != null) {
                              OpenIZ.Configuration.$configuration = xhr;
@@ -2478,7 +3009,7 @@ var OpenIZ = OpenIZ || {
                          if (error != null && error.error !== undefined) // config error
                              controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                      error.error_description,
-                                     null
+                                     error.caused_by
                                  ), controlData.state);
 
                          else if (controlData.onException != null) // unknown error
@@ -2504,7 +3035,7 @@ var OpenIZ = OpenIZ || {
         */
         leaveRealm: function () {
             try {
-                if (!confirm('You are about to leave the realm ' + configuration.realm.address + '. Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?'))
+                if (!confirm('You are about to leave the realm ' + OpenIZ.Configuration.$configuration.realmName + '. Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?'))
                     return false;
                 return OpenIZConfigurationService.LeaveRealm();
             }
@@ -2536,7 +3067,7 @@ var OpenIZ = OpenIZ || {
                      contentType: 'application/json',
                      success: function (xhr, data) {
                          if (data != null && data.error !== undefined)
-                             controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                             controlData.onException(new OpenIZModel.Exception(data.type, data.error, null, data.caused_by), controlData.state
                              );
                          else if (data != null) {
                              OpenIZ.Configuration.$configuration = xhr;
@@ -2556,7 +3087,7 @@ var OpenIZ = OpenIZ || {
                          if (error != null && error.error !== undefined) // config error
                              controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                      error.error_description,
-                                     null
+                                     error.caused_by
                                  ), controlData.state);
 
                          else // unknown error
@@ -2651,6 +3182,13 @@ var OpenIZ = OpenIZ || {
      */
     Material:
         {
+            /** 
+             * @deprecated
+             * @summary Deprecated, use getMaterialAsync
+             */
+            findMaterialAsync: function(controlData) {
+                return OpenIZ.Material.getMaterialAsync(controlData);
+            },
             /**
              * @summary Get manufactured materials from the IMS 
              * @param {object} controlData An object containing search, offset, count and callback data
@@ -2664,11 +3202,14 @@ var OpenIZ = OpenIZ || {
              * @memberof OpenIZ.ManufacturedMaterial
              * @method
              */
-            findMaterialAsync: function (controlData) {
+            getMaterialAsync: function (controlData) {
                 var query = controlData.query || {};
-                query.classConcept = OpenIZModel.EntityClassKeys.Material;
+                if (controlData instanceof String)
+                    query += "&classConcept=" + OpenIZModel.EntityClassKeys.Material;
+                else
+                    query.classConcept = OpenIZModel.EntityClassKeys.Material;
                 OpenIZ.Ims.get({
-                    resource: "Entity",
+                    resource: "Material",
                     continueWith: controlData.continueWith,
                     onException: controlData.onException,
                     query: query,
@@ -2771,9 +3312,66 @@ var OpenIZ = OpenIZ || {
          * @memberof OpenIZ.Queue
          * @method
          */
+        forceResyncAsync : function (controlData) {
+            OpenIZ.Util.simplePost("/__app/queue", {
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /** 
+         * @summary Retrieves a specified queue object
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.queueName The name of the queue to retrieve
+         * @memberof OpenIZ.Queue
+         * @method
+         */
         getQueueAsync: function (controlData) {
             OpenIZ.Util.simpleGet("/__app/queue", {
-                query: { _queue: controlData.queueName, id: "!null" },
+                query: { _queue: controlData.queueName, id: "!null", _id : controlData.id },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /** 
+         * @summary Re-queues a specified queue object
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.queueId The ID of the item to re-queue
+         * @memberof OpenIZ.Queue
+         * @method
+         */
+        requeueDeadAsync: function (controlData) {
+            OpenIZ.Util.simplePut("/__app/queue", {
+                query: "_id=" + controlData.queueId,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /** 
+         * @summary Deletes a specified queue object
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.queueName The name of the queue to delete from
+         * @param {String} controlData.queueId The ID of the queue item to delete
+         * @memberof OpenIZ.Queue
+         * @method
+         */
+        deleteQueueAsync: function (controlData) {
+            OpenIZ.Util.simpleDelete("/__app/queue", {
+                query: "_id=" + controlData.queueId + "&_queue=" + controlData.queueName,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,
@@ -2782,29 +3380,38 @@ var OpenIZ = OpenIZ || {
         }
     }
 };
+
+OpenIZ.UserInterface.patientController = new OpenIZ.UserInterface.PatientControllerPrototype();
+
 /**
  * @summary Current Locale
  */
 //OpenIZ.locale = OpenIZ.Localization.getLocale();
 // No caching
 $.ajaxSetup({
-    cache: false, converters: {
-        'text json': $.parseJSON
-    },
+    cache: false,
     beforeSend: function (data, settings) {
         if (OpenIZ.Authentication.$elevationCredentials.$enabled) {
             data.setRequestHeader("Authorization", "BASIC " +
                 btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
         }
-        data.setRequestHeader("X-OIZMagic", OpenIZApplicationService.GetMagic());
+        if (!OpenIZ.App.magic)
+            OpenIZ.App.magic = OpenIZApplicationService.GetMagic();
+        data.setRequestHeader("X-OIZMagic", OpenIZ.App.magic);
+    },
+    converters: {
+        "text json": function (data) {
+            return $.parseJSON(data, true);
+        }
     }
 });
 
 $(document).ajaxError(function (e, data, setting, err) {
     if ((data.status == 401 || data.status == 403)) {
-        if (OpenIZ.Authentication.$session && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined && (OpenIZ.Authentication.$session && OpenIZ.Authentication.$session.exp < new Date() || document.cookie == "")) {
-            window.location.reload(true);
-            //console.log('hi');
+        if (OpenIZ.Authentication.$session && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined && (OpenIZ.Authentication.$session && OpenIZ.Authentication.$session.exp < new Date() || document.cookie == "") &&
+            window.location.hash != "/corelogin") {
+            console.error("Unauthorized Access:> " + e);
+            OpenIZ.Authentication.$sessionExpiredHandler();
         }
         else if(OpenIZ.Authentication.$elevationCredentials.continueWith) // The session is active
             OpenIZ.Authentication.showElevationDialog();
@@ -2887,4 +3494,43 @@ Date.prototype.tomorrow = function () {
  */
 Date.prototype.yesterday = function () {
     return this.addDays(-1);
+}
+
+/** 
+ * @summary Decodes a hex string
+ * @method
+ */
+String.prototype.hexDecode = function () {
+    return this.replace(/([0-9A-Fa-f]{2})/g, function(i, a) {
+        return String.fromCharCode(parseInt(a, 16));
+    });
+}
+
+/** 
+ * @summary Encodes a hex string
+ * @method
+ */
+String.prototype.hexEncode = function () {
+    var hex, i;
+
+    var result = "";
+    for (i = 0; i < this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += ("0" + hex).slice(-2);
+    }
+
+    return result
+}
+
+/** 
+ * @summary Turns a string into a byte array
+ * @method
+ */
+String.prototype.toByteArray = function () {
+    var result = [];
+    for (var i = 0; i < this.length; i++) {
+        result.push(this.charCodeAt(i));
+    }
+
+    return result
 }

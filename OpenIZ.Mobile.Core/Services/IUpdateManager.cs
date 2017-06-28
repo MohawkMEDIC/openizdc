@@ -42,5 +42,9 @@ namespace OpenIZ.Mobile.Core.Services
         /// </summary>
         void Install(String packageId);
 
+        /// <summary>
+        /// Check for updates
+        /// </summary>
+        void AutoUpdate();
     }
 }

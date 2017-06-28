@@ -31,6 +31,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,14 +68,82 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetAct()
         {
-            var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+            return this.GetAct<Act>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/SubstanceAdministration", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetSubstanceAdministration()
+        {
+            return this.GetAct<SubstanceAdministration>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/QuantityObservation", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetQuantityObservation()
+        {
+            return this.GetAct<QuantityObservation>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/TextObservation", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetTextObservation()
+        {
+            return this.GetAct<TextObservation>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/CodedObservation", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetCodedObservation()
+        {
+            return this.GetAct<CodedObservation>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/PatientEncounter", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetPatientEncounter()
+        {
+            return this.GetAct<PatientEncounter>();
+        }
+
+        /// <summary>
+        /// Get specified service
+        /// </summary>
+        private IdentifiedData GetAct<TAct>() where TAct : IdentifiedData
+        {
+            var actRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<TAct>>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                MemoryCache.Current.RemoveObject(typeof(Act), Guid.Parse(search["_id"].FirstOrDefault()));
-                var act = actRepositoryService.Get<Act>(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
+                var act = actRepositoryService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 return act;
             }
             else
@@ -86,7 +155,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                        offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                        count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 
-                IEnumerable<Act> results = null;
+                IEnumerable<TAct> results = null;
                 if (search.ContainsKey("_onlineOnly") && search["_onlineOnly"][0] == "true")
                 {
                     var integrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
@@ -94,16 +163,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     totalResults = bundle.TotalResults;
                     bundle.Reconstitute();
                     bundle.Item.OfType<Act>().ToList().ForEach(o => o.Tags.Add(new ActTag("onlineResult", "true")));
-                    results = bundle.Item.OfType<Act>();
+                    results = bundle.Item.OfType<TAct>();
 
                 }
-                else if (actRepositoryService is IPersistableQueryProvider)
+                else if (actRepositoryService is IPersistableQueryRepositoryService)
                 {
-                    results = (actRepositoryService as IPersistableQueryProvider).Query<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults, queryId);
+                    if(actRepositoryService is IFastQueryRepositoryService)
+                        results = (actRepositoryService as IFastQueryRepositoryService).Find<TAct>(QueryExpressionParser.BuildLinqExpression<TAct>(search, null, false), offset, count, out totalResults, queryId);
+                    else
+                        results = (actRepositoryService as IPersistableQueryRepositoryService).Find<TAct>(QueryExpressionParser.BuildLinqExpression<TAct>(search, null, false), offset, count, out totalResults, queryId);
                 }
                 else
                 {
-                    results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults);
+                    results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<TAct>(search, null, false), offset, count, out totalResults);
                 }
 
                 //results.ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
@@ -115,7 +187,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     Key = queryId,
                     Count = results.Count(),
                     Item = results.OfType<IdentifiedData>().ToList(),
-                    Offset = 0,
+                    Offset = offset,
                     TotalResults = totalResults
                 };
             }
@@ -137,7 +209,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 // Force load from DB
                 var keyid = Guid.Parse(search["_id"].FirstOrDefault());
-                MemoryCache.Current.RemoveObject(typeof(Act), keyid);
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(keyid);
                 var act = actRepositoryService.Get<Act>(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 if (act == null) throw new KeyNotFoundException();
 
@@ -147,7 +219,39 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 throw new ArgumentNullException("_id");
         }
 
+        /// <summary>
+        /// Updates an act.
+        /// </summary>
+        /// <param name="act">The act to update.</param>
+        /// <returns>Returns the updated act.</returns>
+        [RestOperation(Method = "NULLIFY", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.DeleteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Act NullifyAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
+        {
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
+            Guid actKey = Guid.Empty;
+            Guid actVersionKey = Guid.Empty;
+
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey))
+            {
+                if (act.Key == actKey)
+                {
+                    var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+                    return actRepositoryService.Nullify<Act>(act);
+                }
+                else
+                {
+                    throw new FileNotFoundException("Act not found");
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException("Act not found");
+            }
+        }
+        
         /// <summary>
         /// Updates an act.
         /// </summary>
@@ -161,27 +265,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
             Guid actKey = Guid.Empty;
-            Guid actVersionKey = Guid.Empty;
 
-            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey))
             {
-                if (act.Key == actKey && act.VersionKey == actVersionKey)
+                if (act.Key == actKey)
                 {
                     var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
-                    if (act.ObsoletionTime == null)
-                    {
-                        return actRepositoryService.Save(act);
-                    }
-                    return actRepositoryService.Obsolete<Act>(act.Key.Value);
+                    return actRepositoryService.Save(act);
                 }
                 else
                 {
-                    throw new ArgumentException("Act not found");
+                    throw new FileNotFoundException("Act not found");
                 }
             }
             else
             {
-                throw new ArgumentException("Act not found");
+                throw new FileNotFoundException("Act not found");
             }
         }
     }

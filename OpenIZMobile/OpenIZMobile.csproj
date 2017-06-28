@@ -64,6 +64,29 @@
     <DefineConstants>TRACE</DefineConstants>
     <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <Debugger>Xamarin</Debugger>
+    <AotAssemblies>False</AotAssemblies>
+    <EnableLLVM>False</EnableLLVM>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <EnableProguard>False</EnableProguard>
+    <DebugSymbols>False</DebugSymbols>
+    <AndroidLinkSkip>System.Xml.Linq;mscorlib;System</AndroidLinkSkip>
+    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
+    <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
@@ -146,10 +169,11 @@
     <Compile Include="UserInterfaceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\openiz.core.applet.pak" />
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
+    <AndroidAsset Include="Assets\Applets\tz.timr.applet.pak" />
+    <AndroidAsset Include="Assets\Applets\org.openiz.core.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -208,9 +232,26 @@
   <ItemGroup>
     <AndroidEnvironment Include="environment.txt" />
   </ItemGroup>
-  <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml"  
- copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\org.openiz.core.xml"
- copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"</PreBuildEvent>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak" --keyFile="$(SolutionDir)\..\keys\timr.mobile.applet.pfx" --keyPassword="$(SolutionDir)\..\keys\timr.mobile.applet.pass" --embedCert --optimize
+ copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+ copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PreBuildEvent>
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak" 
+      copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+      copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PreBuildEvent>
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak"
+      copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+      copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

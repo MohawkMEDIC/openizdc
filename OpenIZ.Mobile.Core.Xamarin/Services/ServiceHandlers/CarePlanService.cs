@@ -33,6 +33,7 @@ using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
+using System.IO;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -57,32 +58,35 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<Act>(search);
 
-            if(search.ContainsKey("_patientId"))
+            if (search.ContainsKey("_patientId"))
             {
                 var patientSvc = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-                p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty).Clone() as Patient;
-                p.Participations = new List<ActParticipation>();
+                p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty)?.Clone() as Patient;
+                //p.Participations = new List<ActParticipation>();
             }
 
-            if(p.Participations.Count == 0)
-            {
-                var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
-                int tr = 0;
-                IEnumerable<Act> acts = null;
-                Guid searchState = Guid.Empty;
+            if (p == null)
+                throw new FileNotFoundException();
 
-				if (actService is IPersistableQueryProvider && search.ContainsKey("_state") && Guid.TryParse(search["_state"][0], out searchState))
-					acts = (actService as IPersistableQueryProvider).Query<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr, searchState);
-				else
-					acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr);
+    //        if(p.Participations.Count == 0)
+    //        {
+    //            var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+    //            int tr = 0;
+    //            IEnumerable<Act> acts = null;
+    //            Guid searchState = Guid.Empty;
 
-                p.Participations = acts.Select(a => new ActParticipation(ActParticipationKey.RecordTarget, p)
-                {
-	                Act = a,
-					ParticipationRole = new Concept { Mnemonic = "RecordTarget" },
-					SourceEntity = actService.Get<Act>(a.Key.Value, Guid.Empty)
-                }).ToList();
-            }
+				//if (actService is IPersistableQueryProvider && search.ContainsKey("_state") && Guid.TryParse(search["_state"][0], out searchState))
+				//	acts = (actService as IPersistableQueryProvider).Query<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr, searchState);
+				//else
+				//	acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr);
+
+    //            p.Participations = acts.Select(a => new ActParticipation(ActParticipationKey.RecordTarget, p)
+    //            {
+	   //             Act = a,
+				//	ParticipationRole = new Concept { Mnemonic = "RecordTarget" },
+				//	SourceEntity = actService.Get<Act>(a.Key.Value, Guid.Empty)
+    //            }).ToList();
+    //        }
 
             // As appointments
             bool asAppointments = search.ContainsKey("_appointments") && search["_appointments"][0] == "true";
@@ -90,7 +94,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var protocolService = ApplicationContext.Current.GetService<ICarePlanService>();
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var plan = new List<Act>(protocolService.CreateCarePlan(p, asAppointments));
+
+            List<Act> plan = null;
+            if (search.ContainsKey("_protocolId"))
+                plan = protocolService.CreateCarePlan(p, asAppointments, null, search["_protocolId"].Select(o => Guid.Parse(o)).ToArray()).Action;
+            else
+                plan = protocolService.CreateCarePlan(p, asAppointments).Action; // All protocols
+
             sw.Stop();
             this.m_tracer.TraceInfo(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
 

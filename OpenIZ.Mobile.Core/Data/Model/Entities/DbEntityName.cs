@@ -95,7 +95,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the phonetic code.
 		/// </summary>
 		/// <value>The phonetic code.</value>
-		[Column("phoneticCode"), Indexed]
+		[Column("phoneticCode")]
 		public String PhoneticCode {
 			get;
 			set;
@@ -114,7 +114,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Value of the phonetic table
         /// </summary>
-        [Column("value"), NotNull]
+        [Column("value"), NotNull, Indexed]
         public String Value { get; set; }
     }
 

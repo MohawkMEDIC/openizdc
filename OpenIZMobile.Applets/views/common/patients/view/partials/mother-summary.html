@@ -28,7 +28,7 @@
                 {{rel.targetModel.name.OfficialRecord | oizEntityName}}
             </div>
         </div>
-        <div class="row" ng-if="rel.targetModel.identifier" ng-repeat="(aut, id) in rel.targetModel.identifier">
+        <div class="row" ng-if="rel.targetModel.identifier &amp;&amp; aut &amp;&amp; id.value" ng-repeat="(aut, id) in rel.targetModel.identifier">
             <label class="col-sm-4 col-xs-12">
                 {{ 'locale.patient.demographics.id' | i18n }}
             </label>

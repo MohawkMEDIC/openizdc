@@ -29,26 +29,26 @@
     </oiz:state>
     <h3>{{ 'locale.debug.bugReport' | i18n }}</h3>
     <oiz:script>/org.openiz.core/controllers/settings/password.js</oiz:script>
-    <div class="alert alert-warning" ng-if="!$root.page.onlineState || $root.session.method == 'LOCAL'">
+    <div class="alert alert-warning" ng-if="!$root.page.onlineState ">
         {{ 'locale.action.onlineOnly' | i18n }}
     </div>
 
-    <form class="form" ng-submit="submitBugReport(masterForm)" name="masterForm" ng-if="!report.id">
+    <form class="form" ng-submit="submitBugReport(masterForm)" name="masterForm" ng-if="!report.id" novalidate="novalidate">
         <fieldset class="form-horizontal form-group">
-            <div class="form-group" ng-class="{ 'has-error': (masterForm.submitter.$touched||masterForm.$submitted) &amp;&amp; masterForm.submitter.$invalid }">
+            <div class="form-group" ng-class="{ 'has-error': masterForm.submitter.$invalid &amp;&amp; (masterForm.submitter.$touched||masterForm.$submitted) }">
                 <label class="col-xs-2 control-label" for="submitter">{{ 'locale.debug.reporter' | i18n }}</label>
                 <div class="col-xs-10">
                     <select disabled="disabled" style="width:100%; height:100%" id="submitter" name="submitter" class="form-control" ng-model="report.submitterKey" oiz-entitysearch="UserEntity">
                         <option selected="selected" value="{{$root.session.entity.id}}">{{$root.session.entity.name.OfficialRecord | oizEntityName }}</option>
                     </select>
+                    <p ng-show="masterForm.submitter.$invalid &amp;&amp; (masterForm.submitter.$touched||masterForm.$submitted)" class="help-block text-danger">{{ 'locale.debug.errors.submitterRequired' | i18n }}</p>
                 </div>
-                <p ng-show="masterForm.submitter.$invalid &amp;&amp; masterForm.submitter.$touched" class="help-block text-danger">{{ 'locale.debug.errors.submitterRequired' | i18n }}</p>
-
             </div>
-            <div class="form-group" ng-class="{ 'has-error': (masterForm.note.$touched||masterForm.$submitted) &amp;&amp; masterForm.note.$invalid }">
+            <div class="form-group" ng-class="{ 'has-error': masterForm.note.$invalid &amp;&amp; (masterForm.note.$touched || masterForm.$submitted) }">
                 <label class="col-xs-2 control-label" for="note">{{ 'locale.debug.reproduction' | i18n }}</label>
                 <div class="col-xs-10">
                     <textarea class="form-control" rows="8" name="note" ng-model="report.note" required="required" placeholder="{{ 'locale.debug.reproductionPlaceholder' | i18n }}"></textarea>
+                    <p ng-show="masterForm.note.$invalid &amp;&amp; (masterForm.note.$touched || masterForm.$submitted)" class="help-block text-danger">{{ 'locale.debug.errors.stepsRequired' | i18n }}</p>
                 </div>
             </div>
             <div class="form-group">
@@ -67,7 +67,7 @@
                         </span>
                     </button>
                     <div class="btn-group">
-                        <button id="submitBugButton" ng-disabled="!$root.page.onlineState  || $root.session.method == 'LOCAL'" type="submit" class="btn btn-lg btn-success">
+                        <button id="submitBugButton" ng-disabled="!$root.page.onlineState  " type="submit" class="btn btn-lg btn-success">
                             <span>
                                 <span class="glyphicon glyphicon-ok"></span> {{ 'locale.debug.submit' | i18n }}
                             </span>

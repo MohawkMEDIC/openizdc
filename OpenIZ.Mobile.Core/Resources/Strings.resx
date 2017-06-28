@@ -124,7 +124,7 @@
     <value>The server has a newer version of the object you're trying to update</value>
   </data>
   <data name="locale_downloadError" xml:space="preserve">
-    <value>Error Downloading Remote Data</value>
+    <value>Remote downloads are temporarily not working</value>
   </data>
   <data name="locale_downloadErrorBody" xml:space="preserve">
     <value>There was an error downloading the specified resources: {0}</value>
@@ -150,7 +150,7 @@
     <value>Constructing Freetext Index</value>
   </data>
   <data name="locale_rejectionBody" xml:space="preserve">
-    <value>&lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;</value>
+    <value>&lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;&lt;p&gt;The message has been quarantined, you can view the message in the sync centre.&lt;/p&gt;&lt;a href="#/core/sync" class="btn btn-lg btn-info"&gt;Visit Sync Centre&lt;/a&gt;</value>
   </data>
   <data name="locale_rejectionSubject" xml:space="preserve">
     <value>Synchronization Conflict</value>
@@ -171,13 +171,13 @@
     <value>Installing Tables</value>
   </data>
   <data name="locale_startingPoll" xml:space="preserve">
-    <value>Initiating pull request...</value>
+    <value>Executing pull request...</value>
   </data>
   <data name="locale_start_careplan" xml:space="preserve">
     <value>Starting care plan manager service...</value>
   </data>
   <data name="locale_sync" xml:space="preserve">
-    <value>Downloading {0}s...</value>
+    <value>Downloading {0} ({1} of {2})...</value>
   </data>
   <data name="locale_syncErrorBody" xml:space="preserve">
     <value>&lt;p&gt;Error synchronizing data with remote server. This is usually caused by a conflict where this device tried to send an object ({1}) to the server but the server had a different version of that object.&lt;/p&gt;&lt;p&gt;For your reference, the error is:&lt;br/&gt;{0}&lt;/p&gt;</value>
@@ -198,6 +198,39 @@ Sincerely,
     <value>Loading protocol {0}...</value>
   </data>
   <data name="locale_calculatingCarePlan" xml:space="preserve">
-    <value>Calculating Care-plans ({0} remaining)...</value>
+    <value>Calculating Appointment Proposals ({0} remaining)...</value>
+  </data>
+  <data name="locale_refreshCarePlan" xml:space="preserve">
+    <value>Preparing to update facility plan...</value>
+  </data>
+  <data name="locale_calculateImportedCareplan" xml:space="preserve">
+    <value>Preparing imported data...</value>
+  </data>
+  <data name="InternalServerError" xml:space="preserve">
+    <value>&lt;p&gt;The server encountered an internal error while processing your request. Please contact the system administrator for more information. Include the following diagnostic error data:&lt;/p&gt;&lt;pre&gt;{0}&lt;/pre&gt;</value>
+  </data>
+  <data name="locale_processBundle" xml:space="preserve">
+    <value>Importing {0} from bundle ({1} of {2})...</value>
+  </data>
+  <data name="locale_accountLocked" xml:space="preserve">
+    <value>Account is locked</value>
+  </data>
+  <data name="locale_accountObsolete" xml:space="preserve">
+    <value>Account is deleted</value>
+  </data>
+  <data name="locale_invalidUserNamePassword" xml:space="preserve">
+    <value>Invalid Username / Password</value>
+  </data>
+  <data name="locale_refreshCarePlanPrompt" xml:space="preserve">
+    <value>Your facility plan is over a week old, do you want to recalculate it?</value>
+  </data>
+  <data name="locale_compacting" xml:space="preserve">
+    <value>Optimizing Databases...</value>
+  </data>
+  <data name="locale_loginFromUnsubscribedFacility" xml:space="preserve">
+    <value>The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance.</value>
+  </data>
+  <data name="locale_securitySwitchedMode" xml:space="preserve">
+    <value>Your online session couldn't be extended, you are now operating in disconnected mode.</value>
   </data>
 </root>

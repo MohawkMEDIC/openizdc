@@ -44,28 +44,41 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Patient modelInstance, LocalDataContext context)
         {
+            /*
             var dbPatient = base.FromModelInstance(modelInstance, context) as DbPatient;
 
             if (modelInstance.DeceasedDatePrecision.HasValue)
                 dbPatient.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value];
             return dbPatient;
+            */
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            return new DbPatient()
+            {
+                Uuid = modelInstance.Key?.ToByteArray(),
+                DeceasedDate = modelInstance.DeceasedDate,
+                DeceasedDatePrecision = modelInstance.DeceasedDatePrecision.HasValue ? PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value] : null,
+                GenderConceptUuid = modelInstance.GenderConceptKey?.ToByteArray(),
+                MultipleBirthOrder = modelInstance.MultipleBirthOrder
+            };
         }
 
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Patient ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Patient ToModelInstance(object dataInstance, LocalDataContext context)
         {
 
             var iddat = dataInstance as DbVersionedData;
             var patient = dataInstance as DbPatient ?? dataInstance.GetInstanceOf<DbPatient>() ?? context.Connection.Table<DbPatient>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
             var dbp = dataInstance.GetInstanceOf<DbPerson>() ?? context.Connection.Table<DbPerson>().Where(o => o.Uuid == patient.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<Patient>(dbe, context, loadFast);
+            var retVal = m_entityPersister.ToModelInstance<Patient>(dbe, context);
             retVal.DateOfBirth = dbp.DateOfBirth.HasValue ? (DateTime?)dbp.DateOfBirth.Value.ToLocalTime() : null;
             // Reverse lookup
             if (!String.IsNullOrEmpty(dbp.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == dbp.DateOfBirthPrecision).Select(o => o.Key).First();
+            else
+                retVal.DateOfBirthPrecision = OpenIZ.Core.Model.DataTypes.DatePrecision.Day;
 
             retVal.DeceasedDate = patient.DeceasedDate.HasValue ? (DateTime?)patient.DeceasedDate.Value.ToLocalTime() : null;
             // Reverse lookup
@@ -74,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.MultipleBirthOrder = patient.MultipleBirthOrder;
             retVal.GenderConceptKey = new Guid(patient.GenderConceptUuid);
 
-            retVal.LoadAssociations(context);
+            //retVal.LoadAssociations(context);
 
             return retVal;
         }

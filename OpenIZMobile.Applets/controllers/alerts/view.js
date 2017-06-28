@@ -32,7 +32,7 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state',
     $scope.updateAlert = updateAlert;
     $scope.closeMessage = closeMessage;
 
-    init();
+    angular.element(document).ready(init);
 
     function init() {
         $scope.selectedMessageID = $stateParams.alertId == '' ? null : $stateParams.alertId;
@@ -58,7 +58,6 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state',
                 continueWith: function (data)
                 {
                     $scope.alert = data[0];
-                    console.log($scope.alert);
                     $scope.alert.body = $scope.alert.body.replace("\n", "<br/>");
                     $scope.$apply();
                 }

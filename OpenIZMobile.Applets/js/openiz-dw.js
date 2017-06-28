@@ -21,64 +21,109 @@
 
 var OpenIZWarehouse = OpenIZWarehouse || {
 
-    /** 
-     * @class 
-     * @public
-     * @memberof OpenIZWarehouse
-     * @summary Represents an ad-hoc data mart
-     * @property {string} id The identifier for the datamart
-     * @property {string} name The name of the datamart
-     * @property {Date} creationTime The time that the data mart was created
-     * @property {OpenIZWarehouse.DatamartSchema} schema The schema for the datamart
-     * @param {OpenIZWarehouse.DatamartDefinition} copyData Data from which to copy the datamart definition
-     */
-    DatamartDefinition: function (copyData) {
-        if (copyData) {
-            this.id = copyData.id,
-            this.name = copyData.name;
-            this.creationTime = copyData.creationTime;
-            this.schema = copyData.schema;
-        }
-    },
-
+    // OpenIZ.Core.Data.Warehouse.DatamartDefinition, OpenIZ.Core.PCL, Version=0.8.0.23380, Culture=neutral, PublicKeyToken=null
     /**
      * @class
-     * @public
      * @memberof OpenIZWarehouse
-     * @summary Represents a schema definition which describes the object that is to be persisted
-     * @property {string} id The identifier for the schema
-     * @property {string} name The name of the schema element. 
-     * @property {OpenIZWarehouse.DatamartSchemaProperty} property The properties which are associated with the schema item
-     * @param {OpenIZWarehouse.DatamartSchema} copyData Data from which the schema is to be copied
+     * @public
+     * @summary             Represents a datamart definition which contains the definition of fields for a datamart            
+     * @property {uuid} id            Gets or sets the identifier of the data mart            
+     * @property {string} name            Gets or sets the name of the data mart            
+     * @property {date} creationTime            Gets or sets the time that the data mart was created            
+     * @property {OpenIZWarehouse.DatamartSchema} schema            Gets or sets the datamart schema            
+     * @param {OpenIZWarehouse.DatamartDefinition} copyData Copy constructor (if present)
+     */
+    DatamartDefinition: function (copyData) {
+        this.$type = 'DatamartDefinition';
+        if (copyData) {
+            this.schema = copyData.schema;
+            this.creationTime = copyData.creationTime;
+            this.name = copyData.name;
+            this.id = copyData.id;
+        }
+    },  // DatamartDefinition 
+    // OpenIZ.Core.Data.Warehouse.DatamartSchema, OpenIZ.Core.PCL, Version=0.8.0.23380, Culture=neutral, PublicKeyToken=null
+    /**
+     * @class
+     * @memberof OpenIZWarehouse
+     * @public
+     * @summary             Represents a datamart schema which gives hints to the properties to be stored from             a dynamic object            
+     * @property {uuid} id            Gets or sets the unique identifier for the schema itself            
+     * @property {string} name            Gets or sets the name of the element in the database            
+     * @property {OpenIZWarehouse.DatamartSchemaProperty} property            Gets or sets the property names for the schema element            
+     * @property {OpenIZWarehouse.DatamartStoredQuery} sqp            Gets or sets the query associated with the schema            
+     * @param {OpenIZWarehouse.DatamartSchema} copyData Copy constructor (if present)
      */
     DatamartSchema: function (copyData) {
+        this.$type = 'DatamartSchema';
         if (copyData) {
-            this.id = copyData.id;
-            this.name = copyData.name;
+            this.sqp = copyData.sqp;
             this.property = copyData.property;
+            this.name = copyData.name;
+            this.id = copyData.id;
         }
-    },
-    /** 
+    },  // DatamartSchema 
+    // OpenIZ.Core.Data.Warehouse.DatamartSchemaProperty, OpenIZ.Core.PCL, Version=0.8.0.23380, Culture=neutral, PublicKeyToken=null
+    /**
      * @class
-     * @public
-     * @summary Represents a single property which can be assigned to a schema object
      * @memberof OpenIZWarehouse
-     * @property {string} id The identifier for the schema property object
-     * @property {string} name The name of the schema property object
-     * @property {OpenIZWarehouse.SchemaPropertyType} type The type of data which is to be stored in the warehouse property
-     * @property {OpenIZWarehouse.SchemaPropertyAttributes} attributes The attributes applied to the property
-     * @property {OpenIZWarehouse.DatamartSchemaProperty} property The properties to be stored as sub-properties of this property
-     * @param {OpenIZWarehouse.DatamartSchemaProperty} copyData The data from which the schema property is to be copied
+     * @public
+     * @summary             Represents a single property on the data mart schema            
+     * @property {uuid} id            Gets or sets the identifier of the warehouse property            
+     * @property {string} name            Gets or sets the name of the property            
+     * @property {SchemaPropertyType} type            Gets or sets the type of property            
+     * @property {SchemaPropertyAttributes} attributes            Gets or sets the attributes associated with the property            
+     * @property {OpenIZWarehouse.DatamartSchemaProperty} property            Gets or sets the sub-properties of this property            
+     * @param {OpenIZWarehouse.DatamartSchemaProperty} copyData Copy constructor (if present)
      */
     DatamartSchemaProperty: function (copyData) {
+        this.$type = 'DatamartSchemaProperty';
         if (copyData) {
-            this.id = copyData.id;
-            this.name = copyData.name;
-            this.type = copyData.type;
-            this.attributes = copyData.attributes;
             this.property = copyData.property;
+            this.attributes = copyData.attributes;
+            this.type = copyData.type;
+            this.name = copyData.name;
+            this.id = copyData.id;
         }
-    },
+    },  // DatamartSchemaProperty 
+    // OpenIZ.Core.Data.Warehouse.DatamartStoredQuery, OpenIZ.Core.PCL, Version=0.8.0.23380, Culture=neutral, PublicKeyToken=null
+    /**
+     * @class
+     * @memberof OpenIZWarehouse
+     * @public
+     * @summary             Represents a stored query creation statement            
+     * @property {uuid} id            Gets or sets the provider identifier            
+     * @property {string} name            Definition of the query            
+     * @property {OpenIZWarehouse.DatamartSchemaProperty} property            Gets or sets the property names for the schema element            
+     * @property {OpenIZWarehouse.DatamartStoredQueryDefinition} select            Definition of the query            
+     * @param {OpenIZWarehouse.DatamartStoredQuery} copyData Copy constructor (if present)
+     */
+    DatamartStoredQuery: function (copyData) {
+        this.$type = 'DatamartStoredQuery';
+        if (copyData) {
+            this.select = copyData.select;
+            this.property = copyData.property;
+            this.name = copyData.name;
+            this.id = copyData.id;
+        }
+    },  // DatamartStoredQuery 
+    // OpenIZ.Core.Data.Warehouse.DatamartStoredQueryDefinition, OpenIZ.Core.PCL, Version=0.8.0.23380, Culture=neutral, PublicKeyToken=null
+    /**
+     * @class
+     * @memberof OpenIZWarehouse
+     * @public
+     * @summary             Represents the SQL for an actual query            
+     * @property {string} provider            Provider identifier            
+     * @property {string} sql            The SQL             
+     * @param {OpenIZWarehouse.DatamartStoredQueryDefinition} copyData Copy constructor (if present)
+     */
+    DatamartStoredQueryDefinition: function (copyData) {
+        this.$type = 'DatamartStoredQueryDefinition';
+        if (copyData) {
+            this.sql = copyData.sql;
+            this.provider = copyData.provider;
+        }
+    },  // DatamartStoredQueryDefinition 
 
     /** 
      * @enum {int}
@@ -136,17 +181,35 @@ var OpenIZWarehouse = OpenIZWarehouse || {
          * @memberof OpenIZWarehouse.Adhoc
          * @summary Gets a list of all available datamarts
          */
-        getDatamarts: function (controlData) {
+        getDatamartsAsync: function (controlData) {
             OpenIZ.Util.simpleGet(
                 "/__zombo/marts",
                 controlData);
+        },
+        /** 
+         * @method
+         * @param {object} controlData 
+         * @param {string} controlData.name
+         * @memberof OpenIZWarehouse.Adhoc
+         * @summary Gets a list of all available datamarts
+         */
+        getDatamartAsync: function (controlData) {
+            OpenIZ.Util.simpleGet(
+                "/__zombo/marts",
+                {
+                    continueWith: controlData.continueWith,
+                    onException: controlData.onException,
+                    state: controlData.state,
+                    finally: controlData.finally,
+                    query: { name : controlData.name }
+                });
         },
         /**
          * @method
          * @memberof OpenIZWarehouse.Adhoc
          * @summary Deletes a datamart
          */
-        deleteDatamart: function (controlData) {
+        deleteDatamartAsync: function (controlData) {
             throw OpenIZModel.Exception("NotSupportedException", "Deleting datamarts is not supported");
 
         },
@@ -157,7 +220,7 @@ var OpenIZWarehouse = OpenIZWarehouse || {
          * @param {string} tupleId The identifier of the tuple in that data mart's schema
          * @return {Object} The data stored in that tuple
          */
-        getObject: function (martId, tupleId) {
+        getObjectAsync: function (martId, tupleId) {
             throw OpenIZModel.Exception("NotSupportedException", "Get datamart tuple is not supported");
 
         },
@@ -171,7 +234,7 @@ var OpenIZWarehouse = OpenIZWarehouse || {
          * @param {Object} controlData.parameter The object representing query parameters to the mart
          * @return {Object} A list of matching tuple or aggregates
          */
-        query: function (controlData) {
+        queryAsync: function (controlData) {
 
             var query = controlData.parameters;
             query.queryId = controlData.queryId;
@@ -196,7 +259,7 @@ var OpenIZWarehouse = OpenIZWarehouse || {
          * @param {Object} controlData.object The object to be stored in the datamart
          * @return {string} The tuple identifier of the object stored
          */
-        add: function (controlData) {
+        addAsync: function (controlData) {
             throw OpenIZModel.Exception("NotSupportedException", "Add data to datamarts is not supported");
 
         },
@@ -209,9 +272,30 @@ var OpenIZWarehouse = OpenIZWarehouse || {
          * @param {string} controlData.tupleId The identifier of the tuple to be deleted
          * @return {string} The tuple identifier of the object stored
          */
-        remove: function (controlData) {
+        removeAsync: function (controlData) {
             throw OpenIZModel.Exception("NotSupportedException", "Remove data from datamarts is not supported");
 
+        },
+        /**
+         * @method
+         * @memberof OpenIZWarehouse.Adhoc
+         * @param {object} controlData the control data
+         * @param {string} controlData.martId The datamart from which the object should be retrieved
+         * @param {string} controlData.query The query to match control data on
+         * @return {Object} The data stored in that tuple
+         */
+        adhocQueryAsync: function (controlData) {
+            var query = controlData.parameters;
+            query.martId = controlData.martId;
+            OpenIZ.Util.simpleGet(
+                "/__zombo/adhocQuery",
+                {
+                    query: query,
+                    continueWith: controlData.continueWith,
+                    finally: controlData.finally,
+                    onException: controlData.onException,
+                    state: controlData.state
+                });
         }
     }
 

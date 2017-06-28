@@ -35,13 +35,17 @@ using OpenIZ.Core.Model.Constants;
 using System.Threading;
 using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Core.Model.DataTypes;
+using SQLite.Net.Interop;
+using OpenIZ.Mobile.Core.Data;
+using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Search
 {
     /// <summary>
     /// Search indexing service
     /// </summary>
-    public class SearchIndexService : IFreetextSearchService, IDaemonService
+    public class SearchIndexService : IFreetextSearchService, IDaemonService, IAuditEventSource
     {
 
         // Tracer
@@ -80,11 +84,15 @@ namespace OpenIZ.Mobile.Core.Search
         /// The service is stopping
         /// </summary>
         public event EventHandler Stopping;
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
 
         /// <summary>
         /// Create a connection
         /// </summary>
-        private SQLiteConnectionWithLock CreateConnection()
+        private LockableSQLiteConnection CreateConnection()
         {
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString("openIzSearch").Value);
         }
@@ -104,94 +112,114 @@ namespace OpenIZ.Mobile.Core.Search
         /// </summary>
         public IEnumerable<TEntity> Search<TEntity>(String[] tokens, int offset, int? count, out int totalResults) where TEntity : Entity
         {
-            var conn = this.CreateConnection();
-            using (conn.Lock())
+            try
             {
-                // Search query builder
-                StringBuilder queryBuilder = new StringBuilder();
-
-                queryBuilder.AppendFormat("SELECT DISTINCT {1}.* FROM {0} INNER JOIN {1} ON ({0}.entity = {1}.key) WHERE {1}.type = '{2}' AND {0}.entity IN (",
-                    conn.GetMapping<Model.SearchTermEntity>().TableName, 
-                    conn.GetMapping<Model.SearchEntityType>().TableName, 
-                    typeof(TEntity).FullName);
-
-                foreach (var tkn in tokens)
+                var conn = this.CreateConnection();
+                using (conn.Lock())
                 {
-                    queryBuilder.AppendFormat("SELECT {0}.entity FROM {0} INNER JOIN {1} ON ({0}.term = {1}.key) WHERE ",
+                    // Search query builder
+                    StringBuilder queryBuilder = new StringBuilder();
+
+                    queryBuilder.AppendFormat("SELECT DISTINCT {1}.* FROM {0} INNER JOIN {1} ON ({0}.entity = {1}.key) WHERE {1}.type = '{2}' AND {0}.entity IN (",
                         conn.GetMapping<Model.SearchTermEntity>().TableName,
-                        conn.GetMapping<Model.SearchTerm>().TableName,
+                        conn.GetMapping<Model.SearchEntityType>().TableName,
                         typeof(TEntity).FullName);
 
-                    if (tkn.Contains("*"))
-                        queryBuilder.AppendFormat("{0}.term LIKE '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.Replace("'", "''").Replace("*", "%"));
-                    else
-                        queryBuilder.AppendFormat("{0}.term = '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.ToLower().Replace("'", "''"));
-                    queryBuilder.Append(" INTERSECT ");
+                    foreach (var tkn in tokens)
+                    {
+                        queryBuilder.AppendFormat("SELECT {0}.entity FROM {0} INNER JOIN {1} ON ({0}.term = {1}.key) WHERE ",
+                            conn.GetMapping<Model.SearchTermEntity>().TableName,
+                            conn.GetMapping<Model.SearchTerm>().TableName,
+                            typeof(TEntity).FullName);
+
+                        if (tkn.Contains("*"))
+                            queryBuilder.AppendFormat("{0}.term LIKE '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.Replace("'", "''").Replace("*", "%"));
+                        else
+                            queryBuilder.AppendFormat("{0}.term = '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.ToLower().Replace("'", "''"));
+                        queryBuilder.Append(" INTERSECT ");
+                    }
+
+                    queryBuilder.Remove(queryBuilder.Length - 11, 11);
+                    queryBuilder.Append(")");
+
+                    // Search now!
+                    this.m_tracer.TraceVerbose("FREETEXT SEARCH: {0}", queryBuilder);
+
+                    // Perform query
+                    var results = conn.Query<Model.SearchEntityType>(queryBuilder.ToString());
+
+                    var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+                    totalResults = results.Count();
+
+                    var retVal = results.Skip(offset).Take(count ?? 100).AsParallel().Select(o => persistence.Get(new Guid(o.Key)));
+
+                    this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs("FTS:" + String.Join(":", tokens), retVal));
+                    return retVal;
                 }
-
-                queryBuilder.Remove(queryBuilder.Length - 11, 11);
-                queryBuilder.Append(")");
-
-                // Search now!
-                this.m_tracer.TraceVerbose("FREETEXT SEARCH: {0}", queryBuilder);
-
-                // Perform query
-                var results = conn.Query<Model.SearchEntityType>(queryBuilder.ToString());
-
-                var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
-                totalResults = results.Count();
-                return results.Skip(offset).Take(count ?? 100).AsParallel().Select(o => persistence.Get(new Guid(o.Key)));
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error performing search: {0}", e);
+                throw;
             }
         }
 
         /// <summary>
         /// Perform an index of the entity
         /// </summary>
-        private bool IndexEntity(Entity e)
+        private bool IndexEntity(params Entity[] entities)
         {
+            if (entities.Length == 0) return true;
+
             var conn = this.CreateConnection();
             using (conn.Lock())
             {
                 try
                 {
-                    var entityUuid = e.Key.Value.ToByteArray();
-                    var entityVersionUuid = e.VersionKey.Value.ToByteArray();
-                    if (conn.Table<SearchEntityType>().Where(o => o.Key == entityUuid && o.VersionKey == entityVersionUuid).Count() > 0) return true; // no change
-
                     conn.BeginTransaction();
 
-                    var tokens = (e.Names ?? new List<EntityName>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
+                    foreach (var e in entities)
+                    {
+                        var entityUuid = e.Key.Value.ToByteArray();
+                        var entityVersionUuid = e.VersionKey.Value.ToByteArray();
+                        if (conn.Table<SearchEntityType>().Where(o => o.Key == entityUuid && o.VersionKey == entityVersionUuid).Count() > 0) return true; // no change
+
+                        var tokens = (e.Names ?? new List<EntityName>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
                         .Union((e.Identifiers ?? new List<EntityIdentifier>()).Select(o => o.Value.ToLower()))
                         .Union((e.Addresses ?? new List<EntityAddress>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower())))
                         .Union((e.Telecoms ?? new List<EntityTelecomAddress>()).Select(o => o.Value.ToLower()))
                         .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Names ?? new List<EntityName>()).SelectMany(n => n.Component?.Select(c => c.Value?.Trim().ToLower()))))
                         .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Telecoms ?? new List<EntityTelecomAddress>()).Select(c => c.Value?.Trim().ToLower())))
-                        .Where(o=>o != null);
-                    
-                    // Insert new terms
-                    var existing = conn.Table<SearchTerm>().Where(o => tokens.Contains(o.Term)).ToArray();
-                    var inserting = tokens.Where(t => !existing.Any(x => x.Term == t)).Select(o => new SearchTerm() { Term = o }).ToArray();
-                    conn.InsertAll(inserting);
-                    this.m_tracer.TraceVerbose("{0}", e);
-                    foreach (var itm in existing.Union(inserting))
-                        this.m_tracer.TraceVerbose("\t+{0}", itm.Term);
-                    // Now match tokens with this 
-                    conn.Execute(String.Format(String.Format("DELETE FROM {0} WHERE entity = ?", conn.GetMapping<SearchTermEntity>().TableName), e.Key.Value.ToByteArray()));
-                    conn.Delete<SearchEntityType>(e.Key.Value.ToByteArray());
-                    var insertRefs = existing.Union(inserting).Distinct().Select(o => new SearchTermEntity() { EntityId = e.Key.Value.ToByteArray(), TermId = o.Key }).ToArray();
-                    conn.InsertAll(insertRefs);
-                    conn.Insert(new SearchEntityType() { Key = e.Key.Value.ToByteArray(), SearchType = e.GetType().FullName, VersionKey = e.VersionKey.Value.ToByteArray() });
+                        .Where(o => o != null);
+
+                        // Insert new terms
+                        var existing = conn.Table<SearchTerm>().Where(o => tokens.Contains(o.Term)).ToArray();
+                        var inserting = tokens.Where(t => !existing.Any(x => x.Term == t)).Select(o => new SearchTerm() { Term = o }).ToArray();
+                        conn.InsertAll(inserting);
+
+                        this.m_tracer.TraceVerbose("{0}", e);
+                        foreach (var itm in existing.Union(inserting))
+                            this.m_tracer.TraceVerbose("\t+{0}", itm.Term);
+
+                        // Now match tokens with this 
+                        conn.Execute(String.Format(String.Format("DELETE FROM {0} WHERE entity = ?", conn.GetMapping<SearchTermEntity>().TableName), e.Key.Value.ToByteArray()));
+                        conn.Delete<SearchEntityType>(e.Key.Value.ToByteArray());
+                        var insertRefs = existing.Union(inserting).Distinct().Select(o => new SearchTermEntity() { EntityId = e.Key.Value.ToByteArray(), TermId = o.Key }).ToArray();
+                        conn.InsertAll(insertRefs);
+                        conn.Insert(new SearchEntityType() { Key = e.Key.Value.ToByteArray(), SearchType = e.GetType().FullName, VersionKey = e.VersionKey.Value.ToByteArray() });
+
+                        this.m_tracer.TraceVerbose("Indexed {0}", e);
+
+                    }
 
                     // Now commit
                     conn.Commit();
-
-                    this.m_tracer.TraceVerbose("Indexed {0}", e);
 
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    this.m_tracer.TraceError("Error indexing {0} : {1}", e, ex);
+                    this.m_tracer.TraceError("Error indexing {0} : {1}", entities, ex);
                     conn.Rollback();
                     return false;
                 }
@@ -267,10 +295,14 @@ namespace OpenIZ.Mobile.Core.Search
                     // Bind entity
                     if (bundlePersistence != null && !this.m_bundleBound)
                     {
-                        bundlePersistence.Inserted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
-                        bundlePersistence.Updated += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
-                        bundlePersistence.Obsoleted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.DeleteEntity(i as Entity)).ToList();
-                        this.m_bundleBound = true;
+                        Action<Object> doBundleIndex = (o) =>
+                        {
+                            this.IndexEntity((o as Bundle).Item.Where(e => e is Patient).OfType<Entity>().ToArray());
+                        };
+
+                        bundlePersistence.Inserted += (o, e) => ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(doBundleIndex, e.Data);
+                        bundlePersistence.Updated += (o, e) => ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(doBundleIndex, e.Data);
+                        bundlePersistence.Obsoleted += (o, e) => ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(doBundleIndex, e.Data);
                     }
 
 
@@ -284,7 +316,7 @@ namespace OpenIZ.Mobile.Core.Search
 
                     this.Started?.Invoke(this, EventArgs.Empty);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     this.m_tracer.TraceError("Error starting search index: {0}", e);
                 }
@@ -310,17 +342,16 @@ namespace OpenIZ.Mobile.Core.Search
         /// </summary>
         public bool Index()
         {
-            if (!Monitor.IsEntered(this.m_lock))
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((o) =>
             {
-                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((o) =>
-                {
-                    lock (this.m_lock)
+                if (Monitor.TryEnter(this.m_lock))
+                    try
                     {
                         this.m_tracer.TraceInfo("Starting complete full-text indexing of the primary datastore");
                         try
                         {
-                            // Load all entities in database and index them
-                            int tr = 101, ofs = 0;
+                                // Load all entities in database and index them
+                                int tr = 101, ofs = 0;
                             var patientService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                             Guid queryId = Guid.NewGuid();
 
@@ -330,11 +361,11 @@ namespace OpenIZ.Mobile.Core.Search
                                 if (patientService == null) break;
                                 var entities = patientService.Query(e => e.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, queryId);
 
-                                // Index 
-                                entities.Select(e => this.IndexEntity(e)).ToList();
+                                    // Index 
+                                    this.IndexEntity(entities.ToArray());
 
-                                // Let user know the status
-                                ofs += 50;
+                                    // Let user know the status
+                                    ofs += 50;
                                 ApplicationContext.Current.SetProgress(Strings.locale_indexing, (float)ofs / tr);
                             }
                             if (patientService != null)
@@ -345,12 +376,13 @@ namespace OpenIZ.Mobile.Core.Search
                             this.m_tracer.TraceError("Error indexing primary database: {0}", e);
                             throw;
                         }
-
                     }
-                });
-                return true; // indexing is going to occur
-            }
-            return false;
+                    finally
+                    {
+                        Monitor.Exit(this.m_lock);
+                    }
+            });
+            return true; // indexing is going to occur
         }
     }
 }

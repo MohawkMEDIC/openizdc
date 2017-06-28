@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Services
 		/// </summary>
 		/// <param name="userName">User name.</param>
 		/// <param name="password">Password.</param>
-		public AuthenticatingEventArgs (String userName, String password) : base(userName, password)
+		public AuthenticatingEventArgs (String userName, String password) : base(userName, password, true)
 		{
 			
 		}
@@ -59,17 +59,23 @@ namespace OpenIZ.Mobile.Core.Services
 		/// </summary>
 		/// <param name="userName">User name.</param>
 		/// <param name="password">Password.</param>
-		public AuthenticatedEventArgs (String userName, String password)
+		public AuthenticatedEventArgs (String userName, String password, bool success)
 		{
 			this.UserName = userName;
 			this.Password = password;
+            this.Success = success;
 		}
 
-		/// <summary>
-		/// Gets or sets the name of the user.
-		/// </summary>
-		/// <value>The name of the user.</value>
-		public String UserName {
+        /// <summary>
+        /// Indicates success
+        /// </summary>
+        public bool Success { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the name of the user.
+        /// </summary>
+        /// <value>The name of the user.</value>
+        public String UserName {
 			get;
 			private set;
 		}

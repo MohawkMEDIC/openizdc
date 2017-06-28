@@ -183,6 +183,18 @@ namespace OpenIZ.Mobile.Core.Data
             where TModel : IdentifiedData, new()
             where TDomain : DbIdentified, new()
         {
+
+            // Properties
+            private List<PropertyInfo> m_properties = new List<PropertyInfo>();
+
+            /// <summary>
+            /// Properties
+            /// </summary>
+            public GenericIdentityPersistenceService()
+            {
+                this.m_properties = typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())).Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null).ToList();
+            }
+
             /// <summary>
             /// Ensure exists
             /// </summary>
@@ -190,9 +202,8 @@ namespace OpenIZ.Mobile.Core.Data
             {
                 if (data.IsEmpty()) return data;
 
-                foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
+                foreach (var rp in this.m_properties)
                 {
-                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
@@ -214,9 +225,8 @@ namespace OpenIZ.Mobile.Core.Data
             {
                 if (data.IsEmpty()) return data;
 
-                foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
+                foreach (var rp in this.m_properties)
                 {
-                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
 
                     var instance = rp.GetValue(data);
                     if (instance != null && rp.Name != "SourceEntity") // HACK: Prevent infinite loops on associtive entities

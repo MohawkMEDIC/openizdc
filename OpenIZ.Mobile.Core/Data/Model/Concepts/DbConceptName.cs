@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("value"), Indexed, NotNull]
+		[Column("value"), NotNull]
 		public String Name {
 			get;
 			set;
@@ -65,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the phonetic code.
 		/// </summary>
 		/// <value>The phonetic code.</value>
-		[Column("phoneticCode"), Indexed]
+		[Column("phoneticCode")]
 		public String PhoneticCode {
 			get;
 			set;

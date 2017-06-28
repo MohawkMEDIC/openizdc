@@ -39,12 +39,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Organization ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Organization ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbVersionedData;
             var organization = dataInstance as DbOrganization ?? dataInstance.GetInstanceOf<DbOrganization>() ?? context.Connection.Table<DbOrganization>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context, loadFast);
+            var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context);
             retVal.IndustryConceptKey = organization.IndustryConceptUuid  != null ? (Guid?)new Guid(organization.IndustryConceptUuid) : null;
             return retVal;
         }

@@ -35,13 +35,19 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Network interface ctor
         /// </summary>
-        public NetworkInterfaceInfo(String name, String macAddress, bool isActive, String manufacturer)
+        public NetworkInterfaceInfo(String name, String macAddress, bool isActive, String manufacturer, string ipAddress)
         {
             this.Name = name;
             this.MacAddress = macAddress;
             this.IsActive = isActive;
             this.Manufacturer = manufacturer;
+            this.IpAddress = ipAddress;
         }
+
+        /// <summary>
+        /// IpAddress
+        /// </summary>
+        public string IpAddress { get; set; }
 
         /// <summary>
         /// Mac address
@@ -89,6 +95,11 @@ namespace OpenIZ.Mobile.Core.Services
 		/// Gets whether the network is connected.
 		/// </summary>
 		bool IsNetworkConnected { get; }
+
+        /// <summary>
+        /// Returns true if the network is WIFI
+        /// </summary>
+        bool IsNetworkWifi { get; }
 
         /// <summary>
         /// Fired when the network status changes

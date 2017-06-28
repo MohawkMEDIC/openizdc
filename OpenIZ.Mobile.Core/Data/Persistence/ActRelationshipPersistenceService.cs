@@ -26,6 +26,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using OpenIZ.Core.Data.QueryBuilder;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -34,6 +36,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class ActRelationshipPersistenceService : IdentifiedPersistenceService<ActRelationship, DbActRelationship>, ILocalAssociativePersistenceService
     {
+
+        /// <summary>
+        /// Create DbActParticipation from modelinstance
+        /// </summary>
+        public override object FromModelInstance(ActRelationship modelInstance, LocalDataContext context)
+        {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            return new DbActRelationship()
+            {
+                SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                TargetUuid = modelInstance.TargetActKey?.ToByteArray(),
+                RelationshipTypeUuid = modelInstance.RelationshipTypeKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
+        }
 
         /// <summary>
         /// Get from source
@@ -49,23 +66,46 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override ActRelationship InsertInternal(LocalDataContext context, ActRelationship data)
         {
             // Ensure we haven't already persisted this
-            if(data.TargetAct != null) data.TargetAct = data.TargetAct.EnsureExists(context);
+            if (data.TargetAct != null) data.TargetAct = data.TargetAct.EnsureExists(context);
             data.TargetActKey = data.TargetAct?.Key ?? data.TargetActKey;
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
-            
+
             byte[] target = data.TargetActKey.Value.ToByteArray(),
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            var existing = context.Connection.Table<DbActRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
-            if (existing == null)
-                return base.InsertInternal(context, data);
-            else
-            {
-                data.Key = new Guid(existing.Uuid);
-                return data;
-            }
+            //SqlStatement sql = new SqlStatement<DbActRelationship>().SelectFrom()
+            //    .Where<DbActRelationship>(o => o.SourceUuid == source)
+            //    .Limit(1).Build();
+
+            //IEnumerable<DbActRelationship> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbActRelationship>;
+            //if (dbrelationships == null)
+            //{
+            //    dbrelationships = context.Connection.Query<DbActRelationship>(sql.SQL, sql.Arguments.ToArray()).ToList();
+            //    context.AddData($"EX{sql.ToString()}", dbrelationships);
+            //}
+            //var existing = dbrelationships.FirstOrDefault(
+            //        o => o.RelationshipTypeUuid == typeKey &&
+            //        o.TargetUuid == target);
+
+            //if (existing == null)
+            //{
+            return base.InsertInternal(context, data);
+            //    (dbrelationships as List<DbActRelationship>).Add(new DbActRelationship()
+            //    {
+            //        Uuid = retVal.Key.Value.ToByteArray(),
+            //        RelationshipTypeUuid = typeKey,
+            //        SourceUuid = source,
+            //        TargetUuid = target
+            //    });
+            //    return retVal;
+            //}
+            //else
+            //{
+            //    data.Key = new Guid(existing.Uuid);
+            //    return data;
+            //}
         }
 
         /// <summary>
@@ -79,6 +119,34 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
 
             return base.UpdateInternal(context, data);
+        }
+
+        /// <summary>
+        /// Comparer for entity relationships
+        /// </summary>
+        internal class Comparer : IEqualityComparer<ActRelationship>
+        {
+            /// <summary>
+            /// Determine equality between the two relationships
+            /// </summary>
+            public bool Equals(ActRelationship x, ActRelationship y)
+            {
+                return x.SourceEntityKey == y.SourceEntityKey &&
+                    x.TargetActKey == y.TargetActKey &&
+                    (x.RelationshipTypeKey == y.RelationshipTypeKey ||  x.RelationshipType?.Mnemonic == y.RelationshipType?.Mnemonic);
+            }
+
+            /// <summary>
+            /// Get hash code
+            /// </summary>
+            public int GetHashCode(ActRelationship obj)
+            {
+                int result = obj.SourceEntityKey.GetHashCode();
+                result = 37 * result + obj.RelationshipTypeKey.GetHashCode();
+                result = 37 * result + obj.TargetActKey.GetHashCode();
+                result = 37 * result + (obj.RelationshipType?.Mnemonic.GetHashCode() ?? 0);
+                return result;
+            }
         }
     }
 }

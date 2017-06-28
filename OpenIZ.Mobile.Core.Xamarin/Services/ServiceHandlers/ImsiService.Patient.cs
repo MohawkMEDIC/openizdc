@@ -18,6 +18,7 @@
  * Date: 2017-3-31
  */
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
@@ -27,8 +28,11 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Xamarin.Resources;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
 using System.Collections.Generic;
@@ -71,6 +75,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public Patient UpdatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToUpdate)
         {
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+            patientToUpdate.VersionKey = null;
             // Get all the acts if none were supplied, and all of the relationships if none were supplied
             return repository.Save(patientToUpdate).GetLocked() as Patient;
         }
@@ -96,7 +101,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 Patient patient = null;
                 if (search.ContainsKey("_onlineOnly"))
                 {
-                    patient = integrationService.Get<Patient>(Guid.Parse(search["_id"].FirstOrDefault()), null);
+                    patient = integrationService.Get<Patient>(Guid.Parse(search["_id"].FirstOrDefault()), null, new IntegrationQueryOptions()
+                    {
+                        Expand = new String[] { "relationship.target" }
+                    });
                     // Add this to the cache
                     //ApplicationContext.Current.GetService<IDataCachingService>().Add(patient);
                     patient.Tags.Add(new EntityTag("onlineResult", "true"));
@@ -111,10 +119,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             }
             else
             {
-                
+
                 int totalResults = 0,
                     offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                     count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+                Guid queryId = search.ContainsKey("_queryId") ? Guid.Parse(search["_queryId"][0]) : Guid.Empty;
 
                 IEnumerable<Patient> retVal = null;
 
@@ -125,6 +134,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     this.m_tracer.TraceVerbose("Freetext search: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
 
                     var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
+                    
                     // Filtes
                     if (search.ContainsKey("_onlineOnly"))
                     {
@@ -137,10 +147,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(
                                 new NameValueCollection() {
-                                    { tryFields[tryField++] , values }
+                                    { tryFields[tryField] , values.Select(o=>tryFields[tryField].Contains("name.component.value") ? "~" + o : o).ToList() }
                                 }
                             );
-                            bundle = integrationService.Find(predicate, offset, count);
+
+                            bundle = integrationService.Find(predicate, offset, count, new IntegrationQueryOptions() {
+                                Expand = new String[] { "relationship.target" }
+                            });
+                            tryField++;
                         }
 
                         // Now compose bundle
@@ -154,7 +168,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     else
                     {
                         var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
-                        retVal = fts.Search<Patient>(values.ToArray(), offset, count, out totalResults);
+                        retVal = fts.Search<Patient>(values.Select(o=>o.Replace("~","")).ToArray(), offset, count, out totalResults);
                     }
 
                     search.Remove("any");
@@ -183,7 +197,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             retVal = retVal.Where(predicate.Compile());
                         else
                         {
-                            retVal = patientService.Find(predicate, offset, count, out totalResults);
+                            if (search.ContainsKey("_viewModel") && search["_viewModel"][0] != "full")
+                                retVal = (patientService as IFastQueryRepositoryService).FindFast(predicate, offset, count, out totalResults, queryId);
+                            else
+                                retVal = (patientService as IPersistableQueryRepositoryService).Find(predicate, offset, count, out totalResults, queryId);
                         }
                     }
                 }
@@ -196,7 +213,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 				retVal = retVal.Select(o => o.Clone()).OfType<Patient>();
                 if (search.ContainsKey("_onlineOnly"))
                     retVal.ToList().ForEach((o) => {
-                        MemoryCache.Current.RemoveObject(o.GetType(), o.Key);
+                        ApplicationContext.Current.GetService<IDataCachingService>().Remove(o.Key.Value);
                         if (patientService.Get(o.Key.Value, Guid.Empty) == null)
                             o.Tags.Add(new EntityTag("onlineResult", "true"));
                     });
@@ -211,6 +228,76 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 };
             }
         }
+
+        /// <summary>
+		/// Gets a patient.
+		/// </summary>
+		/// <returns>Returns the patient.</returns>
+        [RestOperation(Method = "GET", UriPath = "/Patient.Download", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData DownloadPatient()
+        {
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            if (!search.ContainsKey("_id"))
+                throw new ArgumentNullException("Missing _id parameter");
+
+            Guid patientId = Guid.Parse(search["_id"][0]);
+
+            // Get the patient
+            var imsiIntegrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
+            var pdp = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+
+            // We shove the data onto the queue for import!!! :)
+            ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, 0.1f);
+            var dbundle = imsiIntegrationService.Find<Patient>(o=>o.Key == patientId, 0, 1);
+            dbundle.Item.RemoveAll(o => !(o is Patient || o is Person));
+            pdp.Insert(dbundle);
+            var patient = dbundle.Item.OfType<Patient>().FirstOrDefault();
+
+            // We now want to subscribe this patient our facility
+            var facilityId = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities?.FirstOrDefault();
+            if (facilityId != null)
+            {
+                patient.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.IncidentalServiceDeliveryLocation, Guid.Parse(facilityId)));
+                imsiIntegrationService.Update(patient);
+            }
+            var personBundle = new Bundle();
+            foreach( var rel in patient.Relationships)
+            {
+                var person = imsiIntegrationService.Get<Entity>(rel.TargetEntityKey.Value, null);
+                if(person != null && person.Type == "Person")
+                {
+                    personBundle.Add(person as Person);
+                }
+            }
+            if(personBundle.Item.Count > 0)
+            {
+                pdp.Insert(personBundle);
+            }
+            int tr = 1,
+                ofs = 0;
+            Guid qid = Guid.NewGuid();
+
+            while(ofs < tr)
+            {
+                var bundle = imsiIntegrationService.Find<Act>(o => o.Participations.Where(p=>p.ParticipationRole.Mnemonic == "RecordTarget").Any(p=>p.PlayerEntityKey == patientId), ofs, 20);
+                //bundle.Reconstitute();
+                tr = bundle.TotalResults;
+                ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, ((float)ofs / tr) * 0.9f + 0.1f);
+                ofs += 20;
+                pdp.Insert(bundle);
+
+                // Let the server know we're interested in this stuff
+                foreach (var itm in bundle.Item.OfType<Act>())
+                    itm.Participations.Add(new ActParticipation(ActParticipationKey.InformationRecipient, Guid.Parse(facilityId)));
+
+                imsiIntegrationService.Update(bundle, true);
+            }
+
+            return patient;
+        }
+
 
         /// <summary>
         /// Get a patient
@@ -268,10 +355,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, Guid.Parse("d0f4a878-13cb-4509-9b4f-80b2c1548d2b")) // TODO: Get user's current location
                 }
             };
-            retVal.SetDelayLoad(true);
-            // HACK: For form which is expecting $0ther
-            (retVal.Relationships[1].TargetEntity as Entity).Telecoms[0].SetDelayLoad(false);
-            (retVal.Relationships[0].TargetEntity as Entity).Telecoms[0].SetDelayLoad(false);
             // Serialize the response
             return retVal;
         }

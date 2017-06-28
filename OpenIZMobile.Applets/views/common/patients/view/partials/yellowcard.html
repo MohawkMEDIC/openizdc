@@ -32,16 +32,18 @@
                     <th class="vaccine-table-column" style="text-align:center">1</th>
                     <th class="vaccine-table-column" style="text-align:center">2</th>
                     <th class="vaccine-table-column" style="text-align:center">3</th>
+                    <th ng-if="longestVaccineAdministration &gt; 4" ng-repeat-n="{{longestVaccineAdministration - 4}}">{{4 + $index}}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations track by $index" ng-class-odd="'vaccine-table-row'">
                     <td class="vaccine-table-vaccine">
-                        <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="(event[0].route || event[1].route) == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
-                        <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="(event[0].route || event[1].route) == '0a1388b0-66fb-4063-bfe3-151dd8442838'" />
+                        <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="(event[0] || event[1] || event[2] || event[3]).route == 'd594f99f-0151-41a0-a359-282ab54683a1' || (event[0] || event[1] || event[2] || event[3]).participation.Product.playerModel.formConcept == '9902267c-8f77-4233-bfd3-e6b068ab326a'" />
+                        <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="((event[0] || event[1] || event[2] || event[3]).route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || (event[0] || event[1] || event[2] || event[3]).participation.Product.playerModel.formConcept == '66cbce3a-2e77-401d-95d8-ee0361f4f076') &amp;&amp; (event[0] || event[1] || event[2] || event[3]).typeConcept != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                        <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="((event[0] || event[1] || event[2] || event[3]).route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || (event[0] || event[1] || event[2] || event[3]).participation.Product.playerModel.formConcept == 'aa02267c-8f77-4233-bfd3-e6b068ab326a')&amp;&amp; (event[0] || event[1] || event[2] || event[3]).typeConcept == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
                     {{ antigenName }}</td>
-                    <td ng-repeat="sequence in event track by $index" class="vaccine-table-icon">
-                        <a data-toggle="tab" data-target="#vaccinations">
+                    <td ng-repeat="sequence in event track by $index" class="vaccine-table-icon" ng-if="sequence.statusConcept != 'cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5'">
+                        <a data-toggle="tab" data-target="#vaccinations" ng-click="showVaccineTab()">
                             <div ng-if="sequence != null" class="input-group" ng-switch="sequence.moodConcept">
                                 <div ng-switch-when="acf7baf2-221f-4bc2-8116-ceb5165be079">
                                     <div class="text-danger" ng-if="sequence.stopTime != null &amp;&amp; sequence.stopTime &lt; $root.page.loadTime">
@@ -51,7 +53,7 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </div>
                                     <div class="text-info" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &gt; $root.page.maxEventTime">
-                                        {{ sequence.actTime | date: 'dd-MM-yyyy' }}
+                                        {{ sequence.actTime | datePrecisionFormat:'D' }}
                                         <span class="glyphicon glyphicon glyphicon-th-large"></span>
                                     </div>
                                 </div>
@@ -66,10 +68,11 @@
                                 <div ng-switch-when="ec74541f-87c4-4327-a4b9-97f325501747">
                                     <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-ok"></span> 
-                                        <div ng-if="sequence.actTime != null">{{ sequence.actTime | date: 'dd-MM-yyyy' }}</div>
+                                        <div ng-if="sequence.actTime != null">{{ sequence.actTime | datePrecisionFormat:'D' }}</div>
                                     </div>
                                     <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                                        <span class="glyphicon glyphicon-tasks"></span> 
+                                        <i class="fa fa-universal-access"></i> 
+                                        {{ 'locale.encounters.queued' | i18n }}
                                     </div>
                                     <div class="text-danger" ng-if="sequence.isNegated">
                                         <span class="glyphicon glyphicon-question-sign"></span> {{ 'locale.encounters.notDone' | i18n }} ({{ sequence.reasonConceptModel | oizConcept }})
@@ -78,10 +81,10 @@
                             </div>
                         </a>
                     </td>
-                    <td ng-if="event.length != 4" ng-repeat-n="{{4 - event.length}}"> </td>
+                    <td ng-if="longestVaccineAdministration &gt; event.length" ng-repeat-n="{{longestVaccineAdministration - event.length}}"></td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <!--chart-legend class="chart-legend" ng-repeat="item in yellowcardLegend"></chart-legend-->
+    <chart-legend class="chart-legend" ng-repeat="item in yellowcardLegend track by $index" ng-init="shortRowCols = yellowcardLegend.length - (yellowcardLegend.length &#37; 3)" />
 </div>

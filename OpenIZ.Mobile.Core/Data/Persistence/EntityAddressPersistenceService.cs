@@ -19,8 +19,11 @@
  */
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
+using OpenIZ.Mobile.Core.Exceptions;
 using SQLite.Net;
+using SQLite.Net.Interop;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,7 +55,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
-            return base.FromModelInstance(modelInstance, context);
+
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+
+            return new DbEntityAddress()
+            {
+                Uuid = modelInstance.Key?.ToByteArray(),
+                SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                UseConceptUuid = modelInstance.AddressUseKey?.ToByteArray()
+            };
         }
 
         /// <summary>
@@ -62,12 +73,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure exists
-            if(data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context);
+            if (data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context);
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.InsertInternal(context, data);
 
             // Data component
+            var addPx = ApplicationContext.Current.GetService<EntityAddressComponentPersistenceService>();
+
             if (data.Component != null)
                 base.UpdateAssociatedItems<EntityAddressComponent, EntityAddress>(
                     new List<EntityAddressComponent>(),
@@ -110,11 +123,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<EntityAddressComponent, DbEntityAddressComponent, DbEntityAddressComponent.QueryResult>, ILocalAssociativePersistenceService
     {
-        
+
+        // Address value identifier lookup 
+        private Dictionary<String, byte[]> m_addressValueIds = new Dictionary<string, byte[]>();
+
         /// <summary>
         /// To model instance
         /// </summary>
-        public override EntityAddressComponent ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override EntityAddressComponent ToModelInstance(object dataInstance, LocalDataContext context)
         {
             if (dataInstance == null) return null;
 
@@ -134,21 +150,38 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(EntityAddressComponent modelInstance, LocalDataContext context)
         {
-            var retVal = base.FromModelInstance(modelInstance, context) as DbEntityAddressComponent;
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            var retVal = new DbEntityAddressComponent()
+            {
+                AddressUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray() 
+            };
 
             // Address component already exists?
-            var existing = context.Connection.Table<DbAddressValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
-            if (existing != null && existing.Key != retVal.Key)
-                retVal.ValueUuid = existing.Uuid;
-            else if(!String.IsNullOrEmpty(modelInstance.Value))
+            byte[] existingKey = null;
+            if (String.IsNullOrEmpty(modelInstance.Value)) return retVal;
+            if (!this.m_addressValueIds.TryGetValue(modelInstance.Value, out existingKey))
             {
-                retVal.ValueUuid = Guid.NewGuid().ToByteArray();
-                context.Connection.Insert(new DbAddressValue()
+                var existing = context.Connection.Table<DbAddressValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
+                if (existing != null && existing.Key != retVal.Key)
+                    retVal.ValueUuid = existing.Uuid;
+                else if (!String.IsNullOrEmpty(modelInstance.Value))
                 {
-                    Uuid = retVal.ValueUuid,
-                    Value = modelInstance.Value
-                });
+                    retVal.ValueUuid = Guid.NewGuid().ToByteArray();
+                    context.Connection.Insert(new DbAddressValue()
+                    {
+                        Uuid = retVal.ValueUuid,
+                        Value = modelInstance.Value
+                    });
+                }
+                lock (this.m_addressValueIds)
+                    if (!this.m_addressValueIds.ContainsKey(modelInstance.Value))
+                        this.m_addressValueIds.Add(modelInstance.Value, retVal.ValueUuid);
             }
+            else
+                retVal.ValueUuid = existingKey;
+
             return retVal;
         }
 
@@ -179,7 +212,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public IEnumerable GetFromSource(LocalDataContext context, Guid id, decimal? versionSequenceId)
         {
             int tr = 0;
-            return this.QueryInternal(context, o=>o.SourceEntityKey == id, 0, -1, out tr, Guid.Empty, false);
+            return this.QueryInternal(context, o => o.SourceEntityKey == id, 0, -1, out tr, Guid.Empty, false);
         }
 
     }

@@ -100,7 +100,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
         /// <param name="args">Arguments.</param>
         protected override void WriteTrace(System.Diagnostics.Tracing.EventLevel level, string source, string format, params object[] args)
         {
-
             lock (this.m_logBacklog)
             {
                 this.m_logBacklog.Enqueue(String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args)));

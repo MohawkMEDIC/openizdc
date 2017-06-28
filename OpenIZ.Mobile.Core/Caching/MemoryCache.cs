@@ -38,6 +38,7 @@ using System.Collections;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Security;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Caching
 {
@@ -48,7 +49,10 @@ namespace OpenIZ.Mobile.Core.Caching
     {
 
         // Entry table for the cache
-        private Dictionary<Type, Dictionary<Guid, CacheEntry>> m_entryTable = new Dictionary<Type, Dictionary<Guid, CacheEntry>>();
+        private Dictionary<Guid, CacheEntry> m_entryTable = new Dictionary<Guid, CacheEntry>();
+
+        // Subscribed types
+        private HashSet<Type> m_subscribedTypes = new HashSet<Type>();
 
         // True if the object is disposed
         private bool m_disposed = false;
@@ -78,7 +82,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Bind types
         /// </summary>
-        private Type[] bindTypes = 
+        private Type[] bindTypes =
         {
             typeof(Concept),
             typeof(AssigningAuthority),
@@ -99,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Caching
             foreach (var t in this.bindTypes)
             {
                 this.RegisterCacheType(t);
-                
+
             }
         }
 
@@ -125,11 +129,7 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(t, out cache))
-                return cache.Count;
-            else
-                return 0;
+            return this.m_entryTable.Count;
 
         }
 
@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// </summary>
         public void AddUpdateEntry(object data)
         {
-            
+
             // Throw if disposed
             this.ThrowIfDisposed();
 
@@ -147,110 +147,48 @@ namespace OpenIZ.Mobile.Core.Caching
             if (idData == null || !idData.Key.HasValue)
                 return;
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objData, out cache))
-            {
-                Guid key = idData?.Key ?? Guid.Empty;
-                CacheEntry entry = null;
-
-                if (cache.TryGetValue(key, out entry))
-                    lock (this.m_lock)
-                    {
-#if PERFMON
-                        this.m_tracer.TraceVerbose("Update cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
-#endif
-                        entry.Update(data as IdentifiedData);
-                    }
-                else
-                    lock (this.m_lock)
-                        if (!cache.ContainsKey(key))
-                        {
-#if PERFMON
-                            this.m_tracer.TraceVerbose("Add cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
-#endif
-                            cache.Add(key, new CacheEntry(DateTime.Now, data as IdentifiedData));
-                            this.m_tracer.TraceVerbose("Cache {0} is now {1} large", objData, cache.Count);
-
-                        }
-            }
-            else //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
-                this.RegisterCacheType(data.GetType());
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(idData.Key.Value, out candidate))
+                candidate.Update(data as IdentifiedData);
+            else
+                lock (this.m_lock)
+                    if (!this.m_entryTable.ContainsKey(idData.Key.Value))
+                        this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
 
         }
 
         /// <summary>
         /// Remove the specified object from the cache
         /// </summary>
-        public void RemoveObject(Type objectType, Guid? key)
+        public void RemoveObject(Guid? key)
         {
             this.ThrowIfDisposed();
 
             if (!key.HasValue) return;
-            else if (objectType == null)
-                throw new ArgumentNullException(nameof(objectType));
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objectType, out cache))
-            {
-                CacheEntry candidate = default(CacheEntry);
-                if (cache.TryGetValue(key.Value, out candidate))
-                {
-                    lock (this.m_lock)
-                    {
-#if PERFMON
-                        this.m_tracer.TraceVerbose("Remove cache object ({0}) - {1}", objectType, key);
-#endif
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(key.Value, out candidate))
+                lock (this.m_lock)
+                    this.m_entryTable.Remove(key.Value);
 
-                        cache.Remove(key.Value);
-                    }
-                }
-            }
-            return;
         }
 
         /// <summary>
         /// Try to get an entry from the cache returning null if not found
         /// </summary>
-        public object TryGetEntry(Type objectType, Guid? key)
+        public object TryGetEntry(Guid? key)
         {
             this.ThrowIfDisposed();
 
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
-
             if (!key.HasValue) return null;
-            else if (objectType == null)
-                throw new ArgumentNullException(nameof(objectType));
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if(this.m_entryTable.TryGetValue(objectType, out cache))
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(key.Value, out candidate))
             {
-                CacheEntry candidate = default(CacheEntry);
-                if (cache.TryGetValue(key.Value, out candidate))
-                {
-                    candidate.Touch();
-#if PERFMON
-                    this.m_tracer.TraceVerbose("Retrieved cache entry ({0}) {1}", objectType, candidate);
-                    sw.Stop();
-                    this.m_tracer.TraceVerbose("PERF: TryGetEntry HIT {0} ({1} ms)", key, sw.ElapsedMilliseconds);
-#endif
-                    return candidate.Data;
-                }
-                else /// try get entry slow
-                {
-                    var entryTabl = this.m_entryTable.FirstOrDefault(o => objectType.GetTypeInfo().IsAssignableFrom(o.Key.GetTypeInfo()) && o.Value.ContainsKey(key.Value));
-                    if (entryTabl.Value == null) return null;
-                    else
-                        return entryTabl.Value[key.Value].Data;
-                }
+                candidate.Touch();
+                return candidate.Data;
             }
 
-#if PERFMON
-            sw.Stop();
-            this.m_tracer.TraceVerbose("PERF: TryGetEntry MISS {0} ({1} ms)", key, sw.ElapsedMilliseconds);
-#endif
             return null;
         }
 
@@ -258,7 +196,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// Sets the minimum age
         /// </summary>
         /// <param name="age"></param>
-        public  void SetMinAge(TimeSpan age)
+        public void SetMinAge(TimeSpan age)
         {
             this.ThrowIfDisposed();
 
@@ -271,39 +209,40 @@ namespace OpenIZ.Mobile.Core.Caching
         public void ReducePressure()
         {
             this.ThrowIfDisposed();
-            
 
             // Entry table clean
-            try {
-                if (!Monitor.TryEnter(this.m_lock))
-                    return; // Something else is locking the process
-
-                this.m_tracer.TraceInfo("Starting memory cache pressure reduction...");
-                var nowTicks = DateTime.Now.Ticks;
-
-                foreach (var itm in this.m_entryTable)
+            if (Monitor.TryEnter(this.m_lock))
+                try
                 {
+
+                    this.m_tracer.TraceInfo("Starting memory cache pressure reduction...");
+                    var nowTicks = DateTime.Now.Ticks;
+
+
                     int maxSize = this.m_configuration.Cache.MaxSize;
-                    var garbageBin = itm.Value.AsParallel().OrderByDescending(o => o.Value.LastUpdateTime).Take(itm.Value.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
+                    var garbageBin = this.m_entryTable.OrderByDescending(o => o.Value.LastUpdateTime).Take(this.m_entryTable.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
 
                     if (garbageBin.Count() > 0)
                     {
-                        this.m_tracer.TraceInfo("Cache {0} overcommitted by {1} will remove entries older than min age..", garbageBin.Count(), itm.Key.FullName);
+                        this.m_tracer.TraceInfo("Cache overcommitted by {0} will remove entries older than min age..", garbageBin.Count());
 
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
-                            IEnumerable<Guid> gc = o as IEnumerable<Guid>;
-                            foreach (var g in gc)
-                                lock (this.m_lock)
-                                    itm.Value.Remove(g);
+                            try
+                            {
+                                IEnumerable<Guid> gc = o as IEnumerable<Guid>;
+                                foreach (var g in gc.ToArray())
+                                    lock (this.m_lock)
+                                        this.m_entryTable.Remove(g);
+                            }
+                            catch { }
                         }, garbageBin);
                     }
                 }
-            }
-            finally
-            {
-                Monitor.Exit(this.m_lock);
-            }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
+                }
         }
 
         /// <summary>
@@ -313,9 +252,7 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-            foreach (var itm in this.m_entryTable)
-                lock (this.m_lock)
-                    itm.Value.Clear();
+            this.m_entryTable.Clear();
         }
 
 
@@ -326,38 +263,35 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-           
+
             long nowTicks = DateTime.Now.Ticks;
-            try// This time wait for a lock
-            {
-                if (!Monitor.TryEnter(this.m_lock))
-                    return;
-
-                this.m_tracer.TraceInfo("Starting memory cache deep clean...");
-
-                // Entry table clean
-                foreach (var itm in this.m_entryTable)
+            if (Monitor.TryEnter(this.m_lock))
+                try// This time wait for a lock
                 {
+
+                    this.m_tracer.TraceInfo("Starting memory cache deep clean...");
+
+                    // Entry table clean
+
                     // Clean old data
-                    var garbageBin = itm.Value.AsParallel().Where(o => nowTicks - o.Value.LastUpdateTime > this.m_configuration.Cache.MaxAge).Select(o => o.Key);
+                    var garbageBin = this.m_entryTable.Where(o => nowTicks - o.Value.LastUpdateTime > this.m_configuration.Cache.MaxAge).Select(o => o.Key);
                     if (garbageBin.Count() > 0)
                     {
-                        this.m_tracer.TraceInfo("Will clean {0} stale entries from cache {1}..", garbageBin.Count(), itm.Key.FullName);
+                        this.m_tracer.TraceInfo("Will clean {0} stale entries from cache..", garbageBin.Count());
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
                             foreach (var g in gc.ToArray())
                                 lock (this.m_lock)
-                                    itm.Value.Remove(g);
+                                    this.m_entryTable.Remove(g);
                         }, garbageBin);
                     }
 
                 }
-            }
-            finally
-            {
-                Monitor.Exit(this.m_lock);
-            }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
+                }
         }
 
         /// <summary>
@@ -368,18 +302,9 @@ namespace OpenIZ.Mobile.Core.Caching
 
             this.ThrowIfDisposed();
 
-            // Lock the master cache 
-            Dictionary<Guid, CacheEntry> cache = null;
-            lock (this.m_lock)
-            {
-                if (!this.m_entryTable.TryGetValue(t, out cache))
-                {
-                    cache = new Dictionary<Guid, CacheEntry>(10);
-                    this.m_entryTable.Add(t, cache);
-                }
-                else
-                    return;
-            }
+            if (this.m_subscribedTypes.Contains(t))
+                return;
+            this.m_subscribedTypes.Add(t);
 
             // We want to subscribe when this object is changed so we can keep the cache fresh
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(t);
@@ -481,7 +406,7 @@ namespace OpenIZ.Mobile.Core.Caching
         //    foreach (var item in properties)
         //    {
         //        var value = item.GetValue(data);
-                
+
         //        if (value is IList && (value as IList).Count > 0)
         //        {
         //            foreach (var listItem in value as IList)

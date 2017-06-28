@@ -36,6 +36,16 @@
     <MonoDataSqlitePortablePath Condition="'$(Platform)' == 'x86'">$(MonoDataSqlitePortableHardware)-x86</MonoDataSqlitePortablePath>
     <MonoDataSqlitePortablePath Condition="'$(Platform)' == 'ARM'">$(MonoDataSqlitePortableHardware)-arm</MonoDataSqlitePortablePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
@@ -125,6 +135,7 @@
   <ItemGroup>
     <Compile Include="ConsoleParameters.cs" />
     <Compile Include="ConsoleTraceWriter.cs" />
+    <Compile Include="MiniAppletManagerService.cs" />
     <Compile Include="MiniConfigurationManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -145,6 +156,10 @@
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554df209-7744-433f-993a-783e2a2803ef}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Mobile.Reporting\OpenIZ.Mobile.Reporting.csproj">
+      <Project>{39A382D5-A4A1-415A-8CEB-618177E23FAC}</Project>
+      <Name>OpenIZ.Mobile.Reporting</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

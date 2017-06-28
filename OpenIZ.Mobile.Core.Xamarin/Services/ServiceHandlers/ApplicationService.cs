@@ -43,6 +43,9 @@ using OpenIZ.Mobile.Core.Interop;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using System.IO.Compression;
 using Newtonsoft.Json.Linq;
+using OpenIZ.Mobile.Core.Xamarin.Threading;
+using OpenIZ.Core.Applets.Services;
+using OpenIZ.Mobile.Core.Tickler;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -60,6 +63,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         private Tracer m_tracer = Tracer.GetTracer(typeof(ApplicationService));
 
         /// <summary>
+        /// Get new uuid
+        /// </summary>
+        [RestOperation(UriPath = "/uuid", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
+        [Anonymous]
+        [return: RestMessage(RestMessageFormat.Raw)]
+        public String NewGuid()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
         /// Submits a bug report via the AMI interface
         /// </summary>
         [RestOperation(UriPath = "/bug", Method = "POST", FaultProvider = nameof(ApplicationServiceFault))]
@@ -67,7 +81,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.Json)]
         public DiagnosticReport PostBugReport([RestMessage(RestMessageFormat.Json)] BugReport report)
         {
-            report.ApplicationInfo = new ApplicationInfo();
+            report.ApplicationInfo = new ApplicationInfo(false);
 
             if (report.IncludeData)
             {
@@ -111,6 +125,28 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         }
 
         /// <summary>
+        /// Get tickles
+        /// </summary>
+        [RestOperation(UriPath = "/tickle", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
+        [Demand(PolicyIdentifiers.Login)]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public List<Tickle> GetTickles()
+        {
+            return ApplicationContext.Current.GetService<ITickleService>().GetTickles(o=>o.Target == Guid.Empty || o.Target == AuthenticationContext.Current.Session.SecurityUser.Key).ToList();
+        }
+
+        /// <summary>
+        /// Get tickles
+        /// </summary>
+        [RestOperation(UriPath = "/tickle", Method = "POST", FaultProvider = nameof(ApplicationServiceFault))]
+        [Demand(PolicyIdentifiers.Login)]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public void SendTickle([RestMessage(RestMessageFormat.Json)] Tickle tickle)
+        {
+            ApplicationContext.Current.GetService<ITickleService>()?.SendTickle(tickle);
+        }
+
+        /// <summary>
         /// Get menu information
         /// </summary>
         [RestOperation(UriPath = "/menu", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
@@ -124,7 +160,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Cannot have menus if not logged in
                 if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated) return null;
 
-                var rootMenus = XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
+                var rootMenus = ApplicationContext.Current.GetService<IAppletManagerService>().Applets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
                 List<MenuInformation> retVal = new List<MenuInformation>();
 
                 // Create menus
@@ -149,7 +185,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             // TODO: Demand permission
             if (menu.Asset != null &&
-                !XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+                !ApplicationContext.Current.GetService<IAppletManagerService>().Applets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             // Get text for menu item
@@ -280,6 +316,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 return retVal;
             }
         }
+
         /// <summary>
         /// Get the alerts from the service
         /// </summary>
@@ -288,7 +325,55 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             try
             {
-                return new ApplicationInfo();
+                return new ApplicationInfo(false);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Could not retrieve app info {0}...", e);
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Get the alerts from the service
+        /// </summary>
+        [RestOperation(UriPath = "/health", Method = "GET")]
+        public ApplicationHealthInfo GetHealth()
+        {
+            try
+            {
+                var thdp = ApplicationContext.Current.GetService<OpenIZThreadPool>();
+                if (thdp == null) return null;
+
+                return new ApplicationHealthInfo()
+                {
+                    Concurrency = thdp.Concurrency,
+                    Threads = thdp.Threads.ToArray(),
+                    Active = thdp.ActiveThreads,
+                    WaitState = thdp.WaitingThreads,
+                    Timers = thdp.ActiveTimers,
+                    NonQueued = thdp.NonQueueThreads,
+                    Utilization = String.Format("{0:#0}%", (thdp.ActiveThreads / (float)thdp.Concurrency) * 100)
+                };
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Could not retrieve app info {0}...", e);
+                throw;
+            }
+
+        }
+
+        /// <summary>
+        /// Get the alerts from the service
+        /// </summary>
+        [RestOperation(UriPath = "/info.max", Method = "GET")]
+        public ApplicationInfo GetInfoMax()
+        {
+            try
+            {
+                return new ApplicationInfo(true);
             }
             catch (Exception e)
             {

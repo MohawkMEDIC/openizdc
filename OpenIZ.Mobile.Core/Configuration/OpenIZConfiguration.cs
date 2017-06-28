@@ -45,10 +45,12 @@ namespace OpenIZ.Mobile.Core.Configuration
     public class OpenIZConfiguration
 	{
 
-		/// <summary>
-		/// OpenIZ configuration
-		/// </summary>
-		public OpenIZConfiguration ()
+	    private static XmlSerializer s_xsz = new XmlSerializer(typeof(OpenIZConfiguration));
+        
+        /// <summary>
+        /// OpenIZ configuration
+        /// </summary>
+        public OpenIZConfiguration ()
 		{
 			this.Sections = new List<Object> ();
 			this.Version = typeof(OpenIZConfiguration).GetTypeInfo ().Assembly.GetName ().Version.ToString ();
@@ -85,8 +87,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <param name="dataStream">Data stream.</param>
 		public static OpenIZConfiguration Load(Stream dataStream)
 		{
-			XmlSerializer xsz = new XmlSerializer(typeof(OpenIZConfiguration));
-			return xsz.Deserialize (dataStream) as OpenIZConfiguration;
+			return s_xsz.Deserialize (dataStream) as OpenIZConfiguration;
 		}
 
 		/// <summary>
@@ -95,8 +96,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <param name="dataStream">Data stream.</param>
 		public void Save(Stream dataStream)
 		{
-			XmlSerializer xsz = new XmlSerializer (typeof(OpenIZConfiguration));
-			xsz.Serialize (dataStream, this);
+            s_xsz.Serialize (dataStream, this);
 		}
 
 

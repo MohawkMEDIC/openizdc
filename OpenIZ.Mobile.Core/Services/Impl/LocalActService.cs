@@ -17,10 +17,12 @@
  * User: justi
  * Date: 2016-8-17
  */
+using MARC.HI.EHRS.SVC.Auditing.Services;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Synchronization;
@@ -29,19 +31,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using OpenIZ.Core.Interfaces;
+using OpenIZ.Core.Model.Patch;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
-	/// <summary>
-	/// Represents an act repository service.
-	/// </summary>
-	public class LocalActService : IActRepositoryService, IPersistableQueryProvider, IRepositoryService<Act>,
+    /// <summary>
+    /// Represents an act repository service.
+    /// </summary>
+    public class LocalActService : IActRepositoryService, IPersistableQueryRepositoryService,
+        IRepositoryService<Act>,
         IRepositoryService<SubstanceAdministration>,
         IRepositoryService<QuantityObservation>,
         IRepositoryService<PatientEncounter>,
         IRepositoryService<CodedObservation>,
         IRepositoryService<TextObservation>
     {
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+
         public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
         {
             throw new NotImplementedException();
@@ -51,11 +61,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// Finds acts based on a specific query.
         /// </summary>
         public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
-		{
-            var results = this.Query(filter, offset, count, out totalResults, Guid.Empty);
-            results = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterQuery(results) ?? results;
-            return results;
-		}
+        {
+            return this.Find<TAct>(filter, offset, count, out totalResults, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        public Act Get(Guid key, Guid versionKey)
+        {
+            return this.Get<Act>(key, Guid.Empty);
+        }
 
         /// <summary>
         /// Get by key
@@ -69,48 +85,52 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// Get the specified act
         /// </summary>
         public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
-			}
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
+            }
 
-			var result = persistenceService.Get(key);
+            var result = persistenceService.Get(key);
 
-	        if (result != null)
-	        {
-				result = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterRetrieve(result) ?? result;
-			}
+            if (result != null)
+            {
+                result = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterRetrieve(result) ?? result;
+            }
+
+            // Data disclosed
+            this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(key.ToString(), new object[] { result }));
 
             return result;
-		}
+        }
 
         public Act Insert(Act data)
         {
-            throw new NotImplementedException();
+            return this.Insert<Act>(data);
         }
 
         /// <summary>
         /// Insert the specified act
         /// </summary>
         public TAct Insert<TAct>(TAct insert) where TAct : Act
-		{
+        {
             insert = this.Validate(insert);
 
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
-			}
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+            }
 
             insert = breService?.BeforeInsert(insert) ?? insert;
-			insert = persistenceService.Insert(insert);
-            breService?.AfterInsert(insert);
-            
+            insert = persistenceService.Insert(insert);
+
+            insert = breService?.AfterInsert(insert) ?? insert;
+
             // Patient relationships
             if (insert.Relationships.Count > 0 || insert.Participations.Count > 0)
                 SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(insert), DataOperationType.Insert);
@@ -118,8 +138,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
             //SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
 
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(insert));
+
             return insert;
-		}
+        }
 
         public Act Obsolete(Guid key)
         {
@@ -130,33 +152,40 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// Obsolete the specified act
         /// </summary>
         public TAct Obsolete<TAct>(Guid key) where TAct : Act
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
-			}
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+            }
 
-			var act = persistenceService.Get(key);
+            var act = persistenceService.Get(key);
 
-			if (act == null)
-				throw new KeyNotFoundException(key.ToString());
+            if (act == null)
+                throw new KeyNotFoundException(key.ToString());
 
             act = breService?.BeforeObsolete(act) ?? act;
-			act = persistenceService.Obsolete(act);
+            act = persistenceService.Obsolete(act);
             act = breService?.AfterObsolete(act) ?? act;
 
+            // Obsolete child-acts
+            if (act.Relationships != null)
+                // check for empty act relationships
+                foreach (var itm in act.Relationships.Where(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.HasComponent && !o.IsEmpty()))
+                    this.Obsolete<Act>(itm.TargetActKey.Value);
+
             SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Obsolete);
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(act));
 
             return act;
-		}
+        }
 
         /// <summary>
         /// Queries the Act service using the specified state query id
         /// </summary>
-        public IEnumerable<TAct> Query<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
+        public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
@@ -166,6 +195,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             var results = persistenceService.Query(filter, offset, count, out totalResults, queryId);
             results = breService?.AfterQuery(results) ?? results;
+            this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(filter.ToString(), results));
             return results;
         }
 
@@ -178,24 +208,29 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// Insert or update the specified act
         /// </summary>
         public TAct Save<TAct>(TAct act) where TAct : Act
-		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
-			if (persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
-			}
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+            }
 
             // Validate act
             act = this.Validate(act);
 
-			try
-			{
+            try
+            {
                 // Get older version
                 if (act.Key.HasValue)
                 {
                     var old = persistenceService.Get(act.Key.Value).Clone();
+                    if (old is Act)
+                        old = (TAct)(old as Act).Copy();
+
+                    if (old == null)
+                        throw new KeyNotFoundException();
 
                     // Fire before update
                     act = breService?.BeforeUpdate(act) ?? act;
@@ -204,15 +239,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     act = persistenceService.Update(act);
 
                     // First after update
-                    breService?.AfterUpdate(act);
+                    act = breService?.AfterUpdate(act);
 
-                    var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
+                    var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, this.Get(act.Key.Value));
 
                     SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
-                    MemoryCache.Current.RemoveObject(typeof(TAct), act.Key);
-                    MemoryCache.Current.RemoveObject(typeof(Act), act.Key);
+                    ApplicationContext.Current.GetService<IDataCachingService>().Remove(act.Key.Value);
+                    ApplicationContext.Current.GetService<IDataCachingService>().Remove(act.Key.Value);
                 }
                 else throw new KeyNotFoundException();
+
+                this.DataUpdated?.Invoke(this, new AuditDataEventArgs(act));
                 return act;
             }
             catch (KeyNotFoundException)
@@ -222,7 +259,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 act = persistenceService.Insert(act);
 
-                breService?.AfterInsert(act);
+                act = breService?.AfterInsert(act) ?? act;
 
                 // Patient relationships
                 if (act.Relationships.Count > 0 || act.Participations.Count > 0)
@@ -230,15 +267,84 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 else
                     SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Insert);
 
+                this.DataCreated?.Invoke(this, new AuditDataEventArgs(act));
+
                 return act;
             }
         }
 
-		/// <summary>
-		/// Validates an act.
-		/// </summary>
-		public TAct Validate<TAct>(TAct data) where TAct : Act
-		{
+        /// <summary>
+        /// Insert or update the specified act
+        /// </summary>
+        public TAct Nullify<TAct>(TAct act) where TAct : Act
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+            }
+
+            // Validate act
+            act = this.Validate(act);
+
+            // Get older version
+            if (act.Key.HasValue)
+            {
+                var old = persistenceService.Get(act.Key.Value).Clone();
+                if (old == null)
+                    throw new KeyNotFoundException();
+
+                // Fire before update
+                act = breService?.BeforeUpdate(act) ?? act;
+
+                // update
+                act.StatusConceptKey = StatusKeys.Nullified; // Status is always nullified
+                act = persistenceService.Update(act);
+
+                // First after update
+                act = breService?.AfterUpdate(act);
+
+                // Obsolete child-acts
+                if (act.Relationships != null)
+                    // check for empty act relationships
+                    foreach (var itm in act.Relationships.Where(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.HasComponent && !o.IsEmpty()))
+                        this.Nullify<Act>(itm.TargetAct ?? this.Get(itm.TargetActKey.Value));
+
+                // Manually create a patch for this
+                var diff = new Patch()
+                {
+                    Key = Guid.NewGuid(),
+                    AppliesTo = new PatchTarget(old),
+                    Operation = new List<PatchOperation>()
+                    {
+                        new PatchOperation(PatchOperationType.Test, "id", act.Key),
+                        new PatchOperation(PatchOperationType.Test, "version", act.VersionKey),
+                        new PatchOperation(PatchOperationType.Replace, "statusConcept", StatusKeys.Nullified)
+                    },
+                    CreationTime = DateTime.Now
+                };
+                if (act.ReasonConceptKey.HasValue)
+                    diff.Operation.Add(new PatchOperation(PatchOperationType.Replace, "reasonConcept", act.ReasonConceptKey));
+
+                SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(act.Key.Value);
+            }
+            else throw new KeyNotFoundException();
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(act));
+
+            return act;
+
+
+        }
+
+        /// <summary>
+        /// Validates an act.
+        /// </summary>
+        public TAct Validate<TAct>(TAct data) where TAct : Act
+        {
             var details = ApplicationContext.Current.GetService<IBusinessRulesService<Act>>()?.Validate(data) ?? new List<DetectedIssue>();
             if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
                 throw new OpenIZ.Core.Exceptions.DetectedIssueException(details);
@@ -246,19 +352,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             // Correct author information and controlling act information
             data = data.Clean() as TAct;
 
-			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            var currentUserEntity = AuthenticationContext.Current.Session?.UserEntity;
+            var currentLocation = currentUserEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation);
 
-			var currentUserEntity = AuthenticationContext.Current.Session?.UserEntity;
-            var currentLocation = currentUserEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation);
             // Set authororiginator
             if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator || o.ParticipationRole?.Mnemonic == "Authororiginator"))
-				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
+                data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity.Key));
+
             // Set location if not done
-            if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.EntryLocation|| o.ParticipationRole?.Mnemonic == "EntryLocation" || o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location") && currentLocation != null)
+            if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.EntryLocation || o.ParticipationRole?.Mnemonic == "EntryLocation" || o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location") && currentLocation != null)
                 data.Participations.Add(new ActParticipation(ActParticipationKey.EntryLocation, currentLocation?.TargetEntityKey));
 
             return data;
-		}
+        }
 
 
         /// <summary>
@@ -268,6 +374,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         {
             return this.Find<Act>(query, offset, count, out totalResults);
         }
+
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        SubstanceAdministration IRepositoryService<SubstanceAdministration>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<SubstanceAdministration>(key, Guid.Empty);
+        }
+
 
         /// <summary>
         /// Get sbadm
@@ -318,6 +433,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return this.Obsolete<SubstanceAdministration>(key);
         }
 
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        QuantityObservation IRepositoryService<QuantityObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<QuantityObservation>(key, Guid.Empty);
+        }
 
         /// <summary>
         /// Get sbadm
@@ -366,6 +488,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         QuantityObservation IRepositoryService<QuantityObservation>.Obsolete(Guid key)
         {
             return this.Obsolete<QuantityObservation>(key);
+        }
+
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        CodedObservation IRepositoryService<CodedObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<CodedObservation>(key, Guid.Empty);
         }
 
 
@@ -418,6 +548,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return this.Obsolete<CodedObservation>(key);
         }
 
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        TextObservation IRepositoryService<TextObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<TextObservation>(key, Guid.Empty);
+        }
+
+
 
         /// <summary>
         /// Get sbadm
@@ -466,6 +605,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         TextObservation IRepositoryService<TextObservation>.Obsolete(Guid key)
         {
             return this.Obsolete<TextObservation>(key);
+        }
+
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        PatientEncounter IRepositoryService<PatientEncounter>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<PatientEncounter>(key, Guid.Empty);
         }
 
 

@@ -55,6 +55,10 @@ using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Interop.AMI;
+using OpenIZ.Mobile.Core.Security.Audit;
+using System.Net;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -186,10 +190,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public ConfigurationViewModel SaveConfiguration([RestMessage(RestMessageFormat.Json)]JObject optionObject)
         {
             // Clean up join realm stuff
-            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(OAuthIdentityProvider).AssemblyQualifiedName);
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(AmiPolicyInformationService).AssemblyQualifiedName);
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(ImsiPersistenceService).AssemblyQualifiedName);
             ApplicationContext.Current.Configuration.Sections.RemoveAll(o => o is SynchronizationConfigurationSection);
+
+            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalAuditRepositoryService).AssemblyQualifiedName);
+            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalAuditService).AssemblyQualifiedName);
 
             // Data mode
             switch (optionObject["data"]["mode"].Value<String>())
@@ -197,23 +203,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 case "online":
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(LocalPolicyInformationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiPolicyInformationService).AssemblyQualifiedName);
-                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
+
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiPersistenceService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiTwoFactorRequestService).AssemblyQualifiedName);
 
                     break;
                 case "offline":
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(OAuthIdentityProvider).AssemblyQualifiedName || o == typeof(HttpBasicIdentityProvider).AssemblyQualifiedName);
 
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalIdentityService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Insert(0, typeof(SQLiteConnectionManager).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
-                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalIdentityService).AssemblyQualifiedName);
                     break;
                 case "sync":
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Insert(0, typeof(SQLiteConnectionManager).AssemblyQualifiedName);
-
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalAlertService).AssemblyQualifiedName);
-                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(QueueManagerService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(RemoteSynchronizationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiIntegrationService).AssemblyQualifiedName);
@@ -225,92 +230,151 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     var syncConfig = new SynchronizationConfigurationSection();
                     var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
                     // TODO: Customize this and clean it up ... It is very hackish
-                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ExtensionType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Person", "Act" })
+                    foreach (var res in new String[] {
+                        "ConceptSet",
+                        "AssigningAuthority",
+                        "IdentifierType",
+                        "TemplateDefinition",
+                        "ExtensionType",
+                        "ConceptClass",
+                        "Concept",
+                        "Material",
+                        "Place",
+                        "PlaceMe",
+                        "Organization",
+                        "UserEntity",
+                        "UserEntityMe",
+                        "Provider",
+                        "ManufacturedMaterial",
+                        "Person",
+                        "PatientEncounter",
+                        "SubstanceAdministration",
+                        "CodedObservation",
+                        "QuantityObservation",
+                        "TextObservation",
+                        "Act"})
                     {
                         var syncSetting = new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = res == "UserEntity" || res == "Person" || res == "Act" ? SynchronizationPullTriggerType.Always :
+                            Triggers = new String[] { "Person", "Act", "SubstanceAdministration", "QuantityObservation", "CodedObservation", "TextObservation", "PatientEncounter" }.Contains(res) ? SynchronizationPullTriggerType.Always :
                                 SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
-                        
+
                         // Subscription
                         if (optionObject["data"]["sync"]["subscribe"] == null)
                         {
                             var efield = typeof(EntityClassKeys).GetField(res);
 
-                            if(res == "Person")
+                            if (res == "Person")
                             {
                                 syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient);
                                 syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient);
                             }
+                            else if (res == "Act")
+                            {
+                                syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement);
+                                syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply);
+                            }
+                            else if (res == "EntityRelationship" || res == "UserEntityMe") continue;
                             else if (efield != null && res != "Place")
                                 syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
                         }
                         else
                         { // Only interested in a few facilities
-                            foreach (var itm in optionObject["data"]["sync"]["subscribe"].Values<String>())
+                            var facility = optionObject["data"]["sync"]["subscribe"].ToString();
+                            if (!syncConfig.Facilities.Contains(facility))
+                                syncConfig.Facilities.Add(facility);
+
+                            switch (res)
                             {
-                                if (!syncConfig.Facilities.Contains(itm))
-                                    syncConfig.Facilities.Add(itm);
-
-                                switch (res)
-                                {
-                                    case "UserEntity":
-                                        if (syncSetting.Filters.Count == 0)
-                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        break;
-                                    case "Person":
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        break;
-                                    case "Act":
-                                        syncSetting.Filters.Add("classConcept=a064984f-9847-4480-8bea-dddf64b3c77c&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
-                                        //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("participation[PrimaryInformationRecipient].player=" + itm + "&_expand=relationship&_expand=participation");
-                                        break;
-                                    case "Place":
-                                        if (syncSetting.Filters.Count == 0)
-                                        {
-                                            syncSetting.Filters.Add("id=!" + itm + "&classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
-                                            syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
-                                        }
-                                        syncSetting.Filters.Add("id=" + itm + "&_expand=relationship");
-                                        break;
-                                    case "Material":
-                                        if (syncSetting.Filters.Count == 0)
-                                            syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Material);
-                                        break;
-                                    case "ManufacturedMaterial":
-                                        if (syncSetting.Filters.Count == 0)
-                                            syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ManufacturedMaterial);
-                                        break;
-                                }
-
+                                case "UserEntity":
+                                case "Provider":
+                                    if (syncSetting.Filters.Count == 0)
+                                    {
+                                        syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facility + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("participation.source.participation.player=" + facility + "&_exclude=relationship&_exclude=participation");
+                                    }
+                                    break;
+                                case "Person":
+                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facility);
+                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facility);
+                                    break;
+                                case "Act":
+                                    syncSetting.Filters.Add("classConcept=!" + ActClassKeys.SubstanceAdministration +
+                                        "&classConcept=!" + ActClassKeys.Observation +
+                                        "&classConcept=!" + ActClassKeys.Encounter +
+                                        "&classConcept=!" + ActClassKeys.Procedure +
+                                        "&participation[Destination|Location].player=" + facility + "&_expand=relationship&_expand=participation");
+	                                //syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+									//syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+                                    //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
+                                    break;
+                                case "UserEntityMe":
+                                    syncSetting.ResourceAqn = "UserEntity";
+                                    syncSetting.Triggers = SynchronizationPullTriggerType.Always;
+                                    syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + facility + "&_expand=relationship&_expand=participation");
+                                    break;
+                                case "SubstanceAdministration":
+                                case "QuantityObservation":
+                                case "CodedObservation":
+                                case "TextObservation":
+                                case "PatientEncounter":
+                                    // I want all stuff for patients in my catchment
+                                    syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facility);
+                                    // I want all stuff for my facility for patients which are not assigned to me
+                                    syncSetting.Filters.Add("participation[Location|InformationRecipient|EntryLocation].player=" + facility + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + facility + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=!" + facility);
+                                    // All stuff that is happening out of my facility for any patient associated with me
+                                    //syncSetting.Filters.Add("participation[Location|InformationRecipient|EntryLocation].player=!" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + itm);
+                                    //syncSetting.Filters.Add("participation[Location].player=!" + itm + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm);
+                                    //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
+                                    break;
+                                case "Place":
+                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
+                                    syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
+                                    break;
+                                case "PlaceMe":
+                                    syncSetting.ResourceAqn = "Place";
+                                    syncSetting.Triggers = SynchronizationPullTriggerType.Always;
+                                    syncSetting.Filters.Add("id=" + facility);
+                                    syncSetting.Always = true;
+                                    break;
+                                case "Material":
+                                    if (syncSetting.Filters.Count == 0)
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Material);
+                                    break;
+                                case "ManufacturedMaterial":
+                                    if (syncSetting.Filters.Count == 0)
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ManufacturedMaterial);
+                                    break;
                             }
                         }
 
                         // Assignable from
-                        if (typeof(BaseEntityData).IsAssignableFrom(binder.BindToType(typeof(BaseEntityData).Assembly.FullName, res)))
-                        {
-                            for (int i = 0; i < syncSetting.Filters.Count; i++)
-                                syncSetting.Filters[i] += "&obsoletionTime=null";
-                            if (syncSetting.Filters.Count == 0)
-                                syncSetting.Filters.Add("obsoletionTime=null");
-                        }
+                        //if (typeof(BaseEntityData).IsAssignableFrom(binder.BindToType(typeof(BaseEntityData).Assembly.FullName, res)))
+                        //{
+                        //    for (int i = 0; i < syncSetting.Filters.Count; i++)
+                        //        syncSetting.Filters[i] += "&obsoletionTime=null";
+                        //    if (syncSetting.Filters.Count == 0)
+                        //        syncSetting.Filters.Add("obsoletionTime=null");
+                        //}
 
                         // TODO: Patient registration <> facility
+
                         syncConfig.SynchronizationResources.Add(syncSetting);
                     }
-
+                    syncConfig.SynchronizationResources.Add(new SynchronizationResource()
+                    {
+                        ResourceAqn = "EntityRelationship",
+                        Triggers = SynchronizationPullTriggerType.OnCommit
+                    });
                     if (optionObject["data"]["sync"]["pollInterval"].Value<String>() != "00:00:00")
                         syncConfig.PollIntervalXml = optionObject["data"]["sync"]["pollInterval"].Value<String>();
                     ApplicationContext.Current.Configuration.Sections.Add(syncConfig);
 
                     break;
             }
+
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalRoleProviderService).AssemblyQualifiedName);
             // Password hashing
             switch (optionObject["security"]["hasher"].Value<String>())
@@ -326,10 +390,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     break;
             }
 
+            // Audit retention.
+            ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().AuditRetention = TimeSpan.Parse(optionObject["security"]["auditRetention"].Value<String>());
+
+            if (optionObject["security"]["onlySubscribedAuth"].Value<Boolean>())
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().OnlySubscribedFacilities = true;
+
             // Proxy
             if (optionObject["network"]["useProxy"].Value<Boolean>())
                 ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>().ProxyAddress = optionObject["network"]["proxyAddress"].Value<String>();
 
+            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets = true;
             // Log settings
             var logSettings = ApplicationContext.Current.Configuration.GetSection<DiagnosticsConfigurationSection>();
             logSettings.TraceWriter = new System.Collections.Generic.List<TraceWriterConfiguration>()
@@ -351,6 +422,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             };
 
+            
             this.m_tracer.TraceInfo("Saving configuration options {0}", optionObject);
             XamarinApplicationContext.Current.ConfigurationManager.Save();
 
@@ -370,13 +442,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             String deviceName = realmData["deviceName"][0];
             this.m_tracer.TraceInfo("Joining {0}", realmUri);
 
-            List<string> enableTrace = null, noTimeout = null, enableSSL = null;
+            List<string> enableTrace = null, noTimeout = null, enableSSL = null, portNo;
             realmData.TryGetValue("enableTrace", out enableTrace);
             enableTrace = enableTrace ?? new List<String>();
             realmData.TryGetValue("noTimeout", out noTimeout);
             noTimeout = noTimeout ?? new List<String>();
             realmData.TryGetValue("enableSSL", out enableSSL);
             enableSSL = enableSSL ?? new List<string>();
+            realmData.TryGetValue("port", out portNo);
+            portNo = portNo ?? new List<string>() { "8080" };
+
 
             // Stage 1 - Demand access admin policy
             try
@@ -404,94 +479,93 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     "HS256"
                 };
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenType = "urn:ietf:params:oauth:token-type:jwt";
+                // Parse ACS URI
+                var scheme = enableSSL.FirstOrDefault() == "true" ? "https" : "http";
+                // AMI Client
+                AmiServiceClient amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
 
-                string scheme = enableSSL.FirstOrDefault() == "true" ? "https" : "http";
-                string portScheme = scheme == "http" ? "8080" : "8443";
-                String imsiUri = String.Format("{0}://{1}:{2}/imsi", scheme, realmUri, portScheme),
-                    oauthUri = String.Format("{0}://{1}:{2}/auth", scheme, realmUri, portScheme),
-                    amiUri = String.Format("{0}://{1}:{2}/ami", scheme, realmUri, portScheme);
-
-                // Parse IMSI URI
+                // We get the ami options for the other configuration
+                var serviceOptions = amiClient.Options();
                 serviceClientSection.Client.Clear();
-                serviceClientSection.Client.Add(new ServiceClientDescription()
-                {
-                    Binding = new ServiceClientBinding()
-                    {
-                        Security = new ServiceClientSecurity()
-                        {
-                            AuthRealm = realmUri,
-                            Mode = SecurityScheme.Bearer,
-                            CredentialProvider = new TokenCredentialProvider(),
-                            PreemptiveAuthentication = true
-                        },
-                        Optimize = true
-                    },
-                    Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
-                        new ServiceClientEndpoint() {
-                            Address = imsiUri,
-                            Timeout = noTimeout.Count > 0 && noTimeout[0] == "true" ? 60000 : 10000
-                        }
-                    },
-                    Name = "imsi",
-                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
-                });
 
-                // Parse ACS URI
-                serviceClientSection.Client.Add(new ServiceClientDescription()
+                Dictionary<ServiceEndpointType, String> endpointNames = new Dictionary<ServiceEndpointType, string>()
                 {
-                    Binding = new ServiceClientBinding()
-                    {
-                        Security = new ServiceClientSecurity()
-                        {
-                            AuthRealm = realmUri,
-                            Mode = SecurityScheme.Bearer,
-                            CredentialProvider = new TokenCredentialProvider(),
-                            PreemptiveAuthentication = true
-                        },
-                        Optimize = false
-                    },
-                    Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
-                        new ServiceClientEndpoint() {
-                            Address = amiUri,
-                            Timeout = noTimeout.Count > 0 && noTimeout[0] == "true" ? 60000 : 10000
-                        }
-                    },
-                    Name = "ami",
-                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
-                });
+                    { ServiceEndpointType.AdministrationIntegrationService, "ami" },
+                    { ServiceEndpointType.ImmunizationIntegrationService, "imsi" },
+                    { ServiceEndpointType.AuthenticationService, "acs" }
+                };
 
-                // Parse ACS URI
-                serviceClientSection.Client.Add(new ServiceClientDescription()
+                foreach (var itm in serviceOptions.Endpoints)
                 {
-                    Binding = new ServiceClientBinding()
+
+                    var urlInfo = itm.BaseUrl.Where(o => o.StartsWith(scheme));
+                    String serviceName = null;
+                    if (!urlInfo.Any() || !endpointNames.TryGetValue(itm.ServiceType, out serviceName))
+                        continue;
+
+                    // Description binding
+                    ServiceClientDescription description = new ServiceClientDescription()
                     {
-                        Security = new ServiceClientSecurity()
+                        Binding = new ServiceClientBinding()
                         {
-                            AuthRealm = realmUri,
-                            Mode = SecurityScheme.Basic,
-                            CredentialProvider = new OAuth2CredentialProvider()
+                            Security = new ServiceClientSecurity()
+                            {
+                                AuthRealm = realmUri,
+                                Mode = itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BearerAuth) ? SecurityScheme.Bearer :
+                                    itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BasicAuth) ? SecurityScheme.Basic :
+                                    SecurityScheme.None,
+                                CredentialProvider = itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BearerAuth) ? (ICredentialProvider)new TokenCredentialProvider() :
+                                    itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BasicAuth) ?
+                                    (ICredentialProvider)(itm.ServiceType == ServiceEndpointType.AuthenticationService ? (ICredentialProvider)new OAuth2CredentialProvider() : new HttpBasicTokenCredentialProvider()) :
+                                    null,
+                                PreemptiveAuthentication = itm.Capabilities != ServiceEndpointCapabilities.None
+                            },
+                            Optimize = itm.Capabilities.HasFlag(ServiceEndpointCapabilities.Compression),
                         },
-                        Optimize = false
-                    },
-                    Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
-                        new ServiceClientEndpoint() {
-                            Address = oauthUri,
-                            Timeout = noTimeout.Count > 0 && noTimeout[0] == "true" ? 60000 : 10000
-                        }
-                    },
-                    Name = "acs",
-                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
-                });
+                        Endpoint = urlInfo.Select(o => new ServiceClientEndpoint()
+                        {
+                            Address = o.Replace("0.0.0.0", realmUri),
+                            Timeout = itm.ServiceType == ServiceEndpointType.ImmunizationIntegrationService ? 60000 : 10000
+                        }).ToList(),
+                        Trace = enableTrace.Count > 0 && enableTrace[0] == "true",
+                        Name = serviceName
+                    };
+
+                    serviceClientSection.Client.Add(description);
+                }
 
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new ImsiPersistenceService());
 
-                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret = Guid.NewGuid().ToString().Replace("-", "");
+                byte[] pcharArray = Guid.NewGuid().ToByteArray();
+                char[] spec = { '@', '#', '$', '*', '~' };
+                for (int i = 0; i < pcharArray.Length; i++)
+                    switch (i % 5)
+                    {
+                        case 0:
+                            pcharArray[i] = (byte)((pcharArray[i] % 10) + 48);
+                            break;
+                        case 1:
+                            pcharArray[i] = (byte)spec[pcharArray[i] % spec.Length];
+                            break;
+                        case 2:
+                            pcharArray[i] = (byte)((pcharArray[i] % 25) + 65);
+                            break;
+                        case 3:
+                            pcharArray[i] = (byte)((pcharArray[i] % 25) + 97);
+                            break;
+                        default:
+                            pcharArray[i] = (byte)((pcharArray[i] % 61) + 65);
+                            break;
+                    }
+
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret = Encoding.ASCII.GetString(pcharArray);
 
                 // Create the necessary device user
                 try
                 {
-                    AmiServiceClient amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                    // Recreate the client with the updated security configuration
+                    amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     // Create application user
                     var role = amiClient.GetRoles(o => o.Name == "SYNCHRONIZERS").CollectionItem.First();
 
@@ -513,16 +587,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         // Create user
                         amiClient.CreateUser(new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo(new OpenIZ.Core.Model.Security.SecurityUser()
                         {
-							CreationTime = DateTimeOffset.Now,
+                            CreationTime = DateTimeOffset.Now,
                             UserName = deviceName,
                             Key = Guid.NewGuid(),
-                            UserClass = UserClassKeys.ApplictionUser,
+                            UserClass = UserClassKeys.ApplicationUser,
                             SecurityHash = Guid.NewGuid().ToString()
                         })
                         {
                             Roles = new List<OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo>()
                             {
-								role
+                                role
                             },
                             Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
                         });
@@ -538,8 +612,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             Device = new OpenIZ.Core.Model.Security.SecurityDevice()
                             {
-								CreationTime = DateTimeOffset.Now,
-								Name = deviceName,
+                                CreationTime = DateTimeOffset.Now,
+                                Name = deviceName,
                                 DeviceSecret = Guid.NewGuid().ToString()
                             }
                         });
@@ -585,23 +659,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     "HS256"
                 };
 
-                String oauthUri = String.Format("http://{0}:8080/auth", realmUri),
-                                        amiUri = String.Format("http://{0}:8080/ami", realmUri);
-
-                // Parse ACS URI
+                // AMI Client
                 serviceClientSection.Client.Clear();
 
+                var scheme = enableSSL.FirstOrDefault() == "true" ? "https" : "http";
+                string amiUri = String.Format("{0}://{1}:{2}/ami", scheme,
+                    realmUri,
+                    portNo.FirstOrDefault());
                 serviceClientSection.Client.Add(new ServiceClientDescription()
                 {
                     Binding = new ServiceClientBinding()
                     {
-                        Security = new ServiceClientSecurity()
-                        {
-                            AuthRealm = realmUri,
-                            Mode = SecurityScheme.Bearer,
-                            CredentialProvider = new TokenCredentialProvider(),
-                            PreemptiveAuthentication = true
-                        },
                         Optimize = false
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
@@ -613,29 +681,47 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
                 });
 
-                // Parse ACS URI
-                serviceClientSection.Client.Add(new ServiceClientDescription()
-                {
-                    Binding = new ServiceClientBinding()
-                    {
-                        Security = new ServiceClientSecurity()
-                        {
-                            AuthRealm = realmUri,
-                            Mode = SecurityScheme.Basic,
-                            CredentialProvider = new OAuth2CredentialProvider()
-                        },
-                        Optimize = false
-                    },
-                    Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
-                        new ServiceClientEndpoint() {
-                            Address = oauthUri
-                        }
-                    },
-                    Name = "acs",
-                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
-                });
 
-                ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new OAuthIdentityProvider());
+                AmiServiceClient amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+
+                // We get the ami options for the other configuration
+                var serviceOptions = amiClient.Options();
+
+                var option = serviceOptions.Endpoints.FirstOrDefault(o => o.ServiceType == ServiceEndpointType.AuthenticationService);
+
+
+                if (option == null)
+                {
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new HttpBasicIdentityProvider());
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(HttpBasicIdentityProvider).AssemblyQualifiedName);
+                }
+                else
+                {
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new OAuthIdentityProvider());
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
+                    // Parse ACS URI
+                    serviceClientSection.Client.Add(new ServiceClientDescription()
+                    {
+                        Binding = new ServiceClientBinding()
+                        {
+                            Security = new ServiceClientSecurity()
+                            {
+                                AuthRealm = realmUri,
+                                Mode = SecurityScheme.Basic,
+                                CredentialProvider = new OAuth2CredentialProvider()
+                            },
+                            Optimize = false
+                        },
+                        Name = "acs",
+                        Trace = enableTrace.Count > 0 && enableTrace[0] == "true",
+                        Endpoint = option.BaseUrl.Select(o => new ServiceClientEndpoint()
+                        {
+                            Address = o.Replace("0.0.0.0", realmUri),
+                            Timeout = 10000
+                        }).ToList()
+                    });
+
+                }
 
                 throw new UnauthorizedAccessException();
             }
@@ -644,7 +730,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 this.m_tracer.TraceError("Error joining context: {0}", e);
                 throw;
             }
-            return null;
         }
 
         /// <summary>

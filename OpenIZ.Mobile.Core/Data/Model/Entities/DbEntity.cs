@@ -62,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the status concept identifier.
 		/// </summary>
 		/// <value>The status concept identifier.</value>
-		[Column("statusConcept"), MaxLength(16), Indexed, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+		[Column("statusConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] StatusConceptUuid {
 			get;
 			set;

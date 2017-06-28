@@ -35,8 +35,8 @@
     <div class="form-group">
         <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
         <div class="col-xs-4">
-            {{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }}
-            <span ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+            {{ patient.dateOfBirth | datePrecisionFormat:'D' }}
+            <span ng-if="patient.dateOfBirthPrecision == 2">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
         </div>
         <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
         <div class="col-xs-4">

@@ -39,14 +39,26 @@ namespace OpenIZ.Mobile.Core.Android.Net
     /// <summary>
     /// Android specific network information service
     /// </summary>
+    /// TODO: Add configuration for roaming
     public class AndroidNetworkInformationService : NetworkInformationService
     {
+
+        private ConnectivityManager m_connManager = null;
+
+        public AndroidNetworkInformationService()
+        {
+            this.m_connManager = (ConnectivityManager)((Xamarin.XamarinApplicationContext.Current as AndroidApplicationContext).Context).GetSystemService(Context.ConnectivityService);
+        }
+        /// <summary>
+        /// Get interfaces
+        /// </summary>
         public override IEnumerable<NetworkInterfaceInfo> GetInterfaces()
         {
             return NetworkInterface.GetAllNetworkInterfaces().Select(o => new NetworkInterfaceInfo(
-                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, AndroidOS.Build.Model
+                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, AndroidOS.Build.Model, o.GetIPProperties().UnicastAddresses.FirstOrDefault().ToString()
             ));
         }
+
         /// <summary>
         /// Is network available
         /// </summary>
@@ -54,8 +66,20 @@ namespace OpenIZ.Mobile.Core.Android.Net
         {
             get
             {
-                ConnectivityManager connectivityManager = (ConnectivityManager)((Xamarin.XamarinApplicationContext.Current as AndroidApplicationContext).Context).GetSystemService(Context.ConnectivityService);
-                return connectivityManager.ActiveNetworkInfo != null && connectivityManager.ActiveNetworkInfo.IsConnected;
+                
+                return this.m_connManager.ActiveNetworkInfo != null && this.m_connManager.ActiveNetworkInfo.IsConnected &&
+                    !this.m_connManager.ActiveNetworkInfo.IsRoaming;
+            }
+        }
+
+        /// <summary>
+        /// True if the network is wifi
+        /// </summary>
+        public override bool IsNetworkWifi
+        {
+            get
+            {
+                return this.IsNetworkAvailable && this.m_connManager.ActiveNetworkInfo?.Type == ConnectivityType.Wifi;
             }
         }
     }

@@ -1,12 +1,20 @@
 ﻿{
   "$type": "SubstanceAdministration",
-  "template": {
+  "templateModel": {
     "mnemonic": "act.substanceadmin.supplement"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
   "typeConcept": "7D84A057-1FCC-4054-A51F-B77D230FC6D1",
   "actTime": "{{now}}",
+  "route": "0a1388b0-66fb-4063-bfe3-151dd8442838",
+  "site": "e5b6847e-91e0-4fca-ac2e-753962008080",
+  "doseSequence": 0,
+  "doseQuantity": 1.0,
+  "doseUnitModel": {
+    "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
+    "mnemonic": "DOSE"
+  },
   "participation": {
     "Location": {
       "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",

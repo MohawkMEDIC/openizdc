@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-7-30
  */
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Mobile.Core.Synchronization.Model;
@@ -28,11 +29,79 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.Mobile.Core.Services
 {
+
+    public class SynchronizationEventArgs
+    {
+        /// <summary>
+        /// Date of objects from pull
+        /// </summary>
+        public DateTime FromDate { get; private set; }
+
+        /// <summary>
+        /// True if the pull is the initial pull
+        /// </summary>
+        public bool IsInitial { get; private set; }
+
+        /// <summary>
+        /// Gets the type that was pulled
+        /// </summary>
+        public Type Type { get; private set; }
+
+        /// <summary>
+        /// Gets the filter of the type that was pulled
+        /// </summary>
+        public NameValueCollection Filter { get; private set; }
+
+        /// <summary>
+        /// Count of records imported
+        /// </summary>
+        public int Count { get; private set; }
+
+        /// <summary>
+        /// Synchronization type events
+        /// </summary>
+        public SynchronizationEventArgs(Type type, NameValueCollection filter, DateTime fromDate, int totalResults) : this(totalResults, fromDate)  
+        {
+            this.Type = type;
+            this.Filter = filter;
+            this.IsInitial = fromDate == default(DateTime);
+        }
+
+        /// <summary>
+        /// Create an empty pull event arg
+        /// </summary>
+        public SynchronizationEventArgs(int totalResults, DateTime fromDate)
+        {
+            this.Count = totalResults;
+            this.FromDate = fromDate;
+
+        }
+
+        /// <summary>
+        /// Creates a new initial pull event arg
+        /// </summary>
+        public SynchronizationEventArgs(bool isInitial, int totalResults, DateTime fromDate) : this(totalResults, fromDate) 
+        {
+            this.IsInitial = isInitial;
+
+        }
+    }
+
     /// <summary>
     /// Represents a synchronization service 
     /// </summary>
     public interface ISynchronizationService
     {
+
+        /// <summary>
+        /// Fired when a pull has completed and imported data
+        /// </summary>
+        event EventHandler<SynchronizationEventArgs> PullCompleted;
+
+        /// <summary>
+        /// Get whether the service is syncing
+        /// </summary>
+        bool IsSynchronizing { get; }
 
         /// <summary>
         /// Fetch to see if there are any particular changes on the specified model type
@@ -49,6 +118,11 @@ namespace OpenIZ.Mobile.Core.Services
         /// </summary>
         int Pull(Type modelType, NameValueCollection filter);
 
+
+        /// <summary>
+        /// Pull data from the remove server and place it on the inbound queue
+        /// </summary>
+        int Pull(Type modelType, NameValueCollection filter, bool always);
 
     }
 }

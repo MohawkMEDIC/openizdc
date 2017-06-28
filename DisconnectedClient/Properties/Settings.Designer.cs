@@ -22,5 +22,23 @@ namespace DisconnectedClient.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Register Patient")]
+        public string locale_patient {
+            get {
+                return ((string)(this["locale_patient"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Search Patients")]
+        public string locale_searchPatient {
+            get {
+                return ((string)(this["locale_searchPatient"]));
+            }
+        }
     }
 }

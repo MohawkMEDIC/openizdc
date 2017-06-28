@@ -37,6 +37,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -71,6 +72,10 @@ namespace OpenIZ.Mobile.Core
             typeof(Place)
         };
 
+        // Get instance of cache
+        private static Dictionary<Type, Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>>> s_getInstanceOfCache = new Dictionary<Type, Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>>>();
+
+
         /// <summary>
         /// Gets an instance of TDomain from me
         /// </summary>
@@ -80,11 +85,33 @@ namespace OpenIZ.Mobile.Core
 
             TDomain retVal = new TDomain();
 
-            foreach (var prop in typeof(TDomain).GetRuntimeProperties())
+            // First get the runtime properties from cache?
+            Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>> meKnownMaps = null;
+            if (!s_getInstanceOfCache.TryGetValue(me.GetType(), out meKnownMaps))
             {
-                var meProp = me.GetType().GetRuntimeProperties().FirstOrDefault(p => p.Name == prop.Name);
-                if (meProp != null)
-                    prop.SetValue(retVal, meProp.GetValue(me));
+                meKnownMaps = new Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>>();
+                lock (s_getInstanceOfCache)
+                    if (!s_getInstanceOfCache.ContainsKey(me.GetType()))
+                        s_getInstanceOfCache.Add(me.GetType(), meKnownMaps);
+            }
+
+            // Do we have a map for the destination?
+            Dictionary<PropertyInfo, PropertyInfo> mapProperties = null;
+            if (!meKnownMaps.TryGetValue(typeof(TDomain), out mapProperties))
+            {
+                mapProperties = new Dictionary<PropertyInfo, PropertyInfo>();
+                foreach (var pi in typeof(TDomain).GetRuntimeProperties())
+                    mapProperties.Add(pi, me.GetType().GetRuntimeProperty(pi.Name));
+                lock (meKnownMaps)
+                    if (meKnownMaps.ContainsKey(typeof(TDomain)))
+                        meKnownMaps.Add(typeof(TDomain), mapProperties);
+            }
+
+            // Now map
+            foreach (var prop in mapProperties)
+            {
+                if (prop.Value != null)
+                    prop.Key.SetValue(retVal, prop.Value.GetValue(me));
                 else
                     return default(TDomain);
             }
@@ -95,11 +122,15 @@ namespace OpenIZ.Mobile.Core
         /// <summary>
         /// Load specified associations
         /// </summary>
-        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context) where TModel : IIdentifiedEntity
+        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context, params string[] excludeProperties) where TModel : IIdentifiedEntity
         {
-
+            //using (context.LockConnection())
+            //{
             if (me == null)
                 throw new ArgumentNullException(nameof(me));
+            else if (me.LoadState == LoadState.FullLoad ||
+                context.DelayLoadMode == LoadState.PartialLoad && context.LoadAssociations == null)
+                return;
             else if (context.Connection.IsInTransaction) return;
 
 #if DEBUG
@@ -137,7 +168,7 @@ namespace OpenIZ.Mobile.Core
             if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
                 lock (s_runtimeProperties)
                 {
-                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.StripGeneric().GetTypeInfo()));
+                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.StripGeneric().GetTypeInfo())).ToList();
 
                     if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
                     {
@@ -145,9 +176,22 @@ namespace OpenIZ.Mobile.Core
                     }
                 }
 
+            // Load fast or lean mode only root associations which will appear on the wire
+            if (context.LoadAssociations != null)
+            {
+                var loadAssociations = context.LoadAssociations.Where(o => o.StartsWith(me.GetType().GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName))
+                    .Select(la => la.Contains(".") ? la.Substring(la.IndexOf(".") + 1) : la).ToArray();
+                if (loadAssociations.Length == 0) return;
+                properties = properties.Where(p => loadAssociations.Any(la => la == p.Name)).ToList();
+
+            }
+
             // Iterate over the properties and load the properties
             foreach (var pi in properties)
             {
+
+                if (excludeProperties?.Contains(pi.Name) == true)
+                    continue;
                 // Map model type to domain
                 var adoPersister = LocalPersistenceService.GetPersister(pi.PropertyType.StripGeneric());
 
@@ -159,7 +203,7 @@ namespace OpenIZ.Mobile.Core
                     // Is there not a value?
                     var assocPersister = adoPersister as ILocalAssociativePersistenceService;
 
-                    // We want to query based on our PK and version if applicable
+                    // We want to que   ry based on our PK and version if applicable
                     decimal? versionSequence = (me as IVersionedEntity)?.VersionSequence;
                     var assoc = assocPersister.GetFromSource(context, me.Key.Value, versionSequence);
                     var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
@@ -194,20 +238,34 @@ namespace OpenIZ.Mobile.Core
             sw.Stop();
             s_tracer.TraceVerbose("Load associations for {0} took {1} ms", me, sw.ElapsedMilliseconds);
 #endif
+
+            me.LoadState = excludeProperties.Length > 0 ? LoadState.PartialLoad : LoadState.FullLoad;
+
             ApplicationContext.Current.GetService<IDataCachingService>()?.Add(me as IdentifiedData);
+            //}
         }
 
         /// <summary>
         /// Try get by classifier
         /// </summary>
-        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context)
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context, bool forceDbSearch = false)
         {
 
             // Is there a classifier?
             var idpInstance = LocalPersistenceService.GetPersister(me.GetType()) as ILocalPersistenceService;
+            if (idpInstance == null) return null;
+            //if (me.Key?.ToString() == "e4d3350b-b0f5-45c1-80ba-49e3844cbcc8")
+            //    System.Diagnostics.Debugger.Break();
 
-            IIdentifiedEntity existing = context.CacheOnCommit.FirstOrDefault(o => o.Key == me.Key);
+            IIdentifiedEntity existing = null;
+            if (me.Key != null)
+                existing = context.TryGetCacheItem(me.Key.Value);
             if (existing != null) return existing;
+            else if (!context.Connection.IsInTransaction)
+                existing = context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
+
+            if (forceDbSearch && me.Key.HasValue)
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(me.Key.Value);
 
             // Is the key not null?
             if (me.Key != Guid.Empty && me.Key != null)
@@ -216,7 +274,7 @@ namespace OpenIZ.Mobile.Core
             }
 
             var classAtt = me.GetType().GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
-            if (classAtt != null)
+            if (classAtt != null && existing == null)
             {
 
                 // Get the domain type
@@ -245,6 +303,10 @@ namespace OpenIZ.Mobile.Core
                 if (dataObject != null)
                     existing = idpInstance.ToModelInstance(dataObject, context) as IIdentifiedEntity;
             }
+
+            if (existing != null && me.Key.HasValue)
+                context.AddData(me.Key.Value.ToString(), existing);
+
             return existing;
 
         }
@@ -263,10 +325,6 @@ namespace OpenIZ.Mobile.Core
 
             var existing = me.TryGetExisting(context);
 
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
 
             // Existing exists?
             if (existing == null && !m_readonlyTypes.Contains(typeof(TModel)))
@@ -282,10 +340,6 @@ namespace OpenIZ.Mobile.Core
             else if (existing == null)
                 throw new KeyNotFoundException($"Object {me} not found in database and is restricted for creation");
 
-#if PERFMON
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: EnsureExists {0} ({1} ms)", me, sw.ElapsedMilliseconds);
-#endif
             return existing == null ? me : (TModel)existing;
 
         }
@@ -295,10 +349,7 @@ namespace OpenIZ.Mobile.Core
         ///// </summary>
         public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
         {
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
+
             var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
             if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
                 return;
@@ -309,10 +360,6 @@ namespace OpenIZ.Mobile.Core
             var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
             keyField.SetValue(instance, value.Key);
 
-#if PERFMON
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: UpdateParentKeys {0} ({1} ms)", instance, sw.ElapsedMilliseconds);
-#endif
         }
     }
 }

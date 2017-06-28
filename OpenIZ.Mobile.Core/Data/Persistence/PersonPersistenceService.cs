@@ -54,29 +54,36 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Person modelInstance, LocalDataContext context)
         {
-            var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
+            /*var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
 
             if (modelInstance.DateOfBirthPrecision.HasValue && PrecisionMap.ContainsKey(modelInstance.DateOfBirthPrecision.Value))
                 dbPerson.DateOfBirthPrecision = PrecisionMap[modelInstance.DateOfBirthPrecision.Value];
-            return dbPerson;
+                */
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+            return new DbPerson()
+            {
+                DateOfBirth = modelInstance.DateOfBirth,
+                DateOfBirthPrecision = modelInstance.DateOfBirthPrecision.HasValue ? PrecisionMap[modelInstance.DateOfBirthPrecision.Value] : null,
+                Uuid = modelInstance.Key?.ToByteArray() 
+            };
         }
 
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Person ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Person ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbIdentified;
             var person = iddat as DbPerson ?? iddat.GetInstanceOf<DbPerson>() ?? context.Connection.Table<DbPerson>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = iddat.GetInstanceOf<DbEntity>() ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<Person>(dbe, context, loadFast);
+            var retVal = m_entityPersister.ToModelInstance<Person>(dbe, context);
             retVal.DateOfBirth = person.DateOfBirth.HasValue ? (DateTime?)person.DateOfBirth.Value.ToLocalTime() : null;
 
             // Reverse lookup
             if (!String.IsNullOrEmpty(person.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PrecisionMap.Where(o => o.Value == person.DateOfBirthPrecision).Select(o => o.Key).First();
 
-            retVal.LoadAssociations(context);
+            //etVal.LoadAssociations(context);
 
             return retVal;
         }
@@ -92,13 +99,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.InsertInternal(context, data);
             byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
-            if (data.LanguageCommunication != null)
-                base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
-                    new List<PersonLanguageCommunication>(),
-                    data.LanguageCommunication,
-                    retVal.Key,
-                    context);
-            return retVal;
+			// Insert language communication
+	        context.Connection.InsertAll(data.LanguageCommunication.Select(l => new DbPersonLanguageCommunication()
+	        {
+		        IsPreferred = l.IsPreferred,
+		        Uuid = l.Key?.ToByteArray() ?? Guid.NewGuid().ToByteArray(),
+		        LanguageCode = l.LanguageCode,
+		        SourceUuid = sourceKey
+	        }));
+
+			return retVal;
         }
 
         /// <summary>

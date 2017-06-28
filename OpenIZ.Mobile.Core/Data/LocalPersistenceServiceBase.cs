@@ -111,19 +111,43 @@ namespace OpenIZ.Mobile.Core.Data
         public event EventHandler<DataQueryEventArgsBase<TData>> Querying;
 
         /// <summary>
+        /// Fire inserting event
+        /// </summary>
+        protected void FireInserting(DataPersistencePreEventArgs<TData> evt)
+        {
+            this.Inserting?.Invoke(this, evt);
+        }
+
+        /// <summary>
+        /// Fire inserting event
+        /// </summary>
+        protected void FireInserted(DataPersistenceEventArgs<TData> evt)
+        {
+            this.Inserted?.Invoke(this, evt);
+        }
+
+        /// <summary>
         /// Creates the connection.
         /// </summary>
         /// <returns>The connection.</returns>
-        private LocalDataContext CreateConnection()
+        protected LocalDataContext CreateConnection()
         {
             return new LocalDataContext(SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(m_configuration.MainDataSourceConnectionStringName).Value));
+        }
+
+        /// <summary>
+        /// Create readonly connection
+        /// </summary>
+        private LocalDataContext CreateReadonlyConnection()
+        {
+            return new LocalDataContext(SQLiteConnectionManager.Current.GetReadonlyConnection(ApplicationContext.Current.Configuration.GetConnectionString(m_configuration.MainDataSourceConnectionStringName).Value));
         }
 
         /// <summary>
         /// Insert the specified data.
         /// </summary>
         /// <param name="data">Data.</param>
-        public TData Insert(TData data)
+        public virtual TData Insert(TData data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -142,42 +166,40 @@ namespace OpenIZ.Mobile.Core.Data
 #endif
 
             // Persist object
-            var context = this.CreateConnection();
-            try
-            {
-                using (context.Connection.Lock())
+            using (var context = this.CreateConnection())
+                try
                 {
-                    try
+                    using (context.LockConnection())
                     {
-                        this.m_tracer.TraceVerbose("INSERT {0}", data);
+                        try
+                        {
+                            this.m_tracer.TraceVerbose("INSERT {0}", data);
 
-                        context.Connection.BeginTransaction();
-                        data.SetDelayLoad(false);
-                        data = this.Insert(context, data);
-                        data.SetDelayLoad(true);
-                        context.Connection.Commit();
-                        // Remove from the cache
-                        foreach (var itm in context.CacheOnCommit)
-                            ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
-                    }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceError("Error : {0}", e);
-                        context.Connection.Rollback();
-                        throw new LocalPersistenceException(DataOperationType.Insert, data, e);
-                    }
+                            context.Connection.BeginTransaction();
+                            data = this.Insert(context, data);
+                            context.Connection.Commit();
+                            // Remove from the cache
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
+                                ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
+                        }
+                        catch (Exception e)
+                        {
+                            this.m_tracer.TraceError("Error : {0}", e);
+                            context.Connection.Rollback();
+                            throw new LocalPersistenceException(DataOperationType.Insert, data, e);
+                        }
 
+                    }
+                    this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+                    return data;
                 }
-                this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
-                return data;
-            }
-            catch { throw; }
+                catch { throw; }
 
 #if PERFMON
             finally
             {
                 sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: INSERT {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Insert), "Complete", sw.Elapsed);
             }
 #endif
 
@@ -187,7 +209,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Update the specified data
         /// </summary>
         /// <param name="data">Data.</param>
-        public TData Update(TData data)
+        public virtual TData Update(TData data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -206,45 +228,43 @@ namespace OpenIZ.Mobile.Core.Data
             sw.Start();
 #endif
             // Persist object
-            var context = this.CreateConnection();
-            try
-            {
-                using (context.Connection.Lock())
+            using (var context = this.CreateConnection())
+                try
                 {
-                    try
+                    using (context.LockConnection())
                     {
-                        this.m_tracer.TraceVerbose("UPDATE {0}", data);
-                        context.Connection.BeginTransaction();
+                        try
+                        {
+                            this.m_tracer.TraceVerbose("UPDATE {0}", data);
+                            context.Connection.BeginTransaction();
 
-                        data.SetDelayLoad(false);
-                        data = this.Update(context, data);
-                        data.SetDelayLoad(true);
+                            data = this.Update(context, data);
 
-                        context.Connection.Commit();
+                            context.Connection.Commit();
 
-                        // Remove from the cache
-                        foreach (var itm in context.CacheOnCommit)
-                            ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
+                            // Remove from the cache
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
+                                ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
 
+                        }
+                        catch (Exception e)
+                        {
+                            this.m_tracer.TraceError("Error : {0}", e);
+                            context.Connection.Rollback();
+                            throw new LocalPersistenceException(DataOperationType.Update, data, e);
+
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceError("Error : {0}", e);
-                        context.Connection.Rollback();
-                        throw new LocalPersistenceException(DataOperationType.Update, data, e);
-
-                    }
+                    this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+                    return data;
                 }
-                this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
-                return data;
-            }
-            catch { throw; }
+                catch { throw; }
 #if PERFMON
-            finally
-            {
-                sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: UPDATE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
-            }
+                finally
+                {
+                    sw.Stop();
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Update), "Complete", sw.Elapsed);
+                }
 #endif
         }
 
@@ -252,7 +272,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Obsolete the specified identified data
         /// </summary>
         /// <param name="data">Data.</param>
-        public TData Obsolete(TData data)
+        public virtual TData Obsolete(TData data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -271,45 +291,44 @@ namespace OpenIZ.Mobile.Core.Data
             }
 
             // Obsolete object
-            var context = this.CreateConnection();
-            try
-            {
-                using (context.Connection.Lock())
+            using (var context = this.CreateConnection())
+                try
                 {
-                    try
+                    using (context.LockConnection())
                     {
-                        this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
-                        context.Connection.BeginTransaction();
+                        try
+                        {
+                            this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
+                            context.Connection.BeginTransaction();
 
-                        data.SetDelayLoad(false);
-                        data = this.Obsolete(context, data);
-                        data.SetDelayLoad(true);
+                            data = this.Obsolete(context, data);
 
-                        context.Connection.Commit();
+                            context.Connection.Commit();
 
-                        // Remove from the cache
-                        foreach (var itm in context.CacheOnCommit)
-                            ApplicationContext.Current.GetService<IDataCachingService>().Remove(itm.GetType(), itm.Key.Value);
+                            // Remove from the cache
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
+                                ApplicationContext.Current.GetService<IDataCachingService>().Remove(itm.Key.Value);
 
+                        }
+                        catch (Exception e)
+                        {
+                            this.m_tracer.TraceError("Error : {0}", e);
+                            context.Connection.Rollback();
+                            throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceError("Error : {0}", e);
-                        context.Connection.Rollback();
-                        throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
-                    }
+                    this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+
+                    return data;
                 }
-                this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
-
-                return data;
-            }
-            catch { throw; }
+                catch { throw; }
 #if PERFMON
-            finally
-            {
-                sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: OBSOLETE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
-            }
+                finally
+                {
+                    sw.Stop();
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Obsolete), "Complete", sw.Elapsed);
+                }
+
 #endif
         }
 
@@ -317,41 +336,73 @@ namespace OpenIZ.Mobile.Core.Data
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
-        public TData Get(Guid key)
+        public virtual TData Get(Guid key)
         {
             if (key == Guid.Empty) return null;
-            var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(key);
+            if ((existing as IdentifiedData)?.LoadState <= LoadState.FullLoad) {
+                using (var context = this.CreateConnection())
+                    try
+                    {
+                        using (context.LockConnection())
+                        {
+                            (existing as IdentifiedData).LoadAssociations(context);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error loading associations: {0}", e);
+                    }
+            }
             if (existing != null)
                 return existing as TData;
             int toss = 0;
             this.m_tracer.TraceInfo("GET: {0}", key);
-            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty, false)?.SingleOrDefault();
+            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty, false, false)?.SingleOrDefault();
         }
 
         /// <summary>
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
+        public virtual System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
         {
             int totalResults = 0;
-            return this.Query(query, 0, null, out totalResults, Guid.Empty, false);
+            return this.Query(query, 0, null, out totalResults, Guid.Empty, false, false);
         }
 
         /// <summary>
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
+        public virtual System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
         {
-            return this.Query(query, offset, count, out totalResults, queryId, true);
+            return this.Query(query, offset, count, out totalResults, queryId, true, false);
+        }
+
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
+        /// <param name="query">Query.</param>
+        public virtual System.Collections.Generic.IEnumerable<TData> QueryFast(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
+        {
+            return this.Query(query, offset, count, out totalResults, queryId, true, true);
+        }
+
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
+        /// <param name="query">Query.</param>
+        public virtual System.Collections.Generic.IEnumerable<TData> QueryExplicitLoad(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, IEnumerable<String> expandProperties)
+        {
+            return this.Query(query, offset, count, out totalResults, queryId, true, true, expandProperties);
         }
 
         /// <summary>
         /// Query function returning results and count control
         /// </summary>
-        private IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, bool countResults)
-        { 
+        private IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, bool countResults, bool fastQuery, IEnumerable<String> expandProperties = null)
+        {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
 
@@ -369,81 +420,82 @@ namespace OpenIZ.Mobile.Core.Data
             sw.Start();
 #endif
             // Query object
-            var context = this.CreateConnection();
-            try
-            {
-                IEnumerable<TData> results = null;
-                using (context.Connection.Lock())
+            using (var context = this.CreateReadonlyConnection())
+                try
                 {
-                    this.m_tracer.TraceVerbose("QUERY {0}", query);
-
-                    results = this.Query(context, query, offset, count ?? -1, out totalResults, queryId, countResults);
-                }
-
-                var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
-                this.Queried?.Invoke(this, postData);
-
-                totalResults = postData.TotalResults;
-
-                // Set delay load
-                foreach (var i in postData.Results)
-                {
-                    if (i != null)
+                    IEnumerable<TData> results = null;
+                    using (context.LockConnection())
                     {
-                        i.SetDelayLoad(true);
+                        this.m_tracer.TraceVerbose("QUERY {0}", query);
+
+                        if (fastQuery)
+                            context.DelayLoadMode = LoadState.PartialLoad;
+                        else
+                            context.DelayLoadMode = LoadState.FullLoad;
+
+                        if (expandProperties != null)
+                            context.LoadAssociations = expandProperties.ToArray();
+
+                        results = this.Query(context, query, offset, count ?? -1, out totalResults, queryId, countResults);
                     }
+
+                    var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
+                    this.Queried?.Invoke(this, postData);
+
+                    totalResults = postData.TotalResults;
+
+                    // Remove from the cache
+                    foreach (var itm in context.CacheOnCommit.AsParallel())
+                        ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+
+                    return postData.Results;
+
+
                 }
-
-                // Remove from the cache
-                foreach (var itm in context.CacheOnCommit)
-                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
-
-                return postData.Results;
-
-
-            }
-            catch (NotSupportedException e)
-            {
-                this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name, e);
-
-                // Build dictionary
-                var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query, true);
-                var filter = new Dictionary<String, Object>();
-
-                foreach (var f in httpValues)
+                catch (NotSupportedException e)
                 {
-                    object existing = null;
-                    if (filter.TryGetValue(f.Key, out existing))
+                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name, e);
+
+                    // Build dictionary
+                    var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query, true);
+                    var filter = new Dictionary<String, Object>();
+
+                    foreach (var f in httpValues)
                     {
-                        if (!(existing is IList))
+                        object existing = null;
+                        if (filter.TryGetValue(f.Key, out existing))
                         {
-                            existing = new List<Object>() { existing };
-                            filter[f.Key] = existing;
+                            if (!(existing is IList))
+                            {
+                                existing = new List<Object>() { existing };
+                                filter[f.Key] = existing;
+                            }
+                            (existing as IList).Add(f.Value);
                         }
-                        (existing as IList).Add(f.Value);
-                    }
-                    else
-                        filter.Add(f.Key, f.Value);
+                        else
+                            filter.Add(f.Key, f.Value);
 
+                    }
+                    // Query
+                    return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults, queryId);
                 }
-                // Query
-                return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults, queryId);
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error : {0}", e);
-                throw;
-            }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error : {0}", e);
+                    throw;
+                }
 #if PERFMON
-            finally
-            {
-                sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: QUERY {0} ({1} ms)", query, sw.ElapsedMilliseconds);
-            }
+                finally
+                {
+                    sw.Stop();
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Query), query.ToString(), sw.Elapsed);
+                }
+
 #endif
 
         }
 
+ 
         /// <summary>
         /// Query this instance.
         /// </summary>
@@ -475,7 +527,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Perform query with control
         /// </summary>
         private IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults, Guid queryId, bool countResults)
-        { 
+        {
             if (String.IsNullOrEmpty(storedQueryName))
                 throw new ArgumentNullException(nameof(storedQueryName));
             else if (parms == null)
@@ -491,37 +543,34 @@ namespace OpenIZ.Mobile.Core.Data
             }
 
             // Query object
-            var context = this.CreateConnection();
-
-            try
-            {
-                List<TData> results = null;
-                using (context.Connection.Lock())
+            using (var context = this.CreateConnection())
+                try
                 {
-                    this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
+                    List<TData> results = null;
+                    using (context.LockConnection())
+                    {
+                        this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
 
-                    results = this.Query(context, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId, countResults).ToList();
+                        results = this.Query(context, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId, countResults).ToList();
+                    }
+
+                    var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
+                    this.Queried?.Invoke(this, postArgs);
+
+                    totalResults = postArgs.TotalResults;
+
+
+                    // Remove from the cache
+                    foreach (var itm in context.CacheOnCommit.AsParallel())
+                        ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
+
+                    return postArgs.Results;
                 }
-
-                var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
-                this.Queried?.Invoke(this, postArgs);
-
-                totalResults = postArgs.TotalResults;
-                foreach (var i in postArgs.Results)
-                    i.SetDelayLoad(true);
-
-
-                // Remove from the cache
-                foreach (var itm in context.CacheOnCommit)
-                    ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
-
-                return postArgs.Results;
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error : {0}", e);
-                throw;
-            }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error : {0}", e);
+                    throw;
+                }
         }
 
         #endregion
@@ -602,10 +651,10 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(LocalDataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             var retVal = this.QueryInternal(context, query, offset, count, out totalResults, queryId, countResults);
+
             foreach (var i in retVal.Where(i => i != null))
-            {
                 context.AddCacheCommit(i);
-            }
+
             return retVal;
 
         }
@@ -617,8 +666,10 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(LocalDataContext context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             var retVal = this.QueryInternal(context, storedQueryName, parms, offset, count, out totalResults, queryId, countResults);
-            foreach (var i in retVal)
+
+            foreach (var i in retVal.Where(i => i != null))
                 context.AddCacheCommit(i);
+
             return retVal;
 
         }
@@ -629,7 +680,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public abstract TData ToModelInstance(Object dataInstance, LocalDataContext context, bool loadFast);
+        public abstract TData ToModelInstance(Object dataInstance, LocalDataContext context);
 
         /// <summary>
         /// Froms the model instance.
@@ -688,7 +739,7 @@ namespace OpenIZ.Mobile.Core.Data
         internal virtual TData Get(LocalDataContext context, Guid key)
         {
             int totalResults = 0;
-            var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(key);
             if (existing != null)
                 return existing as TData;
             return this.QueryInternal(context, o => o.Key == key, 0, 1, out totalResults, Guid.Empty, false)?.SingleOrDefault();
@@ -697,7 +748,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public object Insert(object data)
+        public virtual object Insert(object data)
         {
             return this.Insert(data as TData);
         }
@@ -705,7 +756,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Update the specified object
         /// </summary>
-        public object Update(object data)
+        public virtual object Update(object data)
         {
             return this.Update(data as TData);
         }
@@ -713,7 +764,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Obsoletes the specified data
         /// </summary>
-        public object Obsolete(object data)
+        public virtual object Obsolete(object data)
         {
             return this.Obsolete(data as TData);
         }
@@ -771,7 +822,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         object ILocalPersistenceService.ToModelInstance(object domainInstance, LocalDataContext context)
         {
-            return this.ToModelInstance(domainInstance, context, true);
+            return this.ToModelInstance(domainInstance, context);
         }
     }
 }

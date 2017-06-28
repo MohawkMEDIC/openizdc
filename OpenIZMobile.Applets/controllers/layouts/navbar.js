@@ -22,15 +22,31 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
-layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', function ($scope, $interval, $rootScope, $window) {
-    // Add menu items
-    OpenIZ.App.getMenusAsync({
-        continueWith: function (menus) {
-            $scope.menuItems = menus;
-            $scope.$applyAsync();
+layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', '$state', '$templateCache', function ($scope, $interval, $rootScope, $window , $state, $templateCache) {
+    
+    $rootScope.$watch('session', function (nv, ov) {
+        if (nv && nv.user) {
+            // Add menu items
+            OpenIZ.App.getMenusAsync({
+                continueWith: function (menus) {
+                    $scope.menuItems = menus;
+                    $scope.$applyAsync();
+                }
+            });
         }
+        else
+            $scope.menuItems = null;
     });
 
+    // Session was expired on a background thread
+    OpenIZ.Authentication.$sessionExpiredHandler = function () {
+        if ($rootScope.session) {
+            $rootScope.isLoading = true;
+            $rootScope.session = null;
+            $templateCache.removeAll();
+            $state.reload();
+        }
+    }
 
     // Perform a logout of the session
     $scope.logout = $scope.logout || function () {
@@ -38,8 +54,11 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
             OpenIZ.Authentication.abandonSession({
                 continueWith: function (data) {
                     console.log(data);
-                    window.location.hash = "#/";
-                    $window.location.reload();
+                    $rootScope.isLoading = true;
+                    $rootScope.session = null;
+                    $templateCache.removeAll();
+                    $state.reload();
+                    //$window.location.reload();
                 },
                 onException: function (ex) {
                     console.log(ex);
@@ -71,7 +90,7 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                             "preventDuplicates": true,
                             "showDuration": 150,
                             "hideDuration": 250,
-                            "timeout": 2000
+                            "timeout": 2000,
                         };
 
                         if ($scope.messages) {
@@ -84,18 +103,52 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                         $scope.$apply();
                     }
                 }
-                setTimeout($scope.checkMessages, 30000);
+                setTimeout($scope.checkMessages, 10000);
             }
         });
-        OpenIZ.Queue.getQueueAsync({
-            queueName: OpenIZ.Queue.QueueNames.DeadLetterQueue,
-            continueWith: function (data) {
-                $scope.conflicts = data;
-            },
-            onException: function() {}
-        });
+
+        if ($rootScope.session != null) 
+            OpenIZ.Queue.getQueueAsync({
+                queueName: OpenIZ.Queue.QueueNames.DeadLetterQueue,
+                continueWith: function (data) {
+                    $scope.conflicts = data;
+                },
+                onException: function() {}
+            });
+
+        if ($rootScope.session != null)
+            OpenIZ.App.getTicklesAsync({
+                continueWith: function (data) {
+                    $scope.tickles = data;
+
+                    var already = [];
+                    for (var t in data) {
+                        if (data[t].type & 4) {
+                            var alertOptions = {
+                                "preventDuplicates": true,
+                                "showDuration": 150,
+                                "hideDuration": 250,
+                                "timeout": data[t].exp - new Date(),
+                                "closeButton": false,
+                                "positionClass": "toast-bottom-center",
+                            };
+
+                            if (already.indexOf(data[t].text) > -1)
+                                continue;
+                            already.push(data[t].text);
+
+                            if (data[t].type & 1)
+                                toastr.info(data[t].text, null, alertOptions);
+                            else if (data[t].type & 2)
+                                toastr.error(data[t].text, null, alertOptions);
+
+                        }
+                    }
+                },
+                onException: function() {}
+            });
     };
-    setTimeout($scope.checkMessages, 30000);
+    setTimeout($scope.checkMessages, 10000);
     $scope.checkMessages();
     /**
      * Window resize event handling

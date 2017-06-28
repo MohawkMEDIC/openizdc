@@ -27,10 +27,22 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DefineConstants>TRACE;PERFMON</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Data\Migrations\InitialAuditCatalog.cs" />
     <Compile Include="DataModelExtensions.cs" />
+    <Compile Include="Data\Connection\LockableSQLiteConnection.cs" />
+    <Compile Include="Data\Connection\ReadonlySQLiteConnection.cs" />
+    <Compile Include="Data\Connection\SQLiteConnectionExtensions.cs" />
+    <Compile Include="Data\Connection\WriteableSQLiteConnection.cs" />
     <Compile Include="Data\ILocalPersistenceService.cs" />
     <Compile Include="Data\LocalDataContext.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
@@ -42,6 +54,19 @@
     <Compile Include="Data\QueryBuilder\SqlQueryExpressionBuilder.cs" />
     <Compile Include="Data\QueryBuilder\SqlStatement.cs" />
     <Compile Include="Data\QueryBuilder\TableMapping.cs" />
+    <Compile Include="Exceptions\DuplicateKeyException.cs" />
+    <Compile Include="Security\Audit\LocalAuditRepositoryService.cs" />
+    <Compile Include="Security\Audit\LocalAuditService.cs" />
+    <Compile Include="Security\Audit\Model\DbAuditActorAssociation.cs" />
+    <Compile Include="Security\Audit\Model\DbAuditCode.cs" />
+    <Compile Include="Security\Audit\Model\DbAuditActor.cs" />
+    <Compile Include="Security\Audit\Model\DbAuditData.cs" />
+    <Compile Include="Security\Audit\Model\DbAuditObject.cs" />
+    <Compile Include="Security\Audit\AuditUtil.cs" />
+    <Compile Include="Security\NullCredentials.cs" />
+    <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
+    <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
+    <Compile Include="Services\ITickleService.cs" />
     <Compile Include="Services\IUpdateManager.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />
@@ -102,7 +127,7 @@
     <Compile Include="Exceptions\SessionExpiredException.cs" />
     <Compile Include="Interop\AMI\AmiIntegrationService.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
-    <Compile Include="Protocol\CarePlanManagerService.cs" />
+    <Compile Include="Data\Warehouse\CarePlan\CarePlanManagerService.cs" />
     <Compile Include="Search\Model\SearchEntityType.cs" />
     <Compile Include="Search\Model\SearchTerm.cs" />
     <Compile Include="Search\Model\SearchTermEntity.cs" />
@@ -123,6 +148,8 @@
     <Compile Include="Services\Impl\MemoryQueryPersistenceService.cs" />
     <Compile Include="Services\IntegrationQueryOptions.cs" />
     <Compile Include="Services\ISessionManagerService.cs" />
+    <Compile Include="Synchronization\IQueueFileProvider.cs" />
+    <Compile Include="Synchronization\Model\SynchronizationQuery.cs" />
     <Compile Include="Synchronization\RemoteSynchronizationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
@@ -137,7 +164,7 @@
     <Compile Include="Configuration\SecurityConfigurationSection.cs" />
     <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
     <Compile Include="Configuration\DiagnosticsConfigurationSection.cs" />
-    <Compile Include="Diagnostics\Tracer.cs" />
+    <Compile Include="Search\Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Resources\Strings.fr.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -230,11 +257,17 @@
     <Compile Include="Configuration\Data\Migrations\InitialQueueCatalog.cs" />
     <Compile Include="Data\LocalEntitySource.cs" />
     <Compile Include="Synchronization\SynchronizationLog.cs" />
+    <Compile Include="Tickler\MemoryTickleService.cs" />
+    <Compile Include="Tickler\Tickle.cs" />
+    <Compile Include="Tickler\TickleType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
     <Reference Include="jint">
       <HintPath>..\Solution Items\jint.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
@@ -295,7 +328,8 @@
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Protocol\CarePlanWarehouseSchema.xml" />
+    <EmbeddedResource Include="Security\Audit\Model\ModelMap.xml" />
+    <EmbeddedResource Include="Data\Warehouse\CarePlan\CarePlanWarehouseSchema.xml" />
     <EmbeddedResource Include="Alerting\ModelMap.xml" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
