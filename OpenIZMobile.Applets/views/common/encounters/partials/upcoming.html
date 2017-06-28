@@ -22,14 +22,14 @@
     <oiz:script>~/controllers/common/encounters/partials/upcoming.js</oiz:script>
     <div class="container-fluid" ng-if="encounters &amp;&amp; !isLoading">
         <div class="row" ng-repeat="apt in encounters track by $index" ng-if="apt.moodConcept == 'c46eee70-5612-473f-8d24-595ea15c9c39' &amp;&amp; apt.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-            <div class="col-sm-12 panel" ng-if="apt.relationship.HasComponent">
+            <div class="col-sm-12 panel panel-success" ng-if="apt.relationship.HasComponent">
+                <div>
                     <div class="row encounter-group-title panel-heading">
-                        <label class="col-xs-10"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> {{ 'locale.encounters.schedule.appointment' | i18n }} - {{ apt.actTime | datePrecisionFormat:'D' }}
-                        
+                        <label>
+                            <i class="fa fa-calendar-check-o" aria-hidden="true"></i> {{ 'locale.encounters.schedule.appointment' | i18n }} - {{ apt.actTime | datePrecisionFormat:'D' }}
+
                         </label>
-                        <div class="col-xs-2">
-                            <button ng-click="startAppointment(apt)" class="btn btn-info" ng-if="canStartAppointment(apt)">{{ 'locale.action.start' | i18n }}</button>
-                        </div>
+                        <button ng-click="startAppointment(apt)" class="btn btn-info pull-right" ng-if="canStartAppointment(apt)">{{ 'locale.action.start' | i18n }}</button>
                     </div>
                     <div class="form-group row">
                         <label class="col-xs-12 col-sm-2 control-label">{{ 'locale.encounters.schedule.due' | i18n }}</label>
@@ -77,6 +77,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
     <div class="container-fluid" ng-if="appointments &amp;&amp; appointments.length > 0 &amp;&amp; !isLoading">

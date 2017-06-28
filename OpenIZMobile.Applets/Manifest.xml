@@ -609,6 +609,7 @@
     <string key="locale.action.run">Kukimbia</string>
     <string key="locale.action.save">Kuokoa</string>
     <string key="locale.action.search">Tafuta</string>
+    <string key="locale.action.start">Anza</string>
     <string key="locale.action.submit">Wasilisha</string>
     <string key="locale.action.update">Kupata mabadiliko</string>
     <string key="locale.action.verify">Thibitisha</string>
