@@ -57,9 +57,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                             {
                                 parm.DbType = System.Data.DbType.Int64;
                                 if (itm is DateTime)
-                                    parm.Value = ((DateTime)itm).Ticks;
+                                    parm.Value = ((DateTime)itm).ToUniversalTime().Ticks;
                                 else
-                                    parm.Value = ((DateTimeOffset)itm).Ticks;
+                                    parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Ticks;
                             }
                             else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
                             else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;

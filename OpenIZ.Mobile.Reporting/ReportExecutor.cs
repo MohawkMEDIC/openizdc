@@ -212,7 +212,9 @@ namespace OpenIZ.Mobile.Reporting
                                 retVal[rparm.Name] = DateTime.Parse(kv.Value.ToString());
                                 if (rparm.Ciel)
                                 {
-                                    retVal[rparm.Name] = ((DateTime)retVal[rparm.Name]).AddDays(1).AddSeconds(-1);
+                                    ((DateTime)retVal[rparm.Name]).AddHours(23 - ((DateTime)retVal[rparm.Name]).Hour);
+                                    ((DateTime)retVal[rparm.Name]).AddMinutes(23 - ((DateTime)retVal[rparm.Name]).Minute);
+                                    ((DateTime)retVal[rparm.Name]).AddSeconds(23 - ((DateTime)retVal[rparm.Name]).Second);
                                 }
                                 break;
                             case ReportPropertyType.DateTime:
