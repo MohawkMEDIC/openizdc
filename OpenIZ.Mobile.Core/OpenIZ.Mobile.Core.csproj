@@ -36,6 +36,13 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LinuxSignedRelease|AnyCPU'">
+    <OutputPath>bin\LinuxSignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Configuration\Data\Migrations\InitialAuditCatalog.cs" />
     <Compile Include="DataModelExtensions.cs" />

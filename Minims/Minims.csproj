@@ -46,6 +46,16 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'IeSignedRelease|AnyCPU' ">
+    <OutputPath>bin\LinuxSignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
@@ -147,6 +157,9 @@
       <Link>OpenIZDC.licenseheader</Link>
     </None>
     <None Include="App.config" />
+    <None Include="tools\cmdprompt.cmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core.Xamarin\OpenIZ.Mobile.Core.Xamarin.csproj">
@@ -166,6 +179,7 @@
     <EmbeddedResource Include="lib\shim.js" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="install.iss" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

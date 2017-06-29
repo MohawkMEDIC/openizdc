@@ -10,17 +10,26 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+#if !IE
 using CefSharp.WinForms;
 using CefSharp;
+#endif
 using DisconnectedClient.JNI;
+using OpenIZ.Core.Diagnostics;
 
 namespace DisconnectedClient
 {
     public partial class frmDisconnectedClient : Form
     {
 
+        private Tracer m_tracer = Tracer.GetTracer(typeof(frmDisconnectedClient));
         // Browser
+#if IE
+        public WebBrowser m_browser = null;
+#else
         public ChromiumWebBrowser m_browser = null;
+#endif 
+
         EventHandler<ApplicationProgressEventArgs> m_progressHandler;
 
         // Disconnected client ctor
@@ -29,15 +38,6 @@ namespace DisconnectedClient
 
             InitializeComponent();
 
-            this.InitializeChromium(url);
-        }
-
-        /// <summary>
-        /// Initialize chromium
-        /// </summary>
-        private void InitializeChromium(string url)
-        {
-         
             Action<ApplicationProgressEventArgs> updateUi = (e) =>
             {
                 if (String.IsNullOrEmpty(e.ProgressText))
@@ -65,6 +65,77 @@ namespace DisconnectedClient
             };
             XamarinApplicationContext.ProgressChanged += this.m_progressHandler;
 
+#if IE
+            this.InitializeBrowser(url);
+#else
+            this.InitializeChromium(url);
+#endif
+        }
+
+
+#if IE
+        private void InitializeBrowser(String url)
+        {
+
+
+            this.m_browser = new WebBrowser();
+
+#if !DEBUG
+            this.m_browser.IsWebBrowserContextMenuEnabled = true;
+#endif
+
+            
+            this.m_browser.ObjectForScripting = new AppletFunctionBridge(this);
+            this.m_browser.Navigate(url);
+            this.pnlMain.Controls.Add(this.m_browser);
+            this.m_browser.Dock = DockStyle.Fill;
+            this.m_browser.DocumentCompleted += M_browser_DocumentCompleted;
+        }
+
+        /// <summary>
+        /// Document completed
+        /// </summary>
+        private void M_browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            this.m_browser.Document.Window.Error += (w, we) =>
+            {
+                this.m_tracer.TraceError("{0}@{1}: {2} ", we.Url, we.LineNumber, we.Description);
+            };
+        }
+
+        // Go dback
+        public void Back()
+        {
+            this.m_browser.GoBack();
+        }
+
+        private void showDebugToolsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.m_browser.ShowPropertiesDialog();
+        }
+
+        private void btnZoomWidth_Click(object sender, EventArgs e)
+        {
+
+            double zoomFactor = Double.Parse((sender as ToolStripMenuItem).Tag.ToString());
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            this.m_browser.GoBack();
+        }
+
+        private void btnForward_Click(object sender, EventArgs e)
+        {
+            this.m_browser.GoForward();
+        }
+#else
+        /// <summary>
+        /// Initialize chromium
+        /// </summary>
+        private void InitializeChromium(string url)
+        {
+
             this.m_browser = new ChromiumWebBrowser(url);
             this.m_browser.RequestHandler = new DisconnectedClientRequestHandler();
 
@@ -77,15 +148,7 @@ namespace DisconnectedClient
             this.m_browser.Dock = DockStyle.Fill;
         }
 
-        private void frmDisconnectedClient_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Cef.Shutdown();
-            XamarinApplicationContext.Current.Stop();
-            XamarinApplicationContext.ProgressChanged -= this.m_progressHandler;
-
-        }
-
-        // Go dback
+          // Go dback
         public void Back()
         {
             this.m_browser.Back();
@@ -112,6 +175,26 @@ namespace DisconnectedClient
         {
             this.m_browser.Forward();
         }
+#endif
+        private void frmDisconnectedClient_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DcApplicationContext.Current.SetProgress("Shutting down...", 0);
 
+#if IE
+
+#else
+            Cef.Shutdown();
+#endif
+            XamarinApplicationContext.Current.Stop();
+            XamarinApplicationContext.ProgressChanged -= this.m_progressHandler;
+
+        }
+
+      
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            this.m_browser.Refresh();
+        }
     }
 }

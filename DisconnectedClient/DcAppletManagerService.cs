@@ -104,7 +104,13 @@ namespace DisconnectedClient
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
                 // Read the static shim
-                using (StreamReader shim = new StreamReader(typeof(DcApplicationContext).Assembly.GetManifestResourceStream("DisconnectedClient.lib.shim.js")))
+
+#if IE
+                String shimFile = "DisconnectedClient.lib.shim.ie.js";
+#else
+                String shimFile = "DisconnectedClient.lib.shim.js";
+#endif
+                using (StreamReader shim = new StreamReader(typeof(DcApplicationContext).Assembly.GetManifestResourceStream(shimFile)))
                     tw.Write(shim.ReadToEnd());
 
                 return tw.ToString();

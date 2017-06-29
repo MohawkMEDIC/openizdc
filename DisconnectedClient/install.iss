@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9"
+#define MyAppVersion "0.9.4"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -19,7 +19,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={pf}\Mohawk College\OpenIZ\Disconnected Client
 DisableProgramGroupPage=yes
 LicenseFile=.\License.rtf
 OutputDir=.\dist
@@ -94,7 +94,7 @@ Name: "{commonprograms}\Open Immunize\{#MyAppName}"; Filename: "{app}\{#MyAppExe
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Parameters: "--reset"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 

@@ -101,6 +101,20 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             this.Settings.BuiltInZoomControls = false;
             this.Settings.DisplayZoomControls = false;
             this.Settings.UserAgentString = $"OpenIZ-DC {ApplicationContext.Current.ExecutionUuid}";
+            this.Settings.DatabaseEnabled = false;
+            this.Settings.JavaScriptCanOpenWindowsAutomatically = false;
+            this.Settings.PluginsEnabled = false;
+            this.Settings.SetRenderPriority(WebSettings.RenderPriority.High);
+            this.Settings.SetAppCacheEnabled(true);
+            this.Settings.SetSupportMultipleWindows(false);
+            if (A.OS.Build.VERSION.SdkInt >= A.OS.BuildVersionCodes.Kitkat)
+            {
+                this.SetLayerType(A.Views.LayerType.Hardware, null);
+            }
+            else
+            {
+                this.SetLayerType(A.Views.LayerType.Software, null);
+            }
 
             this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
             //this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");

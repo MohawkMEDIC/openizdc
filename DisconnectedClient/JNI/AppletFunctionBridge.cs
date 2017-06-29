@@ -16,6 +16,13 @@ using System.Threading.Tasks;
 
 namespace DisconnectedClient.JNI
 {
+
+    /// <summary>
+    /// Application function bridge
+    /// </summary>
+#if IE
+    [System.Runtime.InteropServices.ComVisibleAttribute(true)]
+#endif
     public class AppletFunctionBridge
     {
         // Context
