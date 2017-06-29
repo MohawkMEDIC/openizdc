@@ -304,7 +304,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 act = persistenceService.Update(act);
 
                 // First after update
-                act = breService?.AfterUpdate(act);
+                act = breService?.AfterUpdate(act) ?? act;
 
                 // Obsolete child-acts
                 if (act.Relationships != null)
