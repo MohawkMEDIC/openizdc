@@ -24,5 +24,8 @@ namespace DisconnectedClient
         /// </summary>
         [Parameter("reset")]
         public bool Reset { get; set; }
+
+        [Parameter("hdpi")]
+        public bool HdpiFix { get; set; }
     }
 }

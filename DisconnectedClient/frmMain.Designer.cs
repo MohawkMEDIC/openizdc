@@ -45,12 +45,12 @@
             this.mnsTools = new System.Windows.Forms.MenuStrip();
             this.debugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showDebugToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pnlMain = new System.Windows.Forms.Panel();
             this.tspMain = new System.Windows.Forms.ToolStrip();
-            this.btnForward = new System.Windows.Forms.ToolStripButton();
             this.btnBack = new System.Windows.Forms.ToolStripButton();
+            this.btnForward = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
+            this.pnlMain = new System.Windows.Forms.Panel();
             this.statusStrip1.SuspendLayout();
             this.mnsTools.SuspendLayout();
             this.tspMain.SuspendLayout();
@@ -188,14 +188,6 @@
             this.showDebugToolsToolStripMenuItem.Text = "Show Debug Tools";
             this.showDebugToolsToolStripMenuItem.Click += new System.EventHandler(this.showDebugToolsToolStripMenuItem_Click);
             // 
-            // pnlMain
-            // 
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 63);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.Size = new System.Drawing.Size(831, 324);
-            this.pnlMain.TabIndex = 4;
-            // 
             // tspMain
             // 
             this.tspMain.ImageScalingSize = new System.Drawing.Size(32, 32);
@@ -211,16 +203,6 @@
             this.tspMain.TabIndex = 5;
             this.tspMain.Text = "toolStrip1";
             // 
-            // btnForward
-            // 
-            this.btnForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnForward.Image = ((System.Drawing.Image)(resources.GetObject("btnForward.Image")));
-            this.btnForward.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnForward.Name = "btnForward";
-            this.btnForward.Size = new System.Drawing.Size(36, 36);
-            this.btnForward.Text = "Forward";
-            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
-            // 
             // btnBack
             // 
             this.btnBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -230,6 +212,16 @@
             this.btnBack.Size = new System.Drawing.Size(36, 36);
             this.btnBack.Text = "Back";
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
+            // btnForward
+            // 
+            this.btnForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnForward.Image = ((System.Drawing.Image)(resources.GetObject("btnForward.Image")));
+            this.btnForward.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnForward.Name = "btnForward";
+            this.btnForward.Size = new System.Drawing.Size(36, 36);
+            this.btnForward.Text = "Forward";
+            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
             // 
             // toolStripSeparator1
             // 
@@ -246,19 +238,30 @@
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // pnlMain
+            // 
+            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMain.Location = new System.Drawing.Point(0, 63);
+            this.pnlMain.Name = "pnlMain";
+            this.pnlMain.Size = new System.Drawing.Size(831, 324);
+            this.pnlMain.TabIndex = 6;
+            // 
             // frmDisconnectedClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(831, 417);
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.tspMain);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mnsTools);
+            this.DoubleBuffered = true;
             this.MainMenuStrip = this.mnsTools;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmDisconnectedClient";
             this.Text = "OpenIZ Disconnected Client";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmDisconnectedClient_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -288,12 +291,12 @@
         private System.Windows.Forms.ToolStripMenuItem btnZoom75;
         private System.Windows.Forms.ToolStripMenuItem btnZoom50;
         private System.Windows.Forms.ToolStripMenuItem btnZoom25;
-        private System.Windows.Forms.Panel pnlMain;
         private System.Windows.Forms.ToolStrip tspMain;
         private System.Windows.Forms.ToolStripButton btnBack;
         private System.Windows.Forms.ToolStripButton btnForward;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnRefresh;
+        private System.Windows.Forms.Panel pnlMain;
     }
 }
 

@@ -1699,6 +1699,20 @@ var OpenIZ = OpenIZ || {
      */
     CarePlan: {
         /**
+         * @summary Refreshes the cached care plan
+         * @memberof OpenIZ.CarePlan
+         * @method
+         * @param {object} controlData The data which controls the asynchronous operation
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {OpenIZModel.Patient} controlData.data The seed data which should be passed to the forecasting engine in order to calculate the plan
+         * @param {string} controlData.query The additional query parameters which should be passed to the forecaster
+         */
+        refreshAsync: function(controlData) {
+            OpenIZ.Util.simplePost("/__plan/refresh", controlData);
+        },
+        /**
          * @summary Interprets the observation, setting the interpretationConcept property of the observation
          * @param {OpenIZModel.QuantityObservation} obs The observation which is to be interpretation
          * @param {string} ruleSet The rule set to be applied for the clinical decision

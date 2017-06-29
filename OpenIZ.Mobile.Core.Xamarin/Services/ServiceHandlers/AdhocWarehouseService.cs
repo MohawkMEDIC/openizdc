@@ -87,12 +87,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 search.Remove("_");
                 var results = warehouseSvc.StoredQuery(dataMart.Id, queryName, search);
 
-                // HACK: Sometimes the mart needs to be refreshed
-                if (dataMart.Name == "oizcp" && results.Count() == 0)
-                {
-                    ApplicationContext.Current.GetService<CarePlanManagerService>().RefreshCarePlan(true);
-                    throw new Exception("locale.careplan.refreshing");
-                }
+                
                 return results;
             }
         }

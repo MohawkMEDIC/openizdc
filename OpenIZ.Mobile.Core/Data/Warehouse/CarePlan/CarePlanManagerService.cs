@@ -175,6 +175,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                                     queryId = Guid.NewGuid();
                                     tr = 1;
                                     ofs = 0;
+                                    this.m_actCarePlanPromise.Clear();
                                     var syncFilter = patientSync?.LastSync ?? new DateTime(1900, 01, 01);
                                     while (ofs < tr)
                                     {

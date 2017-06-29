@@ -45,6 +45,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		where TDomain : DbBaseData, new()
         where TQueryResult : DbIdentified
 	{
+
+        /// <summary>
+        /// Get the order by
+        /// </summary>
+        protected override IEnumerable<TModel> SortResults(IEnumerable<TModel> data) => data.OrderByDescending(o => o.CreationTime);
+
         /// <summary>
         /// Perform the actual insert.
         /// </summary>

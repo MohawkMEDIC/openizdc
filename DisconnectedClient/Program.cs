@@ -87,9 +87,9 @@ namespace DisconnectedClient
 #else
                 uint x, y;
                 Screen.PrimaryScreen.GetDpi(DpiType.Angular, out x, out y);
-                if (x > 120 || y > 120)
-                    Cef.EnableHighDPISupport();
                 var settings = new CefSettings();
+                if (x > 120 || y > 120 || Program.Parameters.HdpiFix)
+                    Cef.EnableHighDPISupport();
                 Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
 #endif
                 Application.EnableVisualStyles();

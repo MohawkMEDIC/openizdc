@@ -146,6 +146,12 @@ namespace DisconnectedClient
             this.m_browser.RegisterJsObject("OpenIZApplicationService", new AppletFunctionBridge(this));
             this.pnlMain.Controls.Add(this.m_browser);
             this.m_browser.Dock = DockStyle.Fill;
+            this.m_browser.IsBrowserInitializedChanged += (o, e) =>
+            {
+                var width = this.m_browser.Width;
+                this.m_browser.Width = width - 1;
+                this.m_browser.Width = width;
+            };
         }
 
           // Go dback
@@ -196,5 +202,6 @@ namespace DisconnectedClient
         {
             this.m_browser.Refresh();
         }
+        
     }
 }
