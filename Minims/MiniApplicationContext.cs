@@ -213,27 +213,31 @@ namespace Minims
 
                     retVal.SetProgress("Loading configuration", 0.2f);
 
-                    // Load references
-                    foreach (var appletInfo in consoleParms.References)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
-                        try
-                        {
-                            retVal.m_tracer.TraceInfo("Loading applet {0}", appletInfo);
-                            String appletPath = appletInfo;
-                            if (!Path.IsPathRooted(appletInfo))
-                                appletPath = Path.Combine(Environment.CurrentDirectory, appletPath);
-                            using (var fs = File.OpenRead(appletPath))
+                    if (consoleParms.References != null)
+                    {
+                        // Load references
+                        foreach (var appletInfo in consoleParms.References)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
+                            try
                             {
-                                AppletManifest manifest = AppletManifest.Load(fs);
-                                // Is this applet in the allowed applets
+                                retVal.m_tracer.TraceInfo("Loading applet {0}", appletInfo);
+                                String appletPath = appletInfo;
+                                if (!Path.IsPathRooted(appletInfo))
+                                    appletPath = Path.Combine(Environment.CurrentDirectory, appletPath);
+                                using (var fs = File.OpenRead(appletPath))
+                                {
+                                    AppletManifest manifest = AppletManifest.Load(fs);
+                                    // Is this applet in the allowed applets
 
-                                appService.LoadApplet(manifest);
+                                    appService.LoadApplet(manifest);
+                                }
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
-                            throw;
-                        }
+                            catch (Exception e)
+                            {
+                                retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
+                                throw;
+                            }
+                    }
+
 
 
 
