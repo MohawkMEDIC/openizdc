@@ -49,7 +49,7 @@
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfDeath' | i18n }}:</label>
             <div class="col-xs-4">
                 <span ng-model="patient.deceasedDate" oiz-editor="date">
-                    {{ patient.deceasedDate | date : 'yyyy-MM-dd' }}
+                    {{ patient.deceasedDate | datePrecisionFormat : patient.deceasedDatePrecision }}
                 </span>
             </div>
         </div>

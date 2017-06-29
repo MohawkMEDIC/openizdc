@@ -273,8 +273,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
 
             $.fn.select2.defaults.set('language', locale);
 
-            // This re-adds the modal-open class to the body on modal close if there are two open modals.
-            // If we don't re-add modal-open to the body the modals cannot close
+            // This fixes modal scrolling when closing a nested modal
             $(document).on('hidden.bs.modal', function () {
 
                 if ($('.modal.in').length > 0) {
