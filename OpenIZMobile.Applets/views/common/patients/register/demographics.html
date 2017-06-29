@@ -71,8 +71,9 @@
                         <input type="checkbox"
                                ng-disabled="!patient.isDeceased"
                                ng-readonly="patient.readonly.deceasedDate"
-                               ng-model="patient.deceaseDatePrecision"
-                               value="1"
+                               ng-model="patient.deceasedDatePrecision"
+                               ng-true-value="2"
+                               ng-false-value="3"
                                name="approximateDeath" />
                         <div class="control__indicator" style="top: 8px;"></div>
                     </label>
