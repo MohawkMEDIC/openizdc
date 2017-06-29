@@ -110,11 +110,6 @@
                         <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                     </a>
                 </li>
-                <li role="presentation" ng-if="!patient.tag.onlineResult">
-                    <a ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
-                        <span class="glyphicon glyphicon-eye-open margin-right-10"></span> {{ 'locale.patient.tabs.view' | i18n }}
-                    </a>
-                </li>
             </ul>
         </div>
     </div>
