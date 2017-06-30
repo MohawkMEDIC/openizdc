@@ -213,8 +213,8 @@ namespace OpenIZ.Mobile.Reporting
                                 if (rparm.Ciel)
                                 {
                                     ((DateTime)retVal[rparm.Name]).AddHours(23 - ((DateTime)retVal[rparm.Name]).Hour);
-                                    ((DateTime)retVal[rparm.Name]).AddMinutes(23 - ((DateTime)retVal[rparm.Name]).Minute);
-                                    ((DateTime)retVal[rparm.Name]).AddSeconds(23 - ((DateTime)retVal[rparm.Name]).Second);
+                                    ((DateTime)retVal[rparm.Name]).AddMinutes(60 - ((DateTime)retVal[rparm.Name]).Minute);
+                                    ((DateTime)retVal[rparm.Name]).AddSeconds(60 - ((DateTime)retVal[rparm.Name]).Second);
                                 }
                                 break;
                             case ReportPropertyType.DateTime:
