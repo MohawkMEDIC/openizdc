@@ -1,0 +1,73 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2017-3-31
+ -->
+<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.layout.title' | i18n }} {{ about.product }} {{ about.infoVersion }}</h3>
+            v.{{ about.version }} (C) {{ about.copyright }} {{ about.company }} <br/>
+            OpenIZ Platform: {{ about.openiz.version }} ({{about.openiz.infoVersion}})
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+
+            <h3>{{ 'locale.about.versions.applets.title' | i18n }}</h3>
+            <hr />
+            <table class="table table-striped">
+                <tr>
+                    <th></th>
+                    <th>{{ 'locale.about.versions.applet' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.version' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.author' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.id' | i18n }}</th>
+                </tr>
+                <tr ng-repeat="app in about.applet" ng-class="{ 'success': app.PublicKeyToken &amp;&amp; app.PublicKeyToken != '' }">
+                    <td><img src="{{ app.icon }}" alt="logo" />
+                        <span ng-if="app.PublicKeyToken &amp;&amp; app.PublicKeyToken != ''" class="label label-success"><span class="glyphicon glyphicon-certificate"></span>{{ 'locale.about.versions.verified' | i18n }}</span>
+                    </td>
+                    <td>{{ app.name[0].value }} </td>
+                    <td>v.{{app.version}} 
+                        <a id="btnUpdate{{app.id}}" ng-show="app.update" ng-click="update(app.id)" class="btn btn-primary">{{ 'locale.about.versions.update' | i18n }} v.{{app.update.version}}</a>
+                    </td>
+                    <td>{{ app.author }}</td>
+                    <td>{{ app.id }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.versions.assemblies.title' | i18n}}</h3>
+            <hr />
+            <table class="table table-striped">
+                <tr>
+                    <th>{{ 'locale.about.versions.assembly' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.version' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.info' | i18n }}</th>
+                </tr>
+                <tr ng-repeat="asm in about.assembly">
+                    <td>{{ asm.name }}</td>
+                    <td>{{ asm.version }}</td>
+                    <td>{{ asm.info }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

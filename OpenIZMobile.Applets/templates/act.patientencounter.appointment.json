@@ -1,0 +1,21 @@
+﻿{
+  "$type": "PatientEncounter",
+  "templateModel": {
+    "mnemonic": "act.patientencounter.appointment"
+  },
+  "moodConcept": "C46EEE70-5612-473F-8D24-595EA15C9C39",
+  "classConcept": "54b52119-1709-4098-8911-5df6d6c84140",
+  "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+  "dischargeDisposition" :  "499f18c5-56c4-496e-9e23-e5cf862cfab8", 
+  "participation": {
+    "Location": {
+      "player": "{{facilityId}}"
+    },
+    "Authororiginator": {
+      "player": "{{userEntityId}}"
+    },
+    "RecordTarget": {
+      "player": ""
+    }
+  }
+}

@@ -1,3 +1,22 @@
+/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
 using System;
 using System.Security.Principal;
 using System.Linq;
@@ -25,7 +44,11 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <param name="isAuthenticated">If set to <c>true</c> is authenticated.</param>
 		public ClaimsIdentity (String userName, bool isAuthenticated, IEnumerable<Claim> claims)
 		{
-			this.m_claims = new List<Claim> (claims);
+            if (claims != null)
+                this.m_claims = new List<Claim>(claims);
+            else
+                this.m_claims = new List<Security.Claim>();
+
 			if(!this.m_claims.Exists(o=>o.Type == DefaultNameClaimType))
 				this.m_claims.Add(new Claim(DefaultNameClaimType, userName));
 			this.IsAuthenticated = isAuthenticated;
@@ -71,7 +94,7 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <value>The name.</value>
 		public string Name {
 			get {
-				return this.m_claims.Find (o => o.Type == DefaultNameClaimType).Value;
+				return this.m_claims.Find (o => o.Type == DefaultNameClaimType).Value.ToLower();
 			}
 		}
 

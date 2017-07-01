@@ -1,11 +1,30 @@
+/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
 using System;
-using SQLite;
+using SQLite.Net;
 using System.Xml.Serialization;
-using OpenIZ.Mobile.Core.Applets;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;
 using Newtonsoft.Json;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {
@@ -23,14 +42,27 @@ namespace OpenIZ.Mobile.Core.Configuration
 		{
 			this.AppletConfiguration = new List<AppletConfiguration> ();
 			this.AppletGroupOrder = new List<string> ();
-			this.Applets = new List<AppletReference> ();
+			this.Applets = new List<AppletName> ();
+            this.Security = new AppletSecurityConfiguration();
 		}
 
-		/// <summary>
-		/// Gets or sets the directory where applets are stored
-		/// </summary>
-		/// <value>The applet directory.</value>
-		[XmlAttribute("appletDirectory"), JsonIgnore]
+        /// <summary>
+        /// Gets or sets the applet which is used for authentication requests
+        /// </summary>
+        [XmlElement("startup")]
+        public String StartupAsset { get; set; }
+
+        /// <summary>
+        /// Gets or sets the asset which is used for authentication
+        /// </summary>
+        [XmlElement("login")]
+        public String AuthenticationAsset { get; set; }
+
+        /// <summary>
+        /// Gets or sets the directory where applets are stored
+        /// </summary>
+        /// <value>The applet directory.</value>
+        [XmlAttribute("appletDirectory"), JsonIgnore]
 		public String AppletDirectory {
 			get;
 			set;
@@ -62,17 +94,57 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// </summary>
 		/// <value>The applets.</value>
 		[XmlElement("applet"), JsonProperty("applet")]
-		public List<AppletReference> Applets {
+		public List<AppletName> Applets {
 			get;
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Auto-update applet
+        /// </summary>
+        [XmlElement("autoUpdate"), JsonProperty("autoUpdate")]
+        public bool AutoUpdateApplets { get; set; }
 
-	/// <summary>
-	/// Represents a configuration of an applet
-	/// </summary>
-	[JsonObject, XmlType(nameof(AppletConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
+        /// <summary>
+        /// Applet security section
+        /// </summary>
+        [XmlElement("security"), JsonProperty("security")]
+        public AppletSecurityConfiguration Security { get; set; }
+    }
+
+    /// <summary>
+    /// Applet security configuration
+    /// </summary>
+    [XmlType(nameof(AppletSecurityConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
+    [JsonObject(nameof(AppletSecurityConfiguration))]
+    public class AppletSecurityConfiguration
+    {
+
+        /// <summary>
+        /// Create new security configuration
+        /// </summary>
+        public AppletSecurityConfiguration()
+        {
+            this.TrustedPublishers = new List<string>();
+        }
+
+        /// <summary>
+        /// Allow unsigned applets
+        /// </summary>
+        [XmlAttribute("allowUnsigned")]
+        public bool AllowUnsignedApplets { get; set; }
+
+        /// <summary>
+        /// Trusted publisher
+        /// </summary>
+        [XmlElement("trustedPublisher")]
+        public List<String> TrustedPublishers { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a configuration of an applet
+    /// </summary>
+    [JsonObject, XmlType(nameof(AppletConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
 	public class AppletConfiguration
 	{
 

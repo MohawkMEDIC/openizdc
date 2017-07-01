@@ -1,4 +1,22 @@
-﻿
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2016-10-25
+ */
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +28,14 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using OpenIZ.Mobile.Core.Applets;
 using OpenIZ.Mobile.Core.Android.Configuration;
 using OpenIZ.Mobile.Core.Android.AppletEngine;
 using OpenIZ.Mobile.Core.Android;
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Applets;
+using System.Xml;
+using System.Threading.Tasks;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZMobile
 {
@@ -25,69 +47,105 @@ namespace OpenIZMobile
 	public class AppletActivity : Activity
 	{
 
-		private AppletWebView m_webView;
 
-		/// <param name="newConfig">The new device configuration.</param>
-		/// <summary>
-		/// Configuration changed
+        // Home layout
+        private AppletWebView m_webView;
+        private ProgressBar m_progressBar;
+        private TextView m_textView;
+        private Tracer m_tracer = Tracer.GetTracer(typeof(AppletActivity));
+
+        /// <summary>
+		/// Called when the activity has detected the user's press of the back
+		///  key.
 		/// </summary>
-		public override void OnConfigurationChanged (Android.Content.Res.Configuration newConfig)
+		public override void OnBackPressed()
+        {
+            if (this.m_webView.CanGoBack())
+                this.m_webView.GoBack();
+            else
+                base.OnBackPressed();
+        }
+
+        /// <param name="newConfig">The new device configuration.</param>
+        /// <summary>
+        /// Configuration changed
+        /// </summary>
+        public override void OnConfigurationChanged (Android.Content.Res.Configuration newConfig)
 		{
 			base.OnConfigurationChanged (newConfig);
 		}
 
-		/// <summary>
-		/// Called when the activity has detected the user's press of the back
-		///  key.
-		/// </summary>
-		public override void OnBackPressed ()
-		{
-			if (this.m_webView.CanGoBack())
-				this.m_webView.GoBack ();
-			else
-				base.OnBackPressed ();
-		}
-
+		
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
+
+            (AndroidApplicationContext.Current as AndroidApplicationContext).CurrentActivity = this;
+
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
+            //this.m_webView.Asset = asset;
+            var assetLink = this.Intent.Extras.Get("assetLink").ToString();
+            this.m_tracer.TraceInfo("Navigating to {0}", assetLink);
+            if(!String.IsNullOrEmpty(assetLink))
+                this.m_webView.LoadUrl(assetLink);
 
-			var activityId = this.Intent.Extras.Get ("appletId");
-			// Find the applet
-			AppletManifest applet = AndroidApplicationContext.Current.GetApplet (activityId.ToString ());
-			if (applet == null) {
-				Toast.MakeText (this.ApplicationContext, this.GetString (Resource.String.err_applet_not_found), ToastLength.Short).Show ();
-				this.Finish ();
-				return;
-			}
+            // Progress bar
+            this.m_progressBar = new ProgressBar(this, null, Android.Resource.Attribute.ProgressBarStyleHorizontal);
+            this.m_textView = new TextView(this, null);
+            this.m_textView.SetText(Resource.String.loading);
+            this.m_progressBar.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, 24);
+            this.m_textView.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+            var decorView = this.Window.DecorView as FrameLayout;
+            decorView.AddView(this.m_progressBar);
+            decorView.AddView(this.m_textView);
 
-			// Applet has changed
-			this.m_webView.AppletChanged += (o, e) => {
+            // Find the applet
+            //AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
+            //             assetLink, language: this.Resources.Configuration.Locale.Language);
+            //if (asset == null) {
+            //             UserInterfaceUtils.ShowMessage(this, (o, e) => { this.Finish(); }, String.Format("FATAL: {0} not found (installed: {1})", assetLink, AndroidApplicationContext.Current.LoadedApplets.Count));
+
+            //}
+
+            // Progress has changed
+            AndroidApplicationContext.ProgressChanged += (o, e) =>
+            {
+                RunOnUiThread(() =>
+                {
+                    try
+                    {
+                        if (!String.IsNullOrEmpty(e.ProgressText) && e.Progress > 0 && e.Progress < 1.0f)
+                        {
+                            this.m_textView.Visibility = ViewStates.Visible;
+                            this.m_progressBar.Progress = (int)(this.m_progressBar.Max * e.Progress);
+                            this.m_textView.Text = String.Format("{0} {1}", e.ProgressText, e.Progress > 0 ? String.Format("({0:0%})", e.Progress) : null);
+                        }
+                        else
+                            this.m_textView.Visibility = ViewStates.Invisible;
+                    }
+                    catch { }
+                });
+            };
+
+            // Set view 
+            EventHandler observer = null;
+            observer = (o, e) =>
+            {
+                try
+                {
+                    View contentView = decorView.FindViewById(Android.Resource.Id.Content);
+                    this.m_progressBar.SetY(contentView.GetY() + contentView.Height - 15);
+                    this.m_textView.SetY(contentView.GetY() + contentView.Height - this.m_textView.MeasuredHeight - 15);
+
+                    this.m_progressBar.ViewTreeObserver.GlobalLayout -= observer;
+                }
+                catch { }
+            };
+            this.m_progressBar.ViewTreeObserver.GlobalLayout += observer;
 
 
-				var view = o as AppletWebView;
-
-				// Set the header and stuff
-				this.ActionBar.SetTitle(Resource.String.app_name);
-				this.ActionBar.Subtitle = view.Applet.Info.GetName(Resources.Configuration.Locale.DisplayLanguage);
-
-				if (view.Applet.Info.Icon?.StartsWith ("@drawable") == true) {
-					int iconId = this.Resources.GetIdentifier (view.Applet.Info.Icon.Substring (10), "drawable", "org.openiz.openiz_mobile");
-					if (iconId != 0)
-						this.ActionBar.SetIcon (iconId);
-					else
-						this.ActionBar.SetIcon (Resource.Drawable.cogs);
-				} else if (view.Applet.Info.Icon != null)
-					;
-				else
-					this.ActionBar.SetIcon (Resource.Drawable.app_alt);
-
-			};
-			this.m_webView.Applet = applet;
 			//this.m_webView.LoadDataWithBaseURL ("applet:index", "<html><body>Hi!</body></html>", "text/html", "UTF-8", null);
-			this.m_webView.NavigateAsset("index"); // Navigate to the index page
 
 
 		}

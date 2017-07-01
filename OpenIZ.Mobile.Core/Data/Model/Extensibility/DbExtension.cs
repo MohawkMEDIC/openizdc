@@ -1,5 +1,28 @@
-﻿using System;
-using SQLite;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-2-4
+ */
+using System;
+using SQLite.Net;
+using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 {
@@ -10,21 +33,11 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 	{
 
 		/// <summary>
-		/// Gets or sets the source identifier.
-		/// </summary>
-		/// <value>The source identifier.</value>
-		[Column ("source"), Indexed]
-		public int SourceId {
-			get;
-			set;
-		}
-
-		/// <summary>
 		/// Gets or sets the extension identifier.
 		/// </summary>
 		/// <value>The extension identifier.</value>
-		[Column ("extension_type")]
-		public int ExtensionId {
+		[Column ("extensionType"), NotNull, MaxLength(16), ForeignKey(typeof(DbExtensionType), nameof(DbExtensionType.Uuid))]
+		public byte[] ExtensionTypeUuid {
 			get;
 			set;
 		}
@@ -39,7 +52,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets the display value of the object
+        /// </summary>
+        [Column("display")]
+        public String ExtensionDisplay { get; set; }
+
+    }
 
 	/// <summary>
 	/// Entity extension.
@@ -47,15 +66,36 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 	[Table ("entity_extension")]
 	public class DbEntityExtension : DbExtension
 	{
-					
-	}
 
-	/// <summary>
-	/// Act extensions
-	/// </summary>
-	[Table ("act_extension")]
+        /// <summary>
+        /// Gets or sets the source identifier.
+        /// </summary>
+        /// <value>The source identifier.</value>
+        [Column("entity_uuid"), NotNull, Indexed, MaxLength(16), ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
+        public byte[] SourceUuid
+        {
+            get;
+            set;
+        }
+
+    }
+
+    /// <summary>
+    /// Act extensions
+    /// </summary>
+    [Table ("act_extension")]
 	public class DbActExtension : DbExtension
 	{
-	}
+        /// <summary>
+        /// Gets or sets the source identifier.
+        /// </summary>
+        /// <value>The source identifier.</value>
+        [Column("act_uuid"), NotNull, Indexed, MaxLength(16), ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        public byte[] SourceUuid
+        {
+            get;
+            set;
+        }
+    }
 }
 

@@ -1,7 +1,27 @@
-﻿using System;
-using SQLite;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-2-4
+ */
+using System;
+using SQLite.Net;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Data.Model.Security;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model
 {
@@ -14,8 +34,8 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the creation time
 		/// </summary>
 		/// <value>The creation time.</value>
-		[Column("creation_time"), NotNull]
-		public DateTime? CreationTime {
+		[Column("creationTime"), NotNull]
+		public DateTimeOffset? CreationTime {
 			get;
 			set;
 		}
@@ -24,8 +44,8 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the time that the record was obsoleted
 		/// </summary>
 		/// <value>The obsoletion time.</value>
-		[Column("obsoletion_time")]
-		public DateTime? ObsoletionTime {
+		[Column("obsoletionTime")]
+		public DateTimeOffset? ObsoletionTime {
 			get;
 			set;
 		}
@@ -34,8 +54,8 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the updated time.
 		/// </summary>
 		/// <value>The updated time.</value>
-		[Column("updated_time")]
-		public DateTime? UpdatedTime {
+		[Column("updatedTime")]
+		public DateTimeOffset? UpdatedTime {
 			get;
 			set;
 		}
@@ -44,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the user that created the data
 		/// </summary>
 		/// <value>The created by identifier.</value>
-		[Column("created_by"), NotNull, MaxLength(16)]
+		[Column("createdBy"), NotNull, MaxLength(16)]
 		public byte[] CreatedByUuid {
 			get;
 			set;
@@ -54,7 +74,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Obsoletion user
 		/// </summary>
 		/// <value>The obsoleted by identifier.</value>
-		[Column("obsoleted_by"), MaxLength(16)]
+		[Column("obsoletedBy"), MaxLength(16)]
 		public byte[] ObsoletedByUuid { 
 			get;
 			set;
@@ -64,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the updated by identifier.
 		/// </summary>
 		/// <value>The updated by identifier.</value>
-		[Column("updated_by"), MaxLength(16)]
+		[Column("updatedBy"), MaxLength(16)]
 		public byte[] UpdatedByUuid {
 			get;
 			set;

@@ -1,0 +1,101 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2017-3-31
+ -->
+<div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-md-2 col-xs-2">
+                <img src="~/img/appbar.database.png" alt="database" class="left" />
+            </div>
+            <div class="col-md-10 col-xs-10" style="vertical-align:middle">
+                <em>{{ 'locale.settings.dataDescription' | i18n }}</em>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label class="control-label col-sm-2">{{ 'locale.settings.dataMode' | i18n }}</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <select class="form-control" ng-model="config.data.mode">
+                            <option value="sync">{{ 'locale.settings.dataMode.synchronized' | i18n }}</option>
+                            <option value="online">{{ 'locale.settings.dataMode.onlineOnly' | i18n }}</option>
+                            <option value="offline">{{ 'locale.settings.dataMode.offlineOnly' | i18n }}</option>
+                        </select>
+                        <span class="input-group-btn">
+                            <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.dataMode' | i18n }}" data-content="{{ 'locale.settings.dataMode.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-show="config.data.mode == 'sync'">
+                <label class="control-label col-sm-2">{{ 'locale.settings.syncEvents' | i18n }}</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <select class="form-control" multiple="multiple" ng-model="config.data.sync.event">
+                            <option value="onstart">{{ 'locale.settings.pollEvent.start' | i18n }}</option>
+                            <option value="onchange">{{ 'locale.settings.pollEvent.network' | i18n }}</option>
+                            <option value="oncommit">{{ 'locale.settings.pollEvent.commit' | i18n }}</option>
+                        </select>
+                        <span class="input-group-btn">
+                            <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.syncEvents' | i18n }}" data-content="{{ 'locale.settings.syncEvents.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-show="config.data.mode == 'sync' &amp;&amp; config.realmName != null">
+                <label class="control-label col-sm-2">{{ 'locale.settings.pollInterval' | i18n }}</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <select class="form-control" id="pollIntervalInput" ng-model="config.data.sync.pollInterval">
+                            <option value="00:01:00">{{ 'locale.settings.pollInterval.1' | i18n }}</option>
+                            <option value="00:05:00">{{ 'locale.settings.pollInterval.5' | i18n }}</option>
+                            <option value="00:15:00">{{ 'locale.settings.pollInterval.15' | i18n }}</option>
+                            <option value="00:30:00">{{ 'locale.settings.pollInterval.30' | i18n }}</option>
+                            <option value="01:00:00">{{ 'locale.settings.pollInterval.60' | i18n }}</option>
+                            <option value="00:00:00">{{ 'locale.settings.pollInterval.0' | i18n }}</option>
+                            <!--<option value="00:00:00">{{ 'locale.settings.pollInterval.push' | i18n }}</option>-->
+                        </select>
+                        <span class="input-group-btn">
+                            <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.pollInterval' | i18n }}" data-content="{{ 'locale.settings.pollInterval.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" ng-show="config.data.mode == 'sync'">
+                <label class="control-label col-sm-2">{{ 'locale.settings.subscribe' | i18n }}:</label>
+                <div class="col-sm-10" ng-class="{ 'has-error': (settingsForm.facilityInput.$touched || settingsForm.$submitted) &amp;&amp; settingsForm.facilityInput.$invalid }">
+                    <div class="input-group">
+                        <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-change="config.security.onlySubscribedAuth = true" ng-model="config.data.sync.subscribe" ng-required="true" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                            <option value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                        </select>
+                        <span class="input-group-btn">
+                            <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.subscribe' | i18n }}" data-content="{{ 'locale.settings.subscribe.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        </span>
+                    </div>
+                    <p ng-if="(settingsForm.facilityInput.$touched || settingsForm.$submitted) &amp;&amp; settingsForm.facilityInput.$invalid">
+                        <span ng-show="settingsForm.facilityInput.$error.required" class="help-block text-danger">
+                            {{ 'locale.settings.subscribe.error.required' | i18n }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

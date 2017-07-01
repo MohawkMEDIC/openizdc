@@ -1,8 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-6-14
+ -->
 <resources>
 	<string name="library_name">OpenIZ.Mobile.Core.Android</string>
 	<string name="confirm">Ok</string>
 	<string name="cancel">Cancel</string>
 
 	<string name="applet_confirm_close">You have unsaved data on this page. Do you want to close it?</string>
+
+  <string name="err_general">An error occurred, please refer to the application logs</string>
+	<string name="err_oauth2_invalid_request">Access control service is not compatible with this client</string>
+	<string name="err_oauth2_invalid_client">This client application is not authorized for this environment</string>
+  <string name="err_oauth2_invalid_grant">Invalid credentials</string>
+  <string name="err_oauth2_unauthorized_client">The client secret is not configured properly</string>
+  <string name="err_oauth2_unsupported_grant_type">Access control service does not support password grants</string>
+  <string name="err_oauth2_invalid_scope">Client is bound to the incorrect realm</string>
+
+  <string name="err_token_TokenExpired">Session expired</string>
+  <string name="err_token_InvalidSignature">Session has been tampered with</string>
+  <string name="err_token_InvalidTokenType">Access control service is not compatible with this app</string>
+  <string name="err_token_KeyNotFound">Unknown access control certificate</string>
+  <string name="err_token_NotYetValid">Token\'s validity time is in the future. Is the date/time on the device correct?</string>
+
+  <string name="startup_configuration">Loading Configuration</string>
+  <string name="startup_data">Applying Database Changes</string>
+  <string name="startup_update">Applying Updates</string>
+  <string name="startup_setup">Preparing initial configuration</string>
+
 </resources>

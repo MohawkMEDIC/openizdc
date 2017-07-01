@@ -1,0 +1,42 @@
+﻿{
+  "$type": "CodedObservation",
+  "templateModel": {
+    "mnemonic": "act.observation.causeofdeath"
+  },
+  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+  "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+  "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+  "typeConcept": "6fb8487c-cd6f-44f1-ab63-27dc65405792",
+  "value": "6df3720b-857f-4ba2-826f-b7f1d3c3adbb",
+  "actTime": "{{now}}",
+  "relationship": {
+    "HasComponent": {
+      "targetModel": { // Cause of death
+        "$type": "CodedObservation",
+        "id": "{{uuid}}",
+        "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+        "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+        "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+        "typeConcept": "d5e0a5be-d227-413a-a752-b7d79d7d4ede",
+        "value": "70fe34ce-caff-4f46-b6e6-9cd6d8f289d6"
+      }
+    }
+  },
+  "participation": {
+    "Location": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{facilityId}}"
+    },
+    "Authororiginator": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{userEntityId}}"
+    },
+    "RecordTarget": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": ""
+    }
+  }
+}

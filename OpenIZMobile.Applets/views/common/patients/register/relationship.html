@@ -1,0 +1,104 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-6
+ -->
+<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+    <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="relationType">{{ 'locale.patient.relative.type' | i18n }}<span ng-if="motherUnknown">*</span></label>
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.nextOfKinRelationshipType.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.nextOfKinRelationshipType.$invalid }">
+            <div class="input-group">
+                <select id="nextOfKinRelationshipType" class="form-control" name="nextOfKinRelationshipType"
+                        ng-model="patient.relationship.NextOfKin.relationshipType"
+                        bind:source="Concept"
+                        bind:key="mnemonic"
+                        bind:filter="conceptSet.mnemonic=ChildFamilyMember&amp;mnemonic=!Mother"
+                        bind:value="name[{{ locale }}].value">
+                </select>
+                <span class="select-arrow-container-alt" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+                <span class="input-group-btn">
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.type' | i18n }}" data-content="{{ 'locale.patient.relative.type.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div ng-show="patient.relationship.NextOfKin.relationshipType">
+        <div class="form-group">
+            <label class="col-xs-3 control-label" for="relationGivenName">{{ 'locale.patient.relative.givenName' | i18n }}<span ng-if="motherUnknown">*</span></label>
+            <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.relationGivenName.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.relationGivenName.$invalid }">
+                <div class="input-group">
+                    <input type="text" name="relationGivenName" id="relationGivenName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.NextOfKin.targetModel.name.OfficialRecord.component.Given" ng-required="motherUnknown" />
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.givenName' | i18n }}" data-content="{{ 'locale.patient.relative.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    </span>
+                </div>
+                <p ng-if="(editPatientForm.relationGivenName.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.relationGivenName.$invalid">
+                    <span ng-show="editPatientForm.relationGivenName.$error.required" class="help-block text-danger">
+                        {{ 'locale.patient.nextOfKin.errors.givenName.required' | i18n }}
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label" for="relationFamilyName">{{ 'locale.patient.relative.familyName' | i18n }}<span ng-if="motherUnknown">*</span></label>
+            <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.relationFamilyName.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.relationFamilyName.$invalid }">
+                <div class="input-group">
+                    <input type="text" name="relationFamilyName" id="relationFamilyName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.NextOfKin.targetModel.name.OfficialRecord.component.Family" ng-required="motherUnknown" />
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.familyName' | i18n }}" data-content="{{ 'locale.patient.relative.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    </span>
+                </div>
+                <p ng-if="(editPatientForm.relationFamilyName.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.relationFamilyName.$invalid">
+                    <span ng-show="editPatientForm.relationFamilyName.$error.required" class="help-block text-danger">
+                        {{ 'locale.patient.nextOfKin.errors.familyName.required' | i18n }}
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.contact' | i18n }}</label>
+            <div class="col-xs-9 col-sm-4">
+                <div class="input-group" ng-class="{ 'has-error': editPatientForm.relativePhoneNumberType.$error.required || editRelationshipForm.relativePhoneNumberType.$error.required}">
+                    <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
+                            bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value">
+                        <option></option>
+                    </select>
+                    <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.use"
+                            bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.NextOfKin.targetModel.telecom.$other.value">
+                        <option></option>
+                    </select>
+                    <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+                </div>
+                <p class="help-block text-danger ng-cloak" ng-show="editPatientForm.relativePhoneNumberType.$error.required || editRelationshipForm.relativePhoneNumberType.$error.required">{{ 'locale.patient.errors.contactType' | i18n}}</p>
+            </div>
+            <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
+                <div class="margin-top-15 visible-xs"></div>
+                <div class="input-group" ng-class="{ 'has-error': editPatientForm.relationPhoneNumber.$error.pattern || editRelationshipForm.relationPhoneNumber.$error.pattern}">
+                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value" class="form-control" ng-pattern="phoneRegex" />
+                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex" />
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.contact' | i18n }}" data-content="{{ 'locale.patient.relative.contact.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    </span>
+
+                </div>
+                <p class="help-block text-danger ng-cloak" ng-show="editPatientForm.relationPhoneNumber.$error.pattern || editRelationshipForm.relationPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
+            </div>
+        </div>
+    </div>
+</fieldset>

@@ -1,290 +1,469 @@
-﻿using System;
-using OpenIZ.Mobile.Core.Android.Configuration;
-using System.Collections.Generic;
-using OpenIZ.Mobile.Core.Applets;
-using OpenIZ.Mobile.Core.Diagnostics;
-using OpenIZ.Mobile.Core.Configuration;
-using System.IO;
-using OpenIZ.Mobile.Core.Configuration.Data;
-using System.Xml.Serialization;
-using System.Security.Cryptography;
-using OpenIZ.Mobile.Core.Security;
-using System.Reflection;
-using System.Diagnostics.Tracing;
-using Android.Util;
-using Android.Widget;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-10-11
+ */
+using Android.App;
 using Android.Runtime;
-using System.Runtime.InteropServices;
-using OpenIZ.Mobile.Core.Interop.Util;
-using OpenIZ.Core.Model.DataTypes;
+using Android.Util;
+using OpenIZ.Core;
+using OpenIZ.Core.Applets;
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Protocol;
+using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Android.Configuration;
+using OpenIZ.Mobile.Core.Android.Resources;
+using OpenIZ.Mobile.Core.Configuration;
+using OpenIZ.Mobile.Core.Configuration.Data;
+using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Security;
+using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Xamarin;
+using System;
+using System.Diagnostics.Tracing;
+using System.IO;
+using System.Linq;
+using System.Security;
+using System.Security.Cryptography;
+using System.Security.Principal;
+using System.Xml.Serialization;
+using A = Android;
+using OpenIZ.Mobile.Core.Xamarin.Configuration;
+using System.IO.Compression;
+using System.Threading;
+using Android.OS;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Android
 {
-	/// <summary>
-	/// Represents an application context for Xamarin Android
-	/// </summary>
-	public class AndroidApplicationContext : ApplicationContext
-	{
+    /// <summary>
+    /// Represents an application context for Xamarin Android
+    /// </summary>
+    public class AndroidApplicationContext : XamarinApplicationContext
+    {
+        // The application
+        private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication()
+        {
+            ApplicationSecret = "C5B645B7D30A4E7E81A1C3D8B0E28F4C",
+            Key = Guid.Parse("5248ea19-369d-4071-8947-413310872b7e"),
+            Name = "org.openiz.openiz_mobile"
+        };
 
-		// Application Secret
-		public static readonly byte[] secret = new byte[]{
-			0xFF, 0x00, 0x43, 0x23, 0x55, 0x98, 0xA0, 0x20,
-			0xC3, 0xE3, 0xE2, 0xA1, 0x42, 0x92, 0x81, 0xE3
-		};
+        // Configuration manager
+        private ConfigurationManager m_configurationManager;
 
+        /// <summary>
+        /// Static CTOR bind to global handlers to log errors
+        /// </summary>
+        /// <value>The current.</value>
+        static AndroidApplicationContext()
+        {
+            Console.WriteLine("Binding global exception handlers");
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                if (AndroidApplicationContext.Current != null)
+                {
+                    Tracer tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
+                    tracer.TraceEvent(EventLevel.Critical, "Uncaught exception: {0}", e.ExceptionObject.ToString());
+                }
+                Console.WriteLine("AndroindApplicationContext::UncaughtException", e.ExceptionObject.ToString());
+            };
+            AndroidEnvironment.UnhandledExceptionRaiser += (s, e) =>
+            {
+                if (AndroidApplicationContext.Current != null)
+                {
+                    Tracer tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
+                    tracer.TraceEvent(EventLevel.Critical, "Uncaught exception: {0}", e.Exception.ToString());
+                }
+                Console.WriteLine("AndroindApplicationContext::UncaughtException", e.Exception.ToString());
+                e.Handled = true;
+            };
+        }
 
-		// Applets
-		private List<AppletManifest> m_applets = new List<AppletManifest>();
+        /// <summary>
+        /// Fired when no configuration is found
+        /// </summary>
+        public static event EventHandler NoConfiguration;
 
-		// The tracer
-		private Tracer m_tracer;
+        /// <summary>
+        /// Gets or sets the current activity
+        /// </summary>
+        public A.Content.Context CurrentActivity { get; set; }
 
-		/// <summary>
-		/// Fired when no configuration is found
-		/// </summary>
-		public static event EventHandler NoConfiguration;
+        /// <summary>
+        /// Start the application context
+        /// </summary>
+        public static bool Start(A.Content.Context launcherActivity, A.Content.Context context, A.App.Application application)
+        {
+            var retVal = new AndroidApplicationContext();
+            retVal.Context = context;
+            retVal.m_configurationManager = new ConfigurationManager();
+            retVal.AndroidApplication = application;
 
-		// Configuration manager
-		private ConfigurationManager m_configurationManager;
+            // Not configured
+            if (!retVal.ConfigurationManager.IsConfigured)
+            {
+                NoConfiguration?.Invoke(null, EventArgs.Empty);
+                return false;
+            }
+            else
+            { // load configuration
+                try
+                {
+                    retVal.ConfigurationManager.Load();
 
-		/// <summary>
-		/// Static CTOR bind to global handlers to log errors
-		/// </summary>
-		/// <value>The current.</value>
-		static AndroidApplicationContext() {
+                    // Set master application context
+                    ApplicationContext.Current = retVal;
+                    retVal.CurrentActivity = launcherActivity;
+                    retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
+                    // HACK: For some reason the PCL doesn't do this automagically
+                    //var connectionString = retVal.Configuration.GetConnectionString("openIzWarehouse");
+                    //if (!File.Exists(connectionString.Value))
+                    //{
+                    //    retVal.m_tracer.TraceInfo("HAX: Creating warehouse file since PCL can't... {0}", connectionString.Value);
+                    //    SqliteConnection.CreateFile(connectionString.Value);
+                    //}
+                    // Load configured applets
+                    var configuredApplets = retVal.Configuration.GetSection<AppletConfigurationSection>().Applets;
 
-			AppDomain.CurrentDomain.UnhandledException += (s,e)=> {
-				if(AndroidApplicationContext.Current != null)
-				{
-					Tracer tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
-					tracer.TraceEvent(EventLevel.Critical, "Uncaught exception: {0}", e.ExceptionObject.ToString());
-				}
-				else
-					Log.Error("AndroindApplicationContext::UncaughtException", e.ExceptionObject.ToString());
-				
-			};
-			AndroidEnvironment.UnhandledExceptionRaiser += (s, e) => {
-				if(AndroidApplicationContext.Current != null)
-				{
-					Tracer tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
-					tracer.TraceEvent(EventLevel.Critical, "Uncaught exception: {0}", e.Exception.ToString());
-				}
-				else
-					Log.Error("AndroindApplicationContext::UncaughtException", e.Exception.ToString());
-				e.Handled = true;
-			};
+                    retVal.SetProgress(context.GetString(Resource.String.startup_configuration), 0.2f);
+                    var appletManager = retVal.GetService<IAppletManagerService>();
 
-		}
+                    // Load all user-downloaded applets in the data directory
+                    foreach (var appletInfo in configuredApplets)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
+                        try
+                        {
+                            retVal.m_tracer.TraceInfo("Loading applet {0}", appletInfo);
+                            String appletPath = Path.Combine(retVal.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);
 
-		/// <summary>
-		/// Gets the current application context
-		/// </summary>
-		/// <value>The current.</value>
-		public static AndroidApplicationContext Current { get { return ApplicationContext.Current as AndroidApplicationContext; } }
+                            if (!File.Exists(appletPath)) // reinstall
+                            {
+                                retVal.Configuration.GetSection<AppletConfigurationSection>().Applets.Clear();
+                                retVal.SaveConfiguration();
+                                retVal.Alert(Strings.locale_restartRequired);
+                                throw new AppDomainUnloadedException();
+                            }
 
-		/// <summary>
-		/// Starts the application context using in-memory default configuration for the purposes of 
-		/// configuring the software
-		/// </summary>
-		/// <returns><c>true</c>, if temporary was started, <c>false</c> otherwise.</returns>
-		public static bool StartTemporary()
-		{
-			var retVal = new AndroidApplicationContext();
-			retVal.m_configurationManager = new ConfigurationManager (ConfigurationManager.GetDefaultConfiguration());
-			retVal.Principal = new ClaimsPrincipal (new ClaimsIdentity ("SYSTEM", true, new Claim[] {
-				new Claim(ClaimTypes.OpenIzGrantedPolicyClaim, PolicyIdentifiers.AccessClientAdministrativeFunction)
-			}));
-			ApplicationContext.Current = retVal;
-			retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext));
+                            // Load
+                            using (var fs = File.OpenRead(appletPath))
+                            {
+                                AppletManifest manifest = AppletManifest.Load(fs);
+                                // Is this applet in the allowed applets
 
-			return true;
-		}
+                                // public key token match?
+                                if (appletInfo.PublicKeyToken != manifest.Info.PublicKeyToken)
+                                {
+                                    retVal.m_tracer.TraceWarning("Applet {0} failed validation", appletInfo);
+                                    ; // TODO: Raise an error
+                                }
 
-		/// <summary>
-		/// Start the application context
-		/// </summary>
-		public static bool Start ()
-		{
+                                appletManager.LoadApplet(manifest);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
+                            throw;
+                        }
 
-			var retVal = new AndroidApplicationContext ();
-			retVal.m_configurationManager = new ConfigurationManager ();
+                    // Are we going to deploy applets
+                    // Upgrade applets from our app manifest
+                    foreach (var itm in context.Assets.List("Applets"))
+                    {
+                        try
+                        {
+                            retVal.m_tracer.TraceVerbose("Loading {0}", itm);
+                            AppletPackage pkg = AppletPackage.Load(context.Assets.Open(String.Format("Applets/{0}", itm)));
 
-			// Not configured
-			if (!retVal.ConfigurationManager.IsConfigured) {
-				NoConfiguration?.Invoke (null, EventArgs.Empty);
-				return false;
-			} else { // load configuration
-				try {
-					retVal.ConfigurationManager.Load ();
-					// Set master application context
-					ApplicationContext.Current = retVal;
-					retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
+                            // Write data to assets directory
+#if !DEBUG
+                            if (appletManager.GetApplet(pkg.Meta.Id) == null || new Version(appletManager.GetApplet(pkg.Meta.Id).Info.Version) < new Version(pkg.Meta.Version))
+#endif
+                                appletManager.Install(pkg, true);
+                        }
+                        catch (Exception e)
+                        {
+                            retVal.m_tracer?.TraceError(e.ToString());
+                        }
+                    }
 
-					// Load configured applets
-					var configuredApplets = retVal.Configuration.GetSection<AppletConfigurationSection> ().Applets;
+                    // Ensure data migration exists
+                    try
+                    {
+                        // If the DB File doesn't exist we have to clear the migrations
+                        if (!File.Exists(retVal.Configuration.GetConnectionString(retVal.Configuration.GetSection<DataConfigurationSection>().MainDataSourceConnectionStringName).Value))
+                        {
+                            retVal.m_tracer.TraceWarning("Can't find the OpenIZ database, will re-install all migrations");
+                            retVal.Configuration.GetSection<DataConfigurationSection>().MigrationLog.Entry.Clear();
+                        }
+                        retVal.SetProgress(context.GetString(Resource.String.startup_data), 0.6f);
 
-					// Load all user-downloaded applets in the data directory
-					foreach (var appletInfo in configuredApplets)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
-					try {
-							retVal.m_tracer.TraceInfo ("Loading applet {0}", appletInfo);
-							String appletPath = Path.Combine (retVal.Configuration.GetSection<AppletConfigurationSection> ().AppletDirectory, appletInfo.Id);
-							using (var fs = File.OpenRead (appletPath)) {
-								AppletManifest manifest = AppletManifest.Load (fs);
-								// Is this applet in the allowed applets
+                        DataMigrator migrator = new DataMigrator();
+                        migrator.Ensure();
 
-								// public key token match?
-								if (appletInfo.PublicKeyToken != manifest.Info.PublicKeyToken ||
-								    !retVal.VerifyManifest (manifest, appletInfo)) {
-									retVal.m_tracer.TraceWarning ("Applet {0} failed validation", appletInfo);
-									; // TODO: Raise an error
-								}
+                        // Set the entity source
+                        EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
 
-								retVal.LoadApplet (manifest);
-							}
-						} catch (Exception e) {
-							retVal.m_tracer.TraceError ("Loading applet {0} failed: {1}", appletInfo, e.ToString ());
-							throw;
-						}
+                        ApplicationServiceContext.Current = ApplicationContext.Current;
+                        ApplicationServiceContext.HostType = OpenIZHostType.MobileClient;
 
-					// Ensure data migration exists
-					try {
-						// If the DB File doesn't exist we have to clear the migrations
-						if (!File.Exists (retVal.Configuration.GetConnectionString (retVal.Configuration.GetSection<DataConfigurationSection> ().MainDataSourceConnectionStringName).Value)) {
-							retVal.m_tracer.TraceWarning ("Can't find the OpenIZ database, will re-install all migrations");
-							retVal.Configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Clear ();
-						}
+                    }
+                    catch (Exception e)
+                    {
+                        retVal.m_tracer.TraceError(e.ToString());
+                        throw;
+                    }
+                    finally
+                    {
+                        retVal.ConfigurationManager.Save();
+                    }
 
-						DataMigrator migrator = new DataMigrator ();
-						migrator.Ensure ();
-					} catch (Exception e) {
-						retVal.m_tracer.TraceError (e.ToString ());
-						throw;
-					} finally {
-						retVal.ConfigurationManager.Save ();
-					}
-				} catch (Exception e) {
-					retVal.m_tracer?.TraceError (e.ToString ());
-					ApplicationContext.Current = null;
-				}
-				return true;
-			}
-		}
+                    // Start daemons
+                    ApplicationContext.Current.GetService<IUpdateManager>().AutoUpdate();
+                    retVal.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o => { retVal.Start(); }, null);
+                    
+                    // Set the tracer writers for the PCL goodness!
+                    foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
+                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter, itm.Filter);
+                }
+                catch (Exception e)
+                {
+                    retVal.m_tracer?.TraceError(e.ToString());
+                    ApplicationContext.Current = null;
+                    throw;
+                }
 
-		/// <summary>
-		/// Get applet by id
-		/// </summary>
-		/// <returns>The applet.</returns>
-		/// <param name="id">Identifier.</param>
-		public AppletManifest GetApplet (String id)
-		{
-			return this.m_applets.Find (o => o.Info.Id == id);
-		}
+                return true;
+            }
+        }
 
-		/// <summary>
-		/// Register applet
-		/// </summary>
-		/// <param name="applet">Applet.</param>
-		public void LoadApplet (AppletManifest applet)
-		{
-			this.m_applets.Add (applet);
-		}
+        /// <summary>
+        /// Starts the application context using in-memory default configuration for the purposes of
+        /// configuring the software
+        /// </summary>
+        /// <returns><c>true</c>, if temporary was started, <c>false</c> otherwise.</returns>
+        public static bool StartTemporary(A.Content.Context launcherActivity, A.Content.Context context)
+        {
+            try
+            {
+                var retVal = new AndroidApplicationContext();
 
-		/// <summary>
-		/// Get the registered applets
-		/// </summary>
-		/// <value>The registered applets.</value>
-		public IEnumerable<AppletManifest> LoadedApplets {
-			get { 
-				return this.m_applets;
-			}
-		}
+                retVal.Context = context;
+                retVal.CurrentActivity = launcherActivity;
+                retVal.SetProgress(context.GetString(Resource.String.startup_setup), 0);
+                retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
 
-		/// <summary>
-		/// Install an applet
-		/// </summary>
-		public void InstallApplet (AppletPackage package, bool isUpgrade = false)
-		{
+                retVal.m_configurationManager = new ConfigurationManager(OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
+                ApplicationContext.Current = retVal;
+                ApplicationServiceContext.Current = ApplicationContext.Current;
+                ApplicationServiceContext.HostType = OpenIZHostType.MobileClient;
 
-			this.m_tracer.TraceInfo ("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
+                retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
 
-			// TODO: Verify the package
-
-			// Desearialize an prep for install
-			var appletSection = this.Configuration.GetSection<AppletConfigurationSection> ();
-
-			// Copy 
-			if (!Directory.Exists (appletSection.AppletDirectory))
-				Directory.CreateDirectory (appletSection.AppletDirectory);
-
-			String appletPath = Path.Combine (appletSection.AppletDirectory, package.Meta.Id);
-			if (File.Exists (appletPath)) {
-
-				if (!isUpgrade)
-					throw new InvalidOperationException ("Duplicate package name");
-
-				// Unload the loaded applet version
-				this.m_applets.RemoveAll (o => o.Info.Id == package.Meta.Id);
-				appletSection.Applets.RemoveAll (o => o.Id == package.Meta.Id);
-			}
-
-			// Save the applet
-			XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
-			// Serialize the data to disk
-			using (FileStream fs = File.Create (appletPath)) {
-				fs.Write (package.Manifest, 0, package.Manifest.Length);
-				fs.Flush ();
-			}
-
-			// TODO: Sign this with my private key
-			// For now sign with SHA256
-			SHA256 sha = SHA256.Create ();
-			package.Meta.Hash = sha.ComputeHash (package.Manifest);
-			appletSection.Applets.Add (package.Meta);
-
-			if (this.ConfigurationManager.IsConfigured)
-				this.ConfigurationManager.Save ();
-
-			using (MemoryStream ms = new MemoryStream (package.Manifest))
-				this.LoadApplet (AppletManifest.Load (ms));
-
-		}
-
-
-		/// <summary>
-		/// Verifies the manifest against it's recorded signature
-		/// </summary>
-		/// <returns><c>true</c>, if manifest was verifyed, <c>false</c> otherwise.</returns>
-		/// <param name="manifest">Manifest.</param>
-		public bool VerifyManifest (AppletManifest manifest, AppletReference configuredInfo)
-		{
-			return true;
-		}
-
-		/// <summary>
-		/// Gets the configuration manager.
-		/// </summary>
-		/// <value>The configuration manager.</value>
-		public ConfigurationManager ConfigurationManager {
-			get {
-				return this.m_configurationManager;
-			}
-		}
-
-		#region implemented abstract members of ApplicationContext
-
-		/// <summary>
-		/// Get the configuration 
-		/// </summary>
-		/// <value>The configuration.</value>
-		public override OpenIZ.Mobile.Core.Configuration.OpenIZConfiguration Configuration {
-			get {
-				return this.m_configurationManager.Configuration;
-			}
-		}
+                try
+                {
+                    using (var fd = context.Assets.OpenFd("Applets/org.openiz.core.pak"))
+                        retVal.m_tracer.TraceInfo("Installing org.openiz.core : {0} bytes", fd?.Length);
+                    var package = AppletPackage.Load(context.Assets.Open("Applets/org.openiz.core.pak"));
+                    retVal.GetService<IAppletManagerService>().Install(package, true);
+                }
+                catch (Exception e)
+                {
+                    retVal.m_tracer.TraceError(e.ToString());
+                    throw;
+                }
 
 
-		#endregion
-	}
+                retVal.Start();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Error("OpenIZ 0118 999 881 999 119 7253", e.ToString());
+                return false;
+            }
+        }
+        
+        /// <summary>
+        /// Save the configuration
+        /// </summary>
+        public override void SaveConfiguration()
+        {
+            if(this.m_configurationManager.IsConfigured)
+                this.m_configurationManager.Save();
+        }
+
+
+        #region implemented abstract members of ApplicationContext
+
+        /// <summary>
+        /// Gets or sets the android application
+        /// </summary>
+        public Application AndroidApplication { get; private set; }
+
+        /// <summary>
+        /// Gets the application information for the currently running application.
+        /// </summary>
+        /// <value>The application.</value>
+        public override OpenIZ.Core.Model.Security.SecurityApplication Application
+        {
+            get
+            {
+                return c_application;
+            }
+        }
+
+        /// <summary>
+        /// Get the configuration
+        /// </summary>
+        /// <value>The configuration.</value>
+        public override OpenIZ.Mobile.Core.Configuration.OpenIZConfiguration Configuration
+        {
+            get
+            {
+                return this.m_configurationManager.Configuration;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current context
+        /// </summary>
+        public A.Content.Context Context { get; set; }
+
+        /// <summary>
+        /// Gets the device information for the currently running device
+        /// </summary>
+        /// <value>The device.</value>
+        public override OpenIZ.Core.Model.Security.SecurityDevice Device
+        {
+            get
+            {
+                // TODO: Load this from configuration
+                return new OpenIZ.Core.Model.Security.SecurityDevice()
+                {
+                    Name = this.Configuration.GetSection<SecurityConfigurationSection>().DeviceName,
+                    DeviceSecret = this.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret
+                };
+            }
+        }
+
+        /// <summary>
+        /// Get the configuration manager
+        /// </summary>
+        public override IConfigurationManager ConfigurationManager
+        {
+            get
+            {
+                return this.m_configurationManager;
+            }
+        }
+
+        /// <summary>
+        /// Close 
+        /// </summary>
+        public override void Exit()
+        {
+            A.App.Application.SynchronizationContext.Post(_ =>
+            {
+                this.m_tracer.TraceWarning("Restarting application context");
+                ApplicationContext.Current.Stop();
+                (this.Context as Activity).Finish();
+            }, null);
+        }
+
+        /// <summary>
+        /// Confirm the alert
+        /// </summary>
+        public override bool Confirm(string confirmText)
+        {
+            AutoResetEvent evt = new AutoResetEvent(false);
+            bool result = false;
+
+            A.App.Application.SynchronizationContext.Post(_ =>
+            {
+                var alertDialogBuilder = new AlertDialog.Builder(this.CurrentActivity)
+                        .SetMessage(confirmText)
+                        .SetCancelable(false)
+                        .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
+                        {
+                            result = true;
+                            evt.Set();
+                        })
+                        .SetNegativeButton(Strings.locale_cancel, (sender, args) =>
+                        {
+                            result = false;
+                            evt.Set();
+                        });
+
+                alertDialogBuilder.Create().Show();
+            }, null);
+
+            evt.WaitOne();
+            return result;
+        }
+
+
+        /// <summary>
+        /// show toast
+        /// </summary>
+        public override void ShowToast(String message)
+        {
+	        if (Looper.MyLooper() == null)
+	        {
+		        Looper.Prepare();
+	        }
+
+            A.Widget.Toast.MakeText(this.CurrentActivity, message, A.Widget.ToastLength.Long);
+        }
+
+        /// <summary>
+        /// Show an alert
+        /// </summary>
+        public override void Alert(string alertText)
+        {
+            AutoResetEvent evt = new AutoResetEvent(false);
+
+            A.App.Application.SynchronizationContext.Post(_ =>
+            {
+
+                var alertDialogBuilder = new AlertDialog.Builder(this.CurrentActivity)
+                         .SetMessage(alertText)
+                        .SetCancelable(false)
+                        .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
+                        {
+                            evt.Set();
+                        });
+
+                alertDialogBuilder.Create().Show();
+            }, null);
+
+            evt.WaitOne();
+        }
+
+        /// <summary>
+        /// Output performanc log info
+        /// </summary>
+        public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
+        {
+            Log.Info("OpenIZ_PERF", $"{className}.{methodName}@{tagName} - {counter}");
+        }
+
+        #endregion implemented abstract members of ApplicationContext
+    }
 }
-

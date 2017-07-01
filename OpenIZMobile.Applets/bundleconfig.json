@@ -1,0 +1,169 @@
+[
+  {
+    "outputFileName": "js/openiz-localize.min.js",
+    "inputFiles": [
+      "js/openiz-localize.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-model.min.js",
+    "inputFiles": [
+      "js/openiz-model.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz.min.js",
+    "inputFiles": [
+      "js/openiz.js"
+    ]
+  },
+  {
+    "outputFileName": "css/theme.min.css",
+    "inputFiles": [
+      "css/theme.css"
+    ]
+  },
+  {
+    "outputFileName": "lib/bootstrap-tokenfield.min.js",
+    "inputFiles": [
+      "lib/bootstrap-tokenfield.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/jquery.datefix.min.js",
+    "inputFiles": [
+      "lib/jquery.datefix.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/select2.min.js",
+    "inputFiles": [
+      "lib/select2.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-ng.min.js",
+    "inputFiles": [
+      "js/openiz-ng.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/bootstrap-wizard.min.js",
+    "inputFiles": [
+      "lib/bootstrap-wizard.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-dw.min.js",
+    "inputFiles": [
+      "js/openiz-dw.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-bre.min.js",
+    "inputFiles": [
+      "js/openiz-bre.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/vis.min.js",
+    "inputFiles": [
+      "lib/vis.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/select2-extended-ajax.min.js",
+    "inputFiles": [
+      "lib/select2-extended-ajax.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/angular-filter.min.js",
+    "inputFiles": [
+      "lib/angular-filter.js"
+    ]
+  },
+  {
+    "outputFileName": "css/fullcalendar.min.css",
+    "inputFiles": [
+      "css/fullcalendar.css"
+    ]
+  },
+  {
+    "outputFileName": "css/fullcalendar.print.min.css",
+    "inputFiles": [
+      "css/fullcalendar.print.css"
+    ]
+  },
+  {
+    "outputFileName": "css/pageloader.min.css",
+    "inputFiles": [
+      "css/pageloader.css"
+    ]
+  },
+  {
+    "outputFileName": "css/vis.min.css",
+    "inputFiles": [
+      "css/vis.css"
+    ]
+  },
+  {
+    "outputFileName": "css/xeditable.min.css",
+    "inputFiles": [
+      "css/xeditable.css"
+    ]
+  },
+  {
+    "outputFileName": "css/toastr.min.css",
+    "inputFiles": [
+      "css/toastr.css"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-audit.min.js",
+    "inputFiles": [
+      "js/openiz-audit.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-core.js",
+    "inputFiles": [
+      "js/openiz-audit.js",
+      "js/openiz-bre.js",
+      "js/openiz-dw.js",
+      "js/openiz-model.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/lib-core.min.js",
+    "inputFiles": [
+      "lib/jquery.min.js",
+      "lib/jquery.datefix.min.js",
+      "lib/angular.min.js",
+      "lib/angular-route.min.js",
+      "lib/angular-ui-router.min.js",
+      "lib/angular-sanitize.min.js",
+      "lib/angular-filter.min.js",
+      "lib/bootstrap.min.js",
+      "lib/bootstrap-tokenfield.min.js",
+      "lib/moment.min.js",
+      "lib/select2.min.js",
+      "lib/select2-extended-ajax.min.js",
+      "lib/toastr.min.js",
+      "lib/vis.min.js",
+      "lib/fullcalendar.min.js"
+    ]
+  },
+  {
+    "outputFileName": "css/radial-progress.min.css",
+    "inputFiles": [
+      "css/radial-progress.css"
+    ]
+  },
+  {
+    "outputFileName": "css/radialprogress.min.css",
+    "inputFiles": [
+      "css/radialprogress.css"
+    ]
+  }
+]

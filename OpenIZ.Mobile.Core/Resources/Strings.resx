@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Conflict" xml:space="preserve">
+    <value>The server has detected a change conflict on an object you're attempting to update.</value>
+  </data>
+  <data name="DBPE002" xml:space="preserve">
+    <value>The server has a newer version of the object you're trying to update</value>
+  </data>
+  <data name="locale_downloadError" xml:space="preserve">
+    <value>Remote downloads are temporarily not working</value>
+  </data>
+  <data name="locale_downloadErrorBody" xml:space="preserve">
+    <value>There was an error downloading the specified resources: {0}</value>
+  </data>
+  <data name="locale_import" xml:space="preserve">
+    <value>Importing Data...</value>
+  </data>
+  <data name="locale_importDoneBody" xml:space="preserve">
+    <value>The import of remote data is complete</value>
+  </data>
+  <data name="locale_importDoneSubject" xml:space="preserve">
+    <value>Remote Data Imported</value>
+  </data>
+  <data name="locale_importErrorBody" xml:space="preserve">
+    <value>There was an error importing the data from the remote data source. More details are below:
+
+{0}</value>
+  </data>
+  <data name="locale_importErrorSubject" xml:space="preserve">
+    <value>Error importing remote data</value>
+  </data>
+  <data name="locale_indexing" xml:space="preserve">
+    <value>Constructing Freetext Index</value>
+  </data>
+  <data name="locale_rejectionBody" xml:space="preserve">
+    <value>&lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;&lt;p&gt;The message has been quarantined, you can view the message in the sync centre.&lt;/p&gt;&lt;a href="#/core/sync" class="btn btn-lg btn-info"&gt;Visit Sync Centre&lt;/a&gt;</value>
+  </data>
+  <data name="locale_rejectionSubject" xml:space="preserve">
+    <value>Synchronization Conflict</value>
+  </data>
+  <data name="locale_sessionError" xml:space="preserve">
+    <value>Error establishing session:</value>
+  </data>
+  <data name="locale_session_expired" xml:space="preserve">
+    <value>Session is expired</value>
+  </data>
+  <data name="locale_setting_deploy" xml:space="preserve">
+    <value>Deploying Data</value>
+  </data>
+  <data name="locale_setting_migration" xml:space="preserve">
+    <value>Migrating Data</value>
+  </data>
+  <data name="locale_setting_table" xml:space="preserve">
+    <value>Installing Tables</value>
+  </data>
+  <data name="locale_startingPoll" xml:space="preserve">
+    <value>Executing pull request...</value>
+  </data>
+  <data name="locale_start_careplan" xml:space="preserve">
+    <value>Starting care plan manager service...</value>
+  </data>
+  <data name="locale_sync" xml:space="preserve">
+    <value>Downloading {0} ({1} of {2})...</value>
+  </data>
+  <data name="locale_syncErrorBody" xml:space="preserve">
+    <value>&lt;p&gt;Error synchronizing data with remote server. This is usually caused by a conflict where this device tried to send an object ({1}) to the server but the server had a different version of that object.&lt;/p&gt;&lt;p&gt;For your reference, the error is:&lt;br/&gt;{0}&lt;/p&gt;</value>
+  </data>
+  <data name="locale_syncErrorSubject" xml:space="preserve">
+    <value>Error sending object to the server</value>
+  </data>
+  <data name="locale_welcomeMessageBody" xml:space="preserve">
+    <value>Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don't have data. That is normal until the synchronizing is complete. We'll let you know when the synchronization operation is done!
+
+Sincerely,
+- OpenIZ Community</value>
+  </data>
+  <data name="locale_welcomeMessageSubject" xml:space="preserve">
+    <value>Welcome to OpenIZ Disconnected Client Core!</value>
+  </data>
+  <data name="locale_starting" xml:space="preserve">
+    <value>Loading protocol {0}...</value>
+  </data>
+  <data name="locale_calculatingCarePlan" xml:space="preserve">
+    <value>Calculating Appointment Proposals ({0} remaining)...</value>
+  </data>
+  <data name="locale_refreshCarePlan" xml:space="preserve">
+    <value>Preparing to update facility plan...</value>
+  </data>
+  <data name="locale_calculateImportedCareplan" xml:space="preserve">
+    <value>Preparing imported data...</value>
+  </data>
+  <data name="InternalServerError" xml:space="preserve">
+    <value>&lt;p&gt;The server encountered an internal error while processing your request. Please contact the system administrator for more information. Include the following diagnostic error data:&lt;/p&gt;&lt;pre&gt;{0}&lt;/pre&gt;</value>
+  </data>
+  <data name="locale_processBundle" xml:space="preserve">
+    <value>Importing {0} from bundle ({1} of {2})...</value>
+  </data>
+  <data name="locale_accountLocked" xml:space="preserve">
+    <value>Account is locked</value>
+  </data>
+  <data name="locale_accountObsolete" xml:space="preserve">
+    <value>Account is deleted</value>
+  </data>
+  <data name="locale_invalidUserNamePassword" xml:space="preserve">
+    <value>Invalid Username / Password</value>
+  </data>
+  <data name="locale_refreshCarePlanPrompt" xml:space="preserve">
+    <value>Your facility plan is over a week old, do you want to recalculate it?</value>
+  </data>
+  <data name="locale_compacting" xml:space="preserve">
+    <value>Optimizing Databases...</value>
+  </data>
+  <data name="locale_loginFromUnsubscribedFacility" xml:space="preserve">
+    <value>The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance.</value>
+  </data>
+  <data name="locale_securitySwitchedMode" xml:space="preserve">
+    <value>Your online session couldn't be extended, you are now operating in disconnected mode.</value>
+  </data>
+</root>

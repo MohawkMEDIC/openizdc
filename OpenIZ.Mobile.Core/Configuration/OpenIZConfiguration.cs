@@ -1,8 +1,26 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
+using System;
 using System.Reflection;
-using SQLite;
+using SQLite.Net;
 using System.Xml.Serialization;
-using OpenIZ.Mobile.Core.Applets;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;
@@ -23,30 +41,42 @@ namespace OpenIZ.Mobile.Core.Configuration
 	[XmlInclude(typeof(ServiceClientConfigurationSection))]
 	[XmlInclude(typeof(ApplicationConfigurationSection))]
 	[XmlInclude(typeof(DiagnosticsConfigurationSection))]
-	public class OpenIZConfiguration
+    [XmlInclude(typeof(SynchronizationConfigurationSection))]
+    public class OpenIZConfiguration
 	{
 
-		/// <summary>
-		/// OpenIZ configuration
-		/// </summary>
-		public OpenIZConfiguration ()
+	    private static XmlSerializer s_xsz = new XmlSerializer(typeof(OpenIZConfiguration));
+        
+        /// <summary>
+        /// OpenIZ configuration
+        /// </summary>
+        public OpenIZConfiguration ()
 		{
 			this.Sections = new List<Object> ();
 			this.Version = typeof(OpenIZConfiguration).GetTypeInfo ().Assembly.GetName ().Version.ToString ();
 		}
 
-		/// <summary>
-		/// Gets or sets the version of the configuration
-		/// </summary>
-		/// <value>The version.</value>
-		[XmlAttribute("version")]
+        /// <summary>
+        /// Get app setting
+        /// </summary>
+        public string GetAppSetting(string key)
+        {
+            return this.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == key)?.Value;
+        }
+
+        /// <summary>
+        /// Gets or sets the version of the configuration
+        /// </summary>
+        /// <value>The version.</value>
+        [XmlAttribute("version")]
 		public String Version {
 			get { return typeof(OpenIZConfiguration).GetTypeInfo ().Assembly.GetName ().Version.ToString (); }
 			set {
 
 				Version v = new Version (value),
 					myVersion = typeof(OpenIZConfiguration).GetTypeInfo ().Assembly.GetName ().Version;
-				if(v > myVersion)
+				if(v.Major > myVersion.Major ||
+                    v.Minor > myVersion.Minor)
 					throw new ConfigurationException(String.Format("Configuration file version {0} is newer than OpenIZ version {1}", v, myVersion));
 			}
 		}
@@ -57,8 +87,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <param name="dataStream">Data stream.</param>
 		public static OpenIZConfiguration Load(Stream dataStream)
 		{
-			XmlSerializer xsz = new XmlSerializer(typeof(OpenIZConfiguration));
-			return xsz.Deserialize (dataStream) as OpenIZConfiguration;
+			return s_xsz.Deserialize (dataStream) as OpenIZConfiguration;
 		}
 
 		/// <summary>
@@ -67,8 +96,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <param name="dataStream">Data stream.</param>
 		public void Save(Stream dataStream)
 		{
-			XmlSerializer xsz = new XmlSerializer (typeof(OpenIZConfiguration));
-			xsz.Serialize (dataStream, this);
+            s_xsz.Serialize (dataStream, this);
 		}
 
 
@@ -89,7 +117,17 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public T GetSection<T>() where T : IConfigurationSection
 		{
-			return (T)this.Sections.Find (o => o.GetType ().Equals (typeof(T)));
+			return (T)this.GetSection (typeof(T));
+		}
+
+		/// <summary>
+		/// Gets the section of specified type.
+		/// </summary>
+		/// <returns>The section.</returns>
+		/// <param name="t">T.</param>
+		public object GetSection(Type t)
+		{
+			return this.Sections.Find (o => o.GetType ().Equals (t));
 		}
 
 		/// <summary>
@@ -102,7 +140,18 @@ namespace OpenIZ.Mobile.Core.Configuration
 			return this.GetSection<DataConfigurationSection> ()?.ConnectionString.Find (o => o.Name == name);
 		}
 
-
-	}
+        /// <summary>
+        /// Set application setting
+        /// </summary>
+        internal void SetAppSetting(string key, Object value)
+        {
+            var setting = this.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == key);
+            if (setting == null)
+                this.GetSection<ApplicationConfigurationSection>()?.AppSettings.Add(new AppSettingKeyValuePair() { Key = key, Value = value.ToString() });
+            else
+                setting.Value = value.ToString();
+            ApplicationContext.Current.SaveConfiguration();
+        }
+    }
 }
 

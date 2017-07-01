@@ -1,6 +1,26 @@
-﻿using System;
-using SQLite;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-2-4
+ */
+using System;
+using SQLite.Net;
 using OpenIZ.Core.Model.Security;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
@@ -15,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the email.
 		/// </summary>
 		/// <value>The email.</value>
-		[Column("email")]
+		[Column("email"), Collation("NOCASE")]
 		public String Email {
 			get;
 			set;
@@ -36,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// </summary>
 		/// <value><c>true</c> if lockout enabled; otherwise, <c>false</c>.</value>
 		[Column("locked")]
-		public bool LockoutEnabled {
+		public DateTime? Lockout {
 			get;
 			set;
 		}
@@ -75,7 +95,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the name of the user.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		[Column("username"), Unique, NotNull]
+		[Column("username"), Unique, NotNull, Collation("NOCASE")]
 		public String UserName {
 			get;
 			set;
@@ -95,7 +115,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the phone number.
 		/// </summary>
 		/// <value>The phone number.</value>
-		[Column("phone_number")]
+		[Column("phone_number"), Collation("NOCASE")]
 		public String PhoneNumber {
 			get;
 			set;
@@ -113,7 +133,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the role identifier
 		/// </summary>
 		/// <value>The role identifier.</value>
-		[Column("role_id"), Indexed, MaxLength(16)]
+		[Column("role_id"), Indexed(Name = "security_user_role_user_role", Unique = true), MaxLength(16)]
 		public byte[] RoleUuid {
 			get;
 			set;
@@ -123,7 +143,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the user identifier
 		/// </summary>
 		/// <value>The user identifier.</value>
-		[Column("user_id"), Indexed, MaxLength(16)]
+		[Column("user_id"), Indexed(Name = "security_user_role_user_role", Unique = true), MaxLength(16)]
 		public byte[] UserUuid {
 			get;
 			set;

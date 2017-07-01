@@ -1,10 +1,30 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-2-3
+ */
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Linq;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Resources;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data
 {
@@ -32,12 +52,13 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 			this.m_tracer.TraceInfo ("Scanning for data migrations...");
 
 			// Scan for migrations 
-			foreach (var dbm in typeof(DataMigrator).GetTypeInfo().Assembly.ExportedTypes) {
+			foreach (var dbm in typeof(DataMigrator).GetTypeInfo().Assembly.DefinedTypes) {
 				try {
-					if(dbm == typeof(DataMigrator))
+					if(dbm.AsType() == typeof(DataMigrator) ||
+                        !typeof(IDbMigration).GetTypeInfo().IsAssignableFrom(dbm))
 						continue;
 					
-					IDbMigration migration = Activator.CreateInstance (dbm) as IDbMigration;
+					IDbMigration migration = Activator.CreateInstance (dbm.AsType()) as IDbMigration;
 					if (migration != null) {
 						this.m_tracer.TraceVerbose ("Found data migrator {0}...", migration.Id);
 						this.m_migrations.Add (migration);
@@ -56,6 +77,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 			this.m_tracer.TraceInfo ("Ensuring database is up to date");
 			// Migration order
 			foreach (var m in this.GetProposal()) {
+                ApplicationContext.Current.SetProgress(Strings.locale_setting_migration, 0);
 				this.m_tracer.TraceVerbose ("Will Install {0}", m.Id);
 				if (!m.Install ())
 					throw new DataMigrationException (m);

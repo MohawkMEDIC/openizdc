@@ -1,0 +1,142 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-6
+ -->
+<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-mothers-information form-horizontal form-group"
+          ng-controller="MothersInformationController">
+    <oiz:script>/org.openiz.core/controllers/common/patients/register/mother.js</oiz:script>
+    <div class="form-group" ng-hide="editMotherForm">
+        <div class="col-xs-offset-3 col-xs-9">
+            <div class="checkbox">
+                <label class="control control--checkbox">
+                    {{ 'locale.patient.mother.motherIsUnknown' | i18n }}
+                    <input type="checkbox" name="motherUnknown" ng-model="$parent.motherUnknown" />
+                    <div class="control__indicator"></div>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}<span ng-if="!editMotherForm &amp;&amp; !motherUnknown">*</span></label>
+        <div class="col-xs-9" ng-class="{ 'has-error': (mothersInfoForm.mothersGiven.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersGiven.$invalid }">
+            <div class="input-group">
+                <div ng-if="!motherUnknown">
+                    <input type="text" name="mothersGiven" id="mothersGiven" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given" ng-required="!editMotherForm &amp;&amp; !motherUnknown" />
+                </div>
+                <div ng-if="motherUnknown">
+                    <input ng-if="motherUnknown" type="text" class="form-control" disabled="disabled" />
+                </div>
+                <span class="input-group-btn">
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.mother.givenName' | i18n }}" data-content="{{ 'locale.patient.mother.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                </span>
+            </div>
+            <p ng-if="(mothersInfoForm.mothersGiven.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersGiven.$invalid">
+                <span ng-show="mothersInfoForm.mothersGiven.$error.required" class="help-block text-danger">
+                    {{ 'locale.patient.mother.errors.givenName.required' | i18n }}
+                </span>
+            </p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}<span ng-if="!editMotherForm &amp;&amp; !motherUnknown">*</span></label>
+        <div class="col-xs-9" ng-class="{ 'has-error': (mothersInfoForm.mothersFamily.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersFamily.$invalid }">
+            <div class="input-group">
+                <div ng-if="!motherUnknown">
+                    <input type="text" name="mothersFamily" id="mothersFamily" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family" ng-required="!editMotherForm &amp;&amp; !motherUnknown" ng-disabled="motherUnknown" />
+                </div>
+                <div ng-if="motherUnknown">
+                    <input type="text" class="form-control" disabled="disabled" />
+                </div>
+                <span class="input-group-btn">
+                    <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.familyName' | i18n }}" data-content="{{ 'locale.patient.mother.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                </span>
+            </div>
+            <p ng-if="(mothersInfoForm.mothersFamily.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersFamily.$invalid">
+                <span ng-show="mothersInfoForm.mothersFamily.$error.required" class="help-block text-danger">
+                    {{ 'locale.patient.mother.errors.familyName.required' | i18n }}
+                </span>
+            </p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
+        <div class="col-xs-9 col-sm-4">
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersIdentifierType.$error.required}">
+                <select name="mothersIdentifierType" id="mothersIdentifierType" ng-required="patient.relationship.Mother.targetModel.identifier.value" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.authority.domainName"
+                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:data-validation="ValidationRegex" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"
+                        ng-disabled="motherUnknown" >
+                    <option></option>
+                </select>
+                <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+            </div>
+        </div>
+        <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
+            <div class="margin-top-15 visible-xs"></div>
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersIdentifierValue.$error.maxlength || (patient.relationship.Mother.targetModel.identifier.authority.domainName &amp;&amp; mothersInfoForm.mothersIdentifierValue.$error.pattern)}">
+                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-pattern="mothersRegexValidation" ng-model-options="{debounce: 400 }" class="form-control" ng-disabled="motherUnknown"  />
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother)">
+                        <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
+                    </button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.mother.identifier' | i18n }}" data-content="{{ 'locale.patient.mother.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                </span>
+            </div>
+        </div>
+        <div ng-show="mothersInfoForm.mothersIdentifierType.$error.required">
+            <div class="col-xs-3"></div>
+            <p class="col-xs-4 help-block text-danger ng-cloak">{{ 'locale.patient.errors.identifier.required' | i18n}}</p>
+        </div>
+        <div ng-show="mothersInfoForm.mothersIdentifierValue.$error.maxlength">
+            <div class="col-xs-3 col-sm-7"></div>
+            <p class="col-xs-9 col-sm-5 help-block text-danger ng-cloak">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+        </div>
+        <div ng-show="patient.relationship.Mother.targetModel.identifier.authority.domainName &amp;&amp; mothersInfoForm.mothersIdentifierValue.$error.pattern">
+            <div class="col-xs-3 col-sm-7"></div>
+            <p class="col-xs-9 col-sm-5 help-block text-danger ng-cloak">{{ 'locale.patient.errors.pattern' | i18n}}</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.contact' | i18n }}</label>
+        <div class="col-xs-9 col-sm-4">
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersPhoneType.$error.required}">
+                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].use" ng-disabled="motherUnknown"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.Mother.targetModel.telecom[motherPhoneType].value">
+                    <option></option>
+                </select>
+                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use" ng-disabled="motherUnknown"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.Mother.targetModel.telecom.$other.value">
+                    <option></option>
+                </select>
+                <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+             </div>
+            <p class="help-block text-danger ng-cloak" ng-show="mothersInfoForm.mothersPhoneType.$error.required">{{ 'locale.patient.errors.contactType' | i18n}}</p>
+        </div>
+        <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
+            <div class="margin-top-15 visible-xs"></div>
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersPhoneNumber.$error.pattern}">
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].value" class="form-control" ng-pattern="phoneRegex" ng-disabled="motherUnknown" />
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex" ng-disabled="motherUnknown" />
+                <span class="input-group-btn">
+                    <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.contact' | i18n }}" data-content="{{ 'locale.patient.mother.contact.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                </span>
+            </div>
+            <p class="help-block text-danger ng-cloak" ng-show="mothersInfoForm.mothersPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
+        </div>
+    </div>
+</fieldset>

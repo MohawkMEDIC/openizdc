@@ -1,6 +1,26 @@
-﻿using System;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
+using System;
 using System.Security;
 using OpenIZ.Mobile.Core.Security;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Exceptions
 {
@@ -15,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Exceptions
 		/// </summary>
 		/// <param name="policyId">Policy identifier.</param>
 		/// <param name="outcome">Outcome.</param>
-		public PolicyViolationException(string policyId, PolicyDecisionOutcomeType outcome)
+		public PolicyViolationException(string policyId, PolicyGrantType outcome)
 		{
 			this.PolicyId = policyId;
 			this.PolicyDecision = outcome;
@@ -25,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Exceptions
 		/// </summary>
 		/// <param name="policy">Policy.</param>
 		/// <param name="outcome">Outcome.</param>
-		public PolicyViolationException(IPolicy policy, PolicyDecisionOutcomeType outcome)
+		public PolicyViolationException(IPolicy policy, PolicyGrantType outcome)
 		{
 			this.Policy = policy;
 			this.PolicyId = policy.Oid;
@@ -53,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Exceptions
 		/// Gets the policy decision.
 		/// </summary>
 		/// <value>The policy decision.</value>
-		public PolicyDecisionOutcomeType PolicyDecision { get; private set; }
+		public PolicyGrantType PolicyDecision { get; private set; }
 		/// <summary>
 		/// Gets the policy identifier.
 		/// </summary>

@@ -1,0 +1,80 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-17
+ -->
+<form name="userProfileForm" class="form form-horizontal" ng-controller="UserProfileController" ng-submit="saveProfile(userProfileForm, editObject.entity)" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" novalidate="novalidate">
+    <oiz:script>/org.openiz.core/controllers/settings/profile.js</oiz:script>
+    <div class="container-fluid">
+        <div class="form-group">
+            <label class="col-xs-3 col-sm-2 control-label" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9" ng-class="{ 'has-error': (userProfileForm.givenNameInput.$touched || userProfileForm.$submitted) &amp;&amp; userProfileForm.givenNameInput.$invalid }">
+                <input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" id="givenNameInput" name="givenNameInput" ng-required="true" ng-model="editObject.entity.name.OfficialRecord.component.Given"/>
+                <p ng-show="userProfileForm.givenNameInput.$error.required" class="help-block text-danger">{{ 'locale.preferences.errors.givenNameRequired' | i18n }}</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9" ng-class="{ 'has-error': (userProfileForm.familyNameInput.$touched || userProfileForm.$submitted) &amp;&amp; userProfileForm.familyNameInput.$invalid }">
+                <input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" id="familyNameInput" name="familyNameInput" ng-required="true" ng-model="editObject.entity.name.OfficialRecord.component.Family"/>
+                <p ng-show="userProfileForm.familyNameInput.$error.required" class="help-block text-danger">{{ 'locale.preferences.errors.familyNameRequired' | i18n }}</p>
+            </div>
+        </div>
+        <!--<div class="form-group" ng-repeat="(use,tel) in editObject.entity.telecom">
+            <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
+            <div class="col-xs-4">
+                <select name="telephone" id="telephone" class="form-control" ng-model="tel.use"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+            </div>
+            <div class="col-xs-6">
+                <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="tel.value" class="form-control" />
+            </div>
+        </div>-->
+        <div class="form-group">
+            <label class="col-xs-3 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9">
+                <div class="input-group">
+                    <select ng-disabled="editObject.entity.relationship.DedicatedServiceDeliveryLocation.target" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                        <option selected="selected" value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9" ng-class="{ 'has-error': (userProfileForm.languageInput.$touched || userProfileForm.$submitted) &amp;&amp; userProfileForm.languageInput.$invalid }">
+                <div class="input-group">
+                    <select required="required" class="form-control" style="width:100%; height:100%" id="languageInput" name="languageInput" ng-model="editObject.entity.language[0].languageCode">
+                        <option value="en">English</option>
+                        <option value="sw">Kiswahili</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-11">
+                <div class="btn-group pull-right">
+                    <button type="submit" class="btn btn-lg btn-success" id="saveUserProfileButton">
+                        <span>
+                            <span class="glyphicon glyphicon-check"></span> {{ 'locale.action.save' | i18n }}
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

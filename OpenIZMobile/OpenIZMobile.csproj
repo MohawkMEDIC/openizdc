@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -19,7 +19,7 @@
     <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
@@ -28,7 +28,17 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <AndroidSupportedAbis>armeabi-v7a;x86</AndroidSupportedAbis>
+    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <Debugger>Xamarin</Debugger>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <AndroidStoreUncompressedFileExtensions>.pak</AndroidStoreUncompressedFileExtensions>
+    <AotAssemblies>False</AotAssemblies>
+    <EnableLLVM>False</EnableLLVM>
+    <EnableProguard>False</EnableProguard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -39,182 +49,173 @@
     <ConsolePause>false</ConsolePause>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <EnableProguard>true</EnableProguard>
-    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
+    <EnableProguard>False</EnableProguard>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <Debugger>Microsoft</Debugger>
+    <AotAssemblies>False</AotAssemblies>
+    <EnableLLVM>False</EnableLLVM>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <DebugSymbols>False</DebugSymbols>
+    <AndroidLinkSkip>System.Xml.Linq;mscorlib;System</AndroidLinkSkip>
+    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
+    <DefineConstants>TRACE</DefineConstants>
+    <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <Debugger>Xamarin</Debugger>
+    <AotAssemblies>False</AotAssemblies>
+    <EnableLLVM>False</EnableLLVM>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <EnableProguard>False</EnableProguard>
+    <DebugSymbols>False</DebugSymbols>
+    <AndroidLinkSkip>System.Xml.Linq;mscorlib;System</AndroidLinkSkip>
+    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
+    <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LinuxSignedRelease|AnyCPU'">
+    <OutputPath>bin\LinuxSignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressionEvaluator">
+      <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="OpenIZ.Core.Applets">
+      <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model, Version=0.6.14.39571, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model.AMI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.PCL">
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Messaging.AMI.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Messaging.AMI.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Protocol.Xml">
+      <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Protocol.Xml">
+      <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.Net.Platform.XamarinAndroid, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Android\SQLite.Net.Platform.XamarinAndroid.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\Solution Items\Android\SQLitePCL.raw.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\System.Data.Portable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Transactions.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\System.Transactions.Portable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
-    <Reference Include="OpenIZ.Core.Model">
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Android.Export" />
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\Solution Items\SQLitePCL.raw.dll</HintPath>
+    <Reference Include="Xamarin.Android.Support.v4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Xamarin.Android.Support.v4.dll</HintPath>
+    </Reference>
+    <Reference Include="ZXing.Net.Mobile.Core, Version=2.1.44.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\ZXing.Net.Mobile.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.portable, Version=2.1.44.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\zxing.portable.dll</HintPath>
+    </Reference>
+    <Reference Include="ZXingNetMobile, Version=2.1.44.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\ZXingNetMobile.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HomeActivity.cs" />
-    <Compile Include="Layout\UIAppletTile.cs" />
-    <Compile Include="LoginActivity.cs" />
     <Compile Include="AppletActivity.cs" />
     <Compile Include="SplashActivity.cs" />
-    <Compile Include="Layout\UITileContainer.cs" />
+    <Compile Include="UserInterfaceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\OpenIZDC.licenseheader">
+      <Link>OpenIZDC.licenseheader</Link>
+    </None>
+    <AndroidAsset Include="Assets\Applets\org.openiz.core.pak" />
     <None Include="Resources\AboutResources.txt" />
-    <None Include="Properties\AndroidManifest.xml" />
+    <None Include="Properties\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-hdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-mdpi\Icon.png" />
     <AndroidResource Include="Resources\mipmap-xhdpi\Icon.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\Icon.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\Icon.png" />
-    <AndroidResource Include="Resources\layout\Home.axml" />
-    <AndroidResource Include="Resources\layout\Login.axml" />
-    <AndroidResource Include="Resources\drawable\logo.png" />
-    <AndroidResource Include="Resources\values\Strings.xml" />
-    <AndroidResource Include="Resources\values\attrs.xml" />
     <AndroidResource Include="Resources\layout\Applet.axml" />
-    <AndroidResource Include="Resources\drawable\logo_lg.png" />
+    <AndroidResource Include="Resources\drawable\logo.png" />
+    <AndroidResource Include="Resources\values\Strings.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\values\attrs.xml" />
     <AndroidResource Include="Resources\drawable\circle_bg.xml" />
     <AndroidResource Include="Resources\values\Styles.xml" />
     <AndroidResource Include="Resources\layout\Splash.axml" />
     <AndroidResource Include="Resources\drawable\splash_gradient.xml" />
-    <AndroidResource Include="Resources\drawable\aefi.png" />
-    <AndroidResource Include="Resources\drawable\announce.png" />
-    <AndroidResource Include="Resources\drawable\app.png" />
-    <AndroidResource Include="Resources\drawable\app_alt.png" />
-    <AndroidResource Include="Resources\drawable\appbar.user.png" />
-    <AndroidResource Include="Resources\drawable\baby.png" />
-    <AndroidResource Include="Resources\drawable\bed.png" />
-    <AndroidResource Include="Resources\drawable\brick.png" />
-    <AndroidResource Include="Resources\drawable\calendar.png" />
-    <AndroidResource Include="Resources\drawable\check.png" />
-    <AndroidResource Include="Resources\drawable\checkin.png" />
-    <AndroidResource Include="Resources\drawable\cogs.png" />
-    <AndroidResource Include="Resources\drawable\drk_aefi.png" />
-    <AndroidResource Include="Resources\drawable\drk_announce.png" />
-    <AndroidResource Include="Resources\drawable\drk_applet.png" />
-    <AndroidResource Include="Resources\drawable\drk_applet_alt.png" />
-    <AndroidResource Include="Resources\drawable\drk_baby.png" />
-    <AndroidResource Include="Resources\drawable\drk_barcode.png" />
-    <AndroidResource Include="Resources\drawable\drk_bed.png" />
-    <AndroidResource Include="Resources\drawable\drk_brick.png" />
-    <AndroidResource Include="Resources\drawable\drk_calendar.png" />
-    <AndroidResource Include="Resources\drawable\drk_check.png" />
-    <AndroidResource Include="Resources\drawable\drk_checkin.png" />
-    <AndroidResource Include="Resources\drawable\drk_cogs.png" />
-    <AndroidResource Include="Resources\drawable\drk_delete.png" />
-    <AndroidResource Include="Resources\drawable\drk_foot.png" />
-    <AndroidResource Include="Resources\drawable\drk_group.png" />
-    <AndroidResource Include="Resources\drawable\drk_help.png" />
-    <AndroidResource Include="Resources\drawable\drk_home.png" />
-    <AndroidResource Include="Resources\drawable\drk_logout.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient_alt.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient_search.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient_search_alt.png" />
-    <AndroidResource Include="Resources\drawable\drk_queue.png" />
-    <AndroidResource Include="Resources\drawable\drk_register_patient.png" />
-    <AndroidResource Include="Resources\drawable\drk_shield.png" />
-    <AndroidResource Include="Resources\drawable\drk_stock.png" />
-    <AndroidResource Include="Resources\drawable\drk_temp.png" />
-    <AndroidResource Include="Resources\drawable\drk_user.png" />
-    <AndroidResource Include="Resources\drawable\drk_weigh.png" />
-    <AndroidResource Include="Resources\drawable\foot.png" />
-    <AndroidResource Include="Resources\drawable\group.png" />
-    <AndroidResource Include="Resources\drawable\help.png" />
-    <AndroidResource Include="Resources\drawable\home.png" />
-    <AndroidResource Include="Resources\drawable\logout.png" />
-    <AndroidResource Include="Resources\drawable\patient.png" />
-    <AndroidResource Include="Resources\drawable\patient_alt.png" />
-    <AndroidResource Include="Resources\drawable\patient_search.png" />
-    <AndroidResource Include="Resources\drawable\patient_search_alt.png" />
-    <AndroidResource Include="Resources\drawable\queue.png" />
-    <AndroidResource Include="Resources\drawable\shield.png" />
-    <AndroidResource Include="Resources\drawable\stock.png" />
-    <AndroidResource Include="Resources\drawable\temp.png" />
-    <AndroidResource Include="Resources\drawable\weigh.png" />
-    <AndroidResource Include="Resources\drawable\register_patient.png" />
-    <AndroidResource Include="Resources\drawable\drk_encounters.png" />
-    <AndroidResource Include="Resources\drawable\encounters.png" />
     <AndroidResource Include="Resources\drawable\orange_gradient.xml" />
     <AndroidResource Include="Resources\drawable\blue_gradient.xml" />
     <AndroidResource Include="Resources\drawable\gray_gradient.xml" />
-    <AndroidResource Include="Resources\drawable\drk_grid.png" />
-    <AndroidResource Include="Resources\drawable\grid.png" />
-    <AndroidResource Include="Resources\drawable\drk_facility.png" />
-    <AndroidResource Include="Resources\drawable\facility.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\drawable\" />
     <Folder Include="Fragment\" />
-    <Folder Include="Assets\Applets\" />
-    <Folder Include="Layout\" />
     <Folder Include="Resources\layout\gfx\" />
-    <Folder Include="Assets\css\" />
-    <Folder Include="Assets\js\" />
-    <Folder Include="Assets\fonts\" />
-    <Folder Include="Assets\css\img\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\PatientSearchApplet.xml" />
-    <AndroidAsset Include="Assets\css\bootstrap.css" />
-    <AndroidAsset Include="Assets\css\bootstrap-theme.css" />
-    <AndroidAsset Include="Assets\js\angular.min.js" />
-    <AndroidAsset Include="Assets\js\bootstrap.js" />
-    <AndroidAsset Include="Assets\Applets\PatientCheckinApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\AppointmentsApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\WalkinAppointmentApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\EncountersApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\VaccinationQueueApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\AefiQuickReportApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\SettingsApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\AnnouncementsApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\AuditApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\QuickReceiveStockApplet.xml" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.eot" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.ttf" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.woff" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.woff2" />
-    <AndroidAsset Include="Assets\js\jquery.js" />
-    <AndroidAsset Include="Assets\js\jqBootstrapValidation.js" />
-    <AndroidAsset Include="Assets\js\jquery.easing.min.js" />
-    <AndroidAsset Include="Assets\js\jquery-ui.js" />
-    <AndroidAsset Include="Assets\css\jquery-ui.custom.css" />
-    <AndroidAsset Include="Assets\css\jquery-ui.theme.css" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_222222_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_454545_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_888888_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_flat_75_ffffff_40x100.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_65_ffffff_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_75_dadada_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_95_fef1ec_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_2e83ff_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_cd0a0a_256x240.png" />
-    <AndroidAsset Include="Assets\js\openiz-applet-helper.js" />
-    <AndroidAsset Include="Assets\css\img\circle_loader.gif" />
-    <AndroidAsset Include="Assets\js\Chart.min.js" />
-    <AndroidAsset Include="Assets\js\select2.min.js" />
-    <AndroidAsset Include="Assets\css\select2.min.css" />
-    <AndroidAsset Include="Assets\Applets\PatientRegisterApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Mobile.Core.Xamarin\OpenIZ.Mobile.Core.Xamarin.csproj">
+      <Project>{9a06acc9-4d6f-4eab-8a8a-9652bc6a70ae}</Project>
+      <Name>OpenIZ.Mobile.Core.Xamarin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554DF209-7744-433F-993A-783E2A2803EF}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
@@ -224,4 +225,47 @@
       <Name>OpenIZ.Mobile.Core.Android</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-fr\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-sw\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\logo_lg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidEnvironment Include="environment.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xxhdpi\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak" --keyFile="$(SolutionDir)\..\keys\timr.mobile.applet.pfx" --keyPassword="$(SolutionDir)\..\keys\timr.mobile.applet.pass" --embedCert --optimize
+ copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+ copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PreBuildEvent>
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak" 
+      copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+      copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PreBuildEvent>
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak"
+      copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+      copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

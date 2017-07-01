@@ -1,0 +1,83 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-17
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+     xmlns:bind="http://openiz.org/applet/binding"
+     ng-controller="EncounterEntryController">
+    <oiz:script>/org.openiz.core/controllers/common/encounters/register/encounter.js</oiz:script>
+    <div class="form-group row" ng-class="{'has-error' : (editEncounterForm.encounterDate.$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm.encounterDate.$invalid}">
+        <label for="encounterDate" class="col-xs-12 col-sm-2">{{ 'locale.encounters.date' | i18n }}</label>
+        <div class="col-xs-12 col-sm-10">
+            <input required="required" type="datetime-local"
+                   ng-min="patient.dateOfBirth"
+                   min="{{patient.dateOfBirth | date: 'yyyy-MM-ddTHH:mm:ss'}}"
+                   name="encounterDate" max="{{page.maxEventTime | date: 'yyyy-MM-ddTHH:mm:ss'}}"
+                   class="form-control" ng-model="encounter.actTime"
+                   ng-change="encounterDateChanged(encounter)" />
+        </div>
+        <div class="col-sm-offset-2 col-sm-10 col-xs-12" ng-if="(editEncounterForm.encounterDate.$touched||editEncounterForm.$submitted)&amp;&amp;editEncounterForm.encounterDate.$invalid">
+            <p class="help-block text-danger">{{ 'locale.encounters.errors.date' | i18n }}</p>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.facility' | i18n }}</label>
+        <div class="col-xs-12 col-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon input-group-addon-no-label">
+                    <label class="control control--checkbox">
+                        <input type="checkbox"
+                               ng-model="encounter.participation.Location._enabled"
+                               value="1"
+                               name="approximateDob" />
+                        <div class="control__indicator" style="top: 8px;"></div>
+                    </label>
+                </span>
+                <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" 
+                        id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" 
+                        class="form-control"  oiz-entitysearch="Place" 
+                        data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                    <option value="">{{ 'locale.common.location.none' | i18n }}</option>
+                    <option selected="selected" value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">
+                        {{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
+        <div class="col-xs-12 col-sm-10">
+            <div class="input-group">
+                <input type="text" autocomplete="off" autocapitalize="off"  disabled="disabled" value="{{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName}}" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <!--<div class="form-group row">
+        <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.verifier' | i18n }}</label>
+        <div class="col-xs-12 col-sm-10">
+            <div class="input-group">
+                <select disabled="disabled" style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player"  oiz-entitysearch="UserEntity">
+                    <option selected="selected" value="{{encounter.participation.Verifier.player}}">{{encounter.participation.Verifier.playerModel.name.OfficialRecord | oizEntityName }}</option>
+                </select>
+            </div>
+        </div>
+    </div>-->
+    <div ng-include="OpenIZ.App.resolveTemplate(encounter.templateModel.mnemonic)">
+    </div>
+</div>

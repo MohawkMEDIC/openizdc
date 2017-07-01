@@ -1,0 +1,394 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenIZ.Messaging.AMI.Client</name>
+    </assembly>
+    <members>
+        <member name="T:OpenIZ.Messaging.AMI.Client.AmiServiceClient">
+            <summary>
+            Represents the AMI service client.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.#ctor(OpenIZ.Core.Http.IRestClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Messaging.AMI.Client.AmiServiceClient"/> class
+            with a specified <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.
+            </summary>
+            <param name="client">The <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.AcceptCertificateSigningRequest(System.String)">
+            <summary>
+            Accepts a certificate signing request.
+            </summary>
+            <param name="id">The id of the certificate signing request.</param>
+            <returns>Returns the submission result.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.ChangePassword(System.Guid,System.String)">
+            <summary>
+            Changes the password of a user.
+            </summary>
+            <param name="id">The id of the user whose password is to be changed.</param>
+            <param name="password">The new password of the user.</param>
+            <returns>Returns the updated user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateAlert(OpenIZ.Core.Model.AMI.Alerting.AlertMessageInfo)">
+            <summary>
+            Creates an alert message.
+            </summary>
+            <param name="alertMessageInfo">The alert message to be created.</param>
+            <returns>Returns the created alert message.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateApplet(OpenIZ.Core.Model.AMI.Applet.AppletManifestInfo)">
+            <summary>
+            Creates an applet.
+            </summary>
+            <param name="appletManifestInfo">The applet manifest info to be created.</param>
+            <returns>Returns the created applet manifest info.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateApplication(OpenIZ.Core.Model.AMI.Auth.SecurityApplicationInfo)">
+            <summary>
+            Creates a security application.
+            </summary>
+            <param name="applicationInfo">The security application to be created.</param>
+            <returns>Returns the created security application.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateAssigningAuthority(OpenIZ.Core.Model.AMI.DataTypes.AssigningAuthorityInfo)">
+            <summary>
+            Creates an assigning authority.
+            </summary>
+            <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+            <returns>Returns the created assigning authority.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateDevice(OpenIZ.Core.Model.AMI.Auth.SecurityDeviceInfo)">
+            <summary>
+            Creates a device in the IMS.
+            </summary>
+            <param name="device">The device to be created.</param>
+            <returns>Returns the newly created device.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreatePolicy(OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo)">
+            <summary>
+            Creates a policy in the IMS.
+            </summary>
+            <param name="policy">The policy to be created.</param>
+            <returns>Returns the newly created policy.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateRole(OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo)">
+            <summary>
+            Creates a role in the IMS.
+            </summary>
+            <param name="role">The role to be created.</param>
+            <returns>Returns the newly created role.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateUser(OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo)">
+            <summary>
+            Creates a user in the IMS.
+            </summary>
+            <param name="user">The user to be created.</param>
+            <returns>Returns the newly created user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteApplet(System.String)">
+            <summary>
+            Deletes an applet.
+            </summary>
+            <param name="appletId">The id of the applet to be deleted.</param>
+            <returns>Returns the deleted applet.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteApplication(System.String)">
+            <summary>
+            Deletes an application.
+            </summary>
+            <param name="applicationId">The id of the application to be deleted.</param>
+            <returns>Returns the deleted application.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteAssigningAuthority(System.String)">
+            <summary>
+            Deletes an assigning authority.
+            </summary>
+            <param name="assigningAuthorityId">The id of the assigning authority to be deleted.</param>
+            <returns>Returns the deleted assigning authority.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteDevice(System.String)">
+            <summary>
+            Deletes a device.
+            </summary>
+            <param name="id">The id of the device to be deleted.</param>
+            <returns>Returns the deleted device.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeletePolicy(System.String)">
+            <summary>
+            Deletes a security policy.
+            </summary>
+            <param name="id">The id of the policy to be deleted.</param>
+            <returns>Returns the deleted policy.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteRole(System.String)">
+            <summary>
+            Deletes a security role.
+            </summary>
+            <param name="id">The id of the role to be deleted.</param>
+            <returns>Returns the deleted role.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteUser(System.String)">
+            <summary>
+            Deletes a security user.
+            </summary>
+            <param name="id">The id of the user to be deleted.</param>
+            <returns>Returns the deleted user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.Dispose">
+            <summary>
+            Dispose of any resources.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.Dispose(System.Boolean)">
+            <summary>
+            Dispose of any managed resources.
+            </summary>
+            <param name="disposing">Whether the current invocation is disposing.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.FindPolicy(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityPolicy,System.Boolean}})">
+            <summary>
+            Retrieves the specified role from the AMI
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.FindRole(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityRole,System.Boolean}})">
+            <summary>
+            Retrieves the specified role from the AMI
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetAlert(System.String)">
+            <summary>
+            Gets a specific alert.
+            </summary>
+            <param name="id">The id of the alert to retrieve.</param>
+            <returns>Returns the alert.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetAlerts(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Alert.Alerting.AlertMessage,System.Boolean}})">
+            <summary>
+            Gets a list of alerts.
+            </summary>
+            <param name="query">The query expression to use to find the alerts.</param>
+            <returns>Returns a collection of alerts which match the specified criteria.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetApplet(System.String)">
+            <summary>
+            Gets a specific applet.
+            </summary>
+            <param name="id">The id of the applet to retrieve.</param>
+            <returns>Returns the applet.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetApplets">
+            <summary>
+            Gets a list of applets for a specific query.
+            </summary>
+            <returns>Returns a list of applet which match the specific query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetApplication(System.String)">
+            <summary>
+            Gets a specific application.
+            </summary>
+            <param name="id">The id of the application to retrieve.</param>
+            <returns>Returns the application.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetApplications(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.AMI.Auth.SecurityApplicationInfo,System.Boolean}})">
+            <summary>
+            Gets a list applications for a specific query.
+            </summary>
+            <returns>Returns a list of application which match the specific query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetAssigningAuthorities(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.AssigningAuthority,System.Boolean}})">
+            <summary>
+            Gets a list of assigning authorities.
+            </summary>
+            <param name="query">The query expression to use to find the assigning authorities.</param>
+            <returns>Returns a collection of assigning authorities which match the specified criteria.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.AssigningAuthority(System.String)">
+            <summary>
+            Gets a specific assigning authority.
+            </summary>
+            <param name="id">The id of the assigning authority to retrieve.</param>
+            <returns>Returns the assigning authority.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetCertificates(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.AMI.Security.X509Certificate2Info,System.Boolean}})">
+            <summary>
+            Gets a list of certificates.
+            </summary>
+            <param name="query">The query expression to use to find the certificates.</param>
+            <returns>Returns a collection of certificates which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetCertificateSigningRequest(System.String)">
+            <summary>
+            Gets a certificate signing request.
+            </summary>
+            <param name="id">The id of the certificate signing request to be retrieved.</param>
+            <returns>Returns a certificate signing request.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetCertificateSigningRequests(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.AMI.Security.SubmissionInfo,System.Boolean}})">
+            <summary>
+            Gets a list of certificate signing requests.
+            </summary>
+            <param name="query">The query expression to use to find the certificate signing requests.</param>
+            <returns>Returns a collection of certificate signing requests which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetDevice(System.String)">
+            <summary>
+            Gets a specific device.
+            </summary>
+            <param name="))">The id of the security device to be retrieved.</param>
+            <returns>Returns the security device.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetDevices(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.AMI.Auth.SecurityDeviceInfo,System.Boolean}})">
+            <summary>
+            Gets a list of devices.
+            </summary>
+            <param name="query">The query expression to use to find the devices.</param>
+            <returns>Returns a collection of devices which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetPolicies(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityPolicy,System.Boolean}})">
+            <summary>
+            Retrieves a specified policy.
+            </summary>
+            <param name="query">The query expression to use to find the policy.</param>
+            <returns>Returns a collection of policies which match the specified query parameters.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetPolicy(System.String)">
+            <summary>
+            Gets a specific policy.
+            </summary>
+            <param name="id">The id of the policy to be retrieved.</param>
+            <returns>Returns the specific policy.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetRole(System.String)">
+            <summary>
+            Gets a specific role.
+            </summary>
+            <param name="id">The id of the role to be retrieved.</param>
+            <returns>Returns the specified user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetRoles(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityRole,System.Boolean}})">
+            <summary>
+            Retrieves a specified role.
+            </summary>
+            <param name="query">The query expression to use to find the role.</param>
+            <returns>Returns a collection of roles which match the specified query parameters.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetUser(System.String)">
+            <summary>
+            Gets a specific user.
+            </summary>
+            <param name="id">The id of the user to be retrieved.</param>
+            <returns>Returns the specified user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetUsers(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityUser,System.Boolean}})">
+            <summary>
+            Retrieves a specified user.
+            </summary>
+            <param name="query">The query expression to use to find the user.</param>
+            <returns>Returns a collection of users which match the specified query parameters.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.Options">
+            <summary>
+            Gets the options for the AMI.
+            </summary>
+            <returns>Return the service options for the AMI.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.SubmitCertificateSigningRequest(OpenIZ.Core.Model.AMI.Security.SubmissionRequest)">
+            <summary>
+            Submits a certificate signing request to the AMI.
+            </summary>
+            <param name="submissionRequest">The certificate signing request.</param>
+            <returns>Returns the submission result.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateAlert(System.String,OpenIZ.Core.Model.AMI.Alerting.AlertMessageInfo)">
+            <summary>
+            Updates an alert.
+            </summary>
+            <param name="alertId">The id of the alert to be updated.</param>
+            <param name="alertMessageInfo">The alert message info containing the updated information.</param>
+            <returns>Returns the updated alert.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateApplet(System.String,OpenIZ.Core.Model.AMI.Applet.AppletManifestInfo)">
+            <summary>
+            Updates an applet.
+            </summary>
+            <param name="appletId">The id of the applet to be updated.</param>
+            <param name="appletManifestInfo">The applet containing the updated information.</param>
+            <returns>Returns the updated applet.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateApplication(System.String,OpenIZ.Core.Model.AMI.Auth.SecurityApplicationInfo)">
+            <summary>
+            Updates an application.
+            </summary>
+            <param name="applicationId">The id of the application to be updated.</param>
+            <param name="applicationInfo">The application containing the updated information.</param>
+            <returns>Returns the updated application.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateDevice(System.String,OpenIZ.Core.Model.AMI.Auth.SecurityDeviceInfo)">
+            <summary>
+            Updates a device.
+            </summary>
+            <param name="deviceId">The id of the device to be updated.</param>
+            <param name="deviceInfo">The device containing the updated information.</param>
+            <returns>Returns the updated device.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateAssigningAuthority(System.String,OpenIZ.Core.Model.AMI.DataTypes.AssigningAuthorityInfo)">
+            <summary>
+            Updates an assigning authority.
+            </summary>
+            <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+            <param name="assigningAuthorityInfo">The assigning authority info containing the updated information.</param>
+            <returns>Returns the updated assigning authority.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateConcept(System.String,OpenIZ.Core.Model.DataTypes.Concept)">
+            <summary>
+            Updates a concept.
+            </summary>
+            <param name="conceptId">The id of the concept to be updated.</param>
+            <param name="concept">The concept containing the updated information.</param>
+            <returns>Returns the updated concept.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdatePolicy(System.String,OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo)">
+            <summary>
+            Updates a policy.
+            </summary>
+            <param name="policyId">The id of the policy to be updated.</param>
+            <param name="policyInfo">The policy containing the updated information.</param>
+            <returns>Returns the updated policy.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateRole(System.String,OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo)">
+            <summary>
+            Updates a role.
+            </summary>
+            <param name="roleId">The id of the role to be updated.</param>
+            <param name="roleInfo">The role containing the updated information.</param>
+            <returns>Returns the updated role.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateUser(System.Guid,OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo)">
+            <summary>
+            Updates a user.
+            </summary>
+            <param name="id">The id of the user to be updated.</param>
+            <param name="user">The user containing the updated information.</param>
+            <returns>Returns the updated user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetTwoFactorMechanisms">
+            <summary>
+            Gets a list of two-factor mechanisms
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.SendTfaSecret(OpenIZ.Core.Model.AMI.Auth.TfaRequestInfo)">
+            <summary>
+            Create security password reset request
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.SubmitDiagnosticReport(OpenIZ.Core.Model.AMI.Diagnostics.DiagnosticReport)">
+            <summary>
+            Submits a diagnostic report.
+            </summary>
+            <param name="report">The diagnostic report.</param>
+            <returns>Returns the submitted diagnostic report.</returns>
+        </member>
+    </members>
+</doc>

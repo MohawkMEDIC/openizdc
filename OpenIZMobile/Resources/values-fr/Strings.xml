@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: fyfej
+ - Date: 2016-11-14
+ -->
+<resources>
+	<string name="app_name">Client Deconnecte OpenIZ</string>
+	<string name="startup">Commencement le OpenIZ</string>
+	<string name="needs_setup">Nous avons besoin de mettre des choses...</string>
+	<string name="installing_applets">Demarrage Applets...</string>
+
+
+	<!-- Errors -->
+	<string name="err_general">Oops! Something went wrong!</string>
+	<string name="err_applet_not_found">Oops! Looks like there is something wrong with that applet!</string> 
+	<string name="err_startup">A serious error occurred during startup. OpenIZ Mobile cannot continue. Please reference the following error code when seeking help:</string>
+	<string name="err_login">Login error: </string>
+	<string name="err_login_invalidusername">Invalid username/password</string>
+	<string name="err_exception">An unexpected error occurred</string>
+</resources>

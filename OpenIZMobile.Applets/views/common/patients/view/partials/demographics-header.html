@@ -1,0 +1,121 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2017-3-31
+ -->
+<div class="row no-margin-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
+    <div class="col-xs-10">
+        <div class="row">
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
+            <div class="col-xs-4">
+                <span ng-model="patient.name.OfficialRecord.component.Given" oiz-editor="tag">
+                    {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+                </span>
+            </div>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.familyName' | i18n }}:</label>
+            <div class="col-xs-4">
+                <span ng-model="patient.name.OfficialRecord.component.Family" oiz-editor="tag">
+                    {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}:</label>
+            <div class="col-xs-4">
+                <span ng-model="patient.dateOfBirth" oiz-editor="date">
+                    {{ patient.dateOfBirth | datePrecisionFormat:patient.dateOfBirthPrecision }}
+                </span>
+            </div>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
+            <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale].charAt(0).toUpperCase() + patient.genderConceptModel.name[$root.page.locale].slice(1) }}</div>
+
+
+        </div>
+        <div class="row" ng-if="patient.deceasedDate">
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfDeath' | i18n }}:</label>
+            <div class="col-xs-4">
+                <span ng-model="patient.deceasedDate" oiz-editor="date">
+                    {{ patient.deceasedDate | date : 'yyyy-MM-dd' }}
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}:</label>
+            <div class="col-xs-4 padding-id-header">
+                <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
+                    <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
+                    <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ i.authority.name}}</span><br /></span>
+                </div>
+                <span ng-if="patient.identifier.length &gt; 2">...</span>
+
+            </div>
+            
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.facility' | i18n }}:</label>
+            <div class="col-xs-4 no-wrap"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
+        </div>
+        <div class="row">
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}:</label>
+            <div class="col-xs-4 padding-left-30 hide-text-header">
+                <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
+            </div>
+
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
+            <div class="col-xs-4  hide-text-header">
+                <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
+                    <span class="list-group-item-heading">{{ 'locale.patient.mother.names' | i18n }}: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
+                    <small ng-if="rel.targetModel.identifier">{{ 'locale.patient.mother.identifiers' | i18n }}: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+                    <span ng-repeat="contact in rel.targetModel.telecom">
+                        <small>{{ 'locale.patient.mother.contact' | i18n }}: {{contact.value}}</small>
+                    </span>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-xs-2 text-right" ng-show="patient.id">
+        <div class="dropdown">
+            <a id="patientMenuButton" data-toggle="dropdown"
+               class="btn btn-edit white-text" style="top: -5px;"
+               aria-haspopup="true" aria-expanded="true">
+                <span class="glyphicon glyphicon-option-vertical"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li role="presentation" ng-if="patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
+                    <a ng-click="patientController.download()">
+                        <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
+                    </a>
+                </li>
+                <li role="presentation" ng-if="!patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
+                    <a ng-click="patientController.showPatient()">
+                        <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
+                        <span ng-if="patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null">({{ 'locale.patient.status.patientDeceased' | i18n }})</span>
+                    </a>
+                </li>
+                <li role="presentation" ng-if="!patient.tag.onlineResult &amp;&amp; encounterFactory.appointments.length &gt; 0" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
+                    <a ng-click="patientController.appointment()">
+                        <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
+                    </a>
+                </li>
+                <li role="presentation" ng-if="!patient.tag.onlineResult">
+                    <a ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
+                        <span class="glyphicon glyphicon-eye-open margin-right-10"></span> {{ 'locale.patient.tabs.view' | i18n }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,86 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2017-3-31
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="container-fluid" ng-controller="DemographicSummaryController" xmlns:bind="http://openiz.org/applet/binding">
+    <oiz:script>~/controllers/common/patients/view/partials/demographic-summary.js</oiz:script>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.givenName' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.familyName' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.dateOfBirth' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.dateOfBirth | datePrecisionFormat:patient.dateOfBirthPrecision }}
+        </div>
+    </div>
+    <div class="row" ng-if="patient.multipleBirthOrder">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.birthOrder' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ 'locale.common.yes' | i18n }} - {{ patient.multipleBirthOrderText }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.gender' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.genderConceptModel | oizConcept }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.facility' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.registeredFacility' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.relationship.ServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.domicile' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.address.HomeAddress | oizEntityAddress }}
+        </div>
+    </div>
+</div>

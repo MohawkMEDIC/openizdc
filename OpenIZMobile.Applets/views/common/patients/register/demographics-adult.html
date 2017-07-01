@@ -1,0 +1,41 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-24
+ -->
+<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="form-horizontal form-group">
+    <!-- #include virtual="/org.openiz.core/views/common/patients/register/demographics.html" -->
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="patientTelecom">{{ 'locale.patient.demographics.telephone' | i18n }}</label>
+        <div class="col-xs-4">
+            <div class="input-group">
+                <select name="patientTelecomType" id="patientTelecomType" class="form-control" ng-model="patient.telecom.$other.use"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="input-group">
+                <input type="tel" autocomplete="off" autocapitalize="off" name="patientTelecom" ng-model="patient.telecom.$other.value" class="form-control" />
+                <span class="input-group-btn">
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.demographics.telephone' | i18n }}" data-content="{{ 'locale.patient.demographics.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                </span>
+
+            </div>
+        </div>
+    </div>
+</fieldset>

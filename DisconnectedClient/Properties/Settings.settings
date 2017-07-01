@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="DisconnectedClient.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="locale_patient" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Register Patient</Value>
+    </Setting>
+    <Setting Name="locale_searchPatient" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Search Patients</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
