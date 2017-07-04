@@ -119,7 +119,7 @@ namespace DisconnectedClient
                             Application.DoEvents();
                     }
 
-                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
                 }
                 else
                 {

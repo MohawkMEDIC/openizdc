@@ -61,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
         public FileTraceWriter(EventLevel filter, String fileName) : base(filter, null)
         {
             // First, we want to remove the oldest log
-            String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log" + Path.DirectorySeparatorChar + "OpenIZ" + Path.DirectorySeparatorChar, fileName + ".log");
+            String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log", fileName + ".log");
             if (!Directory.Exists(Path.GetDirectoryName(logFileBase)))
                 Directory.CreateDirectory(Path.GetDirectoryName(logFileBase));
 

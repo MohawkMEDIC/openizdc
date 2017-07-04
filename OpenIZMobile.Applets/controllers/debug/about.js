@@ -25,6 +25,8 @@
 
 layoutApp.controller('AboutApplicationController', ['$scope', '$rootScope', '$state', function ($scope, $rootScope, $state) {
 
+    var cachePlace = {};
+
     $scope.data = {};
     // Get information asynchronously
     OpenIZ.App.getInfoAsync({
@@ -71,6 +73,22 @@ layoutApp.controller('AboutApplicationController', ['$scope', '$rootScope', '$st
                 $scope.$apply();
             }
         });
+    };
+
+    
+    $scope.getPlaceName = function(placeId) {
+        var retVal = cachePlace[placeId];
+        if (!retVal) {
+            OpenIZ.Place.findAsync({
+                query: { _id: placeId },
+                synchronous: true,
+                continueWith: function (d) {
+                    retVal = OpenIZ.Util.renderName(d.name.OfficialRecord);
+                    cachePlace[placeId] = retval;
+                }
+            });
+            return retVal;
+        }
     };
 
     // Update the version

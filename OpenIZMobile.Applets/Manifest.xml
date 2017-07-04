@@ -18,7 +18,7 @@
  - Date: 2016-7-17
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.9.5.0">
+  <info id="org.openiz.core" version="0.9.5.6">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -451,6 +451,8 @@
     <string key="locale.about.updateToast.title">Updates Available</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
     <string key="locale.about.workLoad">Threadpool Use</string>
+    <string key="locale.about.environment.facilities">Subscribed To</string>
+    <string key="locale.about.environment.realm">Realm ID</string>
     <!-- End About -->
 
     <!-- Generic Confirmations -->

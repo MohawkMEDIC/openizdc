@@ -3548,3 +3548,10 @@ String.prototype.toByteArray = function () {
 
     return result
 }
+
+
+/** Android 4.4 Hacks **/
+if (!String.prototype.startsWith)
+    String.prototype.startsWith = function (start) {
+        return this.indexOf(start) == 0;
+    };

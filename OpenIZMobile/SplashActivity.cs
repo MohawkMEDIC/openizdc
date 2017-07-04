@@ -176,7 +176,7 @@ namespace OpenIZMobile
                             Action doStart = () =>
                             {
                                 Intent viewIntent = new Intent(this, typeof(AppletActivity));
-                                viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                                viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
                                 viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
                                 this.StartActivity(viewIntent);
                             };
