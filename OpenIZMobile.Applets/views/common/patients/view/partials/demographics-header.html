@@ -52,6 +52,12 @@
                     {{ patient.deceasedDate | datePrecisionFormat : patient.deceasedDatePrecision }}
                 </span>
             </div>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.causeOfDeath' | i18n }}:</label>
+            <div class="col-xs-4">
+                <span ng-model="patient.deceasedDate">
+                    {{ causeOfDeath.valueModel | oizConcept }}
+                </span>
+            </div>
         </div>
         <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}:</label>
