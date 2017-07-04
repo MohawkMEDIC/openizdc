@@ -27,7 +27,6 @@
                 <select id="nextOfKinRelationshipType" class="form-control" name="nextOfKinRelationshipType"
                         ng-model="patient.relationship.NextOfKin.relationshipType"
                         bind:source="Concept"
-                        bind:key="mnemonic"
                         bind:filter="conceptSet.mnemonic=ChildFamilyMember&amp;mnemonic=!Mother"
                         bind:value="name[{{ locale }}].value">
                 </select>
