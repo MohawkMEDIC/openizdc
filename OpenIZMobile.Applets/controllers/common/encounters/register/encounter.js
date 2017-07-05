@@ -95,7 +95,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                             target: enc.id,
                         });
                         relationship._created = false;
-                        relationship._enabled = bind._enabled;
+                        //relationship._enabled = bind._enabled;
                         relationship._encounter = bind._encounter;
                         relationship._originalTime = dat.item[i].actTime;
                         bind._encounter.relationship.HasComponent.push(relationship);

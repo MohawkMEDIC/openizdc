@@ -3511,6 +3511,30 @@ Date.prototype.yesterday = function () {
 }
 
 /** 
+ * Last Week Day
+ */
+Date.prototype.lastWeekDay = function (day, month, year) {
+    if(!day && !month && !year)
+    {
+        var date = new Date();
+        day = date.getDate();
+        year = date.getYear();
+        month = date.getMonth();
+    }
+
+    var lastDay = new Date(year, month + 1, 0);
+    switch (lastDay.getDay()) {
+        case 0:
+            lastDay.setDate(lastDay.getDate() - 2);
+            break;
+        case 6:
+            lastDay.setDate(lastDay.getDate() - 1);
+            break;
+    }
+    return lastDay;
+}
+
+/** 
  * @summary Decodes a hex string
  * @method
  */

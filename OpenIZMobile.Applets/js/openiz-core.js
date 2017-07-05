@@ -9956,7 +9956,7 @@ var OpenIZModel = OpenIZModel || {
         /** 
          * Source replaces target
          */
-        Replaces: 'e998ca72-3b6a-4099-ab6e-7cf6861a5b61',
+        Replaces : 'd1578637-e1cb-415e-b319-4011da033813',
         /** 
          * 
          */
@@ -10073,8 +10073,6 @@ var OpenIZModel = OpenIZModel || {
          * 
          */
         Wife: 'a3ff423e-81d5-4571-8edf-03c295189a23',
-        Replaces: "e998ca72-3b6a-4099-ab6e-7cf6861a5b61"
-
     },  // EntityRelationshipTypeKeys 
     // OpenIZ.Core.Model.Constants.StatusKeys, OpenIZ.Core.Model, Version=0.8.1.31069, Culture=neutral, PublicKeyToken=null
     /**
