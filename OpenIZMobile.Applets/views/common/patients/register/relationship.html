@@ -74,7 +74,7 @@
             <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.contact' | i18n }}</label>
             <div class="col-xs-9 col-sm-4">
                 <div class="input-group" ng-class="{ 'has-error': editPatientForm.relativePhoneNumberType.$error.required || editRelationshipForm.relativePhoneNumberType.$error.required}">
-                    <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
+                    <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType][0].use"
                             bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value">
                         <option></option>
                     </select>
