@@ -25,12 +25,12 @@
                 <label class="control-label">
                     {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} 
                     <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose">{{ act.targetModel.doseSequence }}</a>
-                    <select ng-model="act.targetModel.doseSequence" ng-change="cascadeDoseSequences(act._encounter.relationship.HasComponent, act.targetModel.doseSequence)"  ng-options="i for i in getDoseSequences(act.targetModel.participation.Product.player)" ng-if="act._overrideDose" class="form-control"/>
                 
                 <span ng-if="act._created">
                     ({{ 'locale.encounters.immunization.isBooster' | i18n }})
                 </span>
-                </label><br />
+                </label>
+                <select ng-model="act.targetModel.doseSequence" ng-change="cascadeDoseSequences(act._encounter.relationship.HasComponent, act.targetModel.doseSequence)" ng-options="i for i in getDoseSequences(act.targetModel.participation.Product.player)" ng-if="act._overrideDose" class="form-control" /><br />
                 <span ng-if="act.targetModel.tag.backEntry">
                     <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
                 </span>
