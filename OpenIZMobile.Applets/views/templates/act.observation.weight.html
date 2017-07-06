@@ -65,8 +65,8 @@
             <div class="col-xs-7">
                 <div class="input-group">
                     <label>{{ 'locale.encounters.weight.value' | i18n }}</label>
-                    <input ng-if="!act._enabled" ng-class="{ 'input-error': weightEntryForm['weight_' + act.targetModel.id].$error.max || weightEntryForm['weight_' + act.targetModel.id].$error.required}" ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" class="form-control" ng-model="act.targetModel.value" />
-                    <input ng-if="act._enabled" ng-class="{ 'input-error': weightEntryForm['weight_' + act.targetModel.id].$error.max || weightEntryForm['weight_' + act.targetModel.id].$error.required}" ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" min="1" max="100" class="form-control" ng-model="act.targetModel.value" />
+                    <input ng-if="!act._enabled" ng-class="{ 'input-error': (weightEntryForm['weight_' + act.targetModel.id].$touched || editEncounterForm.$submitted) &amp;&amp; (weightEntryForm['weight_' + act.targetModel.id].$error.number || weightEntryForm['weight_' + act.targetModel.id].$error.min || weightEntryForm['weight_' + act.targetModel.id].$error.max || weightEntryForm['weight_' + act.targetModel.id].$error.required)}" ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" class="form-control" ng-model="act.targetModel.value" />
+                    <input ng-if="act._enabled" ng-class="{ 'input-error': (weightEntryForm['weight_' + act.targetModel.id].$touched || editEncounterForm.$submitted) &amp;&amp; (weightEntryForm['weight_' + act.targetModel.id].$error.number || weightEntryForm['weight_' + act.targetModel.id].$error.min || weightEntryForm['weight_' + act.targetModel.id].$error.max || weightEntryForm['weight_' + act.targetModel.id].$error.required)}" ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" min="1" max="100" class="form-control" ng-model="act.targetModel.value" />
                 </div>
             </div>
             <div ng-class="!act._created &amp;&amp; act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'? 'col-xs-4':'col-xs-5'">
@@ -107,6 +107,9 @@
                 </div>
                 <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; weightEntryForm['weight_' + act.targetModel.id].$error.required &amp;&amp; (weightEntryForm['weight_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
                     {{ 'locale.encounters.immunizations.errors.weightRequired' | i18n }}
+                </div>
+                <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; weightEntryForm['weight_' + act.targetModel.id].$error.number &amp;&amp; (weightEntryForm['weight_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
+                    {{ 'locale.encounters.immunizations.errors.weightInvalid' | i18n }}
                 </div>
             </div>
         </ng-form>

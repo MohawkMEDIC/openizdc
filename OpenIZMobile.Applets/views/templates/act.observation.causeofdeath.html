@@ -24,7 +24,7 @@
                 {{ 'locale.encounters.causeofdeath.title' | i18n }}
             </label><br />
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-7">
             <label> {{ 'locale.patient.causeofdeath' | i18n }}</label>
             <select class="form-control" ng-model="act.targetModel.relationship.HasComponent.targetModel.value" required="required" 
                     bind:source="Concept" bind:filter="conceptSet.mnemonic=CauseOfDeath" bind:value="name[{{ locale }}].value">
