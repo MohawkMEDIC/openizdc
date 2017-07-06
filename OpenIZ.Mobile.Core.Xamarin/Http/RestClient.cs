@@ -379,9 +379,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             var responseContentType = errorResponse.ContentType;
                             if (responseContentType.Contains(";"))
                                 responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
-                            var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
                             try
                             {
+                                var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
+
                                 switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
                                 {
                                     case "deflate":

@@ -121,7 +121,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
 
                     ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticated += (so, se) =>
                     {
-                        if ((se.Principal?.Identity.Name ?? se.UserName) != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
+                        if ((se.Principal?.Identity.Name ?? se.UserName).ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                             AuditUtil.AuditLogin(se.Principal, se.UserName, so as IIdentityProviderService, se.Success);
                     };
                     ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += (so, se) =>

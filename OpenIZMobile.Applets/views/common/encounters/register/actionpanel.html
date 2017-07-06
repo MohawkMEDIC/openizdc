@@ -53,6 +53,7 @@
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.weight')">{{ 'locale.encounter.action.weight' | i18n }}</a></li>
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.substanceadmin.supplement')">{{ 'locale.encounter.action.supplement' | i18n }}</a></li>
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.concern.aefi')">{{ 'locale.encounter.action.aefi' | i18n }}</a></li>
+                <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.problem')">{{ 'locale.encounter.action.problem' | i18n }}</a></li>
                 <li><a ng-class="{'disabled' : hasCauseOfDeath(encounter)}" ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath')">{{ 'locale.encounter.action.death' | i18n }}</a></li>
             </ul>
         </div>
