@@ -59,7 +59,7 @@
                                             {{ 'locale.encounters.immunization.doseSequence' | i18n }}
                                             {{ act.targetModel.doseSequence }}
                                             <ul>
-                                                <li ng-repeat="cons in act.targetModel.participation.Consumable">
+                                                <li ng-if="act._enabled" ng-repeat="cons in act.targetModel.participation.Consumable">
                                                     {{ 'locale.encounters.immunization.lotNumber' | i18n }}
                                                     {{ OpenIZ.Util.renderConceptFromDom(cons.player) }}
                                                 </li>
