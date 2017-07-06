@@ -72,14 +72,15 @@
                                             {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.unitOfMeasure) }}
                                         </span>
                                         <span ng-switch-when="CodedObservation">
-                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.scale.png" ng-if="act.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.virus.png" ng-if="act.targetModel.typeConcept == '260ffe90-7882-4b38-a7af-d2110e91e752'" />
                                             {{ act.targetModel.typeConceptModel | oizConcept }} -
                                             <span ng-if="act.targetModel.valueModel">
                                                 {{ act.targetModel.valueModel | oizConcept}}
                                             </span>
                                             <span ng-if="!act.targetModel.valueModel">
-                                                {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.value) }}
+                                                {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.value) }} 
                                             </span>
+                                           
                                         </span>
                                         <span ng-switch-when="Act">
                                             
