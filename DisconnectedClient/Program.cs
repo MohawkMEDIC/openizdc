@@ -121,17 +121,20 @@ namespace DisconnectedClient
 
                     main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
                 }
-                else
+                else 
                 {
 
                     DcApplicationContext.Current.Started += startHandler;
                     while (!started)
                         Application.DoEvents();
+
                     main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/splash.html");
                 }
 
                 splash.Close();
-                Application.Run(main);
+
+                if(XamarinApplicationContext.Current.GetService<MiniImsServer>().IsRunning)
+                    Application.Run(main);
 
 
 

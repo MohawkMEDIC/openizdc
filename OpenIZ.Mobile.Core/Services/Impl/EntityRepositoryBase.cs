@@ -176,7 +176,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 if (data.Key.HasValue)
                 {
-                    old = persistenceService.Get(data.Key.Value).Clone() as TEntity;
+                    old = persistenceService.Get(data.Key.Value)?.Clone() as TEntity;
                     if (old is Entity)
                         old = (TEntity)(old as Entity)?.Copy();
                 }

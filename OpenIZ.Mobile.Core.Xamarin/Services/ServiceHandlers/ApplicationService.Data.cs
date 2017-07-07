@@ -141,7 +141,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             ApplicationContext.Current.GetService<QueueManagerService>().ExhaustAdminQueue();
 
             ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, ""), 0);
-            var targets = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o => o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange)).ToList();
+            var targets = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o => o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange) || o.Triggers.HasFlag(SynchronizationPullTriggerType.PeriodicPoll)).ToList();
             for(var i = 0; i < targets.Count(); i++)
             {
                 var itm = targets[i];
