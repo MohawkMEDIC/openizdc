@@ -15,12 +15,12 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-17
+ * Date: 2016-7-18
  */
 
 /**
- * @version 0.6.12 (Dalhouse)
- * @copyright (C) 2015-2016, Mohawk College of Applied Arts and Technology
+ * @version 0.9.6 (Edmonton)
+ * @copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
  * @license Apache 2.0
  */
 

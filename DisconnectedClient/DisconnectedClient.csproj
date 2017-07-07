@@ -230,6 +230,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="..\OpenIZDC.licenseheader">
+      <Link>OpenIZDC.licenseheader</Link>
+    </None>
     <None Include="app.manifest" />
     <None Include="Applets\org.openiz.core.pak">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

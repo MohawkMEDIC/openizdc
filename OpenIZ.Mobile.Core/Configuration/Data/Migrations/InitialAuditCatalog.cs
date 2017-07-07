@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2017-4-7
+ * User: justi
+ * Date: 2017-6-28
  */
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
