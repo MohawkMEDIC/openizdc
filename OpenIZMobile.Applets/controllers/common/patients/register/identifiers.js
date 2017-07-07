@@ -44,10 +44,10 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
                     if (identifier[key]) {
                         if (!Array.isArray(identifier[key])) {
                             var value = identifier[key].value || "";
-                            $scope.identifiers.push({ domainName: key, value: value, authority: identifier[key].authority });
+                            $scope.identifiers.push({ domainName: key, value: value});
                         } else {
                             for (var i = 0; i < identifier[key].length; i++) {
-                                $scope.identifiers.push({ domainName: key, value: identifier[key][i].value, authority: identifier[key][i].authority });
+                                $scope.identifiers.push({ domainName: key, value: identifier[key][i].value});
                             }
                         }
                     }
@@ -69,28 +69,21 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
         //builds the identifier back onto the patient
         $scope.$watch('identifiers', function (identifiers, o) {
             if (identifiers && identifiers != o) {
+                $scope.patient.identifier = {};
                 for (key in identifiers) {
-                    authority = identifiers[key].authority;
                     domainName = identifiers[key].domainName;
                     value = identifiers[key].value;
-                    if (value == null)
-                        continue;
-                    else
-                        delete ($scope.patient.identifier[domainName]); // need to rebind
 
                     if (Array.isArray($scope.patient.identifier[domainName])) {
                         $scope.patient.identifier[domainName].push({
-                            authority: authority,
                             value: value
                         })
                     } else {
                         $scope.patient.identifier[domainName] = [{
-                            authority: authority,
                             value: value
                         }]
                     }
                 }
-                //$scope.patient.identifier = tIdentifiers;
             }
         }, true);
     }

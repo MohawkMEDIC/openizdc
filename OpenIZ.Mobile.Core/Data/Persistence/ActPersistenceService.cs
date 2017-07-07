@@ -55,6 +55,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private const String Supply = "A064984F-9847-4480-8BEA-DDDF64B3C77C";
 
         /// <summary>
+        /// Get the order by
+        /// </summary>
+        protected override IEnumerable<Act> SortResults(IEnumerable<Act> data) => data.OrderBy(o => o.CreationTime);
+
+        /// <summary>
         /// Cache convert an act version
         /// </summary>
         protected override Act CacheConvert(DbIdentified dataInstance, LocalDataContext context)

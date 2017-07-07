@@ -49,7 +49,13 @@
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfDeath' | i18n }}:</label>
             <div class="col-xs-4">
                 <span ng-model="patient.deceasedDate" oiz-editor="date">
-                    {{ patient.deceasedDate | date : 'yyyy-MM-dd' }}
+                    {{ patient.deceasedDate | datePrecisionFormat : patient.deceasedDatePrecision }}
+                </span>
+            </div>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.causeOfDeath' | i18n }}:</label>
+            <div class="col-xs-4">
+                <span ng-model="patient.deceasedDate">
+                    {{ causeOfDeath.valueModel | oizConcept }}
                 </span>
             </div>
         </div>
@@ -108,11 +114,6 @@
                 <li role="presentation" ng-if="!patient.tag.onlineResult &amp;&amp; encounterFactory.appointments.length &gt; 0" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
                     <a ng-click="patientController.appointment()">
                         <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
-                    </a>
-                </li>
-                <li role="presentation" ng-if="!patient.tag.onlineResult">
-                    <a ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
-                        <span class="glyphicon glyphicon-eye-open margin-right-10"></span> {{ 'locale.patient.tabs.view' | i18n }}
                     </a>
                 </li>
             </ul>

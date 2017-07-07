@@ -246,6 +246,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "UserEntityMe",
                         "Provider",
                         "ManufacturedMaterial",
+                        "ManufacturedMaterialMe",
                         "Person",
                         "PatientEncounter",
                         "SubstanceAdministration",
@@ -347,6 +348,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     if (syncSetting.Filters.Count == 0)
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ManufacturedMaterial);
                                     break;
+                                case "ManufacturedMaterialMe":
+                                    syncSetting.ResourceAqn = "ManufacturedMaterial";
+                                    syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
+                                    syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facility);
+                                    break;
+
                             }
                         }
 

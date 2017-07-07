@@ -15,12 +15,12 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-17
+ * Date: 2016-7-18
  */
 
 /**
- * @version 0.6.12 (Dalhouse)
- * @copyright (C) 2015-2016, Mohawk College of Applied Arts and Technology
+ * @version 0.9.6 (Edmonton)
+ * @copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
  * @license Apache 2.0
  */
 
@@ -80,6 +80,9 @@ var OpenIZ = OpenIZ || {
          * @class
          * @summary A prototype patient controller which is called by OpenIZ core components
          * @memberof OpenIZ.UserInterface
+         * @description This class is overridden by application to control navigation from core OpenIZ components to patient specific ones
+         * @example To redirect to my-view on patient view
+         *  OpenIZ.UserInterface.PatientControllerPrototype.prototype.view = function(patientId) { $state.transitionTo('myview', { pat: patientId }); };
          */
         PatientControllerPrototype: function () {
 
@@ -161,6 +164,9 @@ var OpenIZ = OpenIZ || {
             };
 
         },
+        /**
+         * @summary Specifies the global patient controller to use for the OpenIZ application session
+         */
         patientController: null
     },
     /**
@@ -168,6 +174,7 @@ var OpenIZ = OpenIZ || {
      * @memberof OpenIZ
      * @static
      * @class
+     * @description This wrapper class will assist developers in interfacing with the MiniIms when operating on Acts.
      */
     Act: {
         /**
@@ -179,8 +186,18 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the act that is to be updated
+         * @param {object} controlData.data The act data to be updated
          * @see {OpenIZ.IMS.delete}
          * @see OpenIZModel.Act
+         * @example 
+         * $scope.act.statusConcept = OpenIZModel.StatusKeys.Completed;
+         * OpenIZ.Act.updateAsync({
+         *      data: $scope.act,
+         *      id: $scope.act.id,
+         *      continueWith: function(data) {
+         *          alert("Act was updated. New version>" + data.versionId);
+         *      }
+         * });
          */
         updateAsync: function (controlData) {
             OpenIZ.Ims.put({
@@ -195,6 +212,7 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Asynchronously deletes an encounter object in the IMS
+         * @description Obsoletion is used to mark an act as "this information is no longer applicable". 
          * @memberof OpenIZ.Act
          * @method
          * @param {Object} controlData An object containing search, offset, count and callback data
@@ -204,6 +222,13 @@ var OpenIZ = OpenIZ || {
          * @param {uuid} controlData.id The identifier of the act that is to be updated
          * @see {OpenIZ.IMS.delete}
          * @see OpenIZModel.Act
+         * @example
+         * OpenIZ.Act.obsoleteAsync({
+         *      id: $scope.act.id,
+         *      continueWith: function(data) {
+         *          alert("Act was deleted");
+         *      }
+         *  });
          */
         obsoleteAsync: function (controlData) {
             OpenIZ.Ims.delete({
@@ -218,6 +243,9 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Asynchronously nullifies an act object in the IMS
+         * @description When an act is nullified, it is deemed to have never existed. This is used when an act is done in error. The act itself
+         * still remains on the patient's file, however it is in a nullified or "errored" state. When updating act details it is recommended that
+         * instead of updating the act directly, that it be nullified and replaced with a relationship of Replaces.
          * @memberof OpenIZ.Act
          * @method
          * @param {Object} controlData An object containing search, offset, count and callback data
@@ -225,7 +253,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the act that is to be updated
-         * @see {OpenIZ.IMS.delete}
+         * @see {OpenIZ.IMS.nullify}
          * @see OpenIZModel.Act
          */
         nullifyAsync: function (controlData) {
@@ -243,6 +271,9 @@ var OpenIZ = OpenIZ || {
          * @summary Creates a fulfillment relationship act
          * @description This method creates a new act which fulfills the specified act
          * @param {OpenIZModel.Act} act The act which the new act should fulfill
+         * @description When an act fulfills another it is said to be a part of the same chain of events. This method helps to 
+         * maintain this chain. For example, if someone orders some stock, or if the care planner proposes something, an act can be
+         * created which "fulfills" the other. I.e. "something proposed I do X, I am fulfilling that proposal"
          */
         createFulfillment: function (act) {
 
@@ -336,6 +367,40 @@ var OpenIZ = OpenIZ || {
           * @param {int} controlData.query._offset The offset of the search result window
           * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
           * @see {OpenIZ.IMS.get}
+          * @example Get all active acts
+          * OpenIZ.Act.findAsync({
+          *     query: {
+          *         statusConcept: OpenIZModel.StatusKeys.Active,
+          *         classConcept: OpenIZModel.ActClassKeys.Observation,
+          *         _count: 10,
+          *         _offset: 0
+          *     },
+          *     continueWith: function(bundle) {
+          *         alert("I found " + bundle.totalResults + " here are results 0 to 10");
+          *     }
+          * });
+          * @example Get all active acts saving the query results (improves performance)
+          * OpenIZ.Act.findAsync({
+          *     query: {
+          *         statusConcept: OpenIZModel.StatusKeys.Active,
+          *         classConcept: OpenIZModel.ActClassKeys.Observation,
+          *         _count: 10,
+          *         _offset: 0,
+          *         _queryId: OpenIZ.App.newGuid()
+          *     },
+          *     continueWith: function(bundle) {
+          *         alert("I found " + bundle.totalResults + " here are results 0 to 10");
+          *     }
+          * });
+          * @example Get a specific Act
+          * OpenIZ.Act.findAsync({
+          *     query: {
+          *         _id: "UUID OF THE ACT"
+          *     },
+          *     continueWith: function(act) {
+          *         alert("This act is a " + act.classConcept);
+          *     }
+          * });
           */
         findAsync: function (controlData) {
             OpenIZ.Ims.get({
@@ -358,11 +423,32 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {OpenIZModel.Act} controlData.data The data which is to be inserted on the IMS
          * @example
-         * OpenIZ.Act.insertAsync({
-         *      data: new OpenIZModel.Act(...),
-         *      continueWith: function(result) { // Do something with result },
-         *      onException: function(ex) { // Handle exception }
-         * });
+         *  var act = new OpenIZModel.SubstanceAdministration({
+         *      doseQuantity: 1,
+         *      participation: {
+         *          Product: {
+         *              target: "UUID OF TARGET PRODUCT"
+         *          },
+         *          RecordTarget: {
+         *              target: "UUID OF PATIENT"
+         *          },
+         *          Performer: {
+         *              target: "UUID OF CLINICIAN"
+         *          }
+         *      },
+         *      sequence: 1,
+         *      isNegated: false
+         *  });
+         *
+         *  OpenIZ.Act.insertAsync({
+         *      data: act,
+         *      continueWith: function(data) {
+         *          alert("Immunization saved as :" + data.id);
+         *      },
+         *      onException: function(e) {
+         *          alert("Oops! Something went wrong!" + e);
+         *      }
+         *  });
          */
         insertAsync: function (controlData) {
             OpenIZ.Ims.post({
@@ -403,10 +489,13 @@ var OpenIZ = OpenIZ || {
         },
         /**
           * @summary Perform a search of an act subtypes asynchronously
+          * @description This method differs from findAsync in that it reports intermediate results and exhausts all results rather than 
+          * relying on a user to page the results.
           * @memberof OpenIZ.Act
           * @method
           * @param {Object} controlData An object containing search, offset, count and callback data
           * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+          * @param {OpenIZ~continueWith} controlData.intermediateResults The callback to call when a subset of results are fetched
           * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
           * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
           * @param {object} controlData.query The query filters to apply to the search
@@ -414,6 +503,18 @@ var OpenIZ = OpenIZ || {
           * @param {int} controlData.query._offset The offset of the search result window
           * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
           * @see {OpenIZ.IMS.get}
+          * @example Fetch all records related to a specific patient
+          * OpenIZ.Act.findClinicalActAsync({
+          *     query: {
+          *         "participation[RecordTarget].player" : patientId
+          *     },
+          *     intermediateResults: function(bundle) {
+          *         // Update your user interface here and do what you like before the next page is fetched
+          *     },
+          *     continueWith: function(bundle) {
+          *         alert("All the patient's data was fetched");
+          *     }
+          * });
           */
         findClinicalActAsync: function (controlData) {
             var actResources = [
@@ -496,6 +597,8 @@ var OpenIZ = OpenIZ || {
     Ims: {
         /**
          * @summary Post data to the IMS
+         * @description This function is responsible for actually interoperating with the IMS running on the disconnected client interface.
+         * The method will ensure that all callbacks are transferred using the standard OpenIZ callback mechanisms.
          * @memberof OpenIZ.Ims
          * @param {object} controlData The data which controls the asynchronous process
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
@@ -1698,6 +1801,20 @@ var OpenIZ = OpenIZ || {
      * @memberof OpenIZ
      */
     CarePlan: {
+        /**
+         * @summary Refreshes the cached care plan
+         * @memberof OpenIZ.CarePlan
+         * @method
+         * @param {object} controlData The data which controls the asynchronous operation
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {OpenIZModel.Patient} controlData.data The seed data which should be passed to the forecasting engine in order to calculate the plan
+         * @param {string} controlData.query The additional query parameters which should be passed to the forecaster
+         */
+        refreshAsync: function(controlData) {
+            OpenIZ.Util.simplePost("/__plan/refresh", controlData);
+        },
         /**
          * @summary Interprets the observation, setting the interpretationConcept property of the observation
          * @param {OpenIZModel.QuantityObservation} obs The observation which is to be interpretation
@@ -3383,10 +3500,6 @@ var OpenIZ = OpenIZ || {
 
 OpenIZ.UserInterface.patientController = new OpenIZ.UserInterface.PatientControllerPrototype();
 
-/**
- * @summary Current Locale
- */
-//OpenIZ.locale = OpenIZ.Localization.getLocale();
 // No caching
 $.ajaxSetup({
     cache: false,
@@ -3406,6 +3519,7 @@ $.ajaxSetup({
     }
 });
 
+// Handles error conditions related to expiry
 $(document).ajaxError(function (e, data, setting, err) {
     if ((data.status == 401 || data.status == 403)) {
         if (OpenIZ.Authentication.$session && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined && (OpenIZ.Authentication.$session && OpenIZ.Authentication.$session.exp < new Date() || document.cookie == "") &&
@@ -3435,6 +3549,7 @@ $(document).ajaxError(function (e, data, setting, err) {
 
 /**
  * @method
+ * @memberof Date
  * @summary Get the week of the year
  */
 Date.prototype.getWeek = function () {
@@ -3444,6 +3559,7 @@ Date.prototype.getWeek = function () {
 
 /**
  * @method
+ * @memberof Date
  * @summary Get the week of the year
  */
 Date.prototype.getUTC = function () {
@@ -3452,6 +3568,7 @@ Date.prototype.getUTC = function () {
 
 /** 
  * @method
+ * @memberof Date
  * @summary Get the first day of the year
  */
 Date.prototype.getFirstDayOfYear = function () {
@@ -3460,6 +3577,7 @@ Date.prototype.getFirstDayOfYear = function () {
 
 /**
  * @method 
+ * @memberof Date
  * @summary Get the first day of the following week
  */
 Date.prototype.nextMonday = function () {
@@ -3472,6 +3590,7 @@ Date.prototype.nextMonday = function () {
 /**
  * @summary Gets the date on the next day
  * @method
+ * @memberof Date
  * @param {Number} days The number of days to add
  */
 Date.prototype.addDays = function (days) {
@@ -3482,6 +3601,7 @@ Date.prototype.addDays = function (days) {
 
 /**
  * @summary Gets the date on the next day
+ * @memberof Date
  * @method
  */
 Date.prototype.tomorrow = function () {
@@ -3491,9 +3611,37 @@ Date.prototype.tomorrow = function () {
 /**
  * @summary Gets the date on the previous day
  * @method
+ * @memberof Date
  */
 Date.prototype.yesterday = function () {
     return this.addDays(-1);
+}
+
+/** 
+ * @summary Last Week Day
+ * @memberof Date
+ * @method
+ * @param {int} year The year for the date to get the end of week
+ * @param {int} month The month for which to gather tha last date
+ */
+Date.prototype.lastWeekDay = function (month, year) {
+    if(!day && !month && !year)
+    {
+        var date = new Date();
+        year = date.getYear();
+        month = date.getMonth();
+    }
+
+    var lastDay = new Date(year, month + 1, 0);
+    switch (lastDay.getDay()) {
+        case 0:
+            lastDay.setDate(lastDay.getDate() - 2);
+            break;
+        case 6:
+            lastDay.setDate(lastDay.getDate() - 1);
+            break;
+    }
+    return lastDay;
 }
 
 /** 
@@ -3534,3 +3682,10 @@ String.prototype.toByteArray = function () {
 
     return result
 }
+
+
+/** Android 4.4 Hacks **/
+if (!String.prototype.startsWith)
+    String.prototype.startsWith = function (start) {
+        return this.indexOf(start) == 0;
+    };

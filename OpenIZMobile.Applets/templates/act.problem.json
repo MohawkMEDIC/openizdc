@@ -1,17 +1,27 @@
 ﻿{
-  "$type": "SubstanceAdministration",
+  "$type": "CodedObservation",
   "templateModel": {
-    "mnemonic": "act.substanceadmin.immunization"
+    "mnemonic": "act.problem"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
-  "typeConcept": "0331e13f-f471-4fbd-92dc-66e0a46239d5",
+  "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+  "typeConcept": "260ffe90-7882-4b38-a7af-d2110e91e752",
+  "typeConceptModel": {
+    "id": "260ffe90-7882-4b38-a7af-d2110e91e752",
+    "mnemonic": "ObservationType-Problem"
+  },
   "actTime": "{{now}}",
-  "doseSequence": 0,
-  "doseQuantity": 1.0,
-  "doseUnitModel": {
-    "id": "a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76",
-    "mnemonic": "UnitOfMeasure-Dose"
+  "value": "70fe34ce-caff-4f46-b6e6-9cd6d8f289d6",
+  "relationship": {
+    "HasComponent": {
+      "targetModel": { // Severity
+        "$type": "CodedObservation",
+        "classConcept": "28d022c6-8a8b-47c4-9e6a-2bc67308739e",
+        "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+        "typeConcept": "05012084-3351-4045-8390-fbcbd7ec1d19",
+        "value": null // TODO: Any value from 2.16.840.1.113883.5.1063
+      }
+    }
   },
   "participation": {
     "Location": {

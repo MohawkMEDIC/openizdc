@@ -39,6 +39,8 @@
     <AotAssemblies>False</AotAssemblies>
     <EnableLLVM>False</EnableLLVM>
     <EnableProguard>False</EnableProguard>
+    <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
+    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -86,6 +88,7 @@
     <AndroidLinkSkip>System.Xml.Linq;mscorlib;System</AndroidLinkSkip>
     <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
     <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
+    <AndroidStoreUncompressedFileExtensions>.pak</AndroidStoreUncompressedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LinuxSignedRelease|AnyCPU'">
     <OutputPath>bin\LinuxSignedRelease\</OutputPath>

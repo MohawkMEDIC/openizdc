@@ -103,7 +103,6 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                         $scope.$apply();
                     }
                 }
-                setTimeout($scope.checkMessages, 10000);
             }
         });
 
@@ -148,8 +147,9 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                 onException: function() {}
             });
     };
-    setTimeout($scope.checkMessages, 10000);
-    $scope.checkMessages();
+
+    setInterval($scope.checkMessages, 10000);
+    //$scope.checkMessages();
     /**
      * Window resize event handling
      */

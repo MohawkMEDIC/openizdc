@@ -51,6 +51,14 @@ namespace OpenIZ.Mobile.Core.Data
     public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData>, ILocalPersistenceService where TData : IdentifiedData, new()
     {
 
+        /// <summary>
+        /// Get the order by
+        /// </summary>
+        protected virtual IEnumerable<TData> SortResults(IEnumerable<TData> data)
+        {
+            return data.OrderByDescending(o => o.Key.Value);
+        }
+
         // Get tracer
         protected Tracer m_tracer; //= Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
 
@@ -436,7 +444,7 @@ namespace OpenIZ.Mobile.Core.Data
                         if (expandProperties != null)
                             context.LoadAssociations = expandProperties.ToArray();
 
-                        results = this.Query(context, query, offset, count ?? -1, out totalResults, queryId, countResults);
+                        results = this.SortResults(this.Query(context, query, offset, count ?? -1, out totalResults, queryId, countResults));
                     }
 
                     var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);

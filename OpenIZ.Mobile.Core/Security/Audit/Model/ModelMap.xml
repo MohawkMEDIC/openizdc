@@ -15,7 +15,7 @@
  - the License.
  - 
  - User: justi
- - Date: 2016-8-17
+ - Date: 2017-6-28
  -->
 <modelMap xmlns="http://openiz.org/model/map">
   <class modelClass="MARC.HI.EHRS.SVC.Auditing.Data.AuditData, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0"

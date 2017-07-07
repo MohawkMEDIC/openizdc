@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-10-25
+ * User: justi
+ * Date: 2016-10-11
  */
 using System;
 using System.Collections.Generic;
@@ -176,7 +176,7 @@ namespace OpenIZMobile
                             Action doStart = () =>
                             {
                                 Intent viewIntent = new Intent(this, typeof(AppletActivity));
-                                viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                                viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
                                 viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
                                 this.StartActivity(viewIntent);
                             };

@@ -1,19 +1,19 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
- *
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you
- * may not use this file except in compliance with the License. You may
- * obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
  * the License.
- *
+ * 
  * User: justi
  * Date: 2016-8-17
  */
@@ -95,7 +95,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                             target: enc.id,
                         });
                         relationship._created = false;
-                        relationship._enabled = bind._enabled;
+                        //relationship._enabled = bind._enabled;
                         relationship._encounter = bind._encounter;
                         relationship._originalTime = dat.item[i].actTime;
                         bind._encounter.relationship.HasComponent.push(relationship);
@@ -318,7 +318,9 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     };
 
     scope.hasCauseOfDeath = scope.hasCauseOfDeath || function (encounter) {
-        return encounter.relationship.HasComponent.some(x => x.targetModel && x.targetModel.templateModel && x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath");
+        return $.grep(encounter.relationship.HasComponent, function (x) {
+            return x.targetModel && x.targetModel.templateModel && x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath";
+        }).length > 0;
     }
 
     scope.addCauseOfDeath = scope.addCauseOfDeath || function (patient, act, encounter) {
