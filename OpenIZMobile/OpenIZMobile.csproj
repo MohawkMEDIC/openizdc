@@ -250,19 +250,20 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
-    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
- copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
- </PreBuildEvent>
+    <PreBuildEvent>
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+      copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+    </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>

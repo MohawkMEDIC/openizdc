@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.4"
+#define MyAppVersion "0.9.6"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -91,6 +91,7 @@ Source: ".\installsupp\vcredist_x86.exe"; DestDir: "{tmp}"; Flags: dontcopy;
 
 [Icons]
 Name: "{commonprograms}\Open Immunize\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{commonprograms}\Open Immunize\Reset {#MyAppName} Configuration"; Parameters:"--reset"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
@@ -104,7 +105,6 @@ var
   ResultCode : integer;
   uninstallString : string;
 begin
-    
     EnableFsRedirection(true);
     ExtractTemporaryFile('vcredist_x86.exe');
     Exec(ExpandConstant('{tmp}\vcredist_x86.exe'), '/install /passive', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);

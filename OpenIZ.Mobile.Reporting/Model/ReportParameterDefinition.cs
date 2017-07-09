@@ -77,6 +77,6 @@ namespace OpenIZ.Mobile.Reporting.Model
         /// When true indicates the value should be the ceiling of the entered value
         /// </summary>
         [XmlAttribute("ceil"), JsonProperty("ceil")]
-        public bool Ciel { get; set; }
+        public bool Ceil { get; set; }
     }
 }

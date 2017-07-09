@@ -5,6 +5,7 @@
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "classConcept": "1987c53c-7ab8-4461-9ebc-0d428744a8c0",
+  "typeConcept": "0744B6AD-BE39-4A08-B64D-F61CB8282267",
   "startTime": "{{now}}",
   "relationship": {
     "HasSubject": {

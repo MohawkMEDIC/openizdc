@@ -286,25 +286,25 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IeSignedRelease|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak" --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak" --optimize
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak" 
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>

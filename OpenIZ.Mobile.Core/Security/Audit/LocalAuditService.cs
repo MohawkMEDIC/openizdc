@@ -164,17 +164,17 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                     {
                         svc.DataCreated += (so, se) =>
                         {
-                            if (se.Objects.Any(x => x is Entity || x is Act))
+                            if (se.Objects.Any(x => x is Entity || x is Act) && AuthenticationContext.Current.Principal.Identity.Name.ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                                 AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Create, AuditableObjectLifecycle.Creation, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
                         svc.DataUpdated += (so, se) =>
                         {
-                            if (se.Objects.Any(x => x is Entity || x is Act))
+                            if (se.Objects.Any(x => x is Entity || x is Act) && AuthenticationContext.Current.Principal.Identity.Name.ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                                 AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Update, AuditableObjectLifecycle.Amendment, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
                         svc.DataObsoleted += (so, se) =>
                         {
-                            if (se.Objects.Any(x => x is Entity || x is Act))
+                            if (se.Objects.Any(x => x is Entity || x is Act) && AuthenticationContext.Current.Principal.Identity.Name.ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                                 AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Delete, AuditableObjectLifecycle.LogicalDeletion, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
                         svc.DataDisclosed += (so, se) =>

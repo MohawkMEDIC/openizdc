@@ -61,10 +61,13 @@ namespace DisconnectedClient
                 Console.WriteLine("Will start in debug mode...");
             if (Program.Parameters.Reset)
             {
-                var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
-                var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
-                if (Directory.Exists(appData)) Directory.Delete(cData, true);
-                if (Directory.Exists(appData)) Directory.Delete(appData, true);
+                if (MessageBox.Show("Are you sure you want to wipe all your data and configuration for the Disconnected Client?", "Confirm Reset", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
+                    var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
+                    if (Directory.Exists(appData)) Directory.Delete(cData, true);
+                    if (Directory.Exists(appData)) Directory.Delete(appData, true);
+                }
                 return;
             }
             String[] directory = {
