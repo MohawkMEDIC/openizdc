@@ -184,7 +184,7 @@
                 </div>
             </div>
             <div class="col-xs-3" ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                <a class="btn btn-lg btn-info" ng-click="removeOverdue(act, '#enable_' + act.targetModel.id)">
+                <a class="btn btn-lg btn-info" ng-if="!act.targetModel._hideActivate" ng-click="removeOverdue(act, '#enable_' + act.targetModel.id)">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-down"></span>
                         <span class="hidden-xs">{{ 'locale.action.activate' | i18n }}</span>
