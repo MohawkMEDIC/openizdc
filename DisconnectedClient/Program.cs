@@ -109,7 +109,7 @@ namespace DisconnectedClient
 #else
                 uint x, y;
                 Screen.PrimaryScreen.GetDpi(DpiType.Angular, out x, out y);
-                var settings = new CefSettings();
+                var settings = new CefSettings() { UserAgent = "OpenIZEmbedded" };
                 if (x > 120 || y > 120 || Program.Parameters.HdpiFix)
                     Cef.EnableHighDPISupport();
                 Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);

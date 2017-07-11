@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.6"
+#define MyAppVersion "0.9.6.1"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -23,7 +23,7 @@ DefaultDirName={pf}\Mohawk College\OpenIZ\Disconnected Client
 DisableProgramGroupPage=yes
 LicenseFile=.\License.rtf
 OutputDir=.\dist
-OutputBaseFilename=setup-openiz-disconnected-client
+OutputBaseFilename=openiz-dc-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 
