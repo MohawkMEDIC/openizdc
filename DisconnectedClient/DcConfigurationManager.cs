@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2017-3-31
+ * Date: 2017-4-3
  */
 using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 using OpenIZ.Core.Protocol;
@@ -173,7 +173,11 @@ namespace DisconnectedClient
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
+#if NOCRYPT
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
+#else
+                    typeof(SQLite.Net.Platform.SqlCipher.SQLitePlatformSqlCipher).AssemblyQualifiedName,
+#endif
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(DcAppletManagerService).AssemblyQualifiedName,
                                         typeof(SQLiteReportDatasource).AssemblyQualifiedName,

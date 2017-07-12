@@ -38,6 +38,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private MaterialPersistenceService m_materialPersister = new MaterialPersistenceService();
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected override IEnumerable<ManufacturedMaterial> SortResults(IEnumerable<ManufacturedMaterial> data)
+        {
+            return data.OrderBy(d => d.ExpiryDate);
+        }
+        /// <summary>
         /// Material persister
         /// </summary>
         /// <param name="dataInstance"></param>

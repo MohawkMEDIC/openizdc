@@ -47,7 +47,10 @@
             <label class="col-sm-4 col-xs-12">
                 {{ 'locale.patient.demographics.contact' | i18n }}
             </label>
-            <div class="col-sm-6 col-xs-12 ng-binding">
+            <div class="col-sm-6 col-xs-12 ng-binding" ng-if="contact[0]">
+                {{contact[0].value}}
+            </div>
+            <div class="col-sm-6 col-xs-12 ng-binding" ng-if="!contact[0]">
                 {{contact.value}}
             </div>
         </div>

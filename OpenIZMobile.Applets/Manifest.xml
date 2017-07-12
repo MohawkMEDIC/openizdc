@@ -1,24 +1,24 @@
 <!--
  - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  -
- -
- - Licensed under the Apache License, Version 2.0 (the "License"); you
- - may not use this file except in compliance with the License. You may
- - obtain a copy of the License at
- -
- - http://www.apache.org/licenses/LICENSE-2.0
- -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- - License for the specific language governing permissions and limitations under
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
  - the License.
- -
+ - 
  - User: justi
- - Date: 2016-7-17
+ - Date: 2016-7-18
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.9.4.6">
+  <info id="org.openiz.core" version="0.9.6.3">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -65,6 +65,11 @@
   <template mnemonic="act.patientencounter.appointment">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.2.0</oid>
     <definition>/org.openiz.core/templates/act.patientencounter.appointment.json</definition>
+  </template>
+  <template mnemonic="act.problem">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.1</oid>
+    <definition>/org.openiz.core/templates/act.problem.json</definition>
+    <form>/org.openiz.core/views/templates/act.problem.html</form>
   </template>
   <menuItem order="50">
     <icon>/org.openiz.core/img/appbar.settings.png</icon>
@@ -113,6 +118,7 @@
     <!-- Actions -->
     <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.activate">Activate</string>
+    <string key="locale.action.recalculate">Re-Caculate</string>
     <string key="locale.action.back">Back</string>
     <string key="locale.action.backEnter">Historical</string>
     <string key="locale.action.cancel">Cancel</string>
@@ -450,6 +456,8 @@
     <string key="locale.about.updateToast.title">Updates Available</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
     <string key="locale.about.workLoad">Threadpool Use</string>
+    <string key="locale.about.environment.facilities">Subscribed To</string>
+    <string key="locale.about.environment.realm">Realm ID</string>
     <!-- End About -->
 
     <!-- Generic Confirmations -->
@@ -463,6 +471,7 @@
     <!-- End Common Dialog -->
 
     <string key="invalid_grant">Invalid grant - Can't login</string>
+    <string key="invalid_scope">The authentication server rejected your login</string>
     <string key="AUTH_INV">Invalid username or password</string>
     <string key="AUTH_LCK">Account is locked</string>
     <string key="AUTH_TFA">Account requires two-factor authentication</string>
@@ -609,6 +618,7 @@
     <string key="locale.action.run">Kukimbia</string>
     <string key="locale.action.save">Kuokoa</string>
     <string key="locale.action.search">Tafuta</string>
+    <string key="locale.action.start">Anza</string>
     <string key="locale.action.submit">Wasilisha</string>
     <string key="locale.action.update">Kupata mabadiliko</string>
     <string key="locale.action.verify">Thibitisha</string>

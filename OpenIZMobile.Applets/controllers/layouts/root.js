@@ -273,6 +273,13 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
 
             $.fn.select2.defaults.set('language', locale);
 
+            // This fixes modal scrolling when closing a nested modal
+            $(document).on('hidden.bs.modal', function () {
+
+                if ($('.modal.in').length > 0) {
+                    $('body').addClass('modal-open');
+                }
+            });
         }
         $rootScope.OpenIZ = OpenIZ;
     });

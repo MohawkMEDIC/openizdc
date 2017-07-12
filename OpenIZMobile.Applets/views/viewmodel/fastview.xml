@@ -16,7 +16,7 @@
  - the License.
  - 
  - User: justi
- - Date: 2017-3-31
+ - Date: 2017-6-28
  -->
 <ViewModel xmlns="http://openiz.org/model/view">
   <include>base</include>
@@ -114,6 +114,7 @@
       <property name="mnemonic"/>
     </property>
     <property name="createdBy" behavior="never"/>
+    <property name="version" behavior="always"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="always"/>

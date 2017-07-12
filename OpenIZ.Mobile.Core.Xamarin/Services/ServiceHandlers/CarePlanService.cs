@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System.IO;
+using OpenIZ.Mobile.Core.Data.Warehouse;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -45,7 +46,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     {
 
         private Tracer m_tracer = Tracer.GetTracer(typeof(CarePlanService));
-        
+
+
+        /// <summary>
+        /// Refresh the care plan
+        /// </summary>
+        [RestOperation(UriPath = "/refresh", Method = "POST", FaultProvider = nameof(CarePlanFaultProvider))]
+        public void Refresh()
+        {
+            ApplicationContext.Current.GetService<CarePlanManagerService>().RefreshCarePlan(true);
+        }
+
         /// <summary>
         /// Gets the specified forecast
         /// </summary>

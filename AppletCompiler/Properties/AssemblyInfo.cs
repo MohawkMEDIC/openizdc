@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
- *
+ * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-8-2
+ * Date: 2017-6-29
  */
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -51,5 +51,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("0.9.4.*")][assembly: AssemblyInformationalVersion("Chippewa")]
-[assembly: AssemblyVersion("0.9.4.*")][assembly: AssemblyInformationalVersion("Dalhouse")]
+[assembly: AssemblyVersion("0.9.7.*")][assembly: AssemblyInformationalVersion("Edmonton")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

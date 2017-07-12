@@ -197,6 +197,7 @@
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
+    <EmbeddedResource Include="Resources\antihaxor" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\InitWarehouse.sql" />

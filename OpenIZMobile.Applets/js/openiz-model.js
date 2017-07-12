@@ -1,8 +1,7 @@
 /// <reference path="openiz.js"/>
-
 /*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
- *
+ * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -17,7 +16,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-11-3
+ * Date: 2016-7-18
  */
 
 /**
@@ -8895,7 +8894,7 @@ var OpenIZModel = OpenIZModel || {
         /** 
          * Source replaces target
          */
-        Replaces: 'e998ca72-3b6a-4099-ab6e-7cf6861a5b61',
+        Replaces : 'd1578637-e1cb-415e-b319-4011da033813',
         /** 
          * 
          */
@@ -9012,8 +9011,6 @@ var OpenIZModel = OpenIZModel || {
          * 
          */
         Wife: 'a3ff423e-81d5-4571-8edf-03c295189a23',
-        Replaces: "e998ca72-3b6a-4099-ab6e-7cf6861a5b61"
-
     },  // EntityRelationshipTypeKeys 
     // OpenIZ.Core.Model.Constants.StatusKeys, OpenIZ.Core.Model, Version=0.8.1.31069, Culture=neutral, PublicKeyToken=null
     /**
@@ -9663,7 +9660,11 @@ var OpenIZModel = OpenIZModel || {
         /** 
          *             There was a cold-storage failure which resulted in the material being unusable.            
          */
-        ColdStorageFailure : '06922eac-0cae-49af-a33c-fc7096349e4a',
+        ColdStorageFailure: '06922eac-0cae-49af-a33c-fc7096349e4a',
+        /** 
+         *             Adjustment is the result of a physical count
+         */
+        PhysicalCount: '5edb55a1-723c-46e4-9fee-2c94db20b7ab'
     },  // ActReasonKeys 
     // OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys, OpenIZ.Core.Model, Version=0.8.1.31069, Culture=neutral, PublicKeyToken=null
     /**

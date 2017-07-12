@@ -1,4 +1,23 @@
-﻿using Mono.Data.Sqlite;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-6-28
+ */
+using Mono.Data.Sqlite;
 using OpenIZ.Mobile.Reporting;
 using OpenIZ.Mobile.Reporting.Model;
 using System;
@@ -87,13 +106,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                         // data reader
                         try
                         {
+                            conn.SetPassword(ApplicationContext.Current.GetCurrentContextSecurityKey());
                             conn.Open();
                             // Attach further connection strings
                             foreach (var itm in connectionString.Where(o => !String.IsNullOrEmpty(o.Identifier)))
                             {
                                 using (var attcmd = conn.CreateCommand())
                                 {
-                                    attcmd.CommandText = $"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString(itm.Value).Value}' AS {itm.Identifier}";
+                                    if(ApplicationContext.Current.GetCurrentContextSecurityKey() == null)
+                                        attcmd.CommandText = $"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString(itm.Value).Value}' AS {itm.Identifier} KEY ''";
+                                    else
+                                        attcmd.CommandText = $"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString(itm.Value).Value}' AS {itm.Identifier} KEY X'{BitConverter.ToString(ApplicationContext.Current.GetCurrentContextSecurityKey()).Replace("-","")}'";
+
                                     attcmd.CommandType = System.Data.CommandType.Text;
                                     attcmd.ExecuteNonQuery();
                                 }

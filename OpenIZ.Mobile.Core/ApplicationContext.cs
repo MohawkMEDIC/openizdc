@@ -331,6 +331,12 @@ namespace OpenIZ.Mobile.Core
             ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
             appSection.Services.RemoveAll(o=>o.GetType() == serviceType);
         }
+
+        /// <summary>
+        /// Instructs the current application context to get a unique identifier that should be used for encrypting/decrypting the 
+        /// OpenIZ databases. This should be a consistent key (i.e. generate from machine, user SID, etc.).
+        /// </summary>
+        public abstract byte[] GetCurrentContextSecurityKey();
     }
 }
 

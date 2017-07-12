@@ -100,6 +100,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -170,6 +173,9 @@
     <Reference Include="SQLite.Net.Platform.Generic">
       <HintPath>..\Solution Items\Net45\SQLite.Net.Platform.Generic.dll</HintPath>
     </Reference>
+    <Reference Include="SQLite.Net.Platform.SqlCipher">
+      <HintPath>..\Solution Items\Net45\SQLite.Net.Platform.SqlCipher.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Portable">
@@ -227,6 +233,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="..\OpenIZDC.licenseheader">
+      <Link>OpenIZDC.licenseheader</Link>
+    </None>
+    <None Include="app.manifest" />
     <None Include="Applets\org.openiz.core.pak">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -266,12 +276,6 @@
     <Content Include="favicon.ico" />
     <Content Include="installsupp\vcredist_x86.exe" />
     <EmbeddedResource Include="lib\shim.ie.js" />
-    <Content Include="sqlite3.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sqlite3.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -279,26 +283,37 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
+      copy "$(SolutionDir)\Solution Items\Net45\libeay32.dll" "$(TargetDir)"
+      copy "$(SolutionDir)\Solution Items\Net45\SqlCipher.dll" "$(TargetDir)"
+      copy "$(SolutionDir)\Solution Items\Net45\SqlCipher.dll" "$(TargetDir)\sqlite3.dll"
+
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IeSignedRelease|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak" --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak" --optimize
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
+      copy "$(SolutionDir)\Solution Items\Net45\libeay32.dll" "$(TargetDir)"
+      copy "$(SolutionDir)\Solution Items\Net45\SqlCipher.dll" "$(TargetDir)"
+      copy "$(SolutionDir)\Solution Items\Net45\SqlCipher.dll" "$(TargetDir)\sqlite3.dll"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PreBuildEvent>
-      "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak" 
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
+      copy "$(SolutionDir)\Solution Items\Net45\libeay32.dll" "$(TargetDir)"
+      copy "$(SolutionDir)\Solution Items\Net45\SqlCipher.dll" "$(TargetDir)"
+      copy "$(SolutionDir)\Solution Items\Net45\SqlCipher.dll" "$(TargetDir)\sqlite3.dll"
     </PreBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\cef.redist.x64.3.2987.1601\build\cef.redist.x64.targets" Condition="Exists('..\packages\cef.redist.x64.3.2987.1601\build\cef.redist.x64.targets')" />

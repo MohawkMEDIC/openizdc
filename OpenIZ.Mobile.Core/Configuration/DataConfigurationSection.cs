@@ -108,7 +108,13 @@ namespace OpenIZ.Mobile.Core.Configuration
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// When true instructs the system to encrypt the data
+        /// </summary>
+        [XmlAttribute("encrypt")]
+        public bool EncryptData { get; set; }
+    }
 
 }
 

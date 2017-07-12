@@ -67,6 +67,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private IQueryPersistenceService m_queryPersistence = ApplicationContext.Current.GetService<IQueryPersistenceService>();
 
         #region implemented abstract members of LocalDataPersistenceService
+
+        /// <summary>
+        /// Append order by statement
+        /// </summary>
+        protected virtual SqlStatement AppendOrderByStatement(SqlStatement domainQuery)
+        {
+            return domainQuery;
+        }
+
+        /// <summary>
+        /// Before inserting an instance
+        /// </summary>
+        protected virtual TDomain BeforeInsertDomainObject(LocalDataContext context, TDomain domain)
+        {
+            return domain;
+        }
+
         /// <summary>
         /// Maps the data to a model instance
         /// </summary>
@@ -93,7 +110,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         }
 
         /// <summary>
-        /// Performthe actual insert.
+        /// Perform the actual insert.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
@@ -123,6 +140,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             //if(context.Connection.Get<TDomain>(domainObject.Uuid) == null)
             try
             {
+                domainObject = this.BeforeInsertDomainObject(context, domainObject);
                 context.Connection.Insert(domainObject);
             }
             catch // doubt this will even work
@@ -207,14 +225,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     queryStatement = new SqlStatement<TDomain>().SelectFrom();
 
                 //queryStatement = new SqlStatement<TDomain>().SelectFrom()
-                queryStatement = queryStatement.Where<TDomain>(expression).Build();
+                queryStatement = queryStatement.Where<TDomain>(expression);
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
             }
             else
             {
-                queryStatement = m_builder.CreateQuery(query).Build();
+                queryStatement = m_builder.CreateQuery(query);
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
             }
+
+            queryStatement = this.AppendOrderByStatement(queryStatement).Build();
 
             // Is this a cached query?
             var retVal = context.CacheQuery(queryStatement)?.OfType<TModel>();

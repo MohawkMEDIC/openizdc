@@ -39,6 +39,18 @@
                     <th>{{ 'locale.about.environment.mem' | i18n }}</th>
                     <td>{{ about.environment.usedMem | number:0 }} b</td>
                 </tr>
+                <tr>
+                    <th>{{ 'locale.about.environment.realm' | i18n }}</th>
+                    <td>{{ $root.system.config.realmName }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'locale.about.environment.facilities' | i18n }}</th>
+                    <td>
+                        <ul>
+                            <li ng-repeat="s in $root.system.config.sync.subscribe">{{ getPlaceName(s); }}</li>
+                        </ul>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>

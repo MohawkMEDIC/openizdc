@@ -18,7 +18,6 @@
  * User: justi
  * Date: 2017-3-31
  */
-
 var OpenIZWarehouse = OpenIZWarehouse || {
 
     // OpenIZ.Core.Data.Warehouse.DatamartDefinition, OpenIZ.Core.PCL, Version=0.8.0.23380, Culture=neutral, PublicKeyToken=null

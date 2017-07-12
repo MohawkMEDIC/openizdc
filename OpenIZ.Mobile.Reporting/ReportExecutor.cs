@@ -1,4 +1,23 @@
-﻿using OpenIZ.Core;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-6-28
+ */
+using OpenIZ.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -210,13 +229,14 @@ namespace OpenIZ.Mobile.Reporting
                                 break;
                             case ReportPropertyType.Date:
                                 retVal[rparm.Name] = DateTime.Parse(kv.Value.ToString());
-                                if (rparm.Ciel)
+                                if (rparm.Ceil)
                                 {
-                                    retVal[rparm.Name] = ((DateTime)retVal[rparm.Name]).AddDays(1).AddSeconds(-1);
+                                    retVal[rparm.Name] = ((DateTime)retVal[rparm.Name]).AddHours(23 - ((DateTime)retVal[rparm.Name]).Hour).AddMinutes(60 - ((DateTime)retVal[rparm.Name]).Minute).AddSeconds(60 - ((DateTime)retVal[rparm.Name]).Second); 
                                 }
                                 break;
                             case ReportPropertyType.DateTime:
                                 retVal[rparm.Name] = DateTime.Parse(kv.Value.ToString());
+
                                 break;
                             case ReportPropertyType.Decimal:
                                 retVal[rparm.Name] = Decimal.Parse(kv.Value.ToString());

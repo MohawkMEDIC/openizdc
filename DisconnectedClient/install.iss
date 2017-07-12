@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.4"
+#define MyAppVersion "0.9.7.0"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -23,7 +23,7 @@ DefaultDirName={pf}\Mohawk College\OpenIZ\Disconnected Client
 DisableProgramGroupPage=yes
 LicenseFile=.\License.rtf
 OutputDir=.\dist
-OutputBaseFilename=setup-openiz-disconnected-client
+OutputBaseFilename=openiz-dc-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 
@@ -86,11 +86,15 @@ Source: ".\bin\x86\SignedRelease\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreve
 Source: ".\bin\x86\SignedRelease\System.Data.Portable.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\System.Transactions.Portable.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\widevinecdmadapter.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\sqlcipher.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\SQLite.Net.Platform.SqlCipher.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\installsupp\vcredist_x86.exe"; DestDir: "{tmp}"; Flags: dontcopy;
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{commonprograms}\Open Immunize\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{commonprograms}\Open Immunize\Reset {#MyAppName} Configuration"; Parameters:"--reset"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
@@ -104,7 +108,6 @@ var
   ResultCode : integer;
   uninstallString : string;
 begin
-    
     EnableFsRedirection(true);
     ExtractTemporaryFile('vcredist_x86.exe');
     Exec(ExpandConstant('{tmp}\vcredist_x86.exe'), '/install /passive', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);

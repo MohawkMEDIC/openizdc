@@ -1,4 +1,23 @@
-﻿using MARC.HI.EHRS.SVC.Auditing.Services;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-6-28
+ */
+using MARC.HI.EHRS.SVC.Auditing.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,7 +140,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
 
                     ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticated += (so, se) =>
                     {
-                        if ((se.Principal?.Identity.Name ?? se.UserName) != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
+                        if ((se.Principal?.Identity.Name ?? se.UserName).ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                             AuditUtil.AuditLogin(se.Principal, se.UserName, so as IIdentityProviderService, se.Success);
                     };
                     ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += (so, se) =>
@@ -130,7 +149,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                             switch (se.Queue)
                             {
                                 case "inbound":
-                                    if(SynchronizationQueue.Inbound.Count() == 0)
+                                    if (SynchronizationQueue.Inbound.Count() == 0)
                                         AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Import, ActionType.Create, AuditableObjectLifecycle.Import, EventIdentifierType.Import, OutcomeIndicator.Success, null);
                                     break;
                                 case "outbound":
@@ -145,22 +164,23 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                     {
                         svc.DataCreated += (so, se) =>
                         {
-                            if (se.Objects.Any(x => x is Entity || x is Act))
+                            if (se.Objects.Any(x => x is Entity || x is Act) && AuthenticationContext.Current.Principal.Identity.Name.ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                                 AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Create, AuditableObjectLifecycle.Creation, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
                         svc.DataUpdated += (so, se) =>
                         {
-                            if (se.Objects.Any(x => x is Entity || x is Act))
+                            if (se.Objects.Any(x => x is Entity || x is Act) && AuthenticationContext.Current.Principal.Identity.Name.ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                                 AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Update, AuditableObjectLifecycle.Amendment, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
                         svc.DataObsoleted += (so, se) =>
                         {
-                            if (se.Objects.Any(x => x is Entity || x is Act))
+                            if (se.Objects.Any(x => x is Entity || x is Act) && AuthenticationContext.Current.Principal.Identity.Name.ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower())
                                 AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Delete, AuditableObjectLifecycle.LogicalDeletion, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
                         svc.DataDisclosed += (so, se) =>
                         {
-                            if (se.Objects.Count() > 0 && se.Objects.Any(i=>i is Patient || i is Act))
+                            if (se.Objects.Count() > 0 && se.Objects.Any(i => i is Patient || i is Act) && AuthenticationContext.Current.Principal.Identity.Name.ToLower() != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName.ToLower() &&
+                            AuthenticationContext.Current.Principal.Identity.Name.ToLower() != "system")
                                 AuditUtil.AuditDataAction(EventTypeCodes.Query, ActionType.Read, AuditableObjectLifecycle.Disclosure, EventIdentifierType.Query, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, se.Query, se.Objects.OfType<IdentifiedData>().ToArray());
                         };
 
@@ -184,7 +204,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             Action<Object> timerQueue = null;
             timerQueue = o =>
             {
-                lock(sendAudit)
+                lock (sendAudit)
                     if (sendAudit.Audit.Count > 0)
                         SynchronizationQueue.Admin.Enqueue(sendAudit, Synchronization.Model.DataOperationType.Insert);
                 ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(new TimeSpan(0, 0, 30), timerQueue, null);
@@ -205,7 +225,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                         {
                             AuditData ad = null;
 
-                            lock(this.m_auditQueue)
+                            lock (this.m_auditQueue)
                                 ad = this.m_auditQueue.Dequeue();
 
                             try
@@ -216,7 +236,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                                     throw new InvalidOperationException("!!SECURITY ALERT!! >> Cannot find audit repository");
                                 ad = ar.Insert(ad);
 
-                                lock(sendAudit)
+                                lock (sendAudit)
                                     sendAudit.Audit.Add(ad);
                             }
                             catch (Exception e)
