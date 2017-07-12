@@ -105,6 +105,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             {
                 this.m_tracer.TraceInfo("Connecting datawarehouse to {0}", dbFile);
                 this.m_connection = new SqliteConnection("Data Source=" + dbFile);
+                (this.m_connection as SqliteConnection).SetPassword(ApplicationContext.Current.GetCurrentContextSecurityKey());
                 this.m_connection.Open();
             }
             catch (Exception e)

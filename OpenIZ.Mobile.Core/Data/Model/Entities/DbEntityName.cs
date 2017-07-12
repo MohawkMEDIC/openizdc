@@ -70,6 +70,12 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         }
 
         /// <summary>
+        /// Sequence identifier
+        /// </summary>
+        [Column("sequence")]
+        public int Sequence { get; set; }
+
+        /// <summary>
         /// Query result
         /// </summary>
         public class QueryResult : DbEntityNameComponent

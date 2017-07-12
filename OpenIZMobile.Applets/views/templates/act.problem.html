@@ -32,7 +32,7 @@
             </select>
         </div>
         <div class="col-xs-6">
-            <label> {{ 'locale.encounters.severity' | i18n }}</label>
+            <label> {{ 'locale.encounters.problem.severity' | i18n }}</label>
             <select required="required" name="problemSeverity_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasComponent.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=SeverityObservation" bind:value="name[{{ locale }}].value">
                 <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.aefi.severity' | i18n }}</option>
             </select>

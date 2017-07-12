@@ -775,7 +775,6 @@ var OpenIZBre = OpenIZBre || {
  * User: justi
  * Date: 2017-3-31
  */
-
 var OpenIZWarehouse = OpenIZWarehouse || {
 
     // OpenIZ.Core.Data.Warehouse.DatamartDefinition, OpenIZ.Core.PCL, Version=0.8.0.23380, Culture=neutral, PublicKeyToken=null
@@ -1059,10 +1058,9 @@ var OpenIZWarehouse = OpenIZWarehouse || {
 }
 
 /// <reference path="openiz.js"/>
-
 /*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
- *
+ * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -1077,7 +1075,7 @@ var OpenIZWarehouse = OpenIZWarehouse || {
  * the License.
  * 
  * User: justi
- * Date: 2016-11-3
+ * Date: 2016-7-18
  */
 
 /**

@@ -244,9 +244,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 if (request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString() &&
                     request.UserAgent != $"OpenIZ-DC {ApplicationContext.Current.ExecutionUuid}")
                 {
-                    using (var sw = new StreamWriter(response.OutputStream))
-                        sw.WriteLine("Ah ah ah! You didn't say the magic word (hint: you need the right X-OIZMagic header, only browsers in the same process have this value)");
-                    return;
+                    // Something wierd with the appp, show them the nice message
+                    if (request.UserAgent.StartsWith("OpenIZ"))
+                    {
+                        using (var sw = new StreamWriter(response.OutputStream))
+                            sw.WriteLine("Hmm, something went wrong. For security's sake we can't show the information you requested. Perhaps restarting the application will help");
+                        return;
+                    }
+                    else // User is using a browser to try and access this? How dare they
+                    {
+                        response.AddHeader("Content-Encoding", "gzip");
+                        using (var rdr = typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.antihaxor"))
+                            rdr.CopyTo(response.OutputStream);
+                        return;
+                    }
                 }
 #endif
 
@@ -523,10 +534,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         private object HandleServiceException(Exception e, InvokationInformation invoke, HttpListenerResponse response)
         {
+#if DEBUG
+            if (e is TargetInvocationException)
+                this.m_tracer.TraceError("{0} - {1} / {2}", invoke.Method.Name, e.Message, e.InnerException?.ToString());
+            else
+                this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e.ToString());
+#else
             if (e is TargetInvocationException)
                 this.m_tracer.TraceError("{0} - {1} / {2}", invoke.Method.Name, e.Message, e.InnerException?.Message);
             else
                 this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e.Message);
+#endif
 
             response.StatusCode = 500;
             if (e is SecurityException)

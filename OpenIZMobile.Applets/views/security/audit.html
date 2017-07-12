@@ -184,7 +184,7 @@
                     </tr>
                 </thead>
                 <tbody ng-if="!isLoading">
-                    <tr ng-repeat="aud in audit.log.CollectionItem" ng-class="{'danger' : aud.Audit.outcome != 'Success'}">
+                    <tr ng-repeat="aud in audit.log.CollectionItem" ng-class="{'danger' : aud.Audit[0].outcome != 'Success', 'success' : aud.Audit[0].outcome == 'Success'}">
                         <td>{{ aud.Audit[0].action }}</td>
                         <td>{{ aud.Audit[0].event }}</td>
                         <td>{{ aud.Audit[0].timestamp | datePrecisionFormat:'M' }}</td>

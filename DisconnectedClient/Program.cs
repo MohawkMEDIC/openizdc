@@ -61,10 +61,13 @@ namespace DisconnectedClient
                 Console.WriteLine("Will start in debug mode...");
             if (Program.Parameters.Reset)
             {
-                var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
-                var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
-                if (Directory.Exists(appData)) Directory.Delete(cData, true);
-                if (Directory.Exists(appData)) Directory.Delete(appData, true);
+                if (MessageBox.Show("Are you sure you want to wipe all your data and configuration for the Disconnected Client?", "Confirm Reset", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
+                    var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
+                    if (Directory.Exists(appData)) Directory.Delete(cData, true);
+                    if (Directory.Exists(appData)) Directory.Delete(appData, true);
+                }
                 return;
             }
             String[] directory = {
@@ -102,15 +105,13 @@ namespace DisconnectedClient
             // Start up!!!
             try
             {
+
 #if IE
 #else
-                uint x, y;
-                Screen.PrimaryScreen.GetDpi(DpiType.Angular, out x, out y);
-                var settings = new CefSettings();
-                if (x > 120 || y > 120 || Program.Parameters.HdpiFix)
-                    Cef.EnableHighDPISupport();
+                var settings = new CefSettings() { UserAgent = "OpenIZEmbedded" };
                 Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
 #endif
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
@@ -138,10 +139,13 @@ namespace DisconnectedClient
                             Application.DoEvents();
                     }
 
-                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
+                    if (minims.IsRunning)
+                        main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
+                    else return;
                 }
                 else 
                 {
+
 
                     DcApplicationContext.Current.Started += startHandler;
                     while (!started)

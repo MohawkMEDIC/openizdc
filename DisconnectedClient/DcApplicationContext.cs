@@ -463,5 +463,17 @@ namespace DisconnectedClient
         public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
         {
         }
+
+        /// <summary>
+        /// In the OpenIZ DC setting the current context security key is the current windows user SID (since we're storing data in appdata it is 
+        /// encrypted per user SID)
+        /// </summary>
+        public override byte[] GetCurrentContextSecurityKey()
+        {
+            var sid = WindowsIdentity.GetCurrent().User;
+            byte[] retVal = new byte[sid.BinaryLength];
+            WindowsIdentity.GetCurrent().User.GetBinaryForm(retVal, 0);
+            return retVal;
+        }
     }
 }

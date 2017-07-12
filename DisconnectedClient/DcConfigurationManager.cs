@@ -173,7 +173,11 @@ namespace DisconnectedClient
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
+#if NOCRYPT
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
+#else
+                    typeof(SQLite.Net.Platform.SqlCipher.SQLitePlatformSqlCipher).AssemblyQualifiedName,
+#endif
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(DcAppletManagerService).AssemblyQualifiedName,
                                         typeof(SQLiteReportDatasource).AssemblyQualifiedName,

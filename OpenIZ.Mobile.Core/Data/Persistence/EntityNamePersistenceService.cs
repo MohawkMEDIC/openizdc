@@ -34,6 +34,7 @@ using OpenIZ.Core.Interfaces;
 using SQLite.Net.Interop;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -168,6 +169,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private Dictionary<String, byte[]> m_existingNames = new Dictionary<string, byte[]>();
 
         /// <summary>
+        /// Order by statement
+        /// </summary>
+        protected override SqlStatement AppendOrderByStatement(SqlStatement domainQuery)
+        {
+            return domainQuery.OrderBy<DbEntityNameComponent>(o => o.Sequence);
+        }
+
+        /// <summary>
         /// To model instance
         /// </summary>
         public override EntityNameComponent ToModelInstance(object dataInstance, LocalDataContext context)
@@ -227,7 +236,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
             else
                 retVal.ValueUuid = existingKey;
+
+
             return retVal;
+        }
+
+        /// <summary>
+        /// Before inserting domain instance
+        /// </summary>
+        protected override DbEntityNameComponent BeforeInsertDomainObject(LocalDataContext context, DbEntityNameComponent domain)
+        {
+            domain.Sequence = context.Connection.ExecuteScalar<Int32>("SELECT COALESCE(MAX(sequence), 0) + 1 FROM entity_name_comp");
+            return domain;
         }
 
         /// <summary>

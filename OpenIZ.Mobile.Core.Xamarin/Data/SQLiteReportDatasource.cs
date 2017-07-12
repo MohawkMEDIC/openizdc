@@ -106,13 +106,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                         // data reader
                         try
                         {
+                            conn.SetPassword(ApplicationContext.Current.GetCurrentContextSecurityKey());
                             conn.Open();
                             // Attach further connection strings
                             foreach (var itm in connectionString.Where(o => !String.IsNullOrEmpty(o.Identifier)))
                             {
                                 using (var attcmd = conn.CreateCommand())
                                 {
-                                    attcmd.CommandText = $"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString(itm.Value).Value}' AS {itm.Identifier}";
+                                    if(ApplicationContext.Current.GetCurrentContextSecurityKey() == null)
+                                        attcmd.CommandText = $"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString(itm.Value).Value}' AS {itm.Identifier} KEY ''";
+                                    else
+                                        attcmd.CommandText = $"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString(itm.Value).Value}' AS {itm.Identifier} KEY X'{BitConverter.ToString(ApplicationContext.Current.GetCurrentContextSecurityKey()).Replace("-","")}'";
+
                                     attcmd.CommandType = System.Data.CommandType.Text;
                                     attcmd.ExecuteNonQuery();
                                 }
