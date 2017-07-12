@@ -24,7 +24,8 @@
             <div class="input-group">
                 <label class="control-label">
                     {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} 
-                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose">{{ act.targetModel.doseSequence }}</a>
+                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</a>
+                    <span ng-if="act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</span>
                 
                 <span ng-if="act._created">
                     ({{ 'locale.encounters.immunization.isBooster' | i18n }})
