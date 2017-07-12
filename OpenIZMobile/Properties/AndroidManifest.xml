@@ -18,7 +18,7 @@
  - User: justi
  - Date: 2016-10-11
  -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0_PRE" package="tz.timr.mobile" android:installLocation="preferExternal" android:versionCode="46">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0_PRE" package="tz.timr.mobile" android:installLocation="preferExternal" android:versionCode="47">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
 	<uses-permission android:name="android.permission.STATUS_BAR" />
 	<uses-permission android:name="android.permission.REBOOT" />

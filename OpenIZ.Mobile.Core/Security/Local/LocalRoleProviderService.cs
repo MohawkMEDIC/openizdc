@@ -183,7 +183,7 @@ namespace OpenIZ.Mobile.Core.Security
                     }
                     catch(Exception e)
                     {
-
+						this.m_tracer.TraceError($"Unable to create role: {e}");
                     }
                 }
             }

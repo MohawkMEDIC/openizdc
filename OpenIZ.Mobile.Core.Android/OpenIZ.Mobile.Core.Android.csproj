@@ -122,7 +122,6 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
-    <Compile Include="AppletEngine\AuthenticationProvider.cs" />
     <Compile Include="AppletEngine\AppletWebView.cs" />
     <Compile Include="AppletEngine\JNI\AppletFunctionBridge.cs" />
     <Compile Include="Resources\Strings.Designer.cs">
