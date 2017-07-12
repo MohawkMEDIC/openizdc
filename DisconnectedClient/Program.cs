@@ -105,15 +105,41 @@ namespace DisconnectedClient
             // Start up!!!
             try
             {
+
+                // Encrypt files
+
+#if !DEBUG
+                try
+                {
+                    // Encrypt the databases
+                    List<String> unEncryptedFiles = new List<string>();
+                    var configuration = new DcConfigurationManager();
+                    configuration.Load();
+                    foreach (var itm in configuration.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
+                        if (!new FileInfo(itm.Value).Attributes.HasFlag(FileAttributes.Encrypted))
+                            unEncryptedFiles.Add(itm.Value);
+                    if (unEncryptedFiles.Any())
+                        try
+                        {
+                            foreach (var itm in unEncryptedFiles)
+                                File.Encrypt(itm);
+                        }
+                        catch
+                        {
+                        }
+                }
+                catch
+                {
+
+                }
+#endif
+
 #if IE
 #else
-                uint x, y;
-                Screen.PrimaryScreen.GetDpi(DpiType.Angular, out x, out y);
                 var settings = new CefSettings() { UserAgent = "OpenIZEmbedded" };
-                if (x > 120 || y > 120 || Program.Parameters.HdpiFix)
-                    Cef.EnableHighDPISupport();
                 Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
 #endif
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
@@ -145,6 +171,7 @@ namespace DisconnectedClient
                 }
                 else 
                 {
+
 
                     DcApplicationContext.Current.Started += startHandler;
                     while (!started)
