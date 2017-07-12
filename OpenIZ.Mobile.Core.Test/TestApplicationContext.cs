@@ -246,5 +246,10 @@ namespace OpenIZ.Mobile.Core.Test
         {
             throw new NotImplementedException();
         }
+
+        public override byte[] GetCurrentContextSecurityKey()
+        {
+            return null;
+        }
     }
 }

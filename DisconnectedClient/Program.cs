@@ -106,34 +106,6 @@ namespace DisconnectedClient
             try
             {
 
-                // Encrypt files
-
-#if !DEBUG
-                try
-                {
-                    // Encrypt the databases
-                    List<String> unEncryptedFiles = new List<string>();
-                    var configuration = new DcConfigurationManager();
-                    configuration.Load();
-                    foreach (var itm in configuration.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
-                        if (!new FileInfo(itm.Value).Attributes.HasFlag(FileAttributes.Encrypted))
-                            unEncryptedFiles.Add(itm.Value);
-                    if (unEncryptedFiles.Any())
-                        try
-                        {
-                            foreach (var itm in unEncryptedFiles)
-                                File.Encrypt(itm);
-                        }
-                        catch
-                        {
-                        }
-                }
-                catch
-                {
-
-                }
-#endif
-
 #if IE
 #else
                 var settings = new CefSettings() { UserAgent = "OpenIZEmbedded" };
@@ -167,7 +139,9 @@ namespace DisconnectedClient
                             Application.DoEvents();
                     }
 
-                    main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
+                    if (minims.IsRunning)
+                        main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
+                    else return;
                 }
                 else 
                 {

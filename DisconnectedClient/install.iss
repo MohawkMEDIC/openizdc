@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.6.1"
+#define MyAppVersion "0.9.7.0"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -86,6 +86,9 @@ Source: ".\bin\x86\SignedRelease\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreve
 Source: ".\bin\x86\SignedRelease\System.Data.Portable.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\System.Transactions.Portable.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\widevinecdmadapter.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\sqlcipher.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\SQLite.Net.Platform.SqlCipher.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\installsupp\vcredist_x86.exe"; DestDir: "{tmp}"; Flags: dontcopy;
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

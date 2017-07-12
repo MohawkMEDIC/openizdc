@@ -374,5 +374,13 @@ namespace Minims
                 }
             });
         }
+
+        /// <summary>
+        /// Get current context key -- Since miniims is debuggable this is not needed
+        /// </summary>
+        public override byte[] GetCurrentContextSecurityKey()
+        {
+            return null;
+        }
     }
 }

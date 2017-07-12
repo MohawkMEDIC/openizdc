@@ -45,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// Constructor for locable sqlite connection
         /// </summary>
         public LockableSQLiteConnection(ISQLitePlatform sqlitePlatform, String databasePath, SQLiteOpenFlags openFlags, bool storeDateTimeAsTicks = true, IBlobSerializer serializer = null, IDictionary<String, TableMapping> tableMappings = null, IDictionary<Type, String> extraTypeMappings = null, IContractResolver resolver = null) :
-            base(sqlitePlatform, databasePath, openFlags, storeDateTimeAsTicks, serializer, tableMappings, extraTypeMappings, resolver)
+            base(sqlitePlatform, databasePath, openFlags, storeDateTimeAsTicks, serializer, tableMappings, extraTypeMappings, resolver, ApplicationContext.Current.GetCurrentContextSecurityKey())
         {
 
         }

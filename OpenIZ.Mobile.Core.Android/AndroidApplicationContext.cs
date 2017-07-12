@@ -465,5 +465,20 @@ namespace OpenIZ.Mobile.Core.Android
         }
 
         #endregion implemented abstract members of ApplicationContext
+
+        /// <summary>
+        /// Provides a security key which is unique to the device
+        /// </summary>
+        public override byte[] GetCurrentContextSecurityKey()
+        {
+            var androidId = A.Provider.Settings.Secure.GetString(this.Context.ContentResolver, A.Provider.Settings.Secure.AndroidId);
+            if (String.IsNullOrEmpty(androidId))
+            {
+                this.m_tracer.TraceWarning("Android ID cannot be found, databases will not be encrypted");
+                return null; // can't encrypt
+            }
+            else
+                return System.Text.Encoding.UTF8.GetBytes(androidId);
+        }
     }
 }
