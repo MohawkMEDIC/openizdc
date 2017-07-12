@@ -152,7 +152,8 @@
                                 data-filter='{ "relationship[ManufacturedProduct].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                                 data-display="scope.lotNumber"
                                 data-defaultEmpty="true"
-                                data-defaultFirst="true"></select>
+                                data-defaultFirst="true"
+                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"></select>
                     </div>
                     <div class="help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
