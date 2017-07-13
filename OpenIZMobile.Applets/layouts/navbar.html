@@ -54,14 +54,14 @@
                                 <img class="navbar-icon" ng-if="::c.icon" ng-src="{{::c.icon}}" ng-alt="{{::c.text}}" ng-title="{{::c.text}}" />
                                 <img class="navbar-icon" ng-if="::!c.icon" src="/org.openiz.core/img/appbar.blank.png" />
                                 {{::c.text}}
-                                <span ng-if="c.action == '#/encounter/search/test'">({{ 'locale.common.underDevelopment' | i18n }})</span>
+                                <span ng-if="c.action == '#/encounter/search/test'">({{ 'locale.common.underDevelopment' | translate }})</span>
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li class="dropdown" id="langDropDown" ng-if="$root.session.user === undefined">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="/org.openiz.core/img/appbar.globe.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.layout.navbar.language' | i18n }}</span> <span class="caret"></span>
+                        <img src="/org.openiz.core/img/appbar.globe.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.layout.navbar.language' | translate }}</span> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation">
@@ -86,7 +86,7 @@
                        class="dropdown-toggle" role="button"
                        data-toggle="collapse" data-target=".navbar-collapse-small"
                        aria-haspopup="true" aria-expanded="false">
-                        <img src="/org.openiz.core/img/appbar.email.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.alerts.title' | i18n }}</span>
+                        <img src="/org.openiz.core/img/appbar.email.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.alerts.title' | translate }}</span>
                         <span ng-if="messages" class="badge">
                             {{messages.length}}
                         </span>
@@ -97,7 +97,7 @@
                        class="dropdown-toggle" role="button"
                        data-toggle="collapse" data-target=".navbar-collapse-small"
                        aria-haspopup="true" aria-expanded="false">
-                        <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.sync.title' | i18n }}</span>
+                        <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.sync.title' | translate }}</span>
                         <span ng-if="conflicts.Size > 0" class="glyphicon glyphicon-exclamation-sign"></span>
                     </a>
                 </li>
@@ -108,12 +108,12 @@
                     <ul class="dropdown-menu">
                         <li role="presentation">
                             <a ui-sref="org-openiz-core.preferences" data-toggle="collapse" data-target=".navbar-collapse-small">
-                                <img src="/org.openiz.core/img/appbar.cog.png" class="navbar-icon" /> {{ 'locale.layout.navbar.preferences' | i18n }}
+                                <img src="/org.openiz.core/img/appbar.cog.png" class="navbar-icon" /> {{ 'locale.layout.navbar.preferences' | translate }}
                             </a>
                         </li>
                         <li role="presentation">
                             <a href="#" ng-click="logout();" data-toggle="collapse" data-target=".navbar-collapse-small">
-                                <img src="/org.openiz.core/img/appbar.man.suitcase.fast.png" class="navbar-icon" /> {{ 'locale.layout.navbar.logout' | i18n }}
+                                <img src="/org.openiz.core/img/appbar.man.suitcase.fast.png" class="navbar-icon" /> {{ 'locale.layout.navbar.logout' | translate }}
                             </a>
                         </li>
                     </ul>
@@ -136,7 +136,7 @@
     <footer class="footer">
         <hr />
         <div class="container">
-            <p class="text-muted text-center">(C){{ 'locale.layout.footer' | i18n }}</p>
+            <p class="text-muted text-center">(C){{ 'locale.layout.footer' | translate }}</p>
         </div>
     </footer>
 
