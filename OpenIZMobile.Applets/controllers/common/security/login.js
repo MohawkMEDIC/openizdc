@@ -25,44 +25,43 @@
 /// <reference path="~/lib/bootstrap.min.js"/>
 
 layoutApp.controller('LoginPartController', ['$scope', '$window', '$stateParams', '$rootScope', '$templateCache', '$state', function ($scope, $window, $stateParams, $rootScope, $templateCache, $state) {
-    // Get the current scope that we're in
+        // Get the current scope that we're in
 
-    $scope.showPasswordReset = $scope.showPasswordReset || function () {
-        $scope.loginForm.$setUntouched();
-        $('#passwordResetDialog').modal({
-            backdrop: 'static',
-            keyboard: false
-        });
-    };
+        $scope.showPasswordReset = $scope.showPasswordReset || function () {
+            $scope.loginForm.$setUntouched();
+            $('#passwordResetDialog').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        };
 
-    $scope.login = $scope.login || function (form, username, password) {
+        $scope.login = $scope.login || function (form, username, password) {
 
-        if (!form.$valid)
-        {
-            console.log(OpenIZ.Localization.getString("locale.security.login.invalid"));
-            return;
-        }
-        OpenIZ.App.showWait('#loginButton');
-        OpenIZ.Authentication.loginAsync({
-            userName: username,
-            password: password,
-            continueWith: function (session) {
-                if (session == null) {
-                    alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
-                }
-                else {
-                    $rootScope.initSessionVars();
-                    $templateCache.removeAll();
-                    $state.reload();
-                    // Reload the window so that the navbar is reloaded with the correct locale strings
-                    $window.location.reload();
-                    //$state.go($stateParams.redirectUrl, $stateParams.params)
+            if (!form.$valid)
+            {
+                console.log(OpenIZ.Localization.getString("locale.security.login.invalid"));
+                return;
+            }
+            OpenIZ.App.showWait('#loginButton');
+            OpenIZ.Authentication.loginAsync({
+                userName: username,
+                password: password,
+                continueWith: function (session) {
+                    if (session == null) {
+                        alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                    }
+                    else {
+                        $rootScope.initSessionVars();
+                        $templateCache.removeAll();
+                        $state.reload();
+                        //$window.location.reload();
+                        //$state.go($stateParams.redirectUrl, $stateParams.params)
 
-                }
-            },
-            onException: function (ex) {
-                //OpenIZ.App.hideWait('#loginButton');
-                OpenIZ.App.hideWait('#loginButton');
+                    }
+                },
+                onException: function (ex) {
+                    //OpenIZ.App.hideWait('#loginButton');
+                    OpenIZ.App.hideWait('#loginButton');
 
                 if (typeof (ex) == "string")
                     console.log(ex);
@@ -75,7 +74,9 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', '$stateParams'
                     console.log(ex);
                 },
                 finally: function () {
-            }
+                }
         });
     }; // scope.login
+
+        
 }]);
