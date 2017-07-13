@@ -352,6 +352,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.ResourceAqn = "ManufacturedMaterial";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facility);
+                                    syncSetting.Filters.Add("relationship[OwnedEntity].source=" + facility);
                                     break;
 
                             }

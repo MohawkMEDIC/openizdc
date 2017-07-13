@@ -1,6 +1,5 @@
 ﻿// OpenIZ Self-Hosted SHIM
 
-
 OpenIZApplicationService.GetStatus = function () {
     return '[ "Dummy Status", 0 ]';
 }
@@ -44,4 +43,8 @@ OpenIZApplicationService.NewGuid = function () {
         async: false
     });
     return retVal;
+}
+
+OpenIZApplicationService.GetMagic = function () {
+    return OpenIZModel.EmptyGuid;
 }

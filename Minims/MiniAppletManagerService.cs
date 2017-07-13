@@ -269,7 +269,7 @@ namespace Minims
         /// Get the SHIM methods
         /// </summary>
         /// <returns></returns>
-        private String GetShimMethods()
+        public String GetShimMethods()
         {
 
             // Load the default SHIM

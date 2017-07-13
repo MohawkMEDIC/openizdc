@@ -66,6 +66,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         public static HttpListenerContext CurrentContext;
 
         // Mini-listener
+        private Boolean m_bypassMagic = false;
         private HttpListener m_listener;
         private Thread m_acceptThread;
         private Tracer m_tracer = Tracer.GetTracer(typeof(MiniImsServer));
@@ -102,6 +103,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
 
                 XamarinApplicationContext.Current.SetProgress("IMS Service Bus", 0);
+
+                this.m_bypassMagic = XamarinApplicationContext.Current.GetType().Name == "MiniApplicationContext";
                 this.m_listener = new HttpListener();
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
 
@@ -240,8 +243,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                 // Services require magic
 #if !DEBUG
-                
-                if (request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString() &&
+                if (!this.m_bypassMagic &&
+                    request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString() &&
                     request.UserAgent != $"OpenIZ-DC {ApplicationContext.Current.ExecutionUuid}")
                 {
                     // Something wierd with the appp, show them the nice message

@@ -149,6 +149,41 @@ namespace Minims
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
 
                 retVal.SetProgress("Loading configuration", 0.2f);
+                var appService = retVal.GetService<IAppletManagerService>();
+
+                if (consoleParms.References != null)
+                {
+                    // Load references
+                    foreach (var appletInfo in consoleParms.References)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
+                        try
+                        {
+                            retVal.m_tracer.TraceInfo("Loading applet {0}", appletInfo);
+                            String appletPath = appletInfo;
+                            if (!Path.IsPathRooted(appletInfo))
+                                appletPath = Path.Combine(Environment.CurrentDirectory, appletPath);
+                            using (var fs = File.OpenRead(appletPath))
+                            {
+                                var package = AppletPackage.Load(fs);
+                                retVal.m_tracer.TraceInfo("Loading {0} v{1}", package.Meta.Id, package.Meta.Version);
+
+                                // Is this applet in the allowed applets
+                                appService.LoadApplet(AppletManifest.Load(new MemoryStream(package.Manifest)));
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
+                            throw;
+                        }
+                }
+
+                // Does openiz.js exist as an asset?
+                var oizJs = appService.Applets.ResolveAsset("/org.openiz.core/js/openiz.js");
+                if (oizJs?.Content != null)
+                {
+                    oizJs.Content = oizJs.Content.ToString() + (appService as MiniAppletManagerService).GetShimMethods();
+                }
+
                 // Load all user-downloaded applets in the data directory
                 foreach (var appletDir in consoleParms.AppletDirectories)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                     try
@@ -158,7 +193,6 @@ namespace Minims
 
                         retVal.m_tracer.TraceInfo("Loading applet {0}", appletDir);
                         String appletPath = Path.Combine(appletDir, "manifest.xml");
-                        var appService = retVal.GetService<IAppletManagerService>();
                         using (var fs = File.OpenRead(appletPath))
                         {
                             AppletManifest manifest = AppletManifest.Load(fs);
@@ -225,10 +259,12 @@ namespace Minims
                                     appletPath = Path.Combine(Environment.CurrentDirectory, appletPath);
                                 using (var fs = File.OpenRead(appletPath))
                                 {
-                                    AppletManifest manifest = AppletManifest.Load(fs);
-                                    // Is this applet in the allowed applets
 
-                                    appService.LoadApplet(manifest);
+                                    var package = AppletPackage.Load(fs);
+                                    retVal.m_tracer.TraceInfo("Loading {0} v{1}", package.Meta.Id, package.Meta.Version);
+
+                                    // Is this applet in the allowed applets
+                                    appService.LoadApplet(package.Unpack());
                                 }
                             }
                             catch (Exception e)
@@ -238,8 +274,12 @@ namespace Minims
                             }
                     }
 
-
-
+                    // Does openiz.js exist as an asset?
+                    var oizJs = appService.Applets.ResolveAsset("/org.openiz.core/js/openiz.js");
+                    if (oizJs?.Content != null)
+                    {
+                        oizJs.Content = oizJs.Content.ToString() + (appService as MiniAppletManagerService).GetShimMethods();
+                    }
 
                     // Load all user-downloaded applets in the data directory
                     foreach (var appletDir in consoleParms.AppletDirectories)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
@@ -259,6 +299,7 @@ namespace Minims
                                 // public key token match?
                                 appService.LoadApplet(manifest);
                             }
+
                         }
                         catch (Exception e)
                         {
@@ -266,9 +307,10 @@ namespace Minims
                             throw;
                         }
 
+                    
                     // Ensure data migration exists
-                    try
-                    {
+                        try
+                        {
                         // If the DB File doesn't exist we have to clear the migrations
                         if (!File.Exists(retVal.Configuration.GetConnectionString(retVal.Configuration.GetSection<DataConfigurationSection>().MainDataSourceConnectionStringName).Value))
                         {
