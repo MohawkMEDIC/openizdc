@@ -139,10 +139,12 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             // Interval to refresh online state and to check session
             setInterval(function () {
                 $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
-                if ($rootScope.page.onlineState)
-                    $("#onlineStateIndicator")[0].style.display = 'none';
-                else
-                    $("#onlineStateIndicator")[0].style.display = 'inline-block';
+                if ($("#onlineStateIndicator")[0]) {
+                    if ($rootScope.page.onlineState)
+                        $("#onlineStateIndicator")[0].style.display = 'none';
+                    else
+                        $("#onlineStateIndicator")[0].style.display = 'inline-block';
+                }
 
                 if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000)) {
                     var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
