@@ -242,6 +242,37 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
+         * @summary Asynchronously cancels an act object in the IMS
+         * @description Cancellation is used to mark an act as "this act was supposed to occur, it started, but was cancelled". 
+         * @memberof OpenIZ.Act
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the act that is to be updated
+         * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Act
+         * @example
+         * OpenIZ.Act.obsoleteAsync({
+         *      id: $scope.act.id,
+         *      continueWith: function(data) {
+         *          alert("Act was deleted");
+         *      }
+         *  });
+         */
+        cancelAsync: function (controlData) {
+            OpenIZ.Ims.cancel({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                id: controlData.id,
+                data: controlData.data,
+                state: controlData.state
+            });
+        },
+        /**
          * @summary Asynchronously nullifies an act object in the IMS
          * @description When an act is nullified, it is deemed to have never existed. This is used when an act is done in error. The act itself
          * still remains on the patient's file, however it is in a nullified or "errored" state. When updating act details it is recommended that
@@ -821,6 +852,54 @@ var OpenIZ = OpenIZ || {
         nullify: function (controlData) {
             $.ajax({
                 method: 'NULLIFY',
+                url: "/__ims/" + controlData.resource + "?_id=" + controlData.id,
+                accept: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                success: function (xhr, data) {
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr, controlData.state);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === undefined)
+                        console.error(error);
+                    else if (error != undefined && error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                error.caused_by
+                            ), controlData.state);
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
+                                null
+                            ), controlData.state);
+
+                    // Do finally
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+
+                }
+            });
+        },
+        /**
+         * @summary Cancel act data from the IMS
+         * @memberof OpenIZ.Ims
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.resource The IMSI resource id to be posted to
+         * @param {object} controlData.id The identifier of the object to delete from the IMS 
+         * @method
+         */
+        cancel: function (controlData) {
+            $.ajax({
+                method: 'CANCEL',
                 url: "/__ims/" + controlData.resource + "?_id=" + controlData.id,
                 accept: 'application/json',
                 contentType: 'application/json',
