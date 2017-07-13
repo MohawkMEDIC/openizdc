@@ -63,12 +63,15 @@ layoutApp.controller('VaccinationHistoryController', ['$scope','$rootScope', fun
         if (sequence.moodConcept === OpenIZModel.ActMoodKeys.Eventoccurrence || (sequence.startTime > $rootScope.page.maxEventTime)) {
             return true;
         }
-        if (currentIndex > 0 && event[currentIndex - 1] !== null) {
-            for (var i = currentIndex - 1; i >= 0; i--) {
-                if (event[i] !== null && !event[i]._enabled) {
-                    return true;
-                }
-            }
+        if (currentIndex > 1 && event[currentIndex - 1] !== null) {
+
+            // Instead of checking if the entire history is enabled, just the previous dose
+            return !event[currentIndex - 1]._enabled;
+            //for (var i = currentIndex - 1; i >= 0; i--) {
+            //    if (event[i] !== null && !event[i]._enabled) {
+            //        return true;
+            //    }
+            //}
         }
         return false;
     }
