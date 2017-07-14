@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the security device identifier.
 		/// </summary>
 		/// <value>The security device identifier.</value>
-		[Column("securityDevice"), MaxLength(16), NotNull, ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Uuid))]
+		[Column("securityDevice"), MaxLength(16), ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Uuid))]
 		public byte[] SecurityDeviceUuid {
 			get;
 			set;
