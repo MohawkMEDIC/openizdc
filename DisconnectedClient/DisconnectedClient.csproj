@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props" Condition="$(Configuration) != 'IeSignedRelease' and Exists('..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props')" />
-  <Import Project="..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props" Condition="$(Configuration) != 'IeSignedRelease' and Exists('..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props')" />
+  <Import Project="..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props" Condition="$(Configuration) != 'MonoLinux' and Exists('..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.props')" />
+  <Import Project="..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props" Condition="$(Configuration) != 'MonoLinux' and Exists('..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -80,8 +80,8 @@
   <PropertyGroup>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IeSignedRelease|AnyCPU'">
-    <OutputPath>bin\IeSignedRelease\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MonoLinux|AnyCPU'">
+    <OutputPath>bin\MonoLinux\</OutputPath>
     <DefineConstants>TRACE;IE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -90,8 +90,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IeSignedRelease|x86'">
-    <OutputPath>bin\x86\IeSignedRelease\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MonoLinux|x86'">
+    <OutputPath>bin\x86\MonoLinux\</OutputPath>
     <DefineConstants>TRACE;IE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -292,10 +292,10 @@
 
     </PreBuildEvent>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IeSignedRelease|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MonoLinux|x86'">
     <PreBuildEvent>
-      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
-      copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
+      mono /opt/OpenIZ/sdk/AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)/org.openiz.core.pak"   --keyFile="$(SolutionDir)/../keys/org.openiz.core.pfx" --keyPassword="$(SolutionDir)/../keys/org.openiz.core.pass" --embedCert --optimize
+      cp "$(TargetDir)/org.openiz.core.pak" "$(ProjectDir)/Applets/org.openiz.core.pak"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
