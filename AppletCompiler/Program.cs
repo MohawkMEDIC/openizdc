@@ -295,6 +295,11 @@ namespace AppletCompiler
             List<AppletAsset> retVal = new List<AppletAsset>();
             foreach (var itm in Directory.GetFiles(source))
             {
+                if(Path.GetFileName(itm).StartsWith("."))
+                {
+                    Console.WriteLine("\t Skipping {0}...", itm);
+                    continue;
+                }
                 Console.WriteLine("\t Processing {0}...", itm);
 
                 if (Path.GetFileName(itm).ToLower() == "manifest.xml")

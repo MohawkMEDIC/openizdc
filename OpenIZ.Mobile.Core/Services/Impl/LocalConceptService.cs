@@ -311,5 +311,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<CodeSystem> FindCodeSystems(Expression<Func<CodeSystem, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

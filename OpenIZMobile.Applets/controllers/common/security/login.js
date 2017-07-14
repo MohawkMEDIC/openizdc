@@ -28,6 +28,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', '$stateParams'
         // Get the current scope that we're in
 
         $scope.showPasswordReset = $scope.showPasswordReset || function () {
+            $scope.loginForm.$setUntouched();
             $('#passwordResetDialog').modal({
                 backdrop: 'static',
                 keyboard: false

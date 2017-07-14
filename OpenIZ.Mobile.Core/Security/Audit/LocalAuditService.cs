@@ -206,7 +206,10 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             {
                 lock (sendAudit)
                     if (sendAudit.Audit.Count > 0)
+                    {
                         SynchronizationQueue.Admin.Enqueue(sendAudit, Synchronization.Model.DataOperationType.Insert);
+                        sendAudit.Audit.Clear();
+                    }
                 ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(new TimeSpan(0, 0, 30), timerQueue, null);
             };
 

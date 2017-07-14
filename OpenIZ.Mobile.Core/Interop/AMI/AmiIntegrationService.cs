@@ -231,7 +231,8 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
             }
             catch (Exception e)
             {
-                return false;
+	            this.m_tracer.TraceError($"Unable to determine network state: {e}");
+				return false;
             }
         }
 

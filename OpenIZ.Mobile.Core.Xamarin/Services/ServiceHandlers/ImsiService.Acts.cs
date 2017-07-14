@@ -220,7 +220,37 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         }
 
         /// <summary>
-        /// Updates an act.
+        /// Cancels an act.
+        /// </summary>
+        /// <param name="act">The act to update.</param>
+        /// <returns>Returns the updated act.</returns>
+        [RestOperation(Method = "CANCEL", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Act CancelAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
+        {
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            Guid actKey = Guid.Empty;
+            Guid actVersionKey = Guid.Empty;
+
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey))
+            {
+                var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+                if (act == null)
+                    act = actRepositoryService.Get<Act>(actKey, Guid.Empty);
+
+                if (act.Key == actKey)
+                    return actRepositoryService.Cancel<Act>(act);
+                else
+                    throw new FileNotFoundException("Act not found");
+            }
+            else
+                throw new FileNotFoundException("Act not found");
+        }
+
+        /// <summary>
+        /// Nullify an act.
         /// </summary>
         /// <param name="act">The act to update.</param>
         /// <returns>Returns the updated act.</returns>
@@ -236,20 +266,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey))
             {
+                var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+                if (act == null)
+                    act = actRepositoryService.Get<Act>(actKey, Guid.Empty);
+
                 if (act.Key == actKey)
-                {
-                    var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
                     return actRepositoryService.Nullify<Act>(act);
-                }
                 else
-                {
                     throw new FileNotFoundException("Act not found");
-                }
             }
             else
-            {
                 throw new FileNotFoundException("Act not found");
-            }
         }
         
         /// <summary>

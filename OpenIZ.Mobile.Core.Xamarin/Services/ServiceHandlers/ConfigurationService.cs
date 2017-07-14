@@ -249,6 +249,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "ManufacturedMaterialMe",
                         "Person",
                         "PatientEncounter",
+                        "PatientEncounterMe",
                         "SubstanceAdministration",
                         "CodedObservation",
                         "QuantityObservation",
@@ -330,6 +331,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     //syncSetting.Filters.Add("participation[Location].player=!" + itm + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm);
                                     //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                     break;
+                                case "PatientEncounterMe":
+                                    syncSetting.Filters.Add("participation[RecordTarget].source.participation[Location].player=" + facility + "&participation[RecordTarget].source.statusConcept=" + StatusKeys.Active + "&participation[RecordTarget].source.classConcept=" + ActClassKeys.Encounter);
+                                    syncSetting.ResourceAqn = "Person";
+                                    syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
+                                    break;
                                 case "Place":
                                     syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
                                     syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
@@ -352,6 +358,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.ResourceAqn = "ManufacturedMaterial";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facility);
+                                    syncSetting.Filters.Add("relationship[OwnedEntity].source=" + facility);
                                     break;
 
                             }

@@ -38,6 +38,7 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Data.QueryBuilder;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -563,6 +564,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     itm.SourceEntityKey = sourceKey;
                     itm.Key = null;
                 }
+                
 
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Any(ecn => ecn.Key == o.Key));

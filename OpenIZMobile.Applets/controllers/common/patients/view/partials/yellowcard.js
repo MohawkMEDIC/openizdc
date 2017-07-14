@@ -118,7 +118,9 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
                         }
 
                         if (model.moodConcept != OpenIZModel.ActMoodKeys.Eventoccurrence && scope.display._vaccineAdministrations[antigenId][model.doseSequence] == null ||
-                            (model.moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && model.statusConcept != OpenIZModel.StatusKeys.Nullified)
+                            (model.moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence &&
+                                model.statusConcept != OpenIZModel.StatusKeys.Nullified &&
+                                model.statusConcept != OpenIZModel.StatusKeys.Cancelled)
                             ) {
                             var existing = scope.display._vaccineAdministrations[antigenId][model.doseSequence];
 

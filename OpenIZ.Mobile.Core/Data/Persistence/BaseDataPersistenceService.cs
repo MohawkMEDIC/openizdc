@@ -74,6 +74,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			else
                 context.Connection.Update(domainObject);
 
+            context.AddTransactedItem(data);
 			return data;
 		}
 
@@ -97,6 +98,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.UpdatedTime = DateTime.Now;
 			context.Connection.Update(domainObject);
+            context.AddTransactedItem(data);
 
             return data;
 		}

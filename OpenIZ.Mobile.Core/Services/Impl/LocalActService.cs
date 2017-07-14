@@ -33,6 +33,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Interfaces;
 using OpenIZ.Core.Model.Patch;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -51,6 +52,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         public event EventHandler<AuditDataEventArgs> DataUpdated;
         public event EventHandler<AuditDataEventArgs> DataObsoleted;
         public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(LocalActService));
 
         public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
         {
@@ -274,7 +278,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         }
 
         /// <summary>
-        /// Insert or update the specified act
+        /// Nullify the specified act
         /// </summary>
         public TAct Nullify<TAct>(TAct act) where TAct : Act
         {
@@ -337,6 +341,83 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             return act;
 
+
+        }
+
+        /// <summary>
+        /// Cancels the specified act
+        /// </summary>
+        public TAct Cancel<TAct>(TAct act) where TAct : Act
+        {
+            // You can only cancel active acts!
+            if (act.StatusConceptKey != StatusKeys.Active)
+                throw new InvalidOperationException("Only active acts can be cancelled");
+
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+            }
+
+            // Validate act
+            act = this.Validate(act);
+
+            // Get older version
+            if (act.Key.HasValue)
+            {
+                var old = persistenceService.Get(act.Key.Value).Clone();
+                if (old == null)
+                    throw new KeyNotFoundException();
+
+                // Fire before update
+                act = breService?.BeforeUpdate(act) ?? act;
+
+                // update
+                act.StatusConceptKey = StatusKeys.Cancelled; // Status is always cancelled
+                act = persistenceService.Update(act);
+
+                // First after update
+                act = breService?.AfterUpdate(act) ?? act;
+
+                // Obsolete child-acts
+                if (act.Relationships != null)
+                    // check for empty act relationships
+                    foreach (var itm in act.Relationships.Where(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.HasComponent && !o.IsEmpty()))
+                        try
+                        {
+                            this.Cancel<Act>(itm.TargetAct ?? this.Get(itm.TargetActKey.Value));
+                        }
+                        catch(Exception e)
+                        {
+                            this.m_tracer.TraceWarning("Cannot cancel act {0} - {1}", itm.Key, e.Message);
+                        }
+
+                // Manually create a patch for this
+                var diff = new Patch()
+                {
+                    Key = Guid.NewGuid(),
+                    AppliesTo = new PatchTarget(old),
+                    Operation = new List<PatchOperation>()
+                    {
+                        new PatchOperation(PatchOperationType.Test, "id", act.Key),
+                        new PatchOperation(PatchOperationType.Test, "version", act.VersionKey),
+                        new PatchOperation(PatchOperationType.Replace, "statusConcept", StatusKeys.Cancelled)
+                    },
+                    CreationTime = DateTime.Now
+                };
+                if (act.ReasonConceptKey.HasValue)
+                    diff.Operation.Add(new PatchOperation(PatchOperationType.Replace, "reasonConcept", act.ReasonConceptKey));
+
+                SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(act.Key.Value);
+            }
+            else throw new KeyNotFoundException();
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(act));
+
+            return act;
 
         }
 
