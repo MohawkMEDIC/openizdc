@@ -263,12 +263,14 @@ namespace OpenIZ.Mobile.Core
             if (existing != null) return existing;
             else if (!context.Connection.IsInTransaction)
                 existing = context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
+            else if(me.Key.HasValue)
+                existing = context.FindTransactedItem(me.Key.Value);
 
             if (forceDbSearch && me.Key.HasValue)
                 ApplicationContext.Current.GetService<IDataCachingService>().Remove(me.Key.Value);
 
             // Is the key not null?
-            if (me.Key != Guid.Empty && me.Key != null)
+            if (me.Key != Guid.Empty && me.Key != null && existing == null)
             {
                 existing = idpInstance.Get(context, me.Key.Value) as IIdentifiedEntity;
             }
@@ -335,7 +337,6 @@ namespace OpenIZ.Mobile.Core
                 if (vMe != null)
                     vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
                 existing = inserted;
-
             }
             else if (existing == null)
                 throw new KeyNotFoundException($"Object {me} not found in database and is restricted for creation");
