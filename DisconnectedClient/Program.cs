@@ -36,6 +36,7 @@ using System.Net.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DisconnectedClient.Core;
 
 namespace DisconnectedClient
 {
@@ -125,9 +126,9 @@ namespace DisconnectedClient
                 };
 
                 frmDisconnectedClient main = null;
-                if (!DcApplicationContext.StartContext())
+				if (!DcApplicationContext.StartContext(new WinFormsDialogProvider()))
                 {
-                    DcApplicationContext.StartTemporary();
+					DcApplicationContext.StartTemporary(new WinFormsDialogProvider());
                     var minims = XamarinApplicationContext.Current.GetService<MiniImsServer>();
 
                     DateTime start = new DateTime();
