@@ -240,7 +240,7 @@
     <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
 
     <property name="classConceptModel" behavior="never"/>
-    <property name="classConcept" behavior="never"/>
+    <property name="classConcept" />
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="typeConceptModel" behavior="always">

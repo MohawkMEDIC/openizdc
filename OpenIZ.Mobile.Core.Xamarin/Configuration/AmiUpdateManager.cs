@@ -155,7 +155,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                     // Check for new applications
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-                    amiClient.Client.Description.Endpoint[0].Timeout = 1000;
+                    amiClient.Client.Description.Endpoint[0].Timeout = 3000;
                     if (amiClient.Ping())
                     {
                         amiClient.Client.Description.Endpoint[0].Timeout = 5000;
