@@ -232,8 +232,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     var facilityId = optionObject["data"]["sync"]["subscribe"].ToString();
                     var facility = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(Guid.Parse(facilityId), Guid.Empty);
-                    var district = facility.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
-                    var region = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(district.Value, Guid.Empty)?.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
+                    var district = optionObject["data"]?["sync"]?["regionOnly"]?.ToString() != "true" ? null : facility.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
+                    var region = optionObject["data"]?["sync"]?["regionOnly"]?.ToString() != "true" ? null : ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(district.Value, Guid.Empty)?.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
 
                     // TODO: Customize this and clean it up ... It is very hackish
                     foreach (var res in new String[] {
@@ -305,7 +305,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         else if (district.HasValue)
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target=" + district.ToString() + "&_exclude=relationship&_exclude=participation");
                                         else
-                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target.relationship[Parent].Source=" + facilityId + " & _exclude=relationship&_exclude=participation");
+                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=participation");
                                         // All users or providers who are involved in acts this facility is subscribed to
                                         syncSetting.Filters.Add("participation.source.participation.player=" + facilityId + "&_exclude=relationship&_exclude=participation");
                                     }
@@ -361,8 +361,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     }
                                     else
                                     {
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation +  "&realtionship[Parent].target.relationship[Parent].source=" + facilityId + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target.relationship[Parent].source=" + facilityId);
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
                                     }
                                     break;
                                 case "PlaceMe":
