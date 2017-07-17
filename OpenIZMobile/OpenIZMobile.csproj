@@ -185,7 +185,6 @@
       <Link>OpenIZDC.licenseheader</Link>
     </None>
     <AndroidAsset Include="Assets\Applets\org.openiz.core.pak" />
-    <AndroidAsset Include="Assets\Applets\tz.timr.applet.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>

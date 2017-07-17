@@ -67,9 +67,9 @@ namespace DisconnectedClient
         // The application
         private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication()
         {
-            ApplicationSecret = "A1CF054D04D04CD1897E114A904E328D",
-            Key = Guid.Parse("4C5A581C-A6EE-4267-9231-B0D3D50CC08A"),
-            Name = "org.openiz.minims"
+            ApplicationSecret = "FE78825ADB56401380DBB406411221FD",
+            Key = Guid.Parse("B7ECA9F3-805E-4BE9-A5C7-30E6E495939A"),
+            Name = "org.openiz.disconnected_client.win32"
         };
 
         // Applet bas directory
