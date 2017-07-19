@@ -576,7 +576,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new ImsiPersistenceService());
-                EntitySource.Current = new EntitySource(new LocalEntitySource());
+                //EntitySource.Current = new EntitySource(new LocalEntitySource());
                 byte[] pcharArray = Guid.NewGuid().ToByteArray();
                 char[] spec = { '@', '#', '$', '*', '~' };
                 for (int i = 0; i < pcharArray.Length; i++)

@@ -482,7 +482,7 @@ angular.module('openiz', [])
                             else if (selection.name != null && selection.name.$other != null)
                                 retVal += OpenIZ.Util.renderName(selection.name.$other);
                             else if (selection.element !== undefined)
-                                retVal += selection.element.innerText;
+                                retVal += selection.element.innerText.trim();
                             else if (selection.text)
                                 retVal += selection.text;
                             return retVal;
@@ -507,6 +507,8 @@ angular.module('openiz', [])
                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord || result.name.Assigned);
                                 if (result.relationship && result.relationship.Parent && result.relationship.Parent.targetModel && result.relationship.Parent.targetModel.name)
                                     retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderName(result.relationship.Parent.targetModel.name.OfficialRecord || result.relationship.Parent.targetModel.name.Assigned) + ")</small>";
+                                else if (result.address)
+                                    retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(result.address) + ")</small>";
                                 return retVal;
                             }
                             else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned)

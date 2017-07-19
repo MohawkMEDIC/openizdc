@@ -1457,6 +1457,8 @@ var OpenIZ = OpenIZ || {
                 retVal += address.component.AdditionalLocator + ", ";
             if (address.component.StreetAddressLine)
                 retVal += address.component.StreetAddressLine + ", ";
+            if (address.component.Precinct)
+                retVal += address.component.Precinct + ", ";
             if (address.component.City)
                 retVal += address.component.City + ", ";
             if (address.component.County != null)
