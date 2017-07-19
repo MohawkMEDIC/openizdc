@@ -44,9 +44,7 @@ namespace OpenIZ.Mobile.Core.Data
     /// </summary>
     public class ImsiPersistenceService
     {
-        // Service client
-        private ImsiServiceClient m_client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-        
+       
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiPersistenceService));
 
@@ -58,8 +56,6 @@ namespace OpenIZ.Mobile.Core.Data
             // Now iterate through the map file and ensure we have all the mappings, if a class does not exist create it
             try
             {
-
-                var options = this.m_client.Options();
 
                 foreach (var itm in typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes.Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) && !o.GetTypeInfo().IsAbstract))
                 {
@@ -94,7 +90,21 @@ namespace OpenIZ.Mobile.Core.Data
             where TModel : IdentifiedData, new()
         {
             // Service client
-            private ImsiServiceClient m_client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+            private ImsiServiceClient m_client = null;
+
+            public GenericImsiPersister()
+            {
+                this.m_client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+                this.m_client.Client.Requesting += (o, e) =>
+                {
+                    e.Query.Add("_expand", new List<String>() {
+                        "typeConcept",
+                        "address.use",
+                        "name.use"
+                    });
+                };
+
+            }
 
             private IPrincipal m_cachedCredential = null;
 
@@ -265,6 +275,13 @@ namespace OpenIZ.Mobile.Core.Data
                     offset = (data as Bundle)?.Offset ?? offset;
                     count = (data as Bundle)?.Count ?? count;
                     totalResults = (data as Bundle)?.TotalResults ?? 1;
+
+
+                    data.Item.AsParallel().ForAll(o =>
+                    {
+                        ApplicationContext.Current.GetService<IDataCachingService>()?.Add(o as IdentifiedData);
+                    });
+
                     return (data as Bundle)?.Item.OfType<TModel>() ?? new List<TModel>() { data as TModel };
                 }
                 catch (WebException)

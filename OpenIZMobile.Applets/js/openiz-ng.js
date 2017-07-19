@@ -497,23 +497,28 @@ angular.module('openiz', [])
                             }
                             else if (result.classConcept != OpenIZModel.EntityClassKeys.ServiceDeliveryLocation && result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord) {
                                 retVal = "<div class='label label-info'>" +
-                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord || result.name.$other);
                                 if (result.address)
                                     retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(result.address) + ")</small>";
                                 return retVal;
                             }
                             else if (result.classConcept == OpenIZModel.EntityClassKeys.ServiceDeliveryLocation && result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null) {
                                 retVal = "<div class='label label-info'>" +
-                                   result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord || result.name.Assigned);
+                                   result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord || result.name.Assigned || result.name.$other );
                                 if (result.relationship && result.relationship.Parent && result.relationship.Parent.targetModel && result.relationship.Parent.targetModel.name)
                                     retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderName(result.relationship.Parent.targetModel.name.OfficialRecord || result.relationship.Parent.targetModel.name.Assigned) + ")</small>";
-                                else if (result.address)
+                                if (result.address)
                                     retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(result.address) + ")</small>";
                                 return retVal;
                             }
-                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned)
-                                return "<div class='label label-default'>" +
-                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.Assigned);
+                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned) {
+                                var retVal = "<div class='label label-default'>" +
+                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.Assigned || result.name.$other);
+
+                                if (result.address)
+                                    retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(result.address) + ")</small>";
+                                return retVal;
+                            }
                             else if (result.name != null && result.name.OfficialRecord)
                                 return "<div class='label label-default'>" +
                                     result.$type + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
