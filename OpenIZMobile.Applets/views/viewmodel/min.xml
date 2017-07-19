@@ -248,6 +248,16 @@
       <property name="name" behavior="always" ref="ConceptName"/>
     </property>
     <property name="relationship" all="true" behavior="always">
+      <property name="Parent" all="true">
+        <property name="source" behavior="never"/>
+        <property name="holder" behavior="never"/>
+        <property name="holderModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="relationshipTypeModel" behavior="never"/>
+        <property name="targetModel" behavior="always">
+          <property name="name" ref="EntityName"/>
+        </property>
+      </property>
       <property name="*" all="true">
         <property name="source" behavior="never"/>
         <property name="holder" behavior="never"/>
