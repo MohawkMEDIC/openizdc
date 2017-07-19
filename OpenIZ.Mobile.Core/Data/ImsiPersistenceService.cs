@@ -35,6 +35,7 @@ using OpenIZ.Core.Http;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Security;
 using System.Net;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -43,6 +44,9 @@ namespace OpenIZ.Mobile.Core.Data
     /// </summary>
     public class ImsiPersistenceService
     {
+        // Service client
+        private ImsiServiceClient m_client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+        
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiPersistenceService));
 
@@ -54,12 +58,19 @@ namespace OpenIZ.Mobile.Core.Data
             // Now iterate through the map file and ensure we have all the mappings, if a class does not exist create it
             try
             {
+
+                var options = this.m_client.Options();
+
                 foreach (var itm in typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes.Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) && !o.GetTypeInfo().IsAbstract))
                 {
+
+                    var rootElement = itm.GetTypeInfo().GetCustomAttribute<XmlRootAttribute>();
+                    if (rootElement == null) continue;
                     // Is there a persistence service?
                     var idpType = typeof(IDataPersistenceService<>);
                     idpType = idpType.MakeGenericType(itm);
 
+                    
                     this.m_tracer.TraceVerbose("Creating persister {0}", itm);
 
                     // Is the model class a Versioned entity?
@@ -163,8 +174,13 @@ namespace OpenIZ.Mobile.Core.Data
 
                 try
                 {
-                    // Gets the specified data
-                    return this.m_client.Get<TModel>(key, null) as TModel;
+                    var existing = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(key);
+                    if (existing == null)
+                    {
+                        existing = this.m_client.Get<TModel>(key, null) as TModel;
+                        ApplicationContext.Current.GetService<IDataCachingService>()?.Add(existing as IdentifiedData);
+                    }
+                    return (TModel)existing;
                 }
                 catch (WebException)
                 {

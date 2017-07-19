@@ -120,7 +120,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Value of the phonetic table
         /// </summary>
-        [Column("value"), NotNull, Indexed]
+        [Column("value"), NotNull]
         public String Value { get; set; }
     }
 

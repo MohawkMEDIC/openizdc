@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Bundle Insert(Bundle data)
         {
             // first, are we just doing a normal insert?
-            //if (data.Item.Count <= 15000)
+            //if (data.Item.Count <= 500)
                 return base.Insert(data);
             //else
             //{ // It is cheaper to open a mem-db and let other threads access the main db for the time being
@@ -75,7 +75,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             //    base.FireInserting(new DataPersistencePreEventArgs<Bundle>(data));
 
             //    // Memory connection
-            //    using (var memConnection = new SQLiteConnectionWithLock(ApplicationContext.Current.GetService<ISQLitePlatform>(), new SQLiteConnectionString(":memory:", true)))
+            //    using (var memConnection = new Data.Connection.WriteableSQLiteConnection(ApplicationContext.Current.GetService<ISQLitePlatform>(), ":memory:", SQLiteOpenFlags.ReadWrite))
             //    {
             //        try
             //        {

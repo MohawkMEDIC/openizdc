@@ -221,7 +221,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (String.IsNullOrEmpty(modelInstance.Value)) return retVal;
             if (!this.m_existingNames.TryGetValue(modelInstance.Value, out existingKey))
             {
-                var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
+                var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).Take(1).FirstOrDefault();
                 if (existing != null && existing.Key != retVal.Key)
                     retVal.ValueUuid = existing.Uuid;
                 else if (!String.IsNullOrEmpty(modelInstance.Value))

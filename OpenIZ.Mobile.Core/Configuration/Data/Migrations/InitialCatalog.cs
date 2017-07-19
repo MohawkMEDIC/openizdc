@@ -36,6 +36,7 @@ using OpenIZ.Mobile.Core.Serices;
 using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Data;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -243,6 +244,24 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                         }
                     }
                 }
+
+                ApplicationContext.Current.GetService<ISynchronizationService>().PullCompleted += (o, e) => {
+                    if (e.IsInitial && !ApplicationContext.Current.GetService<ISynchronizationService>().IsSynchronizing)
+                    {
+                        ApplicationContext.Current.SetProgress("Indexing...", 0.5f);
+                        try
+                        {
+                            tracer.TraceInfo("Will apply default indexes to Address and Name tables");
+                            db.CreateIndex<DbPhoneticValue>(x => x.Value);
+                            db.CreateIndex<DbAddressValue>(x => x.Value);
+                        }
+                        catch(Exception ex)
+                        {
+                            tracer.TraceError("Error creating primary indexes: {0}", ex.ToString());
+                        }
+                    }
+                };
+
                 db.Commit();
             }
             catch (Exception e)
