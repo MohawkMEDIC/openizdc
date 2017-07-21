@@ -47,7 +47,17 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', 'regexSe
                             userName: userName,
                             password: password,
                             continueWith: function (result) {
+                                // Remove dirty and touched from inputs
+                                delete ($scope.changeData.existing);
+                                delete ($scope.changeData.password);
+                                delete ($scope.changeData.confirmation);
+                                
+                                $scope.changePasswordForm.$setPristine();
+                                $scope.changePasswordForm.$setUntouched();
+
                                 OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.passwordChanged"));
+
+                                $scope.$apply();
                             },
                             onException: function (ex) {
                                 if (ex.message != null)
