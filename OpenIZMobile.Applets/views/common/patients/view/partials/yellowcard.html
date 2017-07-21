@@ -43,7 +43,7 @@
                         <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="((event[0] || event[1] || event[2] || event[3]).route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || (event[0] || event[1] || event[2] || event[3]).participation.Product.playerModel.formConcept == 'aa02267c-8f77-4233-bfd3-e6b068ab326a')&amp;&amp; (event[0] || event[1] || event[2] || event[3]).typeConcept == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
                     {{ antigenName }}</td>
                     <td ng-repeat="sequence in event track by $index" class="vaccine-table-icon" ng-if="sequence.statusConcept != 'cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5'">
-                        <a data-toggle="tab" data-target="#vaccinations" ng-click="showVaccineTab()">
+                        <a data-toggle="tab" data-target="#vaccinations" ng-click="showVaccineTab(antigenName)">
                             <div ng-if="sequence != null" class="input-group" ng-switch="sequence.moodConcept">
                                 <div ng-switch-when="acf7baf2-221f-4bc2-8116-ceb5165be079">
                                     <div class="text-danger" ng-if="sequence.stopTime != null &amp;&amp; sequence.stopTime &lt; $root.page.loadTime">
