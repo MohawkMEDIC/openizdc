@@ -102,8 +102,12 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                         });
                     }
                     else {
-                        // Grab the first appointment
+                        // Find the earliest appointment
                         $scope.appointment = proposals.item[0];
+                        for (var i = 1; i < proposals.item.length; i++)
+                            if (proposals.item[i].actTime < $scope.appointment.actTime)
+                                $scope.appointment = proposals.item[i];
+
                         if ($scope.appointment.actTime < $rootScope.page.loadTime) {
                             $scope.appointment.actTime = $rootScope.page.loadTime;
                         }

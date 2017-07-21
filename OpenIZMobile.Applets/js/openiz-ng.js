@@ -197,7 +197,9 @@ angular.module('openiz', [])
                     break;
             }
 
-            return moment(date).format(dateFormat);
+            if(date)
+                return moment(date).format(dateFormat);
+            return null;
         };
     })
     .directive('oizTag', function ($timeout) {
