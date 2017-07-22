@@ -59,6 +59,10 @@ using OpenIZ.Mobile.Core.Security.Audit;
 using System.Net;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Interfaces;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -575,7 +579,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new ImsiPersistenceService());
-
+                ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Query(o => o.ConceptSets.Any(s=>s.Key == ConceptSetKeys.AddressComponentType));
+                EntitySource.Current = new EntitySource(new ConfigurationEntitySource());
                 byte[] pcharArray = Guid.NewGuid().ToByteArray();
                 char[] spec = { '@', '#', '$', '*', '~' };
                 for (int i = 0; i < pcharArray.Length; i++)
@@ -728,7 +733,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 var option = serviceOptions.Endpoints.FirstOrDefault(o => o.ServiceType == ServiceEndpointType.AuthenticationService);
 
-
                 if (option == null)
                 {
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new HttpBasicIdentityProvider());
@@ -782,6 +786,52 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 ErrorDescription = e.InnerException?.Message,
                 ErrorType = e.GetType().Name
             };
+        }
+
+        /// <summary>
+        /// Configuration eneiity source
+        /// </summary>
+        private class ConfigurationEntitySource : IEntitySourceProvider
+        {
+            /// <summary>
+            /// Get the specified object
+            /// </summary>
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
+            {
+                if (typeof(Concept).IsAssignableFrom(typeof(TObject)))
+                    return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Get(key.Value);
+                return null;
+            }
+
+            /// <summary>
+            /// Get specified version
+            /// </summary>
+            /// <typeparam name="TObject"></typeparam>
+            /// <param name="key"></param>
+            /// <param name="versionKey"></param>
+            /// <returns></returns>
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
+            {
+                if (typeof(Concept).IsAssignableFrom(typeof(TObject)))
+                    return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Get(key.Value);
+                return null;
+            }
+
+
+            public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
+            {
+                return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Query(o=>o.SourceEntityKey == sourceKey) ?? new List<TObject>();
+            }
+
+            public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
+            {
+                return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Query(o => o.SourceEntityKey == sourceKey) ?? new List<TObject>();
+            }
+
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
+            {
+                return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Query(query) ?? new List<TObject>();
+            }
         }
     }
 }

@@ -97,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the value of the address
         /// </summary>
-        [Column("value"), NotNull, Indexed]
+        [Column("value"), NotNull, Unique]
         public String Value { get; set; }
     }
 }

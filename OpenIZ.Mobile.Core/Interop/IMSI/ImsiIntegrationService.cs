@@ -293,7 +293,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 {
                     ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
                     client.Client.Credentials = new NullCredentials();
-                    client.Client.Description.Endpoint[0].Timeout = 1000;
+                    client.Client.Description.Endpoint[0].Timeout = 5000;
 
                     return this.IsValidVersion(client) &&
                         client.Ping();

@@ -234,7 +234,7 @@ namespace DisconnectedClient
             {
                 TraceWriter = new List<TraceWriterConfiguration>() {
                     new TraceWriterConfiguration () {
-                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                        Filter = System.Diagnostics.Tracing.EventLevel.Warning,
                         InitializationData = "OpenIZ",
                         TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, String.Format("..{1}{0}{1}log{1}{2}", "OpenIZDC", Path.DirectorySeparatorChar, "OpenIZ"))
                     }

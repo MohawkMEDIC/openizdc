@@ -1450,21 +1450,25 @@ var OpenIZ = OpenIZ || {
             if (entity === undefined) return;
 
             var address = entity.component !== undefined ? entity :
-                entity.address !== undefined ? (entity.address.Direct || entity.address.HomeAddress) :
+                entity.address !== undefined ? (entity.address.Direct || entity.address.HomeAddress || result.name.$other ) :
                 (entity.Direct || entity.HomeAddress || entity.$other);
             var retVal = "";
-            if (address.component.AdditionalLocator)
-                retVal += address.component.AdditionalLocator + ", ";
-            if (address.component.StreetAddressLine)
-                retVal += address.component.StreetAddressLine + ", ";
-            if (address.component.City)
-                retVal += address.component.City + ", ";
-            if (address.component.County != null)
-                retVal += address.component.County + ", ";
-            if (address.component.State != null)
-                retVal += address.component.State + ", ";
-            if (address.component.Country != null)
-                retVal += address.component.Country + ", ";
+            if (address.component) {
+                if (address.component.AdditionalLocator)
+                    retVal += address.component.AdditionalLocator + ", ";
+                if (address.component.StreetAddressLine)
+                    retVal += address.component.StreetAddressLine + ", ";
+                if (address.component.Precinct)
+                    retVal += address.component.Precinct + ", ";
+                if (address.component.City)
+                    retVal += address.component.City + ", ";
+                if (address.component.County != null)
+                    retVal += address.component.County + ", ";
+                if (address.component.State != null)
+                    retVal += address.component.State + ", ";
+                if (address.component.Country != null)
+                    retVal += address.component.Country + ", ";
+            }
             return retVal.substring(0, retVal.length - 2);
         },
         /**

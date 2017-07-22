@@ -65,6 +65,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         public event EventHandler<AuditDataEventArgs> DataUpdated;
         public event EventHandler<AuditDataEventArgs> DataObsoleted;
         public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+        public event EventHandler<SecurityAuditDataEventArgs> SecurityResourceCreated;
+        public event EventHandler<SecurityAuditDataEventArgs> SecurityResourceDeleted;
 
         /// <summary>
         /// Authenticate the user
