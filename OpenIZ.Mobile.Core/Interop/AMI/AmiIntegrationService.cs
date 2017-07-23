@@ -38,6 +38,7 @@ using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Mobile.Core.Synchronization;
 
 namespace OpenIZ.Mobile.Core.Interop.AMI
 {
@@ -191,7 +192,8 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 {
                     case "AuditInfo":
                         // Only send audits over wifi
-                        if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkWifi)
+                        if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkWifi ||
+                            SynchronizationQueue.Admin.Count() > 10)
                         {
                             foreach(var a in (data as AuditInfo).Audit)
                                 AuditUtil.AddDeviceActor(a);
