@@ -116,7 +116,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override EntityRelationship UpdateInternal(LocalDataContext context, EntityRelationship data)
         {
             // Ensure we haven't already persisted this
-            if (data.TargetEntity != null) data.TargetEntity = data.TargetEntity.EnsureExists(context);
+            //if (data.TargetEntity != null) data.TargetEntity = data.TargetEntity.EnsureExists(context);
             data.TargetEntityKey = data.TargetEntity?.Key ?? data.TargetEntityKey;
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
