@@ -147,8 +147,13 @@ layoutApp.controller('SettingsController', ['$scope', 'uiHelperService', functio
             OpenIZ.Configuration.saveAsync({
                 data: config,
                 continueWith: function () {
-                    OpenIZ.App.hideWait('#saveConfigButton');
                     OpenIZ.App.close();
+                },
+                onException: function (error) {
+                    alert(OpenIZ.Localization.getString("locale.settings.status.generalRealmError"))
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait('#saveConfigButton');
                 }
             });
         }
