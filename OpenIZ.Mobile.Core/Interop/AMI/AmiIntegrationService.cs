@@ -39,6 +39,7 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Mobile.Core.Security.Audit;
 using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Interop.AMI
 {
@@ -52,6 +53,16 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(AmiIntegrationService));
+
+        /// <summary>
+        /// Fired on response
+        /// </summary>
+        public event EventHandler<RestResponseEventArgs> Responding;
+
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
         /// <summary>
         /// Gets current credentials

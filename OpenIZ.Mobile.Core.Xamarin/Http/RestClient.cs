@@ -250,7 +250,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             if (r.IsFaulted)
                                 responseError = r.Exception.InnerExceptions.First();
                             else
+                            {
+                                this.FireResponding(new RestResponseEventArgs(method, url, query, r.Result.ContentType, null, (int)(r.Result as HttpWebResponse).StatusCode));
                                 response = r.Result as HttpWebResponse;
+                            }
                         }, TaskContinuationOptions.LongRunning);
                         if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
                             throw new TimeoutException();

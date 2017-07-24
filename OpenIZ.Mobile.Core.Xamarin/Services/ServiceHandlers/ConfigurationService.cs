@@ -237,10 +237,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     var facilityId = optionObject["data"]["sync"]["subscribe"].ToString();
                     var facility = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(Guid.Parse(facilityId), Guid.Empty);
                     var facilityAddress = facility.LoadCollection<EntityAddress>("Addresses").FirstOrDefault();
-                    var facilityState = facilityAddress.Value(AddressComponentKeys.State);
-                    var facilityCounty = facilityAddress.Value(AddressComponentKeys.County);
-                    var district = optionObject["data"]?["sync"]?["only"]?.ToString() == "county";
-                    var region = optionObject["data"]?["sync"]?["only"]?.ToString() == "state";
+                    var facilityState = facilityAddress?.Value(AddressComponentKeys.State);
+                    var facilityCounty = facilityAddress?.Value(AddressComponentKeys.County);
 
                     // TODO: Customize this and clean it up ... It is very hackish
                     foreach (var res in new String[] {
@@ -257,6 +255,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "Organization",
                         "UserEntity",
                         "UserEntityMe",
+                        "PlaceOther",
                         "Provider",
                         "ManufacturedMaterial",
                         "ManufacturedMaterialMe",
@@ -306,13 +305,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 case "Provider":
                                     if (syncSetting.Filters.Count == 0)
                                     {
-                                        // All users and providers in the area
-                                        if (region && facilityState != null)
-                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
-                                        else if (district && facilityCounty != null)
-                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].address.component[State].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation");
-                                        else
-                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=participation");
+                                        // All users and providers for stuff I'm interested in the area
+                                        syncSetting.Filters.Add("participation[Location|EntryLocation|Destination|InformationRecipient|PrimaryInformationRecipient].player=" + facilityId + "&_exclude=relationship&_exclude=participation");
                                         // All users or providers who are involved in acts this facility is subscribed to
                                         syncSetting.Filters.Add("participation.source.participation.player=" + facilityId + "&_exclude=relationship&_exclude=participation");
                                     }
@@ -356,24 +350,48 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     break;
                                 case "Place":
-                                    if(region && facilityState != null)
-                                    {
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId );
-                                    }
-                                    else if (district && facilityCounty != null)
-                                    {
+                                    if (facilityCounty != null)
+                                    { 
+                                        // all SDL in my county
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation");
+                                        // all places in my county
                                         syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId);
+                                    }
+                                    else if (facilityState != null)
+                                    {
+                                        // all sdl in my state
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
+                                        // all places in my state
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
                                     }
                                     else
                                     {
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
                                         syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId);
                                     }
+                                    // all places assigned to me
+                                    syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId);
+                                    break;
+                                case "PlaceOther":
+
+                                    syncSetting.ResourceAqn = "Place";
+                                    syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
+                                    if (facilityCounty != null)
+                                    {
+                                        // all SDL in my county
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&_exclude=relationship&_exclude=participation");
+                                        // all places in my county
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                    }
+                                    else if (facilityState != null)
+                                    {
+                                        // all sdl in my state
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&_exclude=relationship&_exclude=participation");
+                                        // all places in my state
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                    }
+                                    else
+                                        syncSetting = null;
                                     break;
                                 case "PlaceMe":
                                     syncSetting.ResourceAqn = "Place";
@@ -410,7 +428,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                         // TODO: Patient registration <> facility
 
-                        syncConfig.SynchronizationResources.Add(syncSetting);
+                        if(syncSetting != null)
+                            syncConfig.SynchronizationResources.Add(syncSetting);
                     }
                     syncConfig.SynchronizationResources.Add(new SynchronizationResource()
                     {

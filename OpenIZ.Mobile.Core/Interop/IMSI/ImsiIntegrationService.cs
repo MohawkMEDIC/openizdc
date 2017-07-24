@@ -50,6 +50,16 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
     public class ImsiIntegrationService : IClinicalIntegrationService
     {
 
+        /// <summary>
+        /// Fired on response
+        /// </summary>
+        public event EventHandler<RestResponseEventArgs> Responding;
+
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+
         // Cached credential
         private IPrincipal m_cachedCredential = null;
 
@@ -164,6 +174,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             {
                 ImsiServiceClient client = this.GetServiceClient();
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
+                client.Client.Responding += (o,e)=> this.Responding?.Invoke(o,e);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (client.Client.Credentials == null) return null;
                 if (options?.Timeout.HasValue == true)
@@ -215,6 +226,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             {
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
+                client.Client.Responding += (o,e)=> this.Responding?.Invoke(o,e);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (client.Client.Credentials == null) return null;
 
@@ -252,6 +264,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                client.Client.Responding += (o,e)=> this.Responding?.Invoke(o,e);
                 if (client.Client.Credentials == null) return;
 
                 // Special case = Batch submit of data with an entry point
@@ -322,6 +335,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                client.Client.Responding += (o,e)=> this.Responding?.Invoke(o,e);
                 if (client.Client.Credentials == null) return;
                 // Force an update
                 if (unsafeObsolete)
@@ -363,6 +377,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                client.Client.Responding += (o,e)=> this.Responding?.Invoke(o,e);
                 if (client.Client.Credentials == null) return;
 
                 // Force an update

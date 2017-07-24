@@ -44,6 +44,7 @@ using OpenIZ.Core.Model.Security;
 using System.Reflection;
 using System.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -253,6 +254,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 if (lastModificationDate != null)
                     lastModificationDate = lastModificationDate.Value.AddMinutes(-1);
 
+                // Performance timer for more intelligent query control
+                Stopwatch perfTimer = new Stopwatch();
+                EventHandler<RestResponseEventArgs> respondingHandler = (o, e) => perfTimer.Stop();
+                this.m_integrationService.Responding += respondingHandler;
+
                 try
                 {
 
@@ -281,9 +287,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, 0);
                     }
 
-                    // Performance timer for more intelligent query control
-                    Stopwatch perfTimer = new Stopwatch();
-
                     // Enqueue
                     for (int i = result.Count; i < result.TotalResults; i += result.Count)
                     {
@@ -302,12 +305,14 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         perfTimer.Reset();
                         perfTimer.Start();
                         result = this.m_integrationService.Find(modelType, i == 0 ? filter : new NameValueCollection(), i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 120000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
-                        perfTimer.Stop();
 
                         // Queue the act of queueing
                         if (result != null)
                         {
-                            if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
+                            if (count == 2500 && perfTimer.ElapsedMilliseconds < 40000 ||
+                                count < 2000 && result.TotalResults > 10000 && perfTimer.ElapsedMilliseconds < 20000)
+                                count = 1000;
+                            else if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
                                 count < 1000 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
                                 count = 1000;
                             else if (count == 200 && perfTimer.ElapsedMilliseconds < 15000 ||
@@ -364,6 +369,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
 
                     return 0;
+                }
+                finally
+                {
+                    this.m_integrationService.Responding -= respondingHandler;
                 }
             }
         }

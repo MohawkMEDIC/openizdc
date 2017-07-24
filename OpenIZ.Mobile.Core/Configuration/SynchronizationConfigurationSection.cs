@@ -140,6 +140,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlAttribute("ignoreModifiedOn")]
         public bool Always { get; set; }
+        
     }
 
 
