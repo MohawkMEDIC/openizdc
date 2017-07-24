@@ -924,9 +924,7 @@ body{
     padding: 4px;
 }
 .approx-add-in{
-    position: absolute;
-    top: 12px;
-    left: 34px;
+    padding-top: 12px;
 }
 .glyphicon-chevron-down{
     font-size:15px;

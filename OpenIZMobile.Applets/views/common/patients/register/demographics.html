@@ -67,7 +67,7 @@
                        min="{{patient.dateOfBirth | date : 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon input-group-addon-approx">
                     <label class="control control--checkbox">
-                        <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                        <div class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</div>
                         <input type="checkbox"
                                ng-disabled="!patient.isDeceased"
                                ng-readonly="patient.readonly.deceasedDate"
