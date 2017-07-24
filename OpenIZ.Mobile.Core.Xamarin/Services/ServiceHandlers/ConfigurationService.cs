@@ -237,8 +237,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     var facilityId = optionObject["data"]["sync"]["subscribe"].ToString();
                     var facility = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(Guid.Parse(facilityId), Guid.Empty);
                     var facilityAddress = facility.LoadCollection<EntityAddress>("Addresses").FirstOrDefault();
-                    var facilityState = facilityAddress.Value(AddressComponentKeys.State);
-                    var facilityCounty = facilityAddress.Value(AddressComponentKeys.County);
+                    var facilityState = facilityAddress?.Value(AddressComponentKeys.State);
+                    var facilityCounty = facilityAddress?.Value(AddressComponentKeys.County);
                     var district = optionObject["data"]?["sync"]?["only"]?.ToString() == "county";
                     var region = optionObject["data"]?["sync"]?["only"]?.ToString() == "state";
 
