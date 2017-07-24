@@ -399,7 +399,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         public ServiceClientEndpoint()
         {
-            this.Timeout = 4000;
+            this.Timeout = 30000;
         }
 
 		/// <summary>

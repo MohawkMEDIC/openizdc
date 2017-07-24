@@ -295,6 +295,11 @@
     <string key="locale.settings.syncEvents.commit">Everytime new data is available</string>
     <string key="locale.settings.syncEvents.ip">When the internet status changes</string>
 
+    <string key="locale.settings.restrictDownload">Restrict Places</string>
+    <string key="locale.settings.restrictDownload.everything">Everything</string>
+    <string key="locale.settings.restrictDownload.state">Only in my Region/State</string>
+    <string key="locale.settings.restrictDownload.county">Only in my District/County</string>
+    <string key="locale.settings.restrictDownload.help">Use this setting to add an additional restriction on the place data you want in your tablet.</string>
     <string key="locale.settings.pollEvent.start">Start</string>
     <string key="locale.settings.pollEvent.network">Network</string>
     <string key="locale.settings.pollEvent.commit">Commit</string>

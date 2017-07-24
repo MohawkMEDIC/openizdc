@@ -236,8 +236,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     var facilityId = optionObject["data"]["sync"]["subscribe"].ToString();
                     var facility = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(Guid.Parse(facilityId), Guid.Empty);
-                    var district = optionObject["data"]?["sync"]?["regionOnly"]?.ToString() != "true" ? null : facility.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
-                    var region = optionObject["data"]?["sync"]?["regionOnly"]?.ToString() != "true" ? null : ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(district.Value, Guid.Empty)?.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
+                    var facilityAddress = facility.LoadCollection<EntityAddress>("Addresses").FirstOrDefault();
+                    var facilityState = facilityAddress.Value(AddressComponentKeys.State);
+                    var facilityCounty = facilityAddress.Value(AddressComponentKeys.County);
+                    var district = optionObject["data"]?["sync"]?["only"]?.ToString() == "county";
+                    var region = optionObject["data"]?["sync"]?["only"]?.ToString() == "state";
 
                     // TODO: Customize this and clean it up ... It is very hackish
                     foreach (var res in new String[] {
@@ -304,10 +307,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     if (syncSetting.Filters.Count == 0)
                                     {
                                         // All users and providers in the area
-                                        if (region.HasValue)
-                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target.relationship[Parent].target=" + region.ToString() + "&_exclude=relationship&_exclude=participation");
-                                        else if (district.HasValue)
-                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target=" + district.ToString() + "&_exclude=relationship&_exclude=participation");
+                                        if (region && facilityState != null)
+                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
+                                        else if (district && facilityCounty != null)
+                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].address.component[State].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation");
                                         else
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=participation");
                                         // All users or providers who are involved in acts this facility is subscribed to
@@ -353,20 +356,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     break;
                                 case "Place":
-                                    if(region.HasValue)
+                                    if(region && facilityState != null)
                                     {
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[Parent].target.relationship[Parent].target=" + region.ToString() + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target.relationship[Parent].target=" + region.ToString());
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId );
                                     }
-                                    else if (district.HasValue)
+                                    else if (district && facilityCounty != null)
                                     {
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[Parent].target=" + district.ToString() + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target=" + district.ToString());
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId);
                                     }
                                     else
                                     {
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId);
                                     }
                                     break;
                                 case "PlaceMe":
@@ -568,7 +574,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         Endpoint = urlInfo.Select(o => new ServiceClientEndpoint()
                         {
                             Address = o.Replace("0.0.0.0", realmUri),
-                            Timeout = itm.ServiceType == ServiceEndpointType.ImmunizationIntegrationService ? 60000 : 10000
+                            Timeout = itm.ServiceType == ServiceEndpointType.ImmunizationIntegrationService ? 60000 : 30000
                         }).ToList(),
                         Trace = enableTrace.Count > 0 && enableTrace[0] == "true",
                         Name = serviceName
@@ -718,7 +724,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {
-                            Address = amiUri, Timeout = 10000
+                            Address = amiUri, Timeout = 30000
                         }
                     },
                     Name = "ami",
@@ -760,7 +766,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         Endpoint = option.BaseUrl.Select(o => new ServiceClientEndpoint()
                         {
                             Address = o.Replace("0.0.0.0", realmUri),
-                            Timeout = 10000
+                            Timeout = 30000
                         }).ToList()
                     });
 
