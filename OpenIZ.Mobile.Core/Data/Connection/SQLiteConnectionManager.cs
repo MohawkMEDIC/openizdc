@@ -295,6 +295,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                     if (!this.m_writeConnections.TryGetValue(dataSource, out writeConnection)) // Writeable connection can only have one in the pool so if it isn't there make sure it isn't in the current 
                     {
                         writeConnection = new WriteableSQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex | SQLiteOpenFlags.Create) { Persistent = true };
+                        writeConnection.Execute("PRAGMA synchronous = 0");
                         //writeConnection.Execute("PRAGMA automatic_index = true");
                         //writeConnection.Execute("PRAGMA journal_mode = WAL");
                         this.m_writeConnections.Add(dataSource, writeConnection);
