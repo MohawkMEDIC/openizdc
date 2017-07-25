@@ -259,6 +259,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "Provider",
                         "ManufacturedMaterial",
                         "ManufacturedMaterialMe",
+                        "Patient",
                         "Person",
                         "PatientEncounter",
                         "PatientEncounterMe",
@@ -311,8 +312,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Filters.Add("participation.source.participation.player=" + facilityId + "&_exclude=relationship&_exclude=participation");
                                     }
                                     break;
+                                case "Patient":
+                                    syncSetting.Filters.Add("&relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
+                                    break;
                                 case "Person":
-                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     break;
                                 case "Act":
@@ -350,14 +353,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     break;
                                 case "Place":
-                                    if (facilityCounty != null)
+                                    if (facilityState != null)
                                     { 
                                         // all SDL in my county
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation");
                                         // all places in my county
                                         syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
                                     }
-                                    else if (facilityState != null)
+                                    else if (facilityCounty != null)
                                     {
                                         // all sdl in my state
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
@@ -376,14 +379,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                                     syncSetting.ResourceAqn = "Place";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
-                                    if (facilityCounty != null)
+                                    if (facilityState != null)
                                     {
                                         // all SDL in my county
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&_exclude=relationship&_exclude=participation");
                                         // all places in my county
                                         syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
                                     }
-                                    else if (facilityState != null)
+                                    else if (facilityCounty != null)
                                     {
                                         // all sdl in my state
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&_exclude=relationship&_exclude=participation");

@@ -37,6 +37,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Query;
 using System.Net.Security;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -109,7 +110,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                 retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
 
             retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
-            
+
+            if (this.Description.Binding.Optimize)
+                retVal.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             return retVal;
         }
 
@@ -328,21 +331,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                 if (this.Description.Trace)
                                     this.m_tracer.TraceVerbose("HTTP << {0}", Convert.ToBase64String(ms.ToArray()));
 
-                                switch (response.Headers[HttpResponseHeader.ContentEncoding])
-                                {
-                                    case "deflate":
-                                        using (DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress))
-                                            retVal = (TResult)serializer.DeSerialize(df);
-                                        break;
-                                    case "gzip":
-                                        using (GZipStream df = new GZipStream(ms, CompressionMode.Decompress))
-                                            retVal = (TResult)serializer.DeSerialize(df);
-                                        break;
-                                    default:
-                                        retVal = (TResult)serializer.DeSerialize(ms);
-                                        break;
-                                }
-
+                                //switch (response.Headers[HttpResponseHeader.ContentEncoding])
+                                //{
+                                //    case "deflate":
+                                //        using (DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress))
+                                //            retVal = (TResult)serializer.DeSerialize(df);
+                                //        break;
+                                //    case "gzip":
+                                //        using (GZipStream df = new GZipStream(ms, CompressionMode.Decompress))
+                                //            retVal = (TResult)serializer.DeSerialize(df);
+                                //        break;
+                                //    default:
+                                //        retVal = (TResult)serializer.DeSerialize(ms);
+                                //        break;
+                                //}
+                                retVal = (TResult)serializer.DeSerialize(ms);
                             }
 
 #if PERFMON
@@ -386,20 +389,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             {
                                 var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
 
-                                switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
-                                {
-                                    case "deflate":
-                                        using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
-                                            result = (TResult)serializer.DeSerialize(df);
-                                        break;
-                                    case "gzip":
-                                        using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
-                                            result = (TResult)serializer.DeSerialize(df);
-                                        break;
-                                    default:
-                                        result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
-                                        break;
-                                }
+                                //switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
+                                //{
+                                //    case "deflate":
+                                //        using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+                                //            result = (TResult)serializer.DeSerialize(df);
+                                //        break;
+                                //    case "gzip":
+                                //        using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+                                //            result = (TResult)serializer.DeSerialize(df);
+                                //        break;
+                                //    default:
+                                //        result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
+                                //        break;
+                                //}
+                                result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
                             }
                             catch (Exception dse)
                             {

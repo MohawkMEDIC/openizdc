@@ -473,6 +473,8 @@ angular.module('openiz', [])
                                     break;
                             }
                             retVal += "&nbsp;";
+
+
                             if (displayString != null) {
                                 var scope = selection;
                                 retVal += eval(displayString);
@@ -487,6 +489,10 @@ angular.module('openiz', [])
                                 retVal += selection.element.innerText.trim();
                             else if (selection.text)
                                 retVal += selection.text;
+
+                            if (selection.address)
+                                    retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(selection.address) + ")</small>";
+
                             return retVal;
                         },
                         keepSearchResults: true,

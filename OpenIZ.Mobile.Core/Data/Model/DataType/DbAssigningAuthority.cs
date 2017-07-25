@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         /// <summary>
         /// Gets or sets the name of the aa
         /// </summary>
-        [Column("name"), Indexed]
+        [Column("name")]
         public String Name { get; set; }
 
         /// <summary>

@@ -304,6 +304,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         perfTimer.Reset();
                         perfTimer.Start();
+
                         result = this.m_integrationService.Find(modelType, i == 0 ? filter : new NameValueCollection(), i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 120000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
 
                         // Queue the act of queueing
@@ -311,7 +312,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         {
                             if (count == 2500 && perfTimer.ElapsedMilliseconds < 40000 ||
                                 count < 2000 && result.TotalResults > 10000 && perfTimer.ElapsedMilliseconds < 20000)
-                                count = 1000;
+                                count = 2500;
                             else if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
                                 count < 1000 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
                                 count = 1000;

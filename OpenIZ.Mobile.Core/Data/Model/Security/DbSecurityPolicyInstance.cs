@@ -44,36 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		}
 	}
 
-	/// <summary>
-	/// Represents a relationship between an entity and security policy
-	/// </summary>
-	[Table("entity_security_policy")]
-	public class DbEntitySecurityPolicy : DbSecurityPolicyInstance
-	{
-        /// <summary>
-        /// Gets or sets the source
-        /// </summary>
-        /// <value>The source identifier.</value>
-        [Column("entity_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
-        public int EntityId
-        {
-            get;
-            set;
-        }
 
-        /// <summary>
-        /// Gets or sets the policy identifier.
-        /// </summary>
-        /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbSecurityPolicy), nameof(DbSecurityPolicy.Uuid))]
-        public int PolicyId
-        {
-            get;
-            set;
-        }
-
-
-    }
 
     /// <summary>
     /// Represents a security policy applied to an act
@@ -86,7 +57,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// </summary>
         /// <value>The source identifier.</value>
         [Column("act_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
-        public int ActId
+        public byte[] ActId
         {
             get;
             set;
@@ -97,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// </summary>
         /// <value>The policy identifier.</value>
         [Column("policy_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbSecurityPolicy), nameof(DbSecurityPolicy.Uuid))]
-        public int PolicyId
+        public byte[] PolicyId
         {
             get;
             set;
