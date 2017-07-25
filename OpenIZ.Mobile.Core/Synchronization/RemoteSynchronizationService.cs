@@ -275,7 +275,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                     // Attempt to find an existing query
                     var existingQuery = SynchronizationLog.Current.FindQueryData(modelType, filter.ToString());
-                    if (existingQuery != null && DateTime.Now.Subtract(existingQuery.StartTime).TotalHours <= 1)
+                    if (existingQuery != null && DateTime.Now.ToUniversalTime().Subtract(existingQuery.StartTime).TotalHours <= 1)
                     {
                         qid = new Guid(existingQuery.Uuid);
                         result.Count = existingQuery.LastSuccess;

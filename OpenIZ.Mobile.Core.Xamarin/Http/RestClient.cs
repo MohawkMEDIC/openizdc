@@ -102,14 +102,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
             // Compress?
             if (this.Description.Binding.Optimize)
-                retVal.Headers.Add(HttpRequestHeader.AcceptEncoding, "deflate"); // use deflate as it appears to be a little faster
+                retVal.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip"); // use deflate as it appears to be a little faster
 
             // Proxy?
             if (!String.IsNullOrEmpty(this.m_configurationSection.ProxyAddress))
                 retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
 
             retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
-
+            
             return retVal;
         }
 
