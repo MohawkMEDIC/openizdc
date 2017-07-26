@@ -24,9 +24,11 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Services.Impl;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Security;
@@ -288,11 +290,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 ofs += 20;
                 pdp.Insert(bundle);
 
-                // Let the server know we're interested in this stuff
-                foreach (var itm in bundle.Item.OfType<Act>())
-                    itm.Participations.Add(new ActParticipation(ActParticipationKey.InformationRecipient, Guid.Parse(facilityId)));
-
-                imsiIntegrationService.Update(bundle, true);
             }
 
             return patient;

@@ -471,6 +471,29 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (optionObject["network"]["useProxy"].Value<Boolean>())
                 ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>().ProxyAddress = optionObject["network"]["proxyAddress"].Value<String>();
 
+            var optimize = optionObject["network"]["optimize"].Value<String>();
+            OptimizationMethod method = OptimizationMethod.Gzip;
+            if(!String.IsNullOrEmpty(optimize))
+                switch(optimize)
+                {
+                    case "lzma":
+                        method = OptimizationMethod.Lzma;
+                        break;
+                    case "bzip2":
+                        method = OptimizationMethod.Bzip2;
+                        break;
+                    case "deflate":
+                        method = OptimizationMethod.Deflate;
+                        break;
+                    case "off":
+                        method = OptimizationMethod.None;
+                        break;
+                }
+
+            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>().Client)
+                if(itm.Binding.Optimize)
+                    itm.Binding.OptimizationMethod = method;
+
             ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets = true;
             // Log settings
             var logSettings = ApplicationContext.Current.Configuration.GetSection<DiagnosticsConfigurationSection>();
@@ -592,6 +615,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 PreemptiveAuthentication = itm.Capabilities != ServiceEndpointCapabilities.None
                             },
                             Optimize = itm.Capabilities.HasFlag(ServiceEndpointCapabilities.Compression),
+                            OptimizationMethod = itm.Capabilities.HasFlag(ServiceEndpointCapabilities.Compression) ? OptimizationMethod.Gzip : OptimizationMethod.None,
                         },
                         Endpoint = urlInfo.Select(o => new ServiceClientEndpoint()
                         {

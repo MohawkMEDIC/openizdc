@@ -232,6 +232,12 @@ namespace OpenIZ.Mobile.Core.Configuration
 		}
 
         /// <summary>
+        /// Gets or sets the optimization method
+        /// </summary>
+        [XmlElement("method")]
+        public OptimizationMethod OptimizationMethod { get; set; }
+
+        /// <summary>
         /// Gets the security description
         /// </summary>
         IRestClientSecurityDescription IRestClientBindingDescription.Security
@@ -243,10 +249,28 @@ namespace OpenIZ.Mobile.Core.Configuration
         }
     }
 
-	/// <summary>
-	/// Service client security configuration
-	/// </summary>
-	[XmlType (nameof (ServiceClientSecurity), Namespace = "http://openiz.org/mobile/configuration")]
+    /// <summary>
+    /// Optimization method
+    /// </summary>
+    [XmlType(nameof(OptimizationMethod), Namespace = "http://openiz.org/mobile/configuration")]
+    public enum OptimizationMethod
+    {
+        [XmlEnum("off")]
+        None = 0,
+        [XmlEnum("df")]
+        Deflate = 1,
+        [XmlEnum("gz")]
+        Gzip = 2,
+        [XmlEnum("bz2")]
+        Bzip2 = 3,
+        [XmlEnum("7z")]
+        Lzma = 4
+    }
+
+    /// <summary>
+    /// Service client security configuration
+    /// </summary>
+    [XmlType (nameof (ServiceClientSecurity), Namespace = "http://openiz.org/mobile/configuration")]
 	public class ServiceClientSecurity : IRestClientSecurityDescription
 	{
 

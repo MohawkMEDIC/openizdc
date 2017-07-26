@@ -33,6 +33,7 @@ layoutApp.controller('SettingsController', ['$scope', 'uiHelperService', functio
             $scope.config.security.port = 8080;
             $scope.config.network.useProxy = $scope.config.network.proxyAddress != null;
             $scope.config.network.proxyAddress = $scope.config.network.proxyAddress || null;
+            $scope.config.network.optimize = "gzip";
             $scope.ui = {
                 dataCollapsed: true,
                 securityCollapsed: true
