@@ -51,9 +51,9 @@ namespace OpenIZ.Mobile.Core.Security
 				throw new ArgumentNullException(nameof(principal));
 			else if (securable == null)
 				throw new ArgumentNullException(nameof(securable));
-
-			// Get the user object from the principal
-			var pip = ApplicationContext.Current.PolicyInformationService;
+            
+            // Get the user object from the principal
+            var pip = ApplicationContext.Current.PolicyInformationService;
 
 			// Policies
 			var securablePolicies = pip.GetActivePolicies(securable);
@@ -94,7 +94,7 @@ namespace OpenIZ.Mobile.Core.Security
             }
 
             // Can we make this decision based on the claims?
-            if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == ClaimTypes.OpenIzGrantedPolicyClaim && c.Value == policyId || policyId.StartsWith(String.Format("{0}.", c.Value))))
+            if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == ClaimTypes.OpenIzGrantedPolicyClaim && (c.Value == policyId || policyId.StartsWith(String.Format("{0}.", c.Value)))))
             {
                 rule = PolicyGrantType.Grant;
             }

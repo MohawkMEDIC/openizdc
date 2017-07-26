@@ -295,7 +295,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                     if (!this.m_writeConnections.TryGetValue(dataSource, out writeConnection)) // Writeable connection can only have one in the pool so if it isn't there make sure it isn't in the current 
                     {
                         writeConnection = new WriteableSQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex | SQLiteOpenFlags.Create) { Persistent = true };
-                        writeConnection.Execute("PRAGMA synchronous = 0");
+                        writeConnection.Execute("PRAGMA synchronous = 1");
                         //writeConnection.Execute("PRAGMA automatic_index = true");
                         //writeConnection.Execute("PRAGMA journal_mode = WAL");
                         this.m_writeConnections.Add(dataSource, writeConnection);
@@ -310,7 +310,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 else if (isReadonly)
                 {
                     retVal = new ReadonlySQLiteConnection(platform, dataSource, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.FullMutex) { Persistent = true };
-                    retVal.Execute("PRAGMA threads = 2");
+                    //retVal.Execute("PRAGMA threads = 2");
                 }
                 else
                     throw new InvalidOperationException("Should not be here");

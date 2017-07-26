@@ -165,9 +165,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 {
                                     this.ImportElement(new Bundle()
                                     {
-                                        Item = bundle.Item.Skip(ofs).Take(1000).ToList()
+                                        Item = bundle.Item.Skip(ofs).Take(500).ToList()
                                     });
-                                    ofs += 1000;
+                                    ofs += 500;
                                 }
                             }
                             else
@@ -231,19 +231,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 locked = Monitor.TryEnter(this.m_adminLock, 100);
                 if (!locked) return;
+                // TODO: Sleep thread here
+                var amiService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
+                if (!amiService.IsAvailable())
+                {
+                    // Come back in 30 seconds...
+                    this.m_threadPool.QueueUserWorkItem(new TimeSpan(0, 0, 30), (o) => this.ExhaustOutboundQueue(), null);
+                    return;
+                }
+
                 // Exhaust the queue
                 while (SynchronizationQueue.Admin.Count() > 0)
                 {
 
-                    // TODO: Sleep thread here
-                    var amiService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
-                    if (!amiService.IsAvailable())
-                    {
-                        // Come back in 30 seconds...
-                        this.m_threadPool.QueueUserWorkItem(new TimeSpan(0, 0, 30), (o) => this.ExhaustOutboundQueue(), null);
-                        return;
-                    }
-
+                    
                     // Exhaust the outbound queue
                     // Is there more than one item on the queue?
                     var syncItm = SynchronizationQueue.Admin.PeekRaw();

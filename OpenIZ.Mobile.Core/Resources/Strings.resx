@@ -233,4 +233,7 @@ Sincerely,
   <data name="locale_securitySwitchedMode" xml:space="preserve">
     <value>Your online session couldn't be extended, you are now operating in disconnected mode.</value>
   </data>
+  <data name="err_already_computing_careplan" xml:space="preserve">
+    <value>The care plan service is already calculating your facility plan...</value>
+  </data>
 </root>

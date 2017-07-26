@@ -55,6 +55,34 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             { "isBackground", true }
         };
 
+        /// <summary>
+        /// Truncate the existing care plan database
+        /// </summary>
+        public void Truncate()
+        {
+            try
+            {
+                if (this.m_actCarePlanPromise.Count == 0)
+                {
+                    // Deploy schema?
+                    this.m_dataMart = this.m_warehouseService.GetDatamart("oizcp");
+                    if (this.m_dataMart != null)
+                        this.m_warehouseService.DeleteDatamart(this.m_dataMart.Id);
+
+                    this.m_tracer.TraceInfo("Datamart for care plan service doesn't exist, will have to create it...");
+                    this.m_dataMart = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Warehouse.CarePlan.CarePlanWarehouseSchema.xml")));
+                    this.m_tracer.TraceVerbose("Datamart {0} created", this.m_dataMart.Id);
+                }
+                else
+                    throw new InvalidOperationException(Strings.err_already_computing_careplan);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error truncating care plan: {0}", e);
+                throw;
+            }
+        }
+
         // True when the object is subscribed
         private bool m_isSubscribed = false;
 
@@ -157,9 +185,9 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
 
                     // Should we ?
                     var patientSync = SynchronizationLog.Current.GetAll().FirstOrDefault(o => o.ResourceType == "Person");
-                    
+
                     this.RefreshCarePlan(false);
-                    
+
                     // Subscribe to events
                     this.SubscribeEvents();
 
@@ -189,7 +217,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                                     this.m_isSubscribed = false;
                                     this.SubscribeEvents();
                                 }
-                                else if(e.Queue == "inbound")
+                                else if (e.Queue == "inbound")
                                 {
                                     this.m_tracer.TraceWarning("Cannot execute CP yet because inbound={0} & isSync={1}", inboundQueueCount, queueService.IsBusy);
                                 }
@@ -211,14 +239,14 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                 try
                 {
                     ISynchronizationService syncService = ApplicationContext.Current.GetService<ISynchronizationService>();
-                    
+
                     while (this.m_running)
                     {
                         this.m_resetEvent.WaitOne();
                         // de-queue
                         int promiseCount = this.m_actCarePlanPromise.Count;
-                        while (!syncService.IsSynchronizing && 
-                            SynchronizationQueue.Inbound.Count() == 0 && 
+                        while (!syncService.IsSynchronizing &&
+                            SynchronizationQueue.Inbound.Count() == 0 &&
                             this.m_actCarePlanPromise.Count > 0)
                         {
                             if (this.m_actCarePlanPromise.Count > promiseCount)
@@ -303,7 +331,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             var inboundQueueCount = SynchronizationQueue.Inbound.Count();
             if (patientSync != null &&
                 inboundQueueCount == 0 &&
-                    ( force ||
+                    (force ||
                         lastRefresh == DateTime.MinValue ||
                         DateTime.Now.Subtract(lastRefresh).TotalDays > 7 && ApplicationContext.Current.Confirm(Strings.locale_refreshCarePlanPrompt)
                     )
@@ -567,7 +595,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                         act_date = o.ActTime.Date,
                         product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
                         sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
-                        dose_seq=(o as SubstanceAdministration)?.SequenceId
+                        dose_seq = (o as SubstanceAdministration)?.SequenceId
                     }));
                 }
 

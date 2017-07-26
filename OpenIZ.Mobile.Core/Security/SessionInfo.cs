@@ -40,6 +40,7 @@ using System.Threading;
 using OpenIZ.Mobile.Core.Configuration;
 using System.Security;
 using OpenIZ.Mobile.Core.Resources;
+using OpenIZ.Mobile.Core.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -270,7 +271,14 @@ namespace OpenIZ.Mobile.Core.Security
             {
                 var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
                 var securityUser = userService.GetUser(principal.Identity);
-                this.SecurityUser = securityUser;
+                if (securityUser == null) // Not yet persisted, get from server
+                    this.SecurityUser = new SecurityUser()
+                    {
+                        Key = Guid.Parse((principal as ClaimsPrincipal).FindClaim(ClaimTypes.Sid).Value),
+                        UserName = principal.Identity.Name
+                    };
+                else
+                    this.SecurityUser = securityUser;
 
                 // User entity available?
                 this.m_entity = userService.GetUserEntity(principal.Identity);
@@ -284,7 +292,20 @@ namespace OpenIZ.Mobile.Core.Security
                     var sid = Guid.Parse((principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Sid)?.Value ?? ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().QueryFast(o => o.UserName == principal.Identity.Name, 0, 1, out t, Guid.Empty).FirstOrDefault()?.Key.ToString());
                     this.m_entity = amiService.Find<UserEntity>(o => o.SecurityUser.Key == sid, 0, 1, null).Item?.OfType<UserEntity>().FirstOrDefault();
 
-                    ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Update(this.m_entity);
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o => {
+                        try
+                        {
+                            ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Insert(o as Entity);
+                                }
+                        catch (DuplicateKeyException)
+                        {
+                            ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Update(o as Entity);
+                        }
+                        catch(Exception e)
+                        {
+                            this.m_tracer.TraceError("Could not create /update user entity for logged in user: {0}", e);
+                        }
+                    }, this.m_entity);
                 }
             }
             catch (Exception e)

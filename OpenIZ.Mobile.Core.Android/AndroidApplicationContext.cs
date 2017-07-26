@@ -471,6 +471,9 @@ namespace OpenIZ.Mobile.Core.Android
         /// </summary>
         public override byte[] GetCurrentContextSecurityKey()
         {
+#if NOCRYPT
+            return null;
+#else
             var androidId = A.Provider.Settings.Secure.GetString(this.Context.ContentResolver, A.Provider.Settings.Secure.AndroidId);
             if (String.IsNullOrEmpty(androidId))
             {
@@ -479,6 +482,7 @@ namespace OpenIZ.Mobile.Core.Android
             }
             else
                 return System.Text.Encoding.UTF8.GetBytes(androidId);
+#endif
         }
     }
 }

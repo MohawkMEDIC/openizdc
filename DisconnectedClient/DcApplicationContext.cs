@@ -470,10 +470,14 @@ namespace DisconnectedClient
         /// </summary>
         public override byte[] GetCurrentContextSecurityKey()
         {
+#if NOCRYPT
+            return null;
+#else
             var sid = WindowsIdentity.GetCurrent().User;
             byte[] retVal = new byte[sid.BinaryLength];
             WindowsIdentity.GetCurrent().User.GetBinaryForm(retVal, 0);
             return retVal;
+#endif
         }
     }
 }

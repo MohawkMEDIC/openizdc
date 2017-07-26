@@ -181,8 +181,7 @@ namespace OpenIZ.Mobile.Core.Data
                     {
                         try
                         {
-                            context.Connection.Execute("PRAGMA synchronous = 1");
-
+                            
                             this.m_tracer.TraceVerbose("INSERT {0}", data);
 
                             context.Connection.BeginTransaction();

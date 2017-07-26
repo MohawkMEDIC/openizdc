@@ -313,7 +313,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     }
                                     break;
                                 case "Patient":
-                                    syncSetting.Filters.Add("&relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
+                                    syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     break;
                                 case "Person":
                                     syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);

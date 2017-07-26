@@ -212,7 +212,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         // TODO: Clean this up
                         try
                         {
-                            this.SynchronizeSecurity(password, retVal);
+                            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=>this.SynchronizeSecurity(password, o as IPrincipal), retVal);
                         }
                         catch(Exception ex)
                         {
