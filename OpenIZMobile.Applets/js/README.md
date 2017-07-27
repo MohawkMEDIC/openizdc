@@ -15,7 +15,8 @@ Helpful links:
 
 * [Applet Schema](http://openiz.org/artifacts/0.1pre/applet "OpenIZ Applet Schema") which contains information about the format of applets   
 * [IMSI Schema](http://openiz.org/artifacts/0.1pre/imsi "IMSI Schema") which contains information about the format of IMSI objects   
-* [OpenIZ Disconnected Client](http://openizdc.codeplex.com "OpenIZ Xamarin disconnected client") project on codeplex.   
+* [OpenIZ Disconnected Client](http://github.com/MohawkMEDIC/openizdc "OpenIZ  disconnected client") project.   
+* [OpenIZ Applet Starter Code](http://github.com/MohawkMEDIC/openizdctpl "OpenIZ applet started code") project.   
 
 ## License   
 
