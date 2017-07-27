@@ -11,5 +11,5 @@
 
 http://openiz.org/artifacts/0.1pre/imsi/
 
-# OpenIZ Javasript Bridge 
+# OpenIZ Javascript Bridge 
 http://openiz.org/artifacts/0.1pre/openiz-js/
