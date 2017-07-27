@@ -293,17 +293,17 @@ namespace OpenIZ.Mobile.Core.Security
                     this.m_entity = amiService.Find<UserEntity>(o => o.SecurityUser.Key == sid, 0, 1, null).Item?.OfType<UserEntity>().FirstOrDefault();
 
                     ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o => {
+                        var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
                         try
                         {
-                            ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Insert(o as Entity);
-                                }
-                        catch (DuplicateKeyException)
-                        {
-                            ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Update(o as Entity);
+                            if(persistence.Get((o as Entity).Key.Value) == null)
+                                persistence.Insert(o as Entity);
+                            else
+                                persistence.Update(o as Entity);
                         }
                         catch(Exception e)
                         {
-                            this.m_tracer.TraceError("Could not create /update user entity for logged in user: {0}", e);
+                            this.m_tracer.TraceError("Could not create / update user entity for logged in user: {0}", e);
                         }
                     }, this.m_entity);
                 }

@@ -13,6 +13,11 @@ Open Immunize Disconnected Client, Copyright (C) 2015-2017 Mohawk College of App
 + Portions Copyright (C) 2013 Sebastien Ros
 + Portions Copyright (c) 2014, David Khristepher Santos
 + Portions Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
++ Portions Copyright (C) 2010-2017 Google Inc. (http://angularjs.org)
++ Portions Copyright (C) 2012-2015 Kevin Brown, Igor Vaynberg, and Select2 contributors
++ Portions Copyright (c) 2014-2017 Almende B.V.
++ Portions Copyright (c) 2013 Øystein Krog (oystein.krog@gmail.com)
++ Portions Copyright (c) 2012 Krueger Systems, Inc.
 
 This product includes cryptographic software written by Eric Young (eay@cryptsoft.com).  This product includes software written by Tim Hudson (tjh@cryptsoft.com).
 
@@ -214,11 +219,20 @@ copied and put under another distribution licence
 [including the GNU Public Licence.]
 ```
 
-## 2.4 SharpCompress License
-[Source](https://github.com/adamhathcock/sharpcompress/blob/master/LICENSE.txt)
-```
-Copyright (c) 2014  Adam Hathcock
+## 2.4 MIT Licenses
 
++ SharpCompress - [Source](https://github.com/adamhathcock/sharpcompress/blob/master/LICENSE.txt)
++ SQLite-PCL - [Source](https://github.com/MohawkMEDIC/SQLite.Net-PCL) 
++ Angular JS - [Source](https://github.com/angular/angular.js/blob/master/LICENSE)
++ Select2 - [Source](https://github.com/select2/select2/blob/master/LICENSE.md)
++ JQuery 
++ VIS.JS - [Source](https://raw.githubusercontent.com/almende/vis/master/LICENSE-MIT)
++ FullCalendar.io - [Source](https://fullcalendar.io/license/)
++ Moment.js - [Source](https://github.com/moment/moment/blob/develop/LICENSE)
++ Toastr - [Source](https://github.com/CodeSeven/toastr)
++ ChartJS - [Source](http://www.chartjs.org/docs/latest/notes/license.html)
++ 
+```
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -241,42 +255,16 @@ THE SOFTWARE.
 ## 2.5 ZLib.net License
 [Source](https://zlibnet.codeplex.com/license)
 
-## 2.6 SQLite-PCL License
-[Source]
+**Note:** This Library is licensed under the terms of the Lesser GNU General Public License (LGPL 2.1) and is linked to in its original 
+unmodified form. If you wish to remove this library from the project you may do so without impacting the operation of the Disconnected Client.
+This library is only used by the BrainBug application.
 
-**Note:** OpenIZ Disconnected Client uses a modified version of the SQLite-PCL library which is not from the original authory Krueger Systems. These changes are provided 
-[at the MohawkMEDIC github](https://github.com/MohawkMEDIC/SQLite.Net-PCL) and include support for SQLCipher, and libxamarin_sqlite3.so
-
-```
-Copyright (c) 2012 Krueger Systems, Inc.
-Copyright (c) 2013 Øystein Krog (oystein.krog@gmail.com)
-Copyright (c) 2017 Mohawk College of Applied Arts and Technology 
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
-
-## 2.7 ZXing.NET License
+## 2.6 ZXing.NET License
 [Source](https://github.com/zxing/zxing/blob/master/LICENSE)
 
 **Note:** This is the same license (Apache 2.0) as OpenIZ Disconnected Client
 
-## 2.8 JInt License
+## 2.7 JInt License
 [Source](https://github.com/sebastienros/jint/blob/master/LICENSE.txt)
 
 ```
@@ -294,7 +282,7 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
-## 2.9 CSharpEval
+## 2.8 CSharpEval License
 [Source](https://github.com/toimransyed/csharpeval/blob/AntlrParser/LICENSE.txt)
 ```
 Simplified BSD License (BSD)
@@ -319,7 +307,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
-## 2.10 ANTLR License
+## 2.9 ANTLR License
 [Source](https://raw.githubusercontent.com/antlr/antlr4/master/LICENSE.txt)
 
 ```
