@@ -532,7 +532,7 @@ angular.module('openiz', [])
                             },
                             processResults: function (data, params) {
                                 //params.page = params.page || 0;
-                                var data = data.item || data;
+                                var data = data.$type == "Bundle" ? data.item : data.item || data;
                                 var retVal = { results: [] };
                                 if (groupString == null) {
                                     return {
