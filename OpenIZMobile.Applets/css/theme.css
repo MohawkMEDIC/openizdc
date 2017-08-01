@@ -167,6 +167,13 @@ fieldset{
     border: none;
 }
 
+@media (max-width: 1199px) {
+    .select2-results__option {
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+}
+
 .input-group { width:100%; }
 .input-group .form-control:last-child {
     border-radius: 4px;
