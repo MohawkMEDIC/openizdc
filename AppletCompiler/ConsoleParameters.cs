@@ -129,5 +129,12 @@ namespace AppletCompiler
         [Parameter("embedCert")]
         [Description("Embeds the certificate used to sign the package in the applet (recommended for wide-publishing)")]
         public bool EmbedCertificate { get; set; }
+
+        /// <summary>
+        /// Set the compression algorithm
+        /// </summary>
+        [Parameter("compression")]
+        [Description("Sets the compression algorithm [lzma, bzip2, gzip, deflate, default = deflate]")]
+        public String Compression { get; set; }
     }
 }

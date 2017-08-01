@@ -182,9 +182,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                             ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, (float)i / syncTargets.Count);
                             foreach (var fltr in syncResource.Filters)
-                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr), syncResource.Always);
+                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr), syncResource.Always, syncResource.Name);
                             if (syncResource.Filters.Count == 0)
-                                totalResults += this.Pull(syncResource.ResourceType);
+                                totalResults += this.Pull(syncResource.ResourceType, new NameValueCollection(), false, syncResource.Name);
 
                         }
                         ApplicationContext.Current.SetProgress(String.Empty, 0);
@@ -248,6 +248,14 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public int Pull(Type modelType, NameValueCollection filter, bool always)
         {
+            return this.Pull(modelType, filter, always, null);
+        }
+
+        /// <summary>
+        /// Internal pull function
+        /// </summary>
+        public int Pull(Type modelType, NameValueCollection filter, bool always, String name)
+        {
             lock (this.m_lock)
             {
                 var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
@@ -286,7 +294,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     else
                     {
                         if (existingQuery != null) SynchronizationLog.Current.CompleteQuery(new Guid(existingQuery.Uuid));
-                        SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, 0);
+                        SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, name, 0);
                     }
 
                     // Enqueue
@@ -331,7 +339,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
 
                             SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
-                            SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, result.Offset + result.Count);
+                            SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, name, result.Offset + result.Count);
 
                             retVal = result.TotalResults;
                         }
@@ -346,7 +354,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         ApplicationContext.Current.SetProgress(String.Empty, 0);
 
                     // Log that we synchronized successfully
-                    SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
+                    SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag, name);
 
                     // Clear the query
                     SynchronizationLog.Current.CompleteQuery(qid);

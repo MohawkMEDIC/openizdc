@@ -183,7 +183,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 							//    }
 							//}
 
-							SynchronizationLog.Current.Save(typeof(AlertMessage), null, null);
+							SynchronizationLog.Current.Save(typeof(AlertMessage), null, null, null);
 						}
 						catch (Exception ex)
 						{

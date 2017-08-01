@@ -144,6 +144,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
         /// </summary>
         private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
             lock (m_trustedCerts)
             {
                 if (m_trustedCerts.Contains(certificate.Subject))

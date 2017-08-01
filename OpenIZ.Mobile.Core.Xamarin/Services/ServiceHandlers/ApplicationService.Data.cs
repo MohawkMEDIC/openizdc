@@ -149,7 +149,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 if (itm.Filters.Count > 0)
                     foreach (var f in itm.Filters)
-                        ApplicationContext.Current.GetService<RemoteSynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f), itm.Always);
+                        ApplicationContext.Current.GetService<RemoteSynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f), itm.Always, itm.Name);
                 else
                     ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType);
             }

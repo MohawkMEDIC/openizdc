@@ -79,6 +79,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error truncating care plan: {0}", e);
+                this.m_resetEvent.Set();
                 throw;
             }
         }

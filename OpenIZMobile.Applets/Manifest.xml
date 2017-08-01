@@ -18,7 +18,7 @@
  - Date: 2016-7-18
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.9.7.7">
+  <info id="org.openiz.core" version="0.9.7.8">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -536,7 +536,7 @@
     <string key="locale.sync.resource.UserEntity">Author Information</string>
     <string key="locale.sync.resource.Provider">Provider Information</string>
     <string key="locale.sync.resource.ManufacturedMaterial">Material Stock Elements</string>
-    <string key="locale.sync.resource.Person">Persons (Patients &amp; Next of Kin)</string>
+    <string key="locale.sync.resource.Person">Relatives and Next of Kin</string>
     <string key="locale.sync.resource.Act">Acts (Vaccinations, Weights, Adjustments, etc.)</string>
     <string key="locale.sync.resource.PatientEncounter">Patient Encounter</string>
     <string key="locale.sync.resource.SubstanceAdministration">Substance Administration</string>
@@ -544,6 +544,17 @@
     <string key="locale.sync.resource.QuantityObservation">Quantity Observation</string>
     <string key="locale.sync.resource.TextObservation">Text Observation</string>
     <string key="locale.sync.resource.TemplateDefinition">Template Definition</string>
+    <string key="locale.sync.resource.Patient">My Patients</string>
+    <string key="locale.sync.resource.Act.other">Other Actions (orders, financial, etc.)</string>
+    <string key="locale.sync.resource.UserEntity.my">Users in my Facility</string>
+    <string key="locale.sync.resource.PatientEncounter.my">Subscribed Patient Encounters</string>
+    <string key="locale.sync.resource.Place.state">Places in my Region</string>
+    <string key="locale.sync.resource.Place.county">Places in my District</string>
+    <string key="locale.sync.resource.Place.all">Places (Nationwide)</string>
+    <string key="locale.sync.resource.Place.outOfState">Places out of Region</string>
+    <string key="locale.sync.resource.Place.outOfCounty">Places out of District</string>
+    <string key="locale.sync.resource.Place.my">My Facility Metadata</string>
+    <string key="locale.sync.resource.ManufacturedMaterial.my">My Owned Stock</string>
     <!-- End Sync Centre -->
 
     <!-- Audit -->

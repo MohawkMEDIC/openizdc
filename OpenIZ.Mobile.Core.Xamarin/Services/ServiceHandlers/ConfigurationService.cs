@@ -304,6 +304,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             {
                                 case "UserEntity":
                                 case "Provider":
+                                    syncSetting.Name = "locale.sync.resource.Provider";
                                     if (syncSetting.Filters.Count == 0)
                                     {
                                         // All users and providers for stuff I'm interested in the area
@@ -313,12 +314,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     }
                                     break;
                                 case "Patient":
+                                    syncSetting.Name = "locale.sync.resource.Patient";
                                     syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     break;
                                 case "Person":
+                                    syncSetting.Name = "locale.sync.resource.Person";
                                     syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     break;
                                 case "Act":
+                                    syncSetting.Name = "locale.sync.resource.Act.other";
                                     syncSetting.Filters.Add("classConcept=!" + ActClassKeys.SubstanceAdministration +
                                         "&classConcept=!" + ActClassKeys.Observation +
                                         "&classConcept=!" + ActClassKeys.Encounter +
@@ -329,6 +333,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
                                     break;
                                 case "UserEntityMe":
+                                    syncSetting.Name = "locale.sync.resource.UserEntity.my";
                                     syncSetting.ResourceAqn = "UserEntity";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.Always;
                                     syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + facilityId + "&_expand=relationship&_expand=participation");
@@ -338,6 +343,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 case "CodedObservation":
                                 case "TextObservation":
                                 case "PatientEncounter":
+
                                     // I want all stuff for patients in my catchment
                                     syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     // I want all stuff for my facility for patients which are not assigned to me
@@ -348,13 +354,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                     break;
                                 case "PatientEncounterMe":
+                                    syncSetting.Name = "locale.sync.resource.PatientEncounter.my";
                                     syncSetting.Filters.Add("participation[RecordTarget].source.participation[Location].player=" + facilityId + "&participation[RecordTarget].source.statusConcept=" + StatusKeys.Active + "&participation[RecordTarget].source.classConcept=" + ActClassKeys.Encounter);
                                     syncSetting.ResourceAqn = "Person";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     break;
                                 case "Place":
                                     if (facilityState != null)
-                                    { 
+                                    {
+                                        syncSetting.Name = "locale.sync.resource.Place.state";
+
                                         // all SDL in my county
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation");
                                         // all places in my county
@@ -362,6 +371,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     }
                                     else if (facilityCounty != null)
                                     {
+                                        syncSetting.Name = "locale.sync.resource.Place.county";
                                         // all sdl in my state
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
                                         // all places in my state
@@ -369,6 +379,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     }
                                     else
                                     {
+                                        syncSetting.Name = "locale.sync.resource.Place.all";
+
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
                                         syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
                                     }
@@ -381,6 +393,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     if (facilityState != null)
                                     {
+                                        syncSetting.Name = "locale.sync.resource.Place.outOfState";
+
                                         // all SDL in my county
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&_exclude=relationship&_exclude=participation");
                                         // all places in my county
@@ -388,6 +402,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     }
                                     else if (facilityCounty != null)
                                     {
+                                        syncSetting.Name = "locale.sync.resource.Place.outOfCounty";
                                         // all sdl in my state
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&_exclude=relationship&_exclude=participation");
                                         // all places in my state
@@ -397,20 +412,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting = null;
                                     break;
                                 case "PlaceMe":
+                                    syncSetting.Name = "locale.sync.resource.Place.my";
+
                                     syncSetting.ResourceAqn = "Place";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.Always;
                                     syncSetting.Filters.Add("id=" + facilityId);
                                     syncSetting.Always = true;
                                     break;
                                 case "Material":
+                                    syncSetting.Name = "locale.sync.resource.Material";
+
                                     if (syncSetting.Filters.Count == 0)
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Material);
                                     break;
                                 case "ManufacturedMaterial":
+                                    syncSetting.Name = "locale.sync.resource.ManufacturedMaterial";
+
                                     if (syncSetting.Filters.Count == 0)
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ManufacturedMaterial);
                                     break;
                                 case "ManufacturedMaterialMe":
+                                    syncSetting.Name = "locale.sync.resource.ManufacturedMaterial.my";
                                     syncSetting.ResourceAqn = "ManufacturedMaterial";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facilityId);
