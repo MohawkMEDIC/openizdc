@@ -119,7 +119,7 @@ angular.module('openiz', [])
     .filter('orderStatus', function () {
         return function (moodConcept, statusConcept) {
             if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {
-                return "locale.stock.label.shipped";
+                return "locale.stock.label.issued";
             } else if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Completed) {
                 return "locale.stock.label.fulfilled";
             } else if (statusConcept == OpenIZModel.StatusKeys.Obsolete) {
@@ -532,7 +532,7 @@ angular.module('openiz', [])
                             },
                             processResults: function (data, params) {
                                 //params.page = params.page || 0;
-                                var data = data.item || data;
+                                var data = data.$type == "Bundle" ? data.item : data.item || data;
                                 var retVal = { results: [] };
                                 if (groupString == null) {
                                     return {
