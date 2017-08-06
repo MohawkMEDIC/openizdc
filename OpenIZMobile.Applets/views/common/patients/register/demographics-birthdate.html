@@ -25,6 +25,7 @@
         <div class="col-xs-9" ng-class="{ 'has-error': (dateOfBirthForm.dateOfBirth.$touched || (dateOfBirthForm.$submitted || formSubmitted)) &amp;&amp; dateOfBirthForm.dateOfBirth.$invalid }">
             <div class="input-group">
                 <input 
+                       ng-disabled="isGeneratingCarePlan"
                        ng-readonly="patient.readonly.dateOfBirth || patientBackup.tag.hasBirthCertificate === 'True'" type="date"
                        name="dateOfBirth" id="dobInput"
                        class="form-control"
@@ -49,6 +50,7 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
+            <span id="generating-careplan-message"></span>
             <p ng-if="patientBackup.tag.hasBirthCertificate === 'True'">
                 {{ 'locale.patient.demographics.dateOfBirth.hasCertificate' | i18n }}
             </p>

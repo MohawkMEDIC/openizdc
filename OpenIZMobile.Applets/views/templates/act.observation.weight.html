@@ -69,7 +69,7 @@
                     <input ng-if="act._enabled" ng-class="{ 'input-error': (weightEntryForm['weight_' + act.targetModel.id].$touched || editEncounterForm.$submitted) &amp;&amp; (weightEntryForm['weight_' + act.targetModel.id].$error.number || weightEntryForm['weight_' + act.targetModel.id].$error.min || weightEntryForm['weight_' + act.targetModel.id].$error.max || weightEntryForm['weight_' + act.targetModel.id].$error.required)}" ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" min="1" max="100" class="form-control" ng-model="act.targetModel.value" />
                 </div>
             </div>
-            <div ng-class="!act._created &amp;&amp; act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'? 'col-xs-4':'col-xs-5'">
+            <div ng-class="!act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'? 'col-xs-4':'col-xs-5'">
                 <div class="input-group">
                     <label>
                         {{ 'locale.encounters.weight.unitOfMeasure' | i18n }}
@@ -79,7 +79,7 @@
                 </div>
             </div>
             <p ng-show="(editPatientForm.gender.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.weightMax' | i18n }}</p>
-            <div class="col-xs-1" ng-if="!act._created &amp;&amp; act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'">
+            <div class="col-xs-1" ng-if="!act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                 <label class="control control--checkbox">
                     <input type="checkbox"
                            ng-model="act._enabled"

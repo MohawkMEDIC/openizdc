@@ -43,6 +43,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using System.Reflection;
 using System.Diagnostics;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -188,6 +189,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         ApplicationContext.Current.SetProgress(String.Empty, 0);
 
                         // Pull complete?
+                        this.IsSynchronizing = false;
+
                         if (totalResults > 0 && initialSync)
                         {
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
@@ -196,6 +199,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         }
                         else if (totalResults > 0)
                             this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(totalResults, lastSync));
+                        
 
                     }
                     catch (Exception e)
@@ -205,7 +209,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     finally
                     {
                         Monitor.Exit(this.m_lock);
-                        this.IsSynchronizing = false;
                     }
                 }
             });

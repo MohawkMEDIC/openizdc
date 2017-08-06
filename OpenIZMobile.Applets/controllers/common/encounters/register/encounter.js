@@ -79,6 +79,15 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         bind._encounter.relationship._OverdueHasComponent.push(bind);
         $scope.afterfocus = afterfocus;
         bind._enabled = true;
+
+        // Disable activate on earlier sequence doses
+        for (var i = 0, length = bind._encounter.relationship._OverdueHasComponent.length; i < length; i++) {
+            if (bind._encounter.relationship._OverdueHasComponent[i].targetModel.protocol[0].protocol === bind.targetModel.protocol[0].protocol &&
+                bind.targetModel.doseSequence > bind._encounter.relationship._OverdueHasComponent[i].targetModel.doseSequence) {
+                bind._encounter.relationship._OverdueHasComponent[i].targetModel._hideActivate = true;
+            }
+        }
+
         // Call care planner to suggest the next item
         OpenIZ.App.showWait("#makeOvd_" + bind.targetModel.id);
         OpenIZ.CarePlan.getCarePlanAsync({
@@ -137,6 +146,14 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                 $timeout(function () { $(afterFocus).focus() }, 200);
             }
         };
+
+        // Reenable activate on the previous dose
+        for (var i = 0, length = bind._encounter.relationship._OverdueHasComponent.length; i < length; i++) {
+            if (bind._encounter.relationship._OverdueHasComponent[i].targetModel.protocol[0].protocol === bind.targetModel.protocol[0].protocol &&
+                bind._encounter.relationship._OverdueHasComponent[i].targetModel.doseSequence === bind.targetModel.doseSequence - 1) {
+                bind._encounter.relationship._OverdueHasComponent[i].targetModel._hideActivate = false;
+            }
+        }
 
         // Is there a previous or later step in the has component? if so warn
         var laterStep = $.grep(bind._encounter.relationship.HasComponent, /** @param {OpenIZModel.Act} e */ function (e) {
@@ -318,9 +335,9 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     };
 
     scope.hasCauseOfDeath = scope.hasCauseOfDeath || function (encounter) {
-        return $.grep(encounter.relationship.HasComponent, function (x) {
+        return (encounter.relationship && $.grep(encounter.relationship.HasComponent, function (x) {
             return x.targetModel && x.targetModel.templateModel && x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath";
-        }).length > 0;
+        }).length > 0);
     }
 
     scope.addCauseOfDeath = scope.addCauseOfDeath || function (patient, act, encounter) {

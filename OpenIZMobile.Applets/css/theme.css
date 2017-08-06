@@ -1708,3 +1708,12 @@ a.disabled {
 .clear-both {
     clear: both;
 }
+
+@media (max-width: 991px) {
+    .patient-tile-value {
+        margin-left: 10px;
+    }
+}
+.small-input {
+    width: auto !important;
+}

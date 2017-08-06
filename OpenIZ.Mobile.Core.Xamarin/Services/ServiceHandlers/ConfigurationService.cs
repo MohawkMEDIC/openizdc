@@ -59,6 +59,10 @@ using OpenIZ.Mobile.Core.Security.Audit;
 using System.Net;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Interfaces;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -229,6 +233,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
                     var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
+
+                    var facilityId = optionObject["data"]["sync"]["subscribe"].ToString();
+                    var facility = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(Guid.Parse(facilityId), Guid.Empty);
+                    var district = optionObject["data"]?["sync"]?["regionOnly"]?.ToString() != "true" ? null : facility.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
+                    var region = optionObject["data"]?["sync"]?["regionOnly"]?.ToString() != "true" ? null : ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(district.Value, Guid.Empty)?.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
+
                     // TODO: Customize this and clean it up ... It is very hackish
                     foreach (var res in new String[] {
                         "ConceptSet",
@@ -249,6 +259,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "ManufacturedMaterialMe",
                         "Person",
                         "PatientEncounter",
+                        "PatientEncounterMe",
                         "SubstanceAdministration",
                         "CodedObservation",
                         "QuantityObservation",
@@ -283,9 +294,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         }
                         else
                         { // Only interested in a few facilities
-                            var facility = optionObject["data"]["sync"]["subscribe"].ToString();
-                            if (!syncConfig.Facilities.Contains(facility))
-                                syncConfig.Facilities.Add(facility);
+                            if (!syncConfig.Facilities.Contains(facilityId))
+                                syncConfig.Facilities.Add(facilityId);
 
                             switch (res)
                             {
@@ -293,20 +303,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 case "Provider":
                                     if (syncSetting.Filters.Count == 0)
                                     {
-                                        syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facility + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("participation.source.participation.player=" + facility + "&_exclude=relationship&_exclude=participation");
+                                        // All users and providers in the area
+                                        if (region.HasValue)
+                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target.relationship[Parent].target=" + region.ToString() + "&_exclude=relationship&_exclude=participation");
+                                        else if (district.HasValue)
+                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&realtionship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target=" + district.ToString() + "&_exclude=relationship&_exclude=participation");
+                                        else
+                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=participation");
+                                        // All users or providers who are involved in acts this facility is subscribed to
+                                        syncSetting.Filters.Add("participation.source.participation.player=" + facilityId + "&_exclude=relationship&_exclude=participation");
                                     }
                                     break;
                                 case "Person":
-                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facility);
-                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facility);
+                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
+                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     break;
                                 case "Act":
                                     syncSetting.Filters.Add("classConcept=!" + ActClassKeys.SubstanceAdministration +
                                         "&classConcept=!" + ActClassKeys.Observation +
                                         "&classConcept=!" + ActClassKeys.Encounter +
                                         "&classConcept=!" + ActClassKeys.Procedure +
-                                        "&participation[Destination|Location].player=" + facility + "&_expand=relationship&_expand=participation");
+                                        "&participation[Destination|Location].player=" + facilityId + "&_expand=relationship&_expand=participation");
 	                                //syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
 									//syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
                                     //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
@@ -314,7 +331,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 case "UserEntityMe":
                                     syncSetting.ResourceAqn = "UserEntity";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.Always;
-                                    syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + facility + "&_expand=relationship&_expand=participation");
+                                    syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + facilityId + "&_expand=relationship&_expand=participation");
                                     break;
                                 case "SubstanceAdministration":
                                 case "QuantityObservation":
@@ -322,22 +339,40 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 case "TextObservation":
                                 case "PatientEncounter":
                                     // I want all stuff for patients in my catchment
-                                    syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facility);
+                                    syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + facilityId);
                                     // I want all stuff for my facility for patients which are not assigned to me
-                                    syncSetting.Filters.Add("participation[Location|InformationRecipient|EntryLocation].player=" + facility + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + facility + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=!" + facility);
+                                    syncSetting.Filters.Add("participation[Location|InformationRecipient|EntryLocation].player=" + facilityId + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=!" + facilityId);
                                     // All stuff that is happening out of my facility for any patient associated with me
                                     //syncSetting.Filters.Add("participation[Location|InformationRecipient|EntryLocation].player=!" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=" + itm);
                                     //syncSetting.Filters.Add("participation[Location].player=!" + itm + "&participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm);
                                     //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                     break;
+                                case "PatientEncounterMe":
+                                    syncSetting.Filters.Add("participation[RecordTarget].source.participation[Location].player=" + facilityId + "&participation[RecordTarget].source.statusConcept=" + StatusKeys.Active + "&participation[RecordTarget].source.classConcept=" + ActClassKeys.Encounter);
+                                    syncSetting.ResourceAqn = "Person";
+                                    syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
+                                    break;
                                 case "Place":
-                                    syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
-                                    syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
+                                    if(region.HasValue)
+                                    {
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[Parent].target.relationship[Parent].target=" + region.ToString() + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target.relationship[Parent].target=" + region.ToString());
+                                    }
+                                    else if (district.HasValue)
+                                    {
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[Parent].target=" + district.ToString() + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target.relationship[Parent].target=" + district.ToString());
+                                    }
+                                    else
+                                    {
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
+                                    }
                                     break;
                                 case "PlaceMe":
                                     syncSetting.ResourceAqn = "Place";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.Always;
-                                    syncSetting.Filters.Add("id=" + facility);
+                                    syncSetting.Filters.Add("id=" + facilityId);
                                     syncSetting.Always = true;
                                     break;
                                 case "Material":
@@ -351,7 +386,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 case "ManufacturedMaterialMe":
                                     syncSetting.ResourceAqn = "ManufacturedMaterial";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
-                                    syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facility);
+                                    syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facilityId);
+                                    syncSetting.Filters.Add("relationship[OwnedEntity].source=" + facilityId);
                                     break;
 
                             }
@@ -543,7 +579,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new ImsiPersistenceService());
-
+                ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Query(o => o.ConceptSets.Any(s=>s.Key == ConceptSetKeys.AddressComponentType));
+                EntitySource.Current = new EntitySource(new ConfigurationEntitySource());
                 byte[] pcharArray = Guid.NewGuid().ToByteArray();
                 char[] spec = { '@', '#', '$', '*', '~' };
                 for (int i = 0; i < pcharArray.Length; i++)
@@ -696,7 +733,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 var option = serviceOptions.Endpoints.FirstOrDefault(o => o.ServiceType == ServiceEndpointType.AuthenticationService);
 
-
                 if (option == null)
                 {
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new HttpBasicIdentityProvider());
@@ -750,6 +786,52 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 ErrorDescription = e.InnerException?.Message,
                 ErrorType = e.GetType().Name
             };
+        }
+
+        /// <summary>
+        /// Configuration eneiity source
+        /// </summary>
+        private class ConfigurationEntitySource : IEntitySourceProvider
+        {
+            /// <summary>
+            /// Get the specified object
+            /// </summary>
+            public TObject Get<TObject>(Guid? key) where TObject : IdentifiedData, new()
+            {
+                if (typeof(Concept).IsAssignableFrom(typeof(TObject)))
+                    return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Get(key.Value);
+                return null;
+            }
+
+            /// <summary>
+            /// Get specified version
+            /// </summary>
+            /// <typeparam name="TObject"></typeparam>
+            /// <param name="key"></param>
+            /// <param name="versionKey"></param>
+            /// <returns></returns>
+            public TObject Get<TObject>(Guid? key, Guid? versionKey) where TObject : IdentifiedData, IVersionedEntity, new()
+            {
+                if (typeof(Concept).IsAssignableFrom(typeof(TObject)))
+                    return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Get(key.Value);
+                return null;
+            }
+
+
+            public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
+            {
+                return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Query(o=>o.SourceEntityKey == sourceKey) ?? new List<TObject>();
+            }
+
+            public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
+            {
+                return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Query(o => o.SourceEntityKey == sourceKey) ?? new List<TObject>();
+            }
+
+            public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
+            {
+                return ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>()?.Query(query) ?? new List<TObject>();
+            }
         }
     }
 }

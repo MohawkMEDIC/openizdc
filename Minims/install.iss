@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client SDK"
-#define MyAppVersion "0.9.6"
+#define MyAppVersion "0.9.7.2"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 
@@ -22,7 +22,7 @@ DefaultDirName={pf}\Mohawk College\OpenIZ\sdk
 DisableProgramGroupPage=yes
 LicenseFile=..\License.rtf
 OutputDir=.\dist
-OutputBaseFilename=setup-openiz-dc-sdk
+OutputBaseFilename=openizdc-sdk-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 

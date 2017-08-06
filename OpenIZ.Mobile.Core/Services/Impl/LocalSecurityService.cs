@@ -41,6 +41,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         public event EventHandler<AuditDataEventArgs> DataObsoleted;
         public event EventHandler<AuditDataEventArgs> DataUpdated;
         public event EventHandler<SecurityAuditDataEventArgs> SecurityAttributesChanged;
+        public event EventHandler<SecurityAuditDataEventArgs> SecurityResourceCreated;
+        public event EventHandler<SecurityAuditDataEventArgs> SecurityResourceDeleted;
 
         /// <summary>
         /// Change user's password

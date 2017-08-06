@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.7.0"
+#define MyAppVersion "0.9.7.2"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: ".\bin\x86\SignedRelease\DisconnectedClient.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\CefSharp.BrowserSubprocess.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\bin\x86\SignedRelease\sqlite3.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: ".\bin\x86\SignedRelease\sqlite3.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\Applets\org.openiz.core.pak"; DestDir: "{app}\applets"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\fr\OpenIZ.Mobile.Core.resources.dll"; DestDir: "{app}\fr"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\locales\*"; DestDir: "{app}\locales"; Flags: ignoreversion recursesubdirs createallsubdirs

@@ -24,7 +24,8 @@
             <div class="input-group">
                 <label class="control-label">
                     {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} 
-                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose">{{ act.targetModel.doseSequence }}</a>
+                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</a>
+                    <span ng-if="act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</span>
                 
                 <span ng-if="act._created">
                     ({{ 'locale.encounters.immunization.isBooster' | i18n }})
@@ -63,9 +64,9 @@
                             class="form-control"
                             ng-model="act.targetModel.participation.Consumable[0].player"
                             data-watch="act.targetModel.participation.Product.player"
-                            data-watch-target="relationship[ManufacturedProduct].source"
+                            data-watch-target="relationship[Instance].source"
                             oiz-databind="ManufacturedMaterial"
-                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                            data-filter='{ "relationship[Instance].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                             data-display="scope.lotNumber"
                             data-defaultEmpty="true"
                             data-defaultFirst="true"
@@ -99,7 +100,7 @@
                             bind:source="Concept"
                             bind:value="name[{{ locale }}].value"
                             bind:filter="conceptSet.mnemonic=AdministrationSite"
-                            ng-disabled="!act._enabled"
+                            ng-disabled="!act._enabled || act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'"
                             ng-change="act.targetModel.site == 'e5b6847e-91e0-4fca-ac2e-753962008080' ? act.targetModel.route = '0a1388b0-66fb-4063-bfe3-151dd8442838' : act.targetModel.route='d594f99f-0151-41a0-a359-282ab54683a1'">
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.site' | i18n }}</option>
                     </select>
@@ -148,10 +149,11 @@
                                 class="form-control"
                                 ng-model="act.targetModel.participation.Consumable[$index + 1].player"
                                 oiz-databind="ManufacturedMaterial"
-                                data-filter='{ "relationship[ManufacturedProduct].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                                data-filter='{ "relationship[Instance].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                                 data-display="scope.lotNumber"
                                 data-defaultEmpty="true"
-                                data-defaultFirst="true"></select>
+                                data-defaultFirst="true"
+                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"></select>
                     </div>
                     <div class="help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
@@ -184,7 +186,7 @@
                 </div>
             </div>
             <div class="col-xs-3" ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                <a class="btn btn-lg btn-info" ng-click="removeOverdue(act, '#enable_' + act.targetModel.id)">
+                <a class="btn btn-lg btn-info" ng-if="!act.targetModel._hideActivate" ng-click="removeOverdue(act, '#enable_' + act.targetModel.id)">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-down"></span>
                         <span class="hidden-xs">{{ 'locale.action.activate' | i18n }}</span>

@@ -94,7 +94,7 @@ namespace OpenIZ.Mobile.Core.Security
             }
 
             // Can we make this decision based on the claims?
-            if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == ClaimTypes.OpenIzGrantedPolicyClaim && c.Value == policyId))
+            if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == ClaimTypes.OpenIzGrantedPolicyClaim && c.Value == policyId || policyId.StartsWith(String.Format("{0}.", c.Value))))
             {
                 rule = PolicyGrantType.Grant;
             }

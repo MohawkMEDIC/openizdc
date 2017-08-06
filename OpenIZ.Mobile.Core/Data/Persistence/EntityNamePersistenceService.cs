@@ -35,6 +35,7 @@ using SQLite.Net.Interop;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Core.Data.QueryBuilder;
+using System.Threading;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -165,6 +166,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<EntityNameComponent, DbEntityNameComponent, DbEntityNameComponent.QueryResult>, ILocalAssociativePersistenceService
     {
 
+        // Name sequence
+        private static int m_nameSequence = -1;
+
+        // Lock object
+        private static object m_lockObject = new object();
+
         // Existing 
         private Dictionary<String, byte[]> m_existingNames = new Dictionary<string, byte[]>();
 
@@ -214,7 +221,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (String.IsNullOrEmpty(modelInstance.Value)) return retVal;
             if (!this.m_existingNames.TryGetValue(modelInstance.Value, out existingKey))
             {
-                var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
+                var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).Take(1).FirstOrDefault();
                 if (existing != null && existing.Key != retVal.Key)
                     retVal.ValueUuid = existing.Uuid;
                 else if (!String.IsNullOrEmpty(modelInstance.Value))
@@ -246,7 +253,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override DbEntityNameComponent BeforeInsertDomainObject(LocalDataContext context, DbEntityNameComponent domain)
         {
-            domain.Sequence = context.Connection.ExecuteScalar<Int32>("SELECT COALESCE(MAX(sequence), 0) + 1 FROM entity_name_comp");
+            lock(m_lockObject)
+            {
+                if(m_nameSequence < 0)
+                    m_nameSequence = context.Connection.ExecuteScalar<Int32>("SELECT COALESCE(MAX(sequence), 0) + 1 FROM entity_name_comp");
+                domain.Sequence = m_nameSequence++;
+            }
             return domain;
         }
 

@@ -50,7 +50,10 @@ namespace OpenIZ.Mobile.Core.Data
 
         // Cached query
         private Dictionary<String, IEnumerable<Object>> m_cachedQuery = new Dictionary<string, IEnumerable<object>>();
-        
+
+        // Transaction items
+        private Dictionary<Guid, IdentifiedData> m_transactionItems = new Dictionary<Guid, IdentifiedData>();
+
         /// <summary>
         /// Cache commit
         /// </summary>
@@ -101,6 +104,26 @@ namespace OpenIZ.Mobile.Core.Data
         /// Data dictionary
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
+
+        /// <summary>
+        /// Add an item to the list of items which are being about to be committed
+        /// </summary>
+        internal void AddTransactedItem<TModel>(TModel data) where TModel : IdentifiedData
+        {
+            lock(this.m_transactionItems)
+                if(!this.m_transactionItems.ContainsKey(data.Key.Value))
+                    this.m_transactionItems.Add(data.Key.Value, data);
+        }
+
+        /// <summary>
+        /// Add an item to the list of items which are being about to be committed
+        /// </summary>
+        internal IdentifiedData FindTransactedItem(Guid key) 
+        {
+            IdentifiedData retVal = null;
+            this.m_transactionItems.TryGetValue(key, out retVal);
+            return retVal; 
+        }
 
         /// <summary>
         /// The data loading mode
