@@ -137,9 +137,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                 }
             }
 
-            // Set user agent
-            retVal.UserAgent = String.Format("{0} {1} ({2})", Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyTitleAttribute>()?.Title, Assembly.GetEntryAssembly().GetName().Version, Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
-            return retVal;
+			// Set user agent
+			var asm = Assembly.GetEntryAssembly() ?? typeof(RestClient).Assembly;
+
+	        retVal.UserAgent = String.Format("{0} {1} ({2})", asm.GetCustomAttribute<AssemblyTitleAttribute>()?.Title, asm.GetName().Version, asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+
+			return retVal;
         }
 
         /// <summary>
