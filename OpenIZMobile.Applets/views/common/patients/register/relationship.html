@@ -42,7 +42,7 @@
             </p>
         </div>
     </div>
-    <div ng-show="patient.relationship.NextOfKin.relationshipType">
+    <div ng-show="patient.relationship.NextOfKin.relationshipType &amp;&amp; patient.relationship.NextOfKin.relationshipType != '1ee4e74f-542d-4544-96f6-266a6247f274'">
         <div class="form-group">
             <label class="col-xs-3 control-label" for="relationGivenName">{{ 'locale.patient.relative.givenName' | i18n }}<span ng-if="motherUnknown">*</span></label>
             <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.relationGivenName.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.relationGivenName.$invalid }">

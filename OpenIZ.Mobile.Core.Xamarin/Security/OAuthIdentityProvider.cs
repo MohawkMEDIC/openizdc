@@ -150,9 +150,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
                             {
                                 if (principal.Identity.Name == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
-                                    restClient.Description.Endpoint[0].Timeout = 20000;
-                                else
-                                    restClient.Description.Endpoint[0].Timeout = 3000;
+                                    restClient.Description.Endpoint[0].Timeout = restClient.Description.Endpoint[0].Timeout * 2;
                                 OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                                 retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
                             }
@@ -214,7 +212,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         // TODO: Clean this up
                         try
                         {
-                            this.SynchronizeSecurity(password, retVal);
+                            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=>this.SynchronizeSecurity(password, o as IPrincipal), retVal);
                         }
                         catch(Exception ex)
                         {
@@ -344,15 +342,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     localSu.PhoneNumber = cprincipal.FindClaim(ClaimTypes.Telephone)?.Value;
                     ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Update(localSu);
 
+                    // Add user to roles
+                    // TODO: Remove users from specified roles?
+                    localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
                 }
                 catch (Exception ex)
                 {
                     this.m_tracer.TraceWarning("Insertion of local cache credential failed: {0}", ex);
                 }
 
-                // Add user to roles
-                // TODO: Remove users from specified roles?
-                localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
+                
             }
         }
 

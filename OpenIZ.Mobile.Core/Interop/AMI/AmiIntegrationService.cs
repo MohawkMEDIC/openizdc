@@ -38,6 +38,8 @@ using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Interop.AMI
 {
@@ -51,6 +53,16 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(AmiIntegrationService));
+
+        /// <summary>
+        /// Fired on response
+        /// </summary>
+        public event EventHandler<RestResponseEventArgs> Responding;
+
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
         /// <summary>
         /// Gets current credentials
@@ -191,7 +203,8 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 {
                     case "AuditInfo":
                         // Only send audits over wifi
-                        if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkWifi)
+                        if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkWifi ||
+                            SynchronizationQueue.Admin.Count() > 10)
                         {
                             foreach(var a in (data as AuditInfo).Audit)
                                 AuditUtil.AddDeviceActor(a);
@@ -223,7 +236,7 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 {
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = new NullCredentials();
-                    amiClient.Client.Description.Endpoint[0].Timeout = 1000;
+                    amiClient.Client.Description.Endpoint[0].Timeout = 10000;
                     return amiClient.Ping();
                 }
                 else

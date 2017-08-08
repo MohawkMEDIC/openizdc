@@ -44,6 +44,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Data\Migrations\CatalogEdmonton4Update.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialAuditCatalog.cs" />
     <Compile Include="DataModelExtensions.cs" />
     <Compile Include="Data\Connection\LockableSQLiteConnection.cs" />

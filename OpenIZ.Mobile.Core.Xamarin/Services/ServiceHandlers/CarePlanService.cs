@@ -54,6 +54,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [RestOperation(UriPath = "/refresh", Method = "POST", FaultProvider = nameof(CarePlanFaultProvider))]
         public void Refresh()
         {
+            ApplicationContext.Current.GetService<CarePlanManagerService>().Truncate();
             ApplicationContext.Current.GetService<CarePlanManagerService>().RefreshCarePlan(true);
         }
 

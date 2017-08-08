@@ -21,11 +21,17 @@
 
 /// <reference path="openiz.js"/>
 /// <reference path="openiz-model.js"/>
-
 /**
- * Open IZ Localization for angular
+ * @version 0.9.6 (Edmonton)
+ * @copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
+ * @license Apache 2.0
  */
 
+/**
+ * @summary Represents OpenIZ bindings for angular.
+ * @description The purpose of these functions are to provide a mechanism to leverage OpenIZ functionality within AngularJS
+ * @class Angular
+ */
 angular.module('openiz', [])
     //.factory('authInterceptor', ['$log', function ($log) {
     //    return {
@@ -81,8 +87,13 @@ angular.module('openiz', [])
         }];
     })
     /** 
+     * @method i18n
+     * @memberof Angular
      * @summary Filter for localization
      * @use {{ KEY | i18n }}
+     * @description This will translate the specified string into the current language per the manifest file. The mobile application (on android) will pre-process locatlizations so this use of the the filter will be a static translation
+     * @example 
+     *     <span class="label label-info">{ 'locale.someString' | i18n }</span>
      */
     .filter('i18n', ['$rootScope', 'localize', function ($rootScope, localize) {
         var filterFn = function (key) {
@@ -91,6 +102,15 @@ angular.module('openiz', [])
         filterFn.$stateful = false;
         return filterFn;
     }])
+    /** 
+     * @method translate
+     * @memberof Angular
+     * @summary Filter for localization
+     * @use {{ KEY | translate }}
+     * @description This filter is a dynamic translation which is not pre-processed and is intead done in JavaScript. On platforms with limited resources this may not be desirable.
+     * @example 
+     *     <span class="label label-info">{ 'locale.someString' | translate }</span>
+     */
     .filter('translate', function () {
         return function (input) {
             return OpenIZ.Localization.getString(input);
@@ -99,7 +119,7 @@ angular.module('openiz', [])
     .filter('orderStatus', function () {
         return function (moodConcept, statusConcept) {
             if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {
-                return "locale.stock.label.shipped";
+                return "locale.stock.label.issued";
             } else if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Completed) {
                 return "locale.stock.label.fulfilled";
             } else if (statusConcept == OpenIZModel.StatusKeys.Obsolete) {
@@ -120,6 +140,13 @@ angular.module('openiz', [])
             return "default";
         };
     })
+    /**
+     * @method oizSum
+     * @memberof Angular
+     * @summary Sums the values from the model (an array) together 
+     * @example
+     *      <span class="label label-info">{{ 'locale.total' | i18n }} : {{ act.participation | oizSum: 'quantity' }}</span>
+     */
     .filter('oizSum', function () {
         return function (modelValue, propname) {
             // TODO: Find a better function for doing this
@@ -136,6 +163,14 @@ angular.module('openiz', [])
             return sum;
         };
     })
+    /**
+     * @method oizEntityIdentifier
+     * @memberof Angular
+     * @summary Renders a model value which is an EntityIdentifier in a standard way
+     * @see {OpenIZModel.EntityIdentifier}
+     * @example
+     *      <div class="col-md-2">{{ patient.identifier | oizEntityIdentifier }}</div>
+     */
     .filter('oizEntityIdentifier', function () {
         return function (modelValue) {
             if (modelValue === undefined)
@@ -147,22 +182,67 @@ angular.module('openiz', [])
                     return modelValue[k].value;
         };
     })
+    /**
+     * @method oizConcept
+     * @memberof Angular
+     * @summary Renders a model concept into a standard display using the concept's display name
+     * @see {OpenIZModel.Concept}
+     * @example
+     *      <div class="col-md-2">Gender:</div>
+     *      <div class="col-md-2">{{ patient.genderConceptModel | oizConcept }}</div>
+     */
     .filter('oizConcept', function () {
         return function (modelValue) {
             if (modelValue != null && modelValue.name != null)
                 return OpenIZ.Util.renderConceptName(modelValue.name);
         }
     })
+    /**
+     * @method oizEntityName
+     * @memberof Angular
+     * @summary Renders an entity's name in a standard display format
+     * @example
+     *      <div class="col-md-2">Name:</div><div class="col-md-4">{{ patient.name.OfficialRecord | oizEntityName }}</div>
+     */
     .filter('oizEntityName', function () {
         return function (modelValue) {
             return OpenIZ.Util.renderName(modelValue);
         }
     })
+    /** 
+     * @method oizEntityAddress
+     * @memberof Angular
+     * @summary Renders an entity's address in a standardized display form
+     * @description This function will render the entity's specified address in the format Street, Precinct, City, County, State, Country
+     * @example
+     *      <div class="col-md-2">Address:</div><div class="col-md-6">{{ patient.address.Home | oizEntityAddress }}</div>
+     */
     .filter('oizEntityAddress', function () {
         return function (modelValue) {
             return OpenIZ.Util.renderAddress(modelValue);
         }
     })
+    /** 
+     * @method datePrecisionFormat
+     * @memberof Angular
+     * @sumamry Renders the input date using the specified format identifier for date precision.
+     * @param {int} format The format or date precision: Y, m, D, F, etc.
+     * @see {OpenIZ.App.DatePrecisionFormats}
+     * @description To override the formatting for the specified date precision you must override the linked setting in the openiz.js file by setting it in your program
+     * @example mycontroller.js
+     *      ...
+     *       OpenIZ.App.DatePrecisionFormats = {
+     *       DateFormatYear: 'YYYY',
+     *       DateFormatMonth: 'YYYY-MM',
+     *       DateFormatDay: 'YYYY-MM-DD',
+     *       DateFormatHour: 'YYYY-MM-DD HH',
+     *       DateFormatMinute: 'YYYY-MM-DD HH:mm',
+     *       DateFormatSecond: 'YYYY-MM-DD HH:mm:ss'
+     *   },  // My own precision formats
+     * @example mmyview.html
+     *      <div class="col-md-2">DOB:</div><div class="col-md-4">{{ patient.dateOfBirth | datePrecisionFormat: patient.dateOfBirthPrecision }}</div>
+     *      <div class="col-md-2">Created On:</div><div class="col-md-4">{{ patient.creationTime | datePrecisionFormat: 'D' }}</div>
+     */
     .filter('datePrecisionFormat', function () {
         return function (date, format) {
             var dateFormat;
@@ -202,6 +282,16 @@ angular.module('openiz', [])
             return null;
         };
     })
+    /**
+     * @method oizTag
+     * @memberof Angular
+     * @summary Turns any input text box into a tagged text box which breaks apart its components pieces into an array on the model
+     * @example
+     *      <div class="col-md-2">Name:</div>
+     *      <div class="col-md-6">
+     *          <input type="text" oiz-tag="oiz-tag" name="name" ng-model="patient.name.OfficialRecord.component.Given" class="form-control"/>
+     *      </div>
+     */
     .directive('oizTag', function ($timeout) {
         return {
             require: 'ngModel',
@@ -235,10 +325,33 @@ angular.module('openiz', [])
                     createTokensOnBlur: true
                 });
 
-
             }
         }
     })
+    /**
+     * @method oizDatabind
+     * @memberof Angular
+     * @summary Dynamically binds data from the IMS into a drop down
+     * @param {string} value The model type to bind to
+     * @param {string} data-filter The filter to apply to the data binding operation
+     * @param {string} data-watch The model value to be watched for changes which will force the re-load of this drop down
+     * @param {string} data-watch-target The target in the data-filter where the watched value should be placed
+     * @param {string} data-display The property in the result set which should be displayed in the drop down. "scope" references the current result
+     * @param {string} data-key The property in the result set which should be returned as the key
+     * @param {bool} data-defaultFirst When true instructs the databinder to select the first value as the default
+     * @param {string} data-default Sets the expression (javascript) which can populate the default value
+     * @param {string} data-whenEmpty Sets the expression to use when there are no results in the data bind
+     * @param {string} data-defaultKey Sets the key value of the default value
+     * @example
+     *  <select 
+     *      oiz-databind="Place"
+     *      data-filter='{"typeConcept" : "21ab7873-8ef3-4d78-9c19-4582b3c40631" }'
+     *      data-display="scope.name.OfficialRecord.component.$other.value"
+     *      data-key="scope.key"
+     *      data-defaultFirst="true"
+     *      ng-model="patient.address.Home.component.CensusTract"
+     *  />
+     */
     .directive('oizDatabind', function ($timeout) {
         return {
             link: function (scope, element, attrs, ctrl) {
@@ -349,6 +462,19 @@ angular.module('openiz', [])
             }
         };
     })
+    /**
+     * @method oizEntitySearch
+     * @memberof Angular
+     * @summary Binds a select2 search box to the specified select input searching for the specified entities
+     * @description This class is the basis for all drop-down searches in OpenIZ disconnected client. It is used whenever you would like to have a search inline in a form and displayed nicely
+     * @param {string} value The type of object to be searched
+     * @param {string} filter The additional criteria by which results should be filtered
+     * @param {string} data-searchField The field which should be searched on. The default is name.component.value
+     * @param {string} data-default The function which returns a list of objects which represent the default values in the search
+     * @param {string} data-groupBy The property which sets the grouping for the results in the drop-down display
+     * @param {string} data-groupDisplay The property on the group property which is to be displayed
+     * @param {string} data-resultField The field on the result objects which contains the result
+     */
     .directive('oizEntitysearch', function ($timeout) {
         return {
             scope: {
@@ -399,14 +525,14 @@ angular.module('openiz', [])
                             method: "GET",
                             data: function (params) {
                                 filter[searchProperty] = "~" + params.term;
-                                filter["_count"] = 5;
+                                filter["_count"] = 10;
                                 filter["_offset"] = 0;
                                 filter["_viewModel"] = "min";
                                 return filter;
                             },
                             processResults: function (data, params) {
                                 //params.page = params.page || 0;
-                                var data = data.item || data;
+                                var data = data.$type == "Bundle" ? data.item : data.item || data;
                                 var retVal = { results: [] };
                                 if (groupString == null) {
                                     return {
@@ -473,6 +599,8 @@ angular.module('openiz', [])
                                     break;
                             }
                             retVal += "&nbsp;";
+
+
                             if (displayString != null) {
                                 var scope = selection;
                                 retVal += eval(displayString);
@@ -487,6 +615,10 @@ angular.module('openiz', [])
                                 retVal += selection.element.innerText.trim();
                             else if (selection.text)
                                 retVal += selection.text;
+
+                            if (selection.address)
+                                    retVal += " - <small>(<i class='fa fa-map-marker'></i> " + OpenIZ.Util.renderAddress(selection.address) + ")</small>";
+
                             return retVal;
                         },
                         keepSearchResults: true,
@@ -563,6 +695,12 @@ angular.module('openiz', [])
             }
         };
     })
+    /**
+     * @method oizCollapseIndicator
+     * @memberof Angular
+     * @summary Replaces the specified tag with an indicator which illustrates whether the current panel is collapsed
+     * @deprecated
+     */
     .directive('oizCollapseindicator', function () {
         return {
             link: function (scope, element, attrs, ctrl) {
@@ -648,6 +786,7 @@ angular.module('openiz', [])
             }
         };
     })
+    // TODO: Why is this even a thing?
     .directive('chartLegend', function () {
         return {
             restrict: 'E',

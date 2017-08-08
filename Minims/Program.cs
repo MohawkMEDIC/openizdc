@@ -97,7 +97,9 @@ namespace Minims
 
                 XamarinApplicationContext.ProgressChanged += (o, e) =>
                 {
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine(">>> PROGRESS >>> {0} : {1:#0%}", e.ProgressText, e.Progress);
+                    Console.ResetColor();
                 };
 
                 if (!MiniApplicationContext.Start(consoleArgs))

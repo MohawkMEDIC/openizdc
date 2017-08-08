@@ -116,6 +116,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
                 {
                     Etag = o.LastETag,
                     LastSync = o.LastSync,
+                    Name = o.Name,
                     ResourceName = o.ResourceType,
                     Filter = o.Filter
                 }).ToList();

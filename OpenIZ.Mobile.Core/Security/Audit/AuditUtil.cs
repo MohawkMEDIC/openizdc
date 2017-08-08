@@ -141,7 +141,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         }
 
         /// <summary>
-        /// Autility utility which can be used to send a data audit 
+        /// A utility which can be used to send a data audit 
         /// </summary>
         public static void AuditDataAction<TData>(EventTypeCodes typeCode, ActionType action, AuditableObjectLifecycle lifecycle, EventIdentifierType eventType, OutcomeIndicator outcome, String queryPerformed, params TData[] data) where TData : IdentifiedData
         {
@@ -202,6 +202,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 {
                     IDTypeCode = AuditableObjectIdType.SearchCritereon,
                     LifecycleType = AuditableObjectLifecycle.Access,
+					ObjectId = typeof(TData).Name,
                     QueryData = queryPerformed,
                     Role = AuditableObjectRole.Query,
                     Type = AuditableObjectType.SystemObject

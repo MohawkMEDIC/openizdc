@@ -253,7 +253,7 @@
                     <th>{{ 'locale.about.sync.etag' | i18n }}</th>
                 </tr>
                 <tr ng-repeat="s in about.syncInfo">
-                    <td>{{ OpenIZ.Localization.getString("locale.sync.resource." + s.resource) }}</td>
+                    <td>{{  OpenIZ.Localization.getString(s.name || ("locale.sync.resource." + s.resource)) }}</td>
                     <td>{{ s.lastSync | datePrecisionFormat:'M' }}</td>
                     <td>{{ s.etag }}</td>
                 </tr>

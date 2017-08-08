@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="err_applet_corrupt_reinstall" xml:space="preserve">
+    <value>The applet {0} was corrupted. Would you like to download a fresh copy?</value>
+  </data>
   <data name="err_authentication_exception" xml:space="preserve">
     <value>General authentication error occurred</value>
   </data>
   <data name="err_certificate_not_found" xml:space="preserve">
     <value>The specified security certificate was not found</value>
+  </data>
+  <data name="err_configuration_invalid_restore_prompt" xml:space="preserve">
+    <value>There was an error reading your device's configuration information. There is a backup available, would you like to restore the backup?</value>
   </data>
   <data name="err_duplicate_package_name" xml:space="preserve">
     <value>Package is already installed</value>

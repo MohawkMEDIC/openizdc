@@ -18,7 +18,7 @@
  - Date: 2016-7-18
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.9.7.6">
+  <info id="org.openiz.core" version="0.9.7.10">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -263,6 +263,13 @@
     <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
     <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessable, and you're using the correct settings.</string>
 
+    <string key="locale.settings.optimize">Network Optimization</string>
+    <string key="locale.settings.optimize.lzma">Ultra - Requires more server &amp;amp; tablet CPU but minimizes bandwidth (recommended: 2g / dial-in)</string>
+    <string key="locale.settings.optimize.bzip2">High - Requires moderate server &amp;amp; tablet CPU (recommended: 3g / ISDN / DSL)</string>
+    <string key="locale.settings.optimize.gzip">Medium - Balances CPU and bandwidth (recommended: 4g/LTE / DSL / Broadband)</string>
+    <string key="locale.settings.optimize.deflate">Fast - Sacrifices bandwidth for CPU speed (recommended: Broadband WiFi)</string>
+    <string key="locale.settings.optimize.off">Off - Does not optimize traffic (not recommended)</string>
+    <string key="locale.settings.optimize.help">This setting will set the compression level used to communicate with the server. The less bandwidth used the more processing power is required. </string>
     <string key="locale.settings.enableTracing">Enable Tracing</string>
 
     <string key="locale.settings.logTitle">Log Settings</string>
@@ -295,6 +302,11 @@
     <string key="locale.settings.syncEvents.commit">Everytime new data is available</string>
     <string key="locale.settings.syncEvents.ip">When the internet status changes</string>
 
+    <string key="locale.settings.restrictDownload">Restrict Places</string>
+    <string key="locale.settings.restrictDownload.everything">Everything</string>
+    <string key="locale.settings.restrictDownload.state">Only in my Region/State</string>
+    <string key="locale.settings.restrictDownload.county">Only in my District/County</string>
+    <string key="locale.settings.restrictDownload.help">Use this setting to add an additional restriction on the place data you want in your tablet.</string>
     <string key="locale.settings.pollEvent.start">Start</string>
     <string key="locale.settings.pollEvent.network">Network</string>
     <string key="locale.settings.pollEvent.commit">Commit</string>
@@ -524,7 +536,7 @@
     <string key="locale.sync.resource.UserEntity">Author Information</string>
     <string key="locale.sync.resource.Provider">Provider Information</string>
     <string key="locale.sync.resource.ManufacturedMaterial">Material Stock Elements</string>
-    <string key="locale.sync.resource.Person">Persons (Patients &amp; Next of Kin)</string>
+    <string key="locale.sync.resource.Person">Relatives and Next of Kin</string>
     <string key="locale.sync.resource.Act">Acts (Vaccinations, Weights, Adjustments, etc.)</string>
     <string key="locale.sync.resource.PatientEncounter">Patient Encounter</string>
     <string key="locale.sync.resource.SubstanceAdministration">Substance Administration</string>
@@ -532,6 +544,17 @@
     <string key="locale.sync.resource.QuantityObservation">Quantity Observation</string>
     <string key="locale.sync.resource.TextObservation">Text Observation</string>
     <string key="locale.sync.resource.TemplateDefinition">Template Definition</string>
+    <string key="locale.sync.resource.Patient">My Patients</string>
+    <string key="locale.sync.resource.Act.other">Other Actions (orders, financial, etc.)</string>
+    <string key="locale.sync.resource.UserEntity.my">Users in my Facility</string>
+    <string key="locale.sync.resource.PatientEncounter.my">Subscribed Patient Encounters</string>
+    <string key="locale.sync.resource.Place.state">Places in my Region</string>
+    <string key="locale.sync.resource.Place.county">Places in my District</string>
+    <string key="locale.sync.resource.Place.all">Places (Nationwide)</string>
+    <string key="locale.sync.resource.Place.outOfState">Places out of Region</string>
+    <string key="locale.sync.resource.Place.outOfCounty">Places out of District</string>
+    <string key="locale.sync.resource.Place.my">My Facility Metadata</string>
+    <string key="locale.sync.resource.ManufacturedMaterial.my">My Owned Stock</string>
     <!-- End Sync Centre -->
 
     <!-- Audit -->

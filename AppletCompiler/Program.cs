@@ -167,7 +167,7 @@ namespace AppletCompiler
                     {
                         Console.WriteLine("WARNING:>>> THIS PACKAGE IS NOT SIGNED - MOST OPEN IZ TOOLS WILL NOT LOAD IT");
                         mfst.Info.PublicKeyToken = null;
-                        pkg = mfst.CreatePackage();
+                        pkg = mfst.CreatePackage(parameters.Compression);
                         //pkg.Meta.PublicKeyToken = null;
                     }
                     pkg.Meta.Hash = SHA256.Create().ComputeHash(pkg.Manifest);
@@ -251,7 +251,7 @@ namespace AppletCompiler
                 X509Certificate2 signCert = new X509Certificate2(parameters.SignKey, parameters.SignPassword);
 
                 mfst.Info.PublicKeyToken = signCert.Thumbprint;
-                var retVal = mfst.CreatePackage();
+                var retVal = mfst.CreatePackage(parameters.Compression);
                 retVal.Meta.Hash = SHA256.Create().ComputeHash(retVal.Manifest);
                 retVal.Meta.PublicKeyToken = signCert.Thumbprint;
 

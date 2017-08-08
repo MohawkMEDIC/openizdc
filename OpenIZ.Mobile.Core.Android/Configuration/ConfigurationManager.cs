@@ -57,6 +57,8 @@ using OpenIZ.Mobile.Reporting;
 using OpenIZ.Mobile.Core.Xamarin.Data;
 using OpenIZ.Mobile.Core.Data.Warehouse;
 using OpenIZ.Mobile.Core.Tickler;
+using SharpCompress.Compressors.LZMA;
+using SharpCompress.Compressors.BZip2;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -331,6 +333,33 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             {
                 this.m_tracer?.TraceError(e.ToString());
             }
+        }
+
+        /// <summary>
+        /// Backup the configuration
+        /// </summary>
+        public void Backup()
+        {
+            using (var lzs = new BZip2Stream(File.Create(Path.ChangeExtension(this.m_configPath, "bak.bz2")), SharpCompress.Compressors.CompressionMode.Compress))
+                this.m_configuration.Save(lzs);
+        }
+
+        /// <summary>
+        /// True if the configuration has a backup
+        /// </summary>
+        public bool HasBackup()
+        {
+            return File.Exists(Path.ChangeExtension(this.m_configPath, "bak.bz2"));
+        }
+
+        /// <summary>
+        /// Restore the configuration
+        /// </summary>
+        public void Restore()
+        {
+            using (var lzs = new BZip2Stream(File.OpenRead(Path.ChangeExtension(this.m_configPath, "bak.bz2")), SharpCompress.Compressors.CompressionMode.Decompress))
+                this.m_configuration = OpenIZConfiguration.Load(lzs);
+            this.Save();
         }
 
         /// <summary>

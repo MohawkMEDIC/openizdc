@@ -60,5 +60,11 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         [Column("quantity")]
         public int Quantity { get; set; }
 
+        /// <summary>
+        /// Gets the sequence identifier
+        /// </summary>
+        [Column("sequence")]
+        public int Sequence { get; set; }
+
     }
 }

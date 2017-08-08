@@ -122,7 +122,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                 db.CreateTable<DbSecurityDevicePolicy>();
                 db.CreateTable<DbSecurityRolePolicy>();
                 db.CreateTable<DbActSecurityPolicy>();
-                db.CreateTable<DbEntitySecurityPolicy>();
+                //db.CreateTable<DbEntitySecurityPolicy>();
                 db.CreateTable<DbSecurityRole>();
                 db.CreateTable<DbSecurityUser>();
                 db.CreateTable<DbSecurityUserRole>();

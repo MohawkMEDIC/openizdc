@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the target entity
         /// </summary>
-        [Column("target"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
+        [Column("target"), MaxLength(16), NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
         public byte[] TargetUuid { get; set; }
 
 
