@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 
 using Newtonsoft.Json;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 {
@@ -47,6 +48,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
             ErrorType = e.GetType().Name;
             if (e.InnerException != null)
                 InnerError = new ErrorResult(e.InnerException);
+            if(e is DetectedIssueException)
+            {
+                this.ErrorDescription = String.Join(";", (e as DetectedIssueException).Issues.Select(o => o.Text));
+            }
         }
 
         [JsonProperty("type")]

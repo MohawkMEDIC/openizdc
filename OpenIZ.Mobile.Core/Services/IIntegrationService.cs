@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Services
 {
@@ -38,6 +39,16 @@ namespace OpenIZ.Mobile.Core.Services
     /// </summary>
     public interface IIntegrationService
     {
+
+        /// <summary>
+        /// Fired on response
+        /// </summary>
+        event EventHandler<RestResponseEventArgs> Responding;
+
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
         /// <summary>
         /// Find the specified filtered object

@@ -50,6 +50,16 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
     public class ImsiIntegrationService : IClinicalIntegrationService
     {
 
+        /// <summary>
+        /// Fired on response
+        /// </summary>
+        public event EventHandler<RestResponseEventArgs> Responding;
+
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+
         // Cached credential
         private IPrincipal m_cachedCredential = null;
 
@@ -74,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         private bool IsValidVersion(ImsiServiceClient client)
         {
             var expectedVersion = typeof(IdentifiedData).GetTypeInfo().Assembly.GetName().Version;
-            if(this.m_options == null)
+            if (this.m_options == null)
                 this.m_options = client.Options();
             if (this.m_options == null) return false;
             var version = new Version(this.m_options.InterfaceVersion);
@@ -107,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 this.m_cachedCredential = AuthenticationContext.Current.Principal;
                 return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }
@@ -164,6 +174,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             {
                 ImsiServiceClient client = this.GetServiceClient();
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
+                client.Client.Responding += (o, e) => this.Responding?.Invoke(o, e);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (client.Client.Credentials == null) return null;
                 if (options?.Timeout.HasValue == true)
@@ -215,6 +226,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             {
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
+                client.Client.Responding += (o, e) => this.Responding?.Invoke(o, e);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (client.Client.Credentials == null) return null;
 
@@ -252,6 +264,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                client.Client.Responding += (o, e) => this.Responding?.Invoke(o, e);
                 if (client.Client.Credentials == null) return;
 
                 // Special case = Batch submit of data with an entry point
@@ -261,6 +274,12 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     var bund = e.Body as Bundle;
                     if (!(bund?.Entry is UserEntity)) // not submitting a user entity so we only submit ACT
                         bund?.Item.RemoveAll(i => !(i is Act || i is Person && !(i is UserEntity)));// || i is EntityRelationship));
+                    if (bund != null)
+                    {
+                        bund.Key = Guid.NewGuid();
+                        e.Cancel = bund.Item.Count == 0;
+                    }
+
                 };
 
                 // Create method
@@ -293,7 +312,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 {
                     ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
                     client.Client.Credentials = new NullCredentials();
-                    client.Client.Description.Endpoint[0].Timeout = 5000;
+                    client.Client.Description.Endpoint[0].Timeout = 10000;
 
                     return this.IsValidVersion(client) &&
                         client.Ping();
@@ -303,8 +322,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             }
             catch (Exception e)
             {
-	            this.m_tracer.TraceError($"Unable to determine network state: {e}");
-				return false;
+                this.m_tracer.TraceError($"Unable to determine network state: {e}");
+                return false;
             }
         }
 
@@ -322,6 +341,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                client.Client.Responding += (o, e) => this.Responding?.Invoke(o, e);
                 if (client.Client.Credentials == null) return;
                 // Force an update
                 if (unsafeObsolete)
@@ -332,7 +352,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Obsolete" && o.GetParameters().Length == 1);
                 method = method.MakeGenericMethod(new Type[] { data.GetType() });
                 this.m_tracer.TraceVerbose("Performing IMSI OBSOLETE {0}", data);
-             
+
                 var iver = method.Invoke(client, new object[] { data }) as IVersionedEntity;
                 if (iver != null)
                     this.UpdateToServerCopy(iver);
@@ -356,13 +376,14 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 // HACK
                 if (!(data is Bundle || data is Entity || data is Act || data is Patch))
                     return;
-                if (data is Patch && 
+                if (data is Patch &&
                     !typeof(Entity).GetTypeInfo().IsAssignableFrom((data as Patch).AppliesTo.Type.GetTypeInfo()) &&
                     !typeof(Act).GetTypeInfo().IsAssignableFrom((data as Patch).AppliesTo.Type.GetTypeInfo()))
                     return;
 
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                client.Client.Responding += (o, e) => this.Responding?.Invoke(o, e);
                 if (client.Client.Credentials == null) return;
 
                 // Force an update
@@ -371,6 +392,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 // Special case = Batch submit of data with an entry point
                 var submission = (data as Bundle)?.Entry ?? data;
+
+                // Assign a uuid for this submission
+                if (data is Bundle && data.Key == null)
+                    data.Key = Guid.NewGuid();
 
                 if (submission is Patch)
                 {
@@ -404,10 +429,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                         }
 
                     }
-                    catch(WebException e)
+                    catch (WebException e)
                     {
 
-                        switch((e.Response as HttpWebResponse).StatusCode)
+                        switch ((e.Response as HttpWebResponse).StatusCode)
                         {
                             case HttpStatusCode.Conflict: // Try to resolve the conflict in an automated way
                                 this.m_tracer.TraceWarning("Will attempt to force PATCH {0}", patch);
@@ -446,7 +471,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                                 // Re-queue for create
                                 // First, we have to remove the "replaces version" key as it doesn't make much sense
-                                if(localObject is IVersionedEntity)
+                                if (localObject is IVersionedEntity)
                                     (localObject as IVersionedEntity).PreviousVersionKey = null;
                                 this.Insert(Bundle.CreateBundle(localObject as IdentifiedData));
                                 break;
@@ -476,7 +501,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     method = method.MakeGenericMethod(new Type[] { submission.GetType() });
                     this.m_tracer.TraceVerbose("Performing IMSI UPDATE (FULL) {0}", data);
 
-                   var iver = method.Invoke(client, new object[] { submission }) as IVersionedEntity;
+                    var iver = method.Invoke(client, new object[] { submission }) as IVersionedEntity;
                     if (iver != null)
                         this.UpdateToServerCopy(iver);
                 }

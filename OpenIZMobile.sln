@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZMobile", "OpenIZMobile\OpenIZMobile.csproj", "{B031B6B7-B756-4959-B72F-61DB32270647}"
 EndProject
@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Performance4.psess = Performance4.psess
 		Performance5.psess = Performance5.psess
 		Performance6.psess = Performance6.psess
+		Performance7.psess = Performance7.psess
 		Solution Items\SQLite-net.dll = Solution Items\SQLite-net.dll
 	EndProjectSection
 EndProject
@@ -75,6 +76,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Mobile.Reporting", "OpenIZ.Mobile.Reporting\OpenIZ.Mobile.Reporting.csproj", "{39A382D5-A4A1-415A-8CEB-618177E23FAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppletCompiler", "AppletCompiler\AppletCompiler.csproj", "{C83CABC0-A612-4F6D-AFDB-0E2B4C98CDEE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NOTICES", "NOTICES", "{33A06C6B-D3A0-4686-9E95-27ECF135689D}"
+	ProjectSection(SolutionItems) = preProject
+		CONTRIBUTING.md = CONTRIBUTING.md
+		License.rtf = License.rtf
+		NOTICE.md = NOTICE.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

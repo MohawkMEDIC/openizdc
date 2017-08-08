@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.7.2"
+#define MyAppVersion "0.9.7.4"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -82,6 +82,7 @@ Source: ".\bin\x86\SignedRelease\OpenIZ.Protocol.Xml.dll"; DestDir: "{app}"; Fla
 Source: ".\bin\x86\SignedRelease\snapshot_blob.bin"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\SQLite.Net.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\SQLite.Net.Platform.Generic.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\SharpCompress.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\System.Data.Portable.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\System.Transactions.Portable.dll"; DestDir: "{app}"; Flags: ignoreversion

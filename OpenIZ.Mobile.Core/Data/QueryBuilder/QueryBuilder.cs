@@ -439,7 +439,16 @@ namespace OpenIZ.Core.Data.QueryBuilder
                                 retVal.Append(" <> ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         case '~':
-                            retVal.Append(" LIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            if (sValue.Contains("*") || sValue.Contains("?"))
+                                retVal.Append(" LIKE ? ", CreateParameterValue(sValue.Substring(1).Replace("*","%"), propertyInfo.PropertyType));
+                            else
+                                retVal.Append(" LIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            break;
+                        case '^':
+                            retVal.Append(" LIKE ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            break;
+                        case '$':
+                            retVal.Append(" LIKE '%' || ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         default:
                             if (sValue.Equals("null"))

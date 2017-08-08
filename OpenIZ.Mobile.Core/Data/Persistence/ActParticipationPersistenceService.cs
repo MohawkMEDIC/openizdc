@@ -37,6 +37,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class ActParticipationPersistenceService : IdentifiedPersistenceService<ActParticipation, DbActParticipation>
     {
 
+        // Name sequence
+        private static int m_participationSequence = -1;
+        private static object m_lockObject = new object();
+
         // Role mnemonics to save from hitting the DB
         private readonly Dictionary<String, String> m_roleMnemonicDictionary = new Dictionary<String, String>() {
             { "A0174216-6439-4351-9483-A241A48029B7", "Admitter" },
@@ -96,6 +100,28 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             { "5B0FAC74-5AC6-44E6-99A4-6813C0E2F4A9", "Via" },
             { "0B82357F-5AE0-4543-AB8E-A33E9B315BAB", "Witness" }
         };
+
+        /// <summary>
+        /// Before inserting domain instance
+        /// </summary>
+        protected override DbActParticipation BeforeInsertDomainObject(LocalDataContext context, DbActParticipation domain)
+        {
+            lock (m_lockObject)
+            {
+                if (m_participationSequence < 0)
+                    m_participationSequence = context.Connection.ExecuteScalar<Int32>("SELECT COALESCE(MAX(sequence), 0) + 1 FROM act_participation");
+                domain.Sequence = m_participationSequence++;
+            }
+            return domain;
+        }
+
+        /// <summary>
+        /// Order by statement
+        /// </summary>
+        protected override SqlStatement AppendOrderByStatement(SqlStatement domainQuery)
+        {
+            return domainQuery.OrderBy<DbActParticipation>(o => o.Sequence);
+        }
 
         /// <summary>
         /// To model instance 

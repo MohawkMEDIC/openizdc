@@ -59,22 +59,26 @@ namespace DisconnectedClient
 
             Action<ApplicationProgressEventArgs> updateUi = (e) =>
             {
-                if (String.IsNullOrEmpty(e.ProgressText))
-                    return;
-                else
+                try
                 {
-                    lblStatus.Text = String.Format("{0} ({1:#0}%)", e.ProgressText, e.Progress * 100);
-                    if (e.Progress >= 0 && e.Progress <= 1)
-                    {
-                        pgMain.Style = ProgressBarStyle.Continuous;
-                        pgMain.Value = (int)(e.Progress * 100);
-                    }
+                    if (String.IsNullOrEmpty(e.ProgressText))
+                        return;
                     else
                     {
-                        pgMain.Style = ProgressBarStyle.Marquee;
+                        lblStatus.Text = String.Format("{0} ({1:#0}%)", e.ProgressText, e.Progress * 100);
+                        if (e.Progress >= 0 && e.Progress <= 1)
+                        {
+                            pgMain.Style = ProgressBarStyle.Continuous;
+                            pgMain.Value = (int)(e.Progress * 100);
+                        }
+                        else
+                        {
+                            pgMain.Style = ProgressBarStyle.Marquee;
 
+                        }
                     }
                 }
+                catch { }
                 Application.DoEvents();
             };
 

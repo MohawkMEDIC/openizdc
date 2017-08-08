@@ -181,6 +181,7 @@ namespace OpenIZ.Mobile.Core.Data
                     {
                         try
                         {
+                            
                             this.m_tracer.TraceVerbose("INSERT {0}", data);
 
                             context.Connection.BeginTransaction();

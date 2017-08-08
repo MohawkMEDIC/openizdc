@@ -18,7 +18,7 @@
  * Date: 2016-7-15
  */
 using MohawkCollege.Util.Console.Parameters;
-using SharpCompress.Reader.Tar;
+using SharpCompress.Readers.Tar;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -128,10 +128,10 @@ namespace BrainBug
                         while (tar.MoveToNextEntry())
                         {
 
-                            string outName = Path.Combine(parameters.ExtractDir, tar.Entry.FilePath);
+                            string outName = Path.Combine(parameters.ExtractDir, tar.Entry.Key);
                             if (!Directory.Exists(Path.GetDirectoryName(outName)))
                                 Directory.CreateDirectory(Path.GetDirectoryName(outName));
-                            Console.WriteLine("{0} > {1}", tar.Entry.FilePath, outName);
+                            Console.WriteLine("{0} > {1}", tar.Entry.Key, outName);
 
                             if (!tar.Entry.IsDirectory)
                                 using (var ofs = File.Create(outName))

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client SDK"
-#define MyAppVersion "0.9.7.2"
+#define MyAppVersion "0.9.7.4"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 
@@ -64,27 +64,29 @@ Source: ".\bin\SignedRelease\zlibnet.dll"; DestDir: "{app}"; Flags: ignoreversio
 Source: ".\bin\SignedRelease\zxing.portable.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\SignedRelease\sqlite3.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\SignedRelease\minims.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\BrainBug\bin\Release\brainbug.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\BrainBug\bin\Release\SharpCompress.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\BrainBug\bin\Release\zlibnet.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\BrainBug\bin\Release\brainbug.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\BrainBug\bin\Release\SharpCompress.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\BrainBug\bin\Release\zlibnet.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\BrainBug\bin\SignedRelease\brainbug.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\BrainBug\bin\SignedRelease\SharpCompress.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\BrainBug\bin\SignedRelease\zlibnet.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\BrainBug\bin\SignedRelease\brainbug.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\BrainBug\bin\SignedRelease\SharpCompress.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\BrainBug\bin\SignedRelease\zlibnet.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\AppletCompiler\bin\Release\AppletCompiler.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\AppletCompiler\bin\Release\AjaxMin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\AppletCompiler\bin\Release\MARC.Everest.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\AppletCompiler\bin\Release\OpenIZ.Core.Applets.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\AppletCompiler\bin\Release\OpenIZ.Core.Model.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\LogViewer\bin\Release\LogViewer.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\OpenIZ\bin\Release\LogViewer.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\OpenIZMobile\Assets\Applets\org.openiz.core.pak"; DestDir: "{app}"; Flags: recursesubdirs
 Source: ".\bin\SignedRelease\tools\cmdprompt.cmd"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "..\..\OpenIZ\bin\Release\oizdt.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\OpenIZ\bin\Release\MARC.Everest.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\oizdt.config.empty"; DestDir: "{app}"; DestName: "oizdt.exe.config"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\MARC.HI.EHRS.SVC.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\OpenIZ.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\OpenIZ.BusinessRules.JavaScript.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\OpenIZ\bin\Release\oizdt.config.empty"; DestDir: "{app}"; DestName:"openiz.exe.config"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\OpenIZ.Protocol.Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\System.IdentityModel.Tokens.Jwt.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\OpenIZ\Solution Items\MARc.HI.EHRS.SVC.Configuration.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\Open Immunize\SDK\OpenIZ Log Viewer"; Filename: "{app}\LogViewer.exe"

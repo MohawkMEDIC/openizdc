@@ -52,4 +52,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("0.9.4.*")][assembly: AssemblyInformationalVersion("Chippewa")]
 [assembly: AssemblyVersion("0.9.7.*")][assembly: AssemblyInformationalVersion("Edmonton CTP2")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("0.9.7.4")]

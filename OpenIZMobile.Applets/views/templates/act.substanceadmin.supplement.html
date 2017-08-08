@@ -33,8 +33,8 @@
         <div ng-if="!act.targetModel.tag.backEntry">
             <div ng-class="!act._created ? 'col-xs-11':'col-xs-12'">
                 <label ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.supplement.drug' | i18n }}</label>
-                <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~Supplement&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value"
-                        ng-change="act.targetModel.doseSequence = getNextDoseSequence(act.targetModel.participation.Product.player)">
+                <select id="supplement_{{act.targetModel.id}}" ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~Supplement&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value"
+                        ng-change="act.targetModel.doseSequence = getNextDoseSequence(act.targetModel.participation.Product.player); updateSupplementName(act, 'supplement_' + act.targetModel.id)">
                     <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.supplement.drug' | i18n }}</option>
                 </select>
                 <select class="form-control" disabled="disabled" ng-if="act._enabled &amp;&amp; !act._created">

@@ -49,6 +49,9 @@ namespace OpenIZ.Mobile.Core
         // Lock 
         private static Object s_lock = new object();
 
+        // Constructor info
+        private static Dictionary<Type, ConstructorInfo> m_constructors = new Dictionary<Type, ConstructorInfo>();
+
         private static Tracer s_tracer = Tracer.GetTracer(typeof(ModelExtensions));
         //private static Dictionary<String, Guid> s_conceptDictionary = new Dictionary<string, Guid>(20);
         // Lock object
@@ -206,7 +209,28 @@ namespace OpenIZ.Mobile.Core
                     // We want to que   ry based on our PK and version if applicable
                     decimal? versionSequence = (me as IVersionedEntity)?.VersionSequence;
                     var assoc = assocPersister.GetFromSource(context, me.Key.Value, versionSequence);
-                    var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
+
+                    ConstructorInfo ci = null;
+                    if (!m_constructors.TryGetValue(pi.PropertyType, out ci))
+                    {
+                        var type = pi.PropertyType.StripGeneric();
+                        while (type != typeof(Object) && ci == null)
+                        {
+                            ci = pi.PropertyType.GetTypeInfo().DeclaredConstructors.FirstOrDefault(o=> o.GetParameters().Length == 1 && o.GetParameters()[0].ParameterType == typeof(IEnumerable<>).MakeGenericType(type));
+                            type = type.GetTypeInfo().BaseType;
+                        }
+                        if (ci != null)
+                        {
+                            lock (s_lockObject)
+                                if (!m_constructors.ContainsKey(pi.PropertyType))
+                                    m_constructors.Add(pi.PropertyType, ci);
+                        }
+                        else
+                            throw new InvalidOperationException($"This is odd, you seem to have a list with no constructor -> {pi.PropertyType}");
+                    }
+
+                    //var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
+                    var listValue = ci.Invoke(new object[] { assoc });
                     pi.SetValue(me, listValue);
                 }
                 else if (typeof(IIdentifiedEntity).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo())) // Single

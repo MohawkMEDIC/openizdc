@@ -425,6 +425,16 @@
           <property name="name" ref="EntityName"/>
         </property>
       </property>
+      <property name="Performer" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="act" all="true"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="name" ref="EntityName"/>
+        </property>
+      </property>
       <property name="*" all="false">
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>

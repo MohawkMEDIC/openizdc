@@ -85,13 +85,13 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
             /// <summary>
             /// Code
             /// </summary>
-            [Column("code"), Indexed, NotNull]
+            [Column("code"), NotNull]
             public string Code { get; set; }
 
             /// <summary>
             /// Code system
             /// </summary>
-            [Column("code_system"), Indexed]
+            [Column("code_system")]
             public String CodeSystem { get; set; }
 
         }

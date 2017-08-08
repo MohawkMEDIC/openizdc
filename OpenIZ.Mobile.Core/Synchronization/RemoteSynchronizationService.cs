@@ -44,6 +44,7 @@ using OpenIZ.Core.Model.Security;
 using System.Reflection;
 using System.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -181,9 +182,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                             ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, (float)i / syncTargets.Count);
                             foreach (var fltr in syncResource.Filters)
-                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr), syncResource.Always);
+                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr), syncResource.Always, syncResource.Name);
                             if (syncResource.Filters.Count == 0)
-                                totalResults += this.Pull(syncResource.ResourceType);
+                                totalResults += this.Pull(syncResource.ResourceType, new NameValueCollection(), false, syncResource.Name);
 
                         }
                         ApplicationContext.Current.SetProgress(String.Empty, 0);
@@ -208,6 +209,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     }
                     finally
                     {
+                        this.IsSynchronizing = false;
+
                         Monitor.Exit(this.m_lock);
                     }
                 }
@@ -245,6 +248,14 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public int Pull(Type modelType, NameValueCollection filter, bool always)
         {
+            return this.Pull(modelType, filter, always, null);
+        }
+
+        /// <summary>
+        /// Internal pull function
+        /// </summary>
+        public int Pull(Type modelType, NameValueCollection filter, bool always, String name)
+        {
             lock (this.m_lock)
             {
                 var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
@@ -252,6 +263,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     lastModificationDate = null;
                 if (lastModificationDate != null)
                     lastModificationDate = lastModificationDate.Value.AddMinutes(-1);
+
+                // Performance timer for more intelligent query control
+                Stopwatch perfTimer = new Stopwatch();
+                EventHandler<RestResponseEventArgs> respondingHandler = (o, e) => perfTimer.Stop();
+                this.m_integrationService.Responding += respondingHandler;
 
                 try
                 {
@@ -269,7 +285,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                     // Attempt to find an existing query
                     var existingQuery = SynchronizationLog.Current.FindQueryData(modelType, filter.ToString());
-                    if (existingQuery != null && DateTime.Now.Subtract(existingQuery.StartTime).TotalHours <= 1)
+                    if (existingQuery != null && DateTime.Now.ToUniversalTime().Subtract(existingQuery.StartTime).TotalHours <= 1)
                     {
                         qid = new Guid(existingQuery.Uuid);
                         result.Count = existingQuery.LastSuccess;
@@ -278,11 +294,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     else
                     {
                         if (existingQuery != null) SynchronizationLog.Current.CompleteQuery(new Guid(existingQuery.Uuid));
-                        SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, 0);
+                        SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, name, 0);
                     }
-
-                    // Performance timer for more intelligent query control
-                    Stopwatch perfTimer = new Stopwatch();
 
                     // Enqueue
                     for (int i = result.Count; i < result.TotalResults; i += result.Count)
@@ -301,16 +314,22 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         perfTimer.Reset();
                         perfTimer.Start();
-                        result = this.m_integrationService.Find(modelType, i == 0 ? filter : new NameValueCollection(), i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 120000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
-                        perfTimer.Stop();
+
+                        result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 120000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
 
                         // Queue the act of queueing
                         if (result != null)
                         {
-                            if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
-                                count < 1000 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
+                            if (count == 5000 && perfTimer.ElapsedMilliseconds < 40000 ||
+                                count < 5000 && result.TotalResults > 20000 && perfTimer.ElapsedMilliseconds < 40000)
+                                count = 5000;
+                            else if (count == 2500 && perfTimer.ElapsedMilliseconds < 30000 ||
+                                count < 2500 && result.TotalResults > 10000 && perfTimer.ElapsedMilliseconds < 30000)
+                                count = 2500;
+                            else if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
+                                count < 1000 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 20000)
                                 count = 1000;
-                            else if (count == 200 && perfTimer.ElapsedMilliseconds < 15000 ||
+                            else if (count == 200 && perfTimer.ElapsedMilliseconds < 10000 ||
                                 count < 500 && result.TotalResults > 1000 && perfTimer.ElapsedMilliseconds < 10000)
                                 count = 500;
                             else
@@ -320,7 +339,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
 
                             SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
-                            SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, result.Offset + result.Count);
+                            SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, name, result.Offset + result.Count);
 
                             retVal = result.TotalResults;
                         }
@@ -335,7 +354,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         ApplicationContext.Current.SetProgress(String.Empty, 0);
 
                     // Log that we synchronized successfully
-                    SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
+                    SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag, name);
 
                     // Clear the query
                     SynchronizationLog.Current.CompleteQuery(qid);
@@ -364,6 +383,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
 
                     return 0;
+                }
+                finally
+                {
+                    this.m_integrationService.Responding -= respondingHandler;
                 }
             }
         }

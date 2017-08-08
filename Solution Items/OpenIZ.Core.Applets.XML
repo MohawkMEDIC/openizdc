@@ -660,7 +660,7 @@
             Initialize the applet manifest
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.Model.AppletManifest.CreatePackage">
+        <member name="M:OpenIZ.Core.Applets.Model.AppletManifest.CreatePackage(System.String)">
             <summary>
             Create an unsigned package
             </summary>
@@ -722,9 +722,21 @@
             Gets or sets the applet strings
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.Model.AppletManifest.Equals(OpenIZ.Core.Applets.Model.AppletManifest)">
+            <summary>
+            Indicates whether the current object is equal to another object of the same type.
+            </summary>
+            <param name="other">An object to compare with this object.</param>
+            <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
+        </member>
         <member name="T:OpenIZ.Core.Applets.Model.AppletPackage">
             <summary>
             Applet package used for installations only
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Model.AppletPackage.#ctor">
+            <summary>
+            Applet package
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Applets.Model.AppletPackage.Load(System.Byte[])">
@@ -747,6 +759,16 @@
             Gets or ses the manifest to be installed
             </summary>
             <value>The manifest.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletPackage.Version">
+            <summary>
+            The pak version
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletPackage.Compression">
+            <summary>
+            Compression algorithm
+            </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.Model.AppletPackage.PublicKey">
             <summary>
@@ -1035,6 +1057,11 @@
             Gets the reference to use
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription.FindProperty(System.String)">
+            <summary>
+            Find property
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription">
             <summary>
             Property model description
@@ -1108,6 +1135,11 @@
         <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.FindDescription(System.Type)">
             <summary>
             Find description
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.GetTypeName(System.Type)">
+            <summary>
+            Get type name
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.FindDescription(System.String,OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription)">
