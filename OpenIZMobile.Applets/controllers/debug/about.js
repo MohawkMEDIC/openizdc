@@ -84,11 +84,11 @@ layoutApp.controller('AboutApplicationController', ['$scope', '$rootScope', '$st
                 synchronous: true,
                 continueWith: function (d) {
                     retVal = OpenIZ.Util.renderName(d.name.OfficialRecord);
-                    cachePlace[placeId] = retval;
+                    cachePlace[placeId] = retVal;
                 }
             });
-            return retVal;
         }
+        return retVal;
     };
 
     // Update the version

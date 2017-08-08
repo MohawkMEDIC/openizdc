@@ -67,63 +67,90 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Bundle Insert(Bundle data)
         {
             // first, are we just doing a normal insert?
-            //if (data.Item.Count <= 500)
+            if (data.Item.Count <= 250)
                 return base.Insert(data);
-            //else
-            //{ // It is cheaper to open a mem-db and let other threads access the main db for the time being
+            else
+            { // It is cheaper to open a mem-db and let other threads access the main db for the time being
 
-            //    base.FireInserting(new DataPersistencePreEventArgs<Bundle>(data));
+                base.FireInserting(new DataPersistencePreEventArgs<Bundle>(data));
 
-            //    // Memory connection
-            //    using (var memConnection = new Data.Connection.WriteableSQLiteConnection(ApplicationContext.Current.GetService<ISQLitePlatform>(), ":memory:", SQLiteOpenFlags.ReadWrite))
-            //    {
-            //        try
-            //        {
-            //            // We want to apply the initial schema
-            //            new OpenIZ.Mobile.Core.Configuration.Data.Migrations.InitialCatalog().Install(memConnection, true);
+                // Memory connection
+                using (var memConnection = new Data.Connection.WriteableSQLiteConnection(ApplicationContext.Current.GetService<ISQLitePlatform>(), ":memory:", SQLiteOpenFlags.ReadWrite))
+                {
+                    try
+                    {
+                        // We want to apply the initial schema
+                        new OpenIZ.Mobile.Core.Configuration.Data.Migrations.InitialCatalog().Install(memConnection, true);
 
-            //            // We insert in the memcontext now
-            //            using (var memContext = new LocalDataContext(memConnection))
-            //                this.InsertInternal(memContext, data);
+                        // Copy the name component and address component values
+                        if (ApplicationContext.Current.GetCurrentContextSecurityKey() == null)
+                            memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db KEY ''");
+                        else
+                            memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db KEY X'{BitConverter.ToString(ApplicationContext.Current.GetCurrentContextSecurityKey()).Replace("-", "")}'");
 
-            //            var columnMapping = memConnection.TableMappings.Where(o => o.MappedType.Namespace.StartsWith("OpenIZ")).ToList();
+                        try
+                        {
+                            memConnection.BeginTransaction();
 
-            //            // Now we attach our local file based DB by requesting a lock so nobody else touches it!
-            //            using (var fileContext = this.CreateConnection())
-            //            using (fileContext.LockConnection())
-            //            {
-            //                memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db");
+                            // Names & Address
+                            memConnection.Execute($"INSERT OR REPLACE INTO phonetic_value SELECT * FROM file_db.phonetic_value");
+                            memConnection.Execute($"INSERT OR REPLACE INTO entity_addr_val SELECT * FROM file_db.entity_addr_val");
 
-            //                try
-            //                {
-            //                    memConnection.BeginTransaction();
+                            memConnection.Commit();
+                        }
+                        catch
+                        {
+                            memConnection.Rollback();
+                            throw;
+                        }
 
-            //                    // Copy copy!!!
-            //                    foreach (var tbl in columnMapping)
-            //                    {
-            //                        // insert new first
-            //                        memConnection.Execute($"INSERT OR REPLACE INTO file_db.{tbl.TableName} SELECT * FROM {tbl.TableName}");
-            //                    }
+                        memConnection.Execute("DETACH DATABASE file_db");
 
-            //                    memConnection.Commit();
-            //                }
-            //                catch
-            //                {
-            //                    memConnection.Rollback();
-            //                    throw;
-            //                }
-            //            }
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            this.m_tracer.TraceError("Error inserting bundle: {0}", e);
-            //            throw new LocalPersistenceException(Synchronization.Model.DataOperationType.Insert, data, e);
-            //        }
-            //    }
+                        // We insert in the memcontext now
+                        using (var memContext = new LocalDataContext(memConnection))
+                            this.InsertInternal(memContext, data);
 
-            //    base.FireInserted(new DataPersistenceEventArgs<Bundle>(data));
-            //    return data;
-            //}
+                        var columnMapping = memConnection.TableMappings.Where(o => o.MappedType.Namespace.StartsWith("OpenIZ")).ToList();
+
+                        // Now we attach our local file based DB by requesting a lock so nobody else touches it!
+                        using (var fileContext = this.CreateConnection())
+                        using (fileContext.LockConnection())
+                        {
+                            if (ApplicationContext.Current.GetCurrentContextSecurityKey() == null)
+                                memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db KEY ''");
+                            else
+                                memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db KEY X'{BitConverter.ToString(ApplicationContext.Current.GetCurrentContextSecurityKey()).Replace("-", "")}'");
+
+                            try
+                            {
+                                memConnection.BeginTransaction();
+
+                                // Copy copy!!!
+                                foreach (var tbl in columnMapping)
+                                {
+                                    // insert new first
+                                    memConnection.Execute($"INSERT OR REPLACE INTO file_db.{tbl.TableName} SELECT * FROM {tbl.TableName}");
+                                }
+
+                                memConnection.Commit();
+                            }
+                            catch
+                            {
+                                memConnection.Rollback();
+                                throw;
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error inserting bundle: {0}", e);
+                        throw new LocalPersistenceException(Synchronization.Model.DataOperationType.Insert, data, e);
+                    }
+                }
+
+                base.FireInserted(new DataPersistenceEventArgs<Bundle>(data));
+                return data;
+            }
         }
 
         /// <summary>

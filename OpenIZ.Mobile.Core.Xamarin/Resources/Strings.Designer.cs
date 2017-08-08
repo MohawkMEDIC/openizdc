@@ -61,6 +61,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The device is already synchronizing data.
+        /// </summary>
+        internal static string err_already_syncrhonizing {
+            get {
+                return ResourceManager.GetString("err_already_syncrhonizing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to General authentication error occurred.
         /// </summary>
         internal static string err_authentication_exception {

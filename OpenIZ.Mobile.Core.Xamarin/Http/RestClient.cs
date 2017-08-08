@@ -41,6 +41,7 @@ using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors.LZMA;
 using SharpCompress.Compressors.Deflate;
 using SharpCompress.Compressors;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -136,6 +137,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                 }
             }
 
+            // Set user agent
+            retVal.UserAgent = String.Format("OpenIZDC {0} ({1})", typeof(RestClient).Assembly.GetName().Version, typeof(RestClient).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
             return retVal;
         }
 

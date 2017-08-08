@@ -158,19 +158,19 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         try
                         {
-                            if (bundle?.Item.Count > 1000)
-                            {
-                                var ofs = 0;
-                                while (ofs < bundle.Item.Count)
-                                {
-                                    this.ImportElement(new Bundle()
-                                    {
-                                        Item = bundle.Item.Skip(ofs).Take(500).ToList()
-                                    });
-                                    ofs += 500;
-                                }
-                            }
-                            else
+                            //if (bundle?.Item.Count > 1000)
+                            //{
+                            //    var ofs = 0;
+                            //    while (ofs < bundle.Item.Count)
+                            //    {
+                            //        this.ImportElement(new Bundle()
+                            //        {
+                            //            Item = bundle.Item.Skip(ofs).Take(500).ToList()
+                            //        });
+                            //        ofs += 500;
+                            //    }
+                            //}
+                            //else
                                 this.ImportElement(dpe);
                         }
                         catch (Exception e)

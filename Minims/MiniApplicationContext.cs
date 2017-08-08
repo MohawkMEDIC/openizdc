@@ -163,11 +163,12 @@ namespace Minims
                                 appletPath = Path.Combine(Environment.CurrentDirectory, appletPath);
                             using (var fs = File.OpenRead(appletPath))
                             {
+
                                 var package = AppletPackage.Load(fs);
                                 retVal.m_tracer.TraceInfo("Loading {0} v{1}", package.Meta.Id, package.Meta.Version);
 
                                 // Is this applet in the allowed applets
-                                appService.LoadApplet(AppletManifest.Load(new MemoryStream(package.Manifest)));
+                                appService.LoadApplet(package.Unpack());
                             }
                         }
                         catch (Exception e)
@@ -179,11 +180,7 @@ namespace Minims
 
                 // Does openiz.js exist as an asset?
                 var oizJs = appService.Applets.ResolveAsset("/org.openiz.core/js/openiz.js");
-                if (oizJs?.Content != null)
-                {
-                    oizJs.Content = oizJs.Content.ToString() + (appService as MiniAppletManagerService).GetShimMethods();
-                }
-
+                
                 // Load all user-downloaded applets in the data directory
                 foreach (var appletDir in consoleParms.AppletDirectories)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                     try
@@ -208,6 +205,11 @@ namespace Minims
                         retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletDir, e.ToString());
                         throw;
                     }
+
+                if (oizJs?.Content != null)
+                {
+                    oizJs.Content = oizJs.Content.ToString() + (appService as MiniAppletManagerService).GetShimMethods();
+                }
 
                 retVal.Start();
                 return true;
@@ -276,11 +278,7 @@ namespace Minims
 
                     // Does openiz.js exist as an asset?
                     var oizJs = appService.Applets.ResolveAsset("/org.openiz.core/js/openiz.js");
-                    if (oizJs?.Content != null)
-                    {
-                        oizJs.Content = oizJs.Content.ToString() + (appService as MiniAppletManagerService).GetShimMethods();
-                    }
-
+                    
                     // Load all user-downloaded applets in the data directory
                     foreach (var appletDir in consoleParms.AppletDirectories)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                         try
@@ -307,10 +305,14 @@ namespace Minims
                             throw;
                         }
 
-                    
+                    if (oizJs?.Content != null)
+                    {
+                        oizJs.Content = oizJs.Content.ToString() + (appService as MiniAppletManagerService).GetShimMethods();
+                    }
+
                     // Ensure data migration exists
-                        try
-                        {
+                    try
+                    {
                         // If the DB File doesn't exist we have to clear the migrations
                         if (!File.Exists(retVal.Configuration.GetConnectionString(retVal.Configuration.GetSection<DataConfigurationSection>().MainDataSourceConnectionStringName).Value))
                         {

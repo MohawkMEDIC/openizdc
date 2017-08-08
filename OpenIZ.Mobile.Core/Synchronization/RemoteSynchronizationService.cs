@@ -315,7 +315,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         perfTimer.Reset();
                         perfTimer.Start();
 
-                        result = this.m_integrationService.Find(modelType, i == 0 ? filter : new NameValueCollection(), i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 120000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
+                        result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 120000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
 
                         // Queue the act of queueing
                         if (result != null)

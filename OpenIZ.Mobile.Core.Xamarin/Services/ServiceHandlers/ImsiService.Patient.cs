@@ -136,7 +136,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     this.m_tracer.TraceVerbose("Freetext search: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
 
                     var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
-                    
+
                     // Filtes
                     if (search.ContainsKey("_onlineOnly"))
                     {
@@ -153,7 +153,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 }
                             );
 
-                            bundle = integrationService.Find(predicate, offset, count, new IntegrationQueryOptions() {
+                            bundle = integrationService.Find(predicate, offset, count, new IntegrationQueryOptions()
+                            {
                                 Expand = new String[] { "relationship.target" }
                             });
                             tryField++;
@@ -170,7 +171,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     else
                     {
                         var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
-                        retVal = fts.Search<Patient>(values.Select(o=>o.Replace("~","")).ToArray(), offset, count, out totalResults);
+                        retVal = fts.Search<Patient>(values.Select(o => o.Replace("~", "")).ToArray(), offset, count, out totalResults);
                     }
 
                     search.Remove("any");
@@ -195,7 +196,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     }
                     else
                     {
-                        if(retVal != null)
+                        if (retVal != null)
                             retVal = retVal.Where(predicate.Compile());
                         else
                         {
@@ -207,14 +208,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     }
                 }
 
-				if (retVal == null)
-				{
-					retVal = new List<Patient>();
-				}
+                if (retVal == null)
+                {
+                    retVal = new List<Patient>();
+                }
 
-				retVal = retVal.Select(o => o.Clone()).OfType<Patient>();
+                retVal = retVal.Select(o => o.Clone()).OfType<Patient>().Where(o => !o.Tags.Any(t => t.TagKey == "isAnonymous"));
+
+                // Remove those who are anon
                 if (search.ContainsKey("_onlineOnly"))
-                    retVal.ToList().ForEach((o) => {
+                    retVal.ToList().ForEach((o) =>
+                    {
                         ApplicationContext.Current.GetService<IDataCachingService>().Remove(o.Key.Value);
                         if (patientService.Get(o.Key.Value, Guid.Empty) == null)
                             o.Tags.Add(new EntityTag("onlineResult", "true"));
@@ -252,7 +256,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // We shove the data onto the queue for import!!! :)
             ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, 0.1f);
-            var dbundle = imsiIntegrationService.Find<Patient>(o=>o.Key == patientId, 0, 1);
+            var dbundle = imsiIntegrationService.Find<Patient>(o => o.Key == patientId, 0, 1);
             dbundle.Item.RemoveAll(o => !(o is Patient || o is Person));
             pdp.Insert(dbundle);
             var patient = dbundle.Item.OfType<Patient>().FirstOrDefault();
@@ -265,15 +269,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 imsiIntegrationService.Update(patient);
             }
             var personBundle = new Bundle();
-            foreach( var rel in patient.Relationships)
+            foreach (var rel in patient.Relationships)
             {
                 var person = imsiIntegrationService.Get<Entity>(rel.TargetEntityKey.Value, null);
-                if(person != null && person.Type == "Person")
+                if (person != null && person.Type == "Person")
                 {
                     personBundle.Add(person as Person);
                 }
             }
-            if(personBundle.Item.Count > 0)
+            if (personBundle.Item.Count > 0)
             {
                 pdp.Insert(personBundle);
             }
@@ -281,9 +285,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 ofs = 0;
             Guid qid = Guid.NewGuid();
 
-            while(ofs < tr)
+            while (ofs < tr)
             {
-                var bundle = imsiIntegrationService.Find<Act>(o => o.Participations.Where(p=>p.ParticipationRole.Mnemonic == "RecordTarget").Any(p=>p.PlayerEntityKey == patientId), ofs, 20);
+                var bundle = imsiIntegrationService.Find<Act>(o => o.Participations.Where(p => p.ParticipationRole.Mnemonic == "RecordTarget").Any(p => p.PlayerEntityKey == patientId), ofs, 20);
                 //bundle.Reconstitute();
                 tr = bundle.TotalResults;
                 ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, ((float)ofs / tr) * 0.9f + 0.1f);

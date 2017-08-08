@@ -257,6 +257,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.mnsTools);
             this.DoubleBuffered = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mnsTools;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmDisconnectedClient";
