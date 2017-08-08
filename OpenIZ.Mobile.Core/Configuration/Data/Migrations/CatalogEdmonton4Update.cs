@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
     /// <summary>
-    /// Update for migrating edmonton ctp3 to f4
+    /// Update for migrating Edmonton CTP4 to f4
     /// </summary>
     public class CatalogEdmonton4Update : IDbMigration
     {
@@ -21,7 +21,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
         {
             get
             {
-                return "Updates Edmonton CTP3 to CTP4 database";
+                return "Updates Edmonton CTP4 to CTP4 database";
             }
         }
 

@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
             }
 
             // Set user agent
-            retVal.UserAgent = String.Format("OpenIZDC {0} ({1})", typeof(RestClient).Assembly.GetName().Version, typeof(RestClient).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+            retVal.UserAgent = String.Format("{0} {1} ({2})", Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyTitleAttribute>()?.Title, Assembly.GetEntryAssembly().GetName().Version, Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
             return retVal;
         }
 
