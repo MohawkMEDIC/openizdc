@@ -132,6 +132,9 @@
   <data name="err_compactNotPermitted" xml:space="preserve">
     <value>Unfortunately compact is not permitted at this time</value>
   </data>
+  <data name="err_configuration_invalid_restore_prompt" xml:space="preserve">
+    <value>Your configuration file could not be read. There is a backup on your device, would you like to try and recover the backup?</value>
+  </data>
   <data name="err_duplicate_deviceName" xml:space="preserve">
     <value>Device has already been registered.</value>
   </data>

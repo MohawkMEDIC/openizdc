@@ -83,6 +83,10 @@
     <Reference Include="OpenIZ.Protocol.Xml">
       <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
     </Reference>
+    <Reference Include="SharpCompress, Version=0.18.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
     </Reference>

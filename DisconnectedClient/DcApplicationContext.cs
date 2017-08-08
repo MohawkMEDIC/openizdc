@@ -51,6 +51,7 @@ using OpenIZ.Mobile.Core.Services;
 using System.Xml.Serialization;
 using System.Security.Cryptography;
 using OpenIZ.Core.Applets.Services;
+using DisconnectedClient.Properties;
 
 namespace DisconnectedClient
 {
@@ -209,7 +210,21 @@ namespace DisconnectedClient
             { // load configuration
                 try
                 {
-                    retVal.ConfigurationManager.Load();
+                    try
+                    {
+                        retVal.ConfigurationManager.Load();
+                        retVal.ConfigurationManager.Backup();
+                    }
+                    catch
+                    {
+                        if (retVal.ConfigurationManager.HasBackup() && retVal.Confirm(Resources.err_configuration_invalid_restore_prompt))
+                        {
+                            retVal.ConfigurationManager.Restore();
+                            retVal.ConfigurationManager.Load();
+                        }
+                        else
+                            throw;
+                    }
 
                     // Set master application context
                     ApplicationContext.Current = retVal;
@@ -241,10 +256,20 @@ namespace DisconnectedClient
                                 appletService.LoadApplet(manifest);
                             }
                         }
+                        catch (AppDomainUnloadedException) { throw; }
                         catch (Exception e)
                         {
-                            retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
-                            throw;
+                            if (retVal.Confirm(String.Format(Resources.err_applet_corrupt_reinstall, appletInfo.Id)))
+                            {
+                                String appletPath = Path.Combine(retVal.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);
+                                if (File.Exists(appletPath))
+                                    File.Delete(appletPath);
+                            }
+                            else
+                            {
+                                retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
+                                throw;
+                            }
                         }
 
 

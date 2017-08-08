@@ -418,7 +418,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     }
                     else
                     {
-                        this.QueueWorkItem(e.Data.Item.Where(o=>o is Act || o is Patient).ToArray());
+                        this.QueueWorkItem(e.Data.Item.Where(i=>i is Act || i is Patient).ToArray());
                     }
                 };
 

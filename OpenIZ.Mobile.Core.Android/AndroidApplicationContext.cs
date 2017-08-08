@@ -125,7 +125,21 @@ namespace OpenIZ.Mobile.Core.Android
             { // load configuration
                 try
                 {
-                    retVal.ConfigurationManager.Load();
+                    try
+                    {
+                        retVal.ConfigurationManager.Load();
+                        retVal.ConfigurationManager.Backup();
+                    }
+                    catch
+                    {
+                        if (retVal.ConfigurationManager.HasBackup() && retVal.Confirm(Strings.err_configuration_invalid_restore_prompt))
+                        {
+                            retVal.ConfigurationManager.Restore();
+                            retVal.ConfigurationManager.Load();
+                        }
+                        else
+                            throw;
+                    }
 
                     // Set master application context
                     ApplicationContext.Current = retVal;
@@ -176,10 +190,20 @@ namespace OpenIZ.Mobile.Core.Android
                                 appletManager.LoadApplet(manifest);
                             }
                         }
+                        catch(AppDomainUnloadedException) { throw; }
                         catch (Exception e)
                         {
-                            retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
-                            throw;
+                            if (retVal.Confirm(String.Format(Strings.err_applet_corrupt_reinstall, appletInfo.Id)))
+                            {
+                                String appletPath = Path.Combine(retVal.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);
+                                if (File.Exists(appletPath)) 
+                                    File.Delete(appletPath);
+                            }
+                            else
+                            {
+                                retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
+                                throw;
+                            }
                         }
 
                     // Are we going to deploy applets

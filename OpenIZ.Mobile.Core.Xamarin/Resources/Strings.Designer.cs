@@ -106,6 +106,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your configuration file could not be read. There is a backup on your device, would you like to try and recover the backup?.
+        /// </summary>
+        internal static string err_configuration_invalid_restore_prompt {
+            get {
+                return ResourceManager.GetString("err_configuration_invalid_restore_prompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device has already been registered..
         /// </summary>
         internal static string err_duplicate_deviceName {
