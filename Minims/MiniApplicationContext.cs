@@ -82,7 +82,9 @@ namespace Minims
         /// </summary>
         public override void ShowToast(string subject)
         {
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("TOAST >>>> {0}", subject);
+            Console.ResetColor();
         }
 
         /// <summary>
