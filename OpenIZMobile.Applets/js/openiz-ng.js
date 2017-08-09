@@ -781,7 +781,7 @@ angular.module('openiz', [])
             restrict: 'A',
             template: "<span>{{site}}</span>",
             link: function (scope, element, attrs) {
-                scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length) || "N/A";
+                scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length) || OpenIZ.Localization.getString("locale.common.na");
             }
         };
     })
