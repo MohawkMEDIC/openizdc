@@ -525,7 +525,7 @@ angular.module('openiz', [])
                             method: "GET",
                             data: function (params) {
                                 filter[searchProperty] = "~" + params.term;
-                                filter["_count"] = 10;
+                                filter["_count"] = 20;
                                 filter["_offset"] = 0;
                                 filter["_viewModel"] = "min";
                                 return filter;

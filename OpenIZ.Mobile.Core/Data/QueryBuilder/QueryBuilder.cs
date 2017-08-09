@@ -337,7 +337,8 @@ namespace OpenIZ.Core.Data.QueryBuilder
 
                         //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
 
-                        selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
+                        //selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
+                        whereClause.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} IN (SELECT {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name} FROM {tablePrefix}cte{cteStatements.Count - 1})");
 
                     }
 
