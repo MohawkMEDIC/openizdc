@@ -51,7 +51,7 @@ using OpenIZ.Mobile.Core.Services;
 using System.Xml.Serialization;
 using System.Security.Cryptography;
 using OpenIZ.Core.Applets.Services;
-using DisconnectedClient.Properties;
+using DisconnectedClient.Core.Resources;
 
 namespace DisconnectedClient.Core
 {
@@ -227,7 +227,7 @@ namespace DisconnectedClient.Core
                     }
                     catch
                     {
-                        if (retVal.ConfigurationManager.HasBackup() && retVal.Confirm(Resources.err_configuration_invalid_restore_prompt))
+                        if (retVal.ConfigurationManager.HasBackup() && retVal.Confirm(Strings.err_configuration_invalid_restore_prompt))
                         {
                             retVal.ConfigurationManager.Restore();
                             retVal.ConfigurationManager.Load();
@@ -269,7 +269,7 @@ namespace DisconnectedClient.Core
                         catch (AppDomainUnloadedException) { throw; }
                         catch (Exception e)
                         {
-                            if (retVal.Confirm(String.Format(Resources.err_applet_corrupt_reinstall, appletInfo.Id)))
+                            if (retVal.Confirm(String.Format(Strings.err_applet_corrupt_reinstall, appletInfo.Id)))
                             {
                                 String appletPath = Path.Combine(retVal.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);
                                 if (File.Exists(appletPath))

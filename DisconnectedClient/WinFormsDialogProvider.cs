@@ -14,7 +14,7 @@ namespace DisconnectedClient
 		/// Confirm the specified text and title.
 		/// </summary>
 		public bool Confirm(String text, String title) {
-			return MessageBox.Show (text, title, MessageBoxButtons.OKCancel) == DialogResult.Ok;
+			return MessageBox.Show (text, title, MessageBoxButtons.OKCancel) == DialogResult.OK;
 		}
 
 		/// <summary>
