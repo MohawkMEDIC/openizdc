@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2015
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C665902-E2DA-45D3-AD9C-03DE3451CD33}"
@@ -48,7 +48,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Mobile.Core.Android"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applet", "Applet", "{7CFE7F3E-9B3F-45A3-B104-07B8E0C3CAB8}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "", "OpenIZMobile.Applets", "{62575ED7-0C4D-4EBC-8AD8-57D191E051DC}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OpenIZMobile.Applets", "OpenIZMobile.Applets", "{62575ED7-0C4D-4EBC-8AD8-57D191E051DC}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_45865"

@@ -125,7 +125,8 @@ namespace DisconnectedClient.Core
                 // Read the static shim
 
                 String shimFile = "DisconnectedClient.Core.lib.shim.js";
-                using (StreamReader shim = new StreamReader(typeof(DcApplicationContext).Assembly.GetManifestResourceStream(shimFile)))
+                var manifestName = Assembly.GetEntryAssembly().GetManifestResourceNames().FirstOrDefault(o => o.EndsWith("shim.js"));
+                using (StreamReader shim = new StreamReader(Assembly.GetEntryAssembly().GetManifestResourceStream(manifestName)))
                     tw.Write(shim.ReadToEnd());
 
                 return tw.ToString();

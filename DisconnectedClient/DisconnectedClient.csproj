@@ -273,6 +273,7 @@
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="installsupp\vcredist_x86.exe" />
+    <EmbeddedResource Include="lib\shim.js" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

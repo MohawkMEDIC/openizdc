@@ -174,4 +174,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="lib\shim.js" />
+  </ItemGroup>
 </Project>
