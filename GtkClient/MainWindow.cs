@@ -99,6 +99,9 @@ public partial class MainWindow: Gtk.Window
 		};
 		this.m_webView.Settings = new WebkitSettings("OpenIZ-DC " + ApplicationContext.Current.ExecutionUuid.ToString());
 		this.m_webView.Closed += (sender, e) => {
+
+			ApplicationContext.Current.SetProgress ("Shutting down...", 0);
+			ApplicationContext.Current.Stop ();
 			this.Destroy ();
 			Application.Quit();
 		};
@@ -109,6 +112,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
+		ApplicationContext.Current.SetProgress ("Shutting down...", 0);
+		ApplicationContext.Current.Stop ();
 		Application.Quit ();
 		a.RetVal = true;
 	}

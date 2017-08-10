@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using DisconnectedClient.Core;
 using System.Reflection;
 using OpenIZ.Mobile.Core;
+using Pango;
 
 namespace GtkClient
 {
@@ -22,6 +23,7 @@ namespace GtkClient
 
 		// Splash window
 		private static Window s_splashWindow;
+		private static Label m_statusLabel;
 
 		/// <summary>
 		/// Gets or sets the console parameters
@@ -42,14 +44,21 @@ namespace GtkClient
 				Console.WriteLine("Will start in debug mode...");
 			if (MainClass.Parameters.Reset)
 			{
-				if (ConfirmBox.Show("Are you sure you want to wipe all your data and configuration for the Disconnected Client?", "Confirm Reset") == ResponseType.Ok)
-				{
-					var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
-					var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
-					if (Directory.Exists(appData)) Directory.Delete(cData, true);
-					if (Directory.Exists(appData)) Directory.Delete(appData, true);
+				while (true) {
+					Console.Write ("Are you sure you want to wipe all your data and configuration for the Disconnected Client? [Y/N]");
+					var resp = Console.ReadKey ();
+					switch (resp.Key) {
+						case ConsoleKey.Y:
+							var appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
+							var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC");
+							if (Directory.Exists(appData)) Directory.Delete(cData, true);
+							if (Directory.Exists(appData)) Directory.Delete(appData, true);
+							return;
+						case ConsoleKey.N:
+						case ConsoleKey.Escape:
+							return;
+					}
 				}
-				return;
 			}
 			String[] directory = {
 				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC"),
@@ -89,11 +98,35 @@ namespace GtkClient
 			{
 
 				s_splashWindow = new Window (WindowType.Toplevel);
-				s_splashWindow.SetSizeRequest (640, 480);
+				s_splashWindow.SetSizeRequest (640, 500);
 				s_splashWindow.Decorated = false;
 				s_splashWindow.SetPosition (WindowPosition.CenterAlways);
 				s_splashWindow.Resizable = false;
-				s_splashWindow.Show ();
+				s_splashWindow.ModifyBg(StateType.Normal, new Gdk.Color(255, 255, 255));
+				// Add image to the splash window
+				var vbox = new VBox();
+
+				var productLabel = new Label(Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title);
+				var fontDescription = FontDescription.FromString("Sans Bold 24");
+				productLabel.ModifyFont(fontDescription);
+
+				var versionLabel = new Label(String.Format("{0} ({1})", Assembly.GetEntryAssembly().GetName().Version, Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion));
+				var logoImage = new Image(Assembly.GetEntryAssembly(), "GtkClient.lib.logo_lg.png");
+				logoImage.SetPadding(10, 10);
+				m_statusLabel = new Label("Starting Up...");
+				m_statusLabel.SetPadding(10, 10);
+
+				vbox.PackStart(productLabel);
+				vbox.PackStart(versionLabel);
+				vbox.PackStart(logoImage);
+				vbox.PackEnd(m_statusLabel);
+
+
+				ApplicationContext.ProgressChanged += ApplicationContext_ProgressChanged;
+
+				s_splashWindow.Add(vbox);
+
+				s_splashWindow.ShowAll ();
 				Application.Invoke(StartContext);
 				Application.Run ();
 
@@ -103,6 +136,16 @@ namespace GtkClient
 			{
 				MessageBox.Show(e.ToString(), "Runtime Error");
 			}
+		}
+
+		/// <summary>
+		/// Progress changed for startup
+		/// </summary>
+		static void ApplicationContext_ProgressChanged (object sender, ApplicationProgressEventArgs e)
+		{
+			Application.Invoke((o,p)=> {
+				m_statusLabel.Text = String.Format("{0} ({1:0%})", e.ProgressText, e.Progress);
+			});
 		}
 
 
@@ -132,6 +175,7 @@ namespace GtkClient
 						Application.RunIteration();
 				}
 
+				ApplicationContext.ProgressChanged -= ApplicationContext_ProgressChanged;
 				s_splashWindow.Destroy();
 				if (minims.IsRunning)
 					main = new MainWindow("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
@@ -144,7 +188,8 @@ namespace GtkClient
 
 				while (!started)
 					Application.RunIteration();
-				
+
+				ApplicationContext.ProgressChanged -= ApplicationContext_ProgressChanged;
 				s_splashWindow.Destroy();
 				main = new MainWindow("http://127.0.0.1:9200/org.openiz.core/splash.html");
 			}
