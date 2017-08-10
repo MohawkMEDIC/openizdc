@@ -149,6 +149,7 @@
     <Compile Include="MessageBox.cs" />
     <Compile Include="GtkDialogProvider.cs" />
     <Compile Include="WebkitSettings.cs" />
+    <Compile Include="OpenIZWebView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

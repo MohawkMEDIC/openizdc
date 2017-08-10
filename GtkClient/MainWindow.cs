@@ -3,11 +3,14 @@ using Gtk;
 using WebKit;
 using OpenIZ.Mobile.Core;
 using GtkClient;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 public partial class MainWindow: Gtk.Window
 {
 
-	private WebView m_webView;
+	private Tracer m_tracer = Tracer.GetTracer (typeof(MainWindow));
+
+	private OpenIZWebView m_webView;
 	private VBox m_verticalBox;
 	private Statusbar m_statusBar;
 	private Toolbar m_toolbar;
@@ -23,7 +26,7 @@ public partial class MainWindow: Gtk.Window
 		this.CreateWidgets ();
 		this.Title = "OpenIZ Disconnected Client for Linux";
 		this.Build ();
-
+		this.Maximize ();
 		this.m_webView.LoadUri (startUrl);
 	}
 
@@ -50,6 +53,15 @@ public partial class MainWindow: Gtk.Window
 		this.m_statusBar.Push (1, "Idle");
 		this.m_progress = new ProgressBar ();
 		this.m_statusBar.Add (this.m_progress);
+		ApplicationContext.ProgressChanged += (o, e) => {
+
+			Application.Invoke((o1,e1) => {
+				this.m_statusBar.Pop (1);
+				if (!String.IsNullOrEmpty (e.ProgressText))
+					this.m_statusBar.Push (1, e.ProgressText);
+				this.m_progress.Fraction = (double)e.Progress;
+			});
+		};
 	}
 
 	private void CreateActions() {
@@ -79,18 +91,38 @@ public partial class MainWindow: Gtk.Window
 	}
 
 	private void CreateWebView() {
-		this.m_webView = new WebView ();
+		this.m_webView = new OpenIZWebView ();
 
 		this.m_webView.Editable = false;
 		this.m_webView.TitleChanged += (o, e) => {
 			this.Title = "OpenIZ Disconnected Client for Linux - " + e.Title;
 		};
 		this.m_webView.Settings = new WebkitSettings("OpenIZ-DC " + ApplicationContext.Current.ExecutionUuid.ToString());
+		this.m_webView.Closed += (sender, e) => {
+			this.Destroy ();
+			Application.Quit();
+		};
+		this.m_webView.ConsoleMessage += (sender, e) => {
+			this.m_tracer.TraceInfo(e.Message);
+		};
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		Application.Quit ();
 		a.RetVal = true;
+	}
+
+	/// <summary>
+	/// Releases all resource used by the <see cref="MainWindow"/> object.
+	/// </summary>
+	/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MainWindow"/>. The <see cref="Dispose"/>
+	/// method leaves the <see cref="MainWindow"/> in an unusable state. After calling <see cref="Dispose"/>, you must
+	/// release all references to the <see cref="MainWindow"/> so the garbage collector can reclaim the memory that the
+	/// <see cref="MainWindow"/> was occupying.</remarks>
+
+	public override void Dispose ()
+	{
+		base.Dispose ();
 	}
 }

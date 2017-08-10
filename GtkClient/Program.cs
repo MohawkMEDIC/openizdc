@@ -10,6 +10,8 @@ using System.IO;
 using System.Net.Security;
 using System.Collections.Generic;
 using DisconnectedClient.Core;
+using System.Reflection;
+using OpenIZ.Mobile.Core;
 
 namespace GtkClient
 {
@@ -17,6 +19,9 @@ namespace GtkClient
 	{
 		// Trusted certificates
 		private static List<String> s_trustedCerts = new List<string>();
+
+		// Splash window
+		private static Window s_splashWindow;
 
 		/// <summary>
 		/// Gets or sets the console parameters
@@ -83,47 +88,15 @@ namespace GtkClient
 			try
 			{
 
+				s_splashWindow = new Window (WindowType.Toplevel);
+				s_splashWindow.SetSizeRequest (640, 480);
+				s_splashWindow.Decorated = false;
+				s_splashWindow.SetPosition (WindowPosition.CenterAlways);
+				s_splashWindow.Resizable = false;
+				s_splashWindow.Show ();
+				Application.Invoke(StartContext);
+				Application.Run ();
 
-				bool started = false;
-				EventHandler startHandler = (o, e) =>
-				{
-					started = true;
-				};
-
-				MainWindow main = null;
-				if (!DcApplicationContext.StartContext(new GtkDialogProvider()))
-				{
-					DcApplicationContext.StartTemporary(new GtkDialogProvider());
-					var minims = XamarinApplicationContext.Current.GetService<MiniImsServer>();
-
-					DateTime start = new DateTime();
-
-					if (!minims.IsRunning)
-					{
-						minims.Started += startHandler;
-						while (!started && DateTime.Now.Subtract(start).TotalSeconds < 20)
-							Application.RunIteration();
-					}
-
-					if (minims.IsRunning)
-						main = new MainWindow("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
-					else return;
-				}
-				else 
-				{
-					
-					DcApplicationContext.Current.Started += startHandler;
-					while (!started)
-						Application.RunIteration();
-
-					main = new MainWindow("http://127.0.0.1:9200/org.openiz.core/splash.html");
-				}
-
-
-				if(XamarinApplicationContext.Current.GetService<MiniImsServer>().IsRunning) {
-					main.Show ();
-					Application.Run ();
-				}
 
 			}
 			catch (Exception e)
@@ -131,5 +104,57 @@ namespace GtkClient
 				MessageBox.Show(e.ToString(), "Runtime Error");
 			}
 		}
+
+
+		/// <summary>
+		/// Start the IMS and do main program
+		/// </summary>
+		public static void StartContext(System.Object s, EventArgs ev) {
+
+			bool started = false;
+			EventHandler startHandler = (o, e) =>
+			{
+				started = true;
+			};
+
+			MainWindow main = null;
+			if (!DcApplicationContext.StartContext(new GtkDialogProvider()))
+			{
+				DcApplicationContext.StartTemporary(new GtkDialogProvider());
+				var minims = XamarinApplicationContext.Current.GetService<MiniImsServer>();
+
+				DateTime start = new DateTime();
+
+				if (!minims.IsRunning)
+				{
+					minims.Started += startHandler;
+					while (!started && DateTime.Now.Subtract(start).TotalSeconds < 20)
+						Application.RunIteration();
+				}
+
+				s_splashWindow.Destroy();
+				if (minims.IsRunning)
+					main = new MainWindow("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
+				else return;
+			}
+			else 
+			{
+
+				DcApplicationContext.Current.Started += startHandler;
+
+				while (!started)
+					Application.RunIteration();
+				
+				s_splashWindow.Destroy();
+				main = new MainWindow("http://127.0.0.1:9200/org.openiz.core/splash.html");
+			}
+
+
+
+			if(XamarinApplicationContext.Current.GetService<MiniImsServer>().IsRunning) {
+				main.Show ();
+			}
+		}
+	
 	}
 }

@@ -175,11 +175,7 @@ namespace DisconnectedClient.Core
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
-#if NOCRYPT
-                    typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
-#else
-                    typeof(SQLite.Net.Platform.SqlCipher.SQLitePlatformSqlCipher).AssemblyQualifiedName,
-#endif
+
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(DcAppletManagerService).AssemblyQualifiedName,
                                         typeof(SQLiteReportDatasource).AssemblyQualifiedName,
@@ -195,7 +191,14 @@ namespace DisconnectedClient.Core
                 }
             };
 
-
+			#if NOCRYPT
+			appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName);
+			#else
+			if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+				appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.SqlCipher.SQLitePlatformSqlCipher).AssemblyQualifiedName);
+			else
+				appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName);
+			#endif
 
             // Security configuration
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()

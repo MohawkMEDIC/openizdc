@@ -508,10 +508,14 @@ namespace DisconnectedClient.Core
 #if NOCRYPT
             return null;
 #else
-            var sid = WindowsIdentity.GetCurrent().User;
-            byte[] retVal = new byte[sid.BinaryLength];
-            WindowsIdentity.GetCurrent().User.GetBinaryForm(retVal, 0);
-            return retVal;
+			if(Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				var sid = WindowsIdentity.GetCurrent().User;
+	            byte[] retVal = new byte[sid.BinaryLength];
+	            WindowsIdentity.GetCurrent().User.GetBinaryForm(retVal, 0);
+	            return retVal;
+			}
+			else 
+				return null;
 #endif
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Gtk;
+using System.Threading;
 
 namespace GtkClient
 {
@@ -24,8 +25,17 @@ namespace GtkClient
 		}
 
 		public static ResponseType Show(String message, String title) {
-			using (var msg = new MessageBox (title, message))
-				return msg.Show ();
+			AutoResetEvent evt = new AutoResetEvent (false);
+			ResponseType result  = ResponseType.None;
+
+			Application.Invoke ((o, e) => {
+				using (var msg = new MessageBox (title, message))
+					result = msg.Show();
+				evt.Set();
+			});
+			evt.WaitOne ();
+			return result;
+
 		}
 	}
 
@@ -49,8 +59,17 @@ namespace GtkClient
 		}
 
 		public static ResponseType Show(String message, String title) {
-			using (var msg = new ConfirmBox (title, message))
-				return msg.Show ();
+
+			AutoResetEvent evt = new AutoResetEvent (false);
+			ResponseType result = ResponseType.None;
+
+			Application.Invoke ((o, e) => {
+				using (var msg = new ConfirmBox (title, message))
+					result = msg.Show();
+				evt.Set();
+			});
+			evt.WaitOne ();
+			return result;
 		}
 
 	}
