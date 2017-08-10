@@ -267,6 +267,10 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         return retVal;
     }
 
+    scope.doseSequenceFilter = function (dose) {
+        return dose === 0 ? OpenIZ.Localization.getString('locale.encounters.immunization.birthDose') : dose;
+    }
+
     /** 
      * Cascade dose sequences
      */
