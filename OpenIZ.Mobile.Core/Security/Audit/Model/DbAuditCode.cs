@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Code system
         /// </summary>
-        [Column("code_system"), Indexed]
+        [Column("code_system")]
         public String CodeSystem { get; set; }
 
     }

@@ -26,7 +26,6 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Xamarin.Security;
 using System.Security;
-using System.IO.Compression;
 using OpenIZ.Core.Http;
 using System.IO;
 using OpenIZ.Core.Model;
@@ -37,6 +36,12 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Query;
 using System.Net.Security;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
+using SharpCompress.Compressors.BZip2;
+using SharpCompress.Compressors.LZMA;
+using SharpCompress.Compressors.Deflate;
+using SharpCompress.Compressors;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -87,6 +92,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         config.Binding.Security.ClientCertificate.StoreName));
                 this.ClientCertificates.Add(cert);
             }
+
+          
         }
 
         /// <summary>
@@ -100,16 +107,39 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
             if (this.ClientCertificates != null)
                 retVal.ClientCertificates.AddRange(this.ClientCertificates);
 
-            // Compress?
-            if (this.Description.Binding.Optimize)
-                retVal.Headers.Add(HttpRequestHeader.AcceptEncoding, "deflate"); // use deflate as it appears to be a little faster
-
             // Proxy?
             if (!String.IsNullOrEmpty(this.m_configurationSection.ProxyAddress))
                 retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
 
             retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
 
+            // Set appropriate header
+            if (this.Description.Binding.Optimize)
+            {
+                switch ((this.Description.Binding as ServiceClientBinding)?.OptimizationMethod)
+                {
+                    case OptimizationMethod.Lzma:
+                        retVal.Headers[HttpRequestHeader.AcceptEncoding] = "lzma,bzip2,gzip,deflate";
+                        break;
+                    case OptimizationMethod.Bzip2:
+                        retVal.Headers[HttpRequestHeader.AcceptEncoding] = "bzip2,gzip,deflate";
+                        break;
+                    case OptimizationMethod.Gzip:
+                        retVal.Headers[HttpRequestHeader.AcceptEncoding] = "gzip,deflate";
+                        break;
+                    case OptimizationMethod.Deflate:
+                        retVal.Headers[HttpRequestHeader.AcceptEncoding] = "deflate";
+                        break;
+                    case OptimizationMethod.None:
+                        retVal.Headers[HttpRequestHeader.AcceptEncoding] = null;
+                        break;
+
+                }
+            }
+
+            // Set user agent
+            var asm = Assembly.GetEntryAssembly() ?? typeof(RestClient).Assembly;
+            retVal.UserAgent = String.Format("{0} {1} ({2})", asm.GetCustomAttribute<AssemblyTitleAttribute>()?.Title, asm.GetName().Version, asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
             return retVal;
         }
 
@@ -118,6 +148,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
         /// </summary>
         private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
             lock (m_trustedCerts)
             {
                 if (m_trustedCerts.Contains(certificate.Subject))
@@ -216,9 +249,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             {
                                 if (this.Description.Binding.Optimize)
                                 {
-                                    requestObj.Headers.Add("Content-Encoding", "deflate");
-                                    using (var df = new DeflateStream(ms, CompressionMode.Compress))
-                                        serializer.Serialize(df, body);
+                                    switch((this.Description.Binding as ServiceClientBinding)?.OptimizationMethod)
+                                    {
+                                        case OptimizationMethod.Lzma:
+                                            requestObj.Headers.Add("Content-Encoding", "lzma");
+                                            using (var df = new LZipStream(requestStream, CompressionMode.Compress, leaveOpen: true))
+                                                serializer.Serialize(df, body);
+                                            break;
+                                        case OptimizationMethod.Bzip2:
+                                            requestObj.Headers.Add("Content-Encoding", "bzip2");
+                                            using (var df = new BZip2Stream(requestStream, CompressionMode.Compress, leaveOpen: true))
+                                                serializer.Serialize(df, body);
+                                            break;
+                                        case OptimizationMethod.Gzip:
+                                            requestObj.Headers.Add("Content-Encoding", "gzip");
+                                            using (var df = new GZipStream(requestStream, CompressionMode.Compress, leaveOpen: true))
+                                                serializer.Serialize(df, body);
+                                            break;
+                                        case OptimizationMethod.Deflate:
+                                            requestObj.Headers.Add("Content-Encoding", "deflate");
+                                            using (var df = new DeflateStream(requestStream, CompressionMode.Compress, leaveOpen: true))
+                                                serializer.Serialize(df, body);
+                                            break;
+                                        case OptimizationMethod.None:
+                                        default:
+                                            serializer.Serialize(ms, body);
+                                            break;
+                                    }
                                 }
                                 else
                                     serializer.Serialize(ms, body);
@@ -250,7 +307,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             if (r.IsFaulted)
                                 responseError = r.Exception.InnerExceptions.First();
                             else
+                            {
+                                this.FireResponding(new RestResponseEventArgs(method, url, query, r.Result.ContentType, null, (int)(r.Result as HttpWebResponse).StatusCode, r.Result.ContentLength));
                                 response = r.Result as HttpWebResponse;
+                            }
                         }, TaskContinuationOptions.LongRunning);
                         if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
                             throw new TimeoutException();
@@ -328,18 +388,26 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                 switch (response.Headers[HttpResponseHeader.ContentEncoding])
                                 {
                                     case "deflate":
-                                        using (DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress))
+                                        using (DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress, leaveOpen: true))
                                             retVal = (TResult)serializer.DeSerialize(df);
                                         break;
                                     case "gzip":
-                                        using (GZipStream df = new GZipStream(ms, CompressionMode.Decompress))
+                                        using (GZipStream df = new GZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
                                             retVal = (TResult)serializer.DeSerialize(df);
+                                        break;
+                                    case "bzip2":
+                                        using (var bzs = new BZip2Stream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                            retVal = (TResult)serializer.DeSerialize(bzs);
+                                        break;
+                                    case "lzma":
+                                        using (var lzmas = new LZipStream(ms, CompressionMode.Decompress, leaveOpen : true))
+                                            retVal = (TResult)serializer.DeSerialize(lzmas);
                                         break;
                                     default:
                                         retVal = (TResult)serializer.DeSerialize(ms);
                                         break;
                                 }
-
+                                //retVal = (TResult)serializer.DeSerialize(ms);
                             }
 
 #if PERFMON
@@ -386,17 +454,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                 switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
                                 {
                                     case "deflate":
-                                        using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+                                        using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
                                             result = (TResult)serializer.DeSerialize(df);
                                         break;
                                     case "gzip":
-                                        using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+                                        using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
                                             result = (TResult)serializer.DeSerialize(df);
+                                        break;
+                                    case "bzip2":
+                                        using (var bzs = new BZip2Stream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
+                                            result = (TResult)serializer.DeSerialize(bzs);
+                                        break;
+                                    case "lzma":
+                                        using (var lzmas = new LZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
+                                            result = (TResult)serializer.DeSerialize(lzmas);
+
                                         break;
                                     default:
                                         result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
                                         break;
                                 }
+                                //result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
                             }
                             catch (Exception dse)
                             {

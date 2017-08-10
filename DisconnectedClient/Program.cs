@@ -111,6 +111,7 @@ namespace DisconnectedClient
 #else
                 var settings = new CefSettings() { UserAgent = "OpenIZEmbedded" };
                 Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
+                Cef.EnableHighDPISupport();
 #endif
 
                 Application.EnableVisualStyles();

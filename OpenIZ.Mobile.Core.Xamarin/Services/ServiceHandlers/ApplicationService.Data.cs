@@ -47,6 +47,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     public partial class ApplicationService
     {
 
+        // Is downloading
+        private static bool s_isDownloading = false;
+
         /// <summary>
         /// Delete queue entry
         /// </summary>
@@ -139,21 +142,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             ApplicationContext.Current.GetService<QueueManagerService>().ExhaustOutboundQueue();
             ApplicationContext.Current.GetService<QueueManagerService>().ExhaustAdminQueue();
-
-            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, ""), 0);
-            var targets = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o => o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange) || o.Triggers.HasFlag(SynchronizationPullTriggerType.PeriodicPoll)).ToList();
-            for(var i = 0; i < targets.Count(); i++)
+            if (ApplicationContext.Current.GetService<ISynchronizationService>().IsSynchronizing || s_isDownloading)
+                throw new InvalidOperationException(Strings.err_already_syncrhonizing);
+            else
             {
-                var itm = targets[i];
-                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, itm.ResourceType.Name), (float)i / targets.Count);
+                s_isDownloading = true;
+                try
+                {
+                    ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, ""), 0);
+                    var targets = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o => o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange) || o.Triggers.HasFlag(SynchronizationPullTriggerType.PeriodicPoll)).ToList();
+                    for (var i = 0; i < targets.Count(); i++)
+                    {
+                        var itm = targets[i];
+                        ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, itm.ResourceType.Name), (float)i / targets.Count);
 
-                if (itm.Filters.Count > 0)
-                    foreach (var f in itm.Filters)
-                        ApplicationContext.Current.GetService<RemoteSynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f), itm.Always);
-                else
-                    ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType);
+                        if (itm.Filters.Count > 0)
+                            foreach (var f in itm.Filters)
+                                ApplicationContext.Current.GetService<RemoteSynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f), itm.Always, itm.Name);
+                        else
+                            ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType);
+                    }
+                }
+                finally
+                {
+                    s_isDownloading = false;
+                }
             }
-            
+
         }
 
         /// <summary>

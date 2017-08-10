@@ -68,13 +68,26 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
         /// </summary>
         /// <param name="config">Config.</param>
         void Save(OpenIZConfiguration config);
-		
-			
+					
 		/// <summary>
 		/// Get the configuration
 		/// </summary>
 		OpenIZConfiguration Configuration {get; }
 
+        /// <summary>
+        /// Backs up the configuration
+        /// </summary>
+        void Backup();
+
+        /// <summary>
+        /// Has a backup?
+        /// </summary>
+        bool HasBackup();
+
+        /// <summary>
+        /// Restore a backup
+        /// </summary>
+        void Restore();
 	}
 }
 

@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// <summary>
 		/// Gets or sets the universal identifier for the object
 		/// </summary>
-		[PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull]
+		[PrimaryKey, Column("uuid"), MaxLength(16), NotNull]
 		public virtual byte[] Uuid {
 			get;
 			set;
@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
         /// <summary>
         /// Gets or sets the uuid pointing to the act
         /// </summary>
-        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid)), AlwaysJoin]
+        [PrimaryKey, Column("uuid"), MaxLength(16), NotNull, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid)), AlwaysJoin]
         public override byte[] Uuid { get; set; }
 
     }
@@ -90,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
         /// <summary>
         /// Gets or sets the uuid pointing to the act
         /// </summary>
-        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbObservation), nameof(DbObservation.Uuid)), AlwaysJoin]
+        [PrimaryKey, Column("uuid"), MaxLength(16), NotNull, ForeignKey(typeof(DbObservation), nameof(DbObservation.Uuid)), AlwaysJoin]
         public override byte[] Uuid { get; set; }
 
     }
@@ -104,7 +104,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
         /// <summary>
         /// Gets or sets the uuid pointing to the act
         /// </summary>
-        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid)), AlwaysJoin]
+        [PrimaryKey, Column("uuid"), MaxLength(16), NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid)), AlwaysJoin]
         public override byte[] Uuid { get; set; }
 
     }
@@ -118,7 +118,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
         /// <summary>
         /// Gets or sets the uuid pointing to the act
         /// </summary>
-        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbPerson), nameof(DbPerson.Uuid)), AlwaysJoin]
+        [PrimaryKey, Column("uuid"), MaxLength(16), NotNull, ForeignKey(typeof(DbPerson), nameof(DbPerson.Uuid)), AlwaysJoin]
         public override byte[] Uuid { get; set; }
 
     }
@@ -132,7 +132,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
         /// <summary>
         /// Gets or sets the uuid pointing to the act
         /// </summary>
-        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbMaterial), nameof(DbMaterial.Uuid)), AlwaysJoin]
+        [PrimaryKey, Column("uuid"), MaxLength(16), NotNull, ForeignKey(typeof(DbMaterial), nameof(DbMaterial.Uuid)), AlwaysJoin]
         public override byte[] Uuid { get; set; }
 
     }

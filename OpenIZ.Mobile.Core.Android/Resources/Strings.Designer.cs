@@ -61,6 +61,15 @@ namespace OpenIZ.Mobile.Core.Android.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The applet {0} was corrupted. Would you like to download a fresh copy?.
+        /// </summary>
+        internal static string err_applet_corrupt_reinstall {
+            get {
+                return ResourceManager.GetString("err_applet_corrupt_reinstall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to General authentication error occurred.
         /// </summary>
         internal static string err_authentication_exception {
@@ -75,6 +84,15 @@ namespace OpenIZ.Mobile.Core.Android.Resources {
         internal static string err_certificate_not_found {
             get {
                 return ResourceManager.GetString("err_certificate_not_found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was an error reading your device&apos;s configuration information. There is a backup available, would you like to restore the backup?.
+        /// </summary>
+        internal static string err_configuration_invalid_restore_prompt {
+            get {
+                return ResourceManager.GetString("err_configuration_invalid_restore_prompt", resourceCulture);
             }
         }
         

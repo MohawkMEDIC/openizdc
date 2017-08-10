@@ -105,7 +105,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             {
                 this.m_tracer.TraceInfo("Connecting datawarehouse to {0}", dbFile);
                 this.m_connection = new SqliteConnection("Data Source=" + dbFile);
-                (this.m_connection as SqliteConnection).SetPassword(ApplicationContext.Current.GetCurrentContextSecurityKey());
+
+                var key = ApplicationContext.Current.GetCurrentContextSecurityKey();
+                if (key != null)
+                    (this.m_connection as SqliteConnection).SetPassword(key);
                 this.m_connection.Open();
             }
             catch (Exception e)
@@ -145,7 +148,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 this.m_tracer.TraceError("Error initializing database connection to {0} : {1}", dbFile, ex);
             }
@@ -418,7 +421,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             createSql.AppendFormat(")");
 
             // Now execute SQL create statement
-            if(!(container is DatamartStoredQuery))
+            if (!(container is DatamartStoredQuery))
                 lock (this.m_lock)
                 {
                     using (var dbc = this.CreateCommand(tx, createSql.ToString())) dbc.ExecuteNonQuery();
@@ -432,7 +435,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// </summary>
         private IDbCommand CreateCommand(IDbTransaction tx, string sql, params object[] parameters)
         {
-            
+
             var retVal = this.m_connection.CreateCommand();
             retVal.Transaction = tx;
             retVal.CommandType = System.Data.CommandType.Text;
@@ -448,7 +451,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     if (itm is DateTime)
                     {
                         DateTime dt = (DateTime)itm;
-                        switch(dt.Kind)
+                        switch (dt.Kind)
                         {
                             case DateTimeKind.Local:
                                 parm.Value = ((DateTime)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
@@ -520,7 +523,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             foreach (var itm in (deleteQuery as NameValueCollection))
                                 parms.Add(itm.Key, itm.Value);
                         }
-                        else 
+                        else
                         {
                             parms = new ExpandoObject();
                             foreach (var itm in deleteQuery.GetType().GetProperties())
@@ -532,7 +535,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                         using (var dbc = this.CreateCommand(tx, String.Format("DELETE FROM {0} {1} ", mart.Schema.Name, this.ParseFilterDictionary(mart.Schema.Name, parms, mart.Schema.Properties, vals)), vals.ToArray()))
                             dbc.ExecuteNonQuery();
                         this.DeleteProperties(tx, mart.Schema.Name, mart.Schema);
-                        
+
                         tx.Commit();
                     }
                     catch (Exception e)
@@ -561,15 +564,46 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         {
             this.ThrowIfDisposed();
 
+            using (var tx = this.m_connection.BeginTransaction())
+            {
+                try
+                {
+                    this.m_tracer.TraceInfo("Deleting datamart {0}", datamartId);
+
+                    // Delete the schema
+                    var mart = this.GetDatamart(datamartId);
+                    using (var dbc = this.CreateCommand(tx, "DELETE FROM dw_properties WHERE cont_id = ?", mart.Schema.Id))
+                        dbc.ExecuteNonQuery();
+                    using (var dbc = this.CreateCommand(tx, "DELETE FROM dw_schemas WHERE uuid = ?", mart.Schema.Id))
+                        dbc.ExecuteNonQuery();
+                    using (var dbc = this.CreateCommand(tx, "DELETE FROM dw_datamarts WHERE uuid = ?", mart.Id))
+                        dbc.ExecuteNonQuery();
+                    using (var dbc = this.CreateCommand(tx, "DELETE FROM dw_properties WHERE cont_id in (select uuid from dw_st_query where schema_id = ?)", mart.Schema.Id))
+                        dbc.ExecuteNonQuery();
+                    using (var dbc = this.CreateCommand(tx, "DELETE FROM dw_st_query WHERE schema_id = ?", mart.Schema.Id))
+                        dbc.ExecuteNonQuery();
+
+                    using (var dbc = this.CreateCommand(tx, string.Format("DROP TABLE {0}", mart.Schema.Name)))
+                        dbc.ExecuteNonQuery();
+
+
+                    tx.Commit();
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error deleting data mart {0} : {1}", datamartId, e);
+                    tx.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public void Truncate(Guid datamartId)
+        {
             throw new NotImplementedException();
         }
 
-	    public void Truncate(Guid datamartId)
-	    {
-		    throw new NotImplementedException();
-	    }
-
-	    /// <summary>
+        /// <summary>
         /// Dispose the 
         /// </summary>
         public void Dispose()
@@ -714,9 +748,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             using (var dbc = this.CreateCommand(null, String.Format("SELECT COUNT(*) FROM ({0})", sb), vals.ToArray()))
                 totalResults = Convert.ToInt32(dbc.ExecuteScalar());
 
-            if(count > 0)
+            if (count > 0)
                 sb.AppendFormat(" LIMIT {0}", count);
-            if(offset > 0)
+            if (offset > 0)
                 sb.AppendFormat(" OFFSET {0}", offset);
 
             lock (this.m_lock)
@@ -749,7 +783,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
                     sb.Append("(");
 
-                    string key = s.Key.Replace(".", "_").Replace("[]",""),
+                    string key = s.Key.Replace(".", "_").Replace("[]", ""),
                         scopedQuery = objectName + ".";
 
                     // Property info
@@ -863,7 +897,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                 else if (rdr[i] is byte[] && (rdr[i] as byte[]).Length == 16 ||
                     property?.Type == SchemaPropertyType.Uuid)
                     value = new Guid(rdr[i] as byte[]);
-                else if((rdr[i] is int || rdr[i] is long) && 
+                else if ((rdr[i] is int || rdr[i] is long) &&
                     property?.Type == SchemaPropertyType.Date)
                 {
                     value = Convert.ToInt64(rdr[i]);
@@ -924,8 +958,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         public DatamartStoredQuery CreateStoredQuery(Guid datamartId, object queryDefinition)
         {
             this.ThrowIfDisposed();
-            
-           
+
+
             // Now create / register the data schema
             lock (this.m_lock)
             {
@@ -1005,7 +1039,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                 // Queries
                 using (var dbc = this.CreateCommand(null, "SELECT * FROM dw_st_query WHERE schema_id = ?", retVal.Id))
                 using (var rdr = dbc.ExecuteReader())
-                    while(rdr.Read())
+                    while (rdr.Read())
                     {
                         retVal.Queries.Add(new DatamartStoredQuery()
                         {

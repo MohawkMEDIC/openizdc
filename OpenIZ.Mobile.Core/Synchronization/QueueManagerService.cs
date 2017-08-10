@@ -158,19 +158,19 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         try
                         {
-                            if (bundle?.Item.Count > 2500)
-                            {
-                                var ofs = 0;
-                                while (ofs < bundle.Item.Count)
-                                {
-                                    this.ImportElement(new Bundle()
-                                    {
-                                        Item = bundle.Item.Skip(ofs).Take(2500).ToList()
-                                    });
-                                    ofs += 2500;
-                                }
-                            }
-                            else
+                            //if (bundle?.Item.Count > 1000)
+                            //{
+                            //    var ofs = 0;
+                            //    while (ofs < bundle.Item.Count)
+                            //    {
+                            //        this.ImportElement(new Bundle()
+                            //        {
+                            //            Item = bundle.Item.Skip(ofs).Take(500).ToList()
+                            //        });
+                            //        ofs += 500;
+                            //    }
+                            //}
+                            //else
                                 this.ImportElement(dpe);
                         }
                         catch (Exception e)
@@ -231,19 +231,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 locked = Monitor.TryEnter(this.m_adminLock, 100);
                 if (!locked) return;
+                // TODO: Sleep thread here
+                var amiService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
+                if (!amiService.IsAvailable())
+                {
+                    // Come back in 30 seconds...
+                    this.m_threadPool.QueueUserWorkItem(new TimeSpan(0, 0, 30), (o) => this.ExhaustOutboundQueue(), null);
+                    return;
+                }
+
                 // Exhaust the queue
                 while (SynchronizationQueue.Admin.Count() > 0)
                 {
 
-                    // TODO: Sleep thread here
-                    var amiService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
-                    if (!amiService.IsAvailable())
-                    {
-                        // Come back in 30 seconds...
-                        this.m_threadPool.QueueUserWorkItem(new TimeSpan(0, 0, 30), (o) => this.ExhaustOutboundQueue(), null);
-                        return;
-                    }
-
+                    
                     // Exhaust the outbound queue
                     // Is there more than one item on the queue?
                     var syncItm = SynchronizationQueue.Admin.PeekRaw();

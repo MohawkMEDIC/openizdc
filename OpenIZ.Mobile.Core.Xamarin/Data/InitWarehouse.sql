@@ -17,9 +17,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS dw_schemas_name_idx ON dw_schemas(name);
 CREATE TABLE IF NOT EXISTS dw_st_query (
 	uuid blob(16) not null,
 	schema_id blob(16) not null,
-	name varchar(64) not null unique,
+	name varchar(64) not null,
 	constraint pk_dw_st_query primary key (uuid)
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS dw_st_query_name_idx ON dw_st_query(schema_id,name);
 
 CREATE TABLE IF NOT EXISTS dw_properties (
 	uuid blob(16) not null primary key,

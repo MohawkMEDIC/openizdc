@@ -49,6 +49,8 @@ using System.IO.Compression;
 using OpenIZ.Core.Applets.Services;
 using OpenIZ.Mobile.Core.Security.Audit;
 using OpenIZ.Core;
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -564,6 +566,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             {
                 response.StatusCode = 403;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
+            else if(e is DetectedIssueException)
+            {
+                return new ErrorResult(e);
             }
             else if (e is TargetInvocationException)
                 return this.HandleServiceException(e.InnerException, invoke, response);

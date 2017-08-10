@@ -92,6 +92,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
         $('#nextButton').show();
 
         // Remove dirty and touched from inputs
+        delete ($scope.resetRequest.userName);
         delete ($scope.resetRequest.mechanism);
         delete ($scope.resetRequest.mechanismModel);
         delete ($scope.resetRequest.tfaSecret);

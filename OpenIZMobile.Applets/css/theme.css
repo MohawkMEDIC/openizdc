@@ -167,6 +167,13 @@ fieldset{
     border: none;
 }
 
+@media (max-width: 1199px) {
+    .select2-results__option {
+        padding-top: 14px;
+        padding-bottom: 14px;
+    }
+}
+
 .input-group { width:100%; }
 .input-group .form-control:last-child {
     border-radius: 4px;
@@ -786,6 +793,8 @@ body{
 .vaccinations-tile{
     background:white;
     margin-bottom:5px;
+    padding-top:10px;
+    padding-bottom:10px;
 }
 
 /**Header dock*/
@@ -924,9 +933,7 @@ body{
     padding: 4px;
 }
 .approx-add-in{
-    position: absolute;
-    top: 12px;
-    left: 34px;
+    padding-top: 12px;
 }
 .glyphicon-chevron-down{
     font-size:15px;
@@ -1713,4 +1720,7 @@ a.disabled {
     .patient-tile-value {
         margin-left: 10px;
     }
+}
+.small-input {
+    width: auto !important;
 }

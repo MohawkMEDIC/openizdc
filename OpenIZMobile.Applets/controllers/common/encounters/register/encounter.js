@@ -335,9 +335,9 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     };
 
     scope.hasCauseOfDeath = scope.hasCauseOfDeath || function (encounter) {
-        return $.grep(encounter.relationship.HasComponent, function (x) {
+        return (encounter.relationship && $.grep(encounter.relationship.HasComponent, function (x) {
             return x.targetModel && x.targetModel.templateModel && x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath";
-        }).length > 0;
+        }).length > 0);
     }
 
     scope.addCauseOfDeath = scope.addCauseOfDeath || function (patient, act, encounter) {

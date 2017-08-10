@@ -51,6 +51,7 @@ using OpenIZ.Mobile.Core.Services;
 using System.Xml.Serialization;
 using System.Security.Cryptography;
 using OpenIZ.Core.Applets.Services;
+using DisconnectedClient.Properties;
 
 namespace DisconnectedClient.Core
 {
@@ -69,9 +70,9 @@ namespace DisconnectedClient.Core
         // The application
         private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication()
         {
-            ApplicationSecret = "A1CF054D04D04CD1897E114A904E328D",
-            Key = Guid.Parse("4C5A581C-A6EE-4267-9231-B0D3D50CC08A"),
-            Name = "org.openiz.minims"
+            ApplicationSecret = "FE78825ADB56401380DBB406411221FD",
+            Key = Guid.Parse("B7ECA9F3-805E-4BE9-A5C7-30E6E495939A"),
+            Name = "org.openiz.disconnected_client.win32"
         };
 
         // Applet bas directory
@@ -219,7 +220,21 @@ namespace DisconnectedClient.Core
             { // load configuration
                 try
                 {
-                    retVal.ConfigurationManager.Load();
+                    try
+                    {
+                        retVal.ConfigurationManager.Load();
+                        retVal.ConfigurationManager.Backup();
+                    }
+                    catch
+                    {
+                        if (retVal.ConfigurationManager.HasBackup() && retVal.Confirm(Resources.err_configuration_invalid_restore_prompt))
+                        {
+                            retVal.ConfigurationManager.Restore();
+                            retVal.ConfigurationManager.Load();
+                        }
+                        else
+                            throw;
+                    }
 
                     // Set master application context
                     ApplicationContext.Current = retVal;
@@ -251,10 +266,20 @@ namespace DisconnectedClient.Core
                                 appletService.LoadApplet(manifest);
                             }
                         }
+                        catch (AppDomainUnloadedException) { throw; }
                         catch (Exception e)
                         {
-                            retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
-                            throw;
+                            if (retVal.Confirm(String.Format(Resources.err_applet_corrupt_reinstall, appletInfo.Id)))
+                            {
+                                String appletPath = Path.Combine(retVal.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);
+                                if (File.Exists(appletPath))
+                                    File.Delete(appletPath);
+                            }
+                            else
+                            {
+                                retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletInfo, e.ToString());
+                                throw;
+                            }
                         }
 
 
@@ -480,10 +505,14 @@ namespace DisconnectedClient.Core
         /// </summary>
         public override byte[] GetCurrentContextSecurityKey()
         {
+#if NOCRYPT
+            return null;
+#else
             var sid = WindowsIdentity.GetCurrent().User;
             byte[] retVal = new byte[sid.BinaryLength];
             WindowsIdentity.GetCurrent().User.GetBinaryForm(retVal, 0);
             return retVal;
+#endif
         }
     }
 }

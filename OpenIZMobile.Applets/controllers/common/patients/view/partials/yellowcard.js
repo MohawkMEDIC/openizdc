@@ -139,7 +139,8 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
             $scope.display._vaccineAdministrations = {};
     };
 
-    function showVaccineTab() {
+    function showVaccineTab(antigenName) {
         $('a[data-target="#vaccinations"]').tab('show');
+        window.scrollTo(0, $('#' + antigenName + '-header').offset().top - $('div.header-dock').height() - $('div.navbar').height());
     }
 }]);

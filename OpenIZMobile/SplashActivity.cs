@@ -50,12 +50,21 @@ using OpenIZ.Mobile.Core.Xamarin.Services;
 
 namespace OpenIZMobile
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true, ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
     public class SplashActivity : Activity
     {
 
         // Tracer
         private Tracer m_tracer;
+
+        /// <param name="newConfig">The new device configuration.</param>
+        /// <summary>
+        /// Configuration changed
+        /// </summary>
+        public override void OnConfigurationChanged(Android.Content.Res.Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+        }
 
         /// <summary>
         /// Progress has changed

@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the mnemonic.
 		/// </summary>
 		/// <value>The mnemonic.</value>
-		[Column("mnemonic"), Indexed, NotNull]
+		[Column("mnemonic"), NotNull]
 		public String Mnemonic {
 			get;
 			set;

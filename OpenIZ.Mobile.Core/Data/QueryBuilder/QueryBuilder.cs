@@ -337,7 +337,8 @@ namespace OpenIZ.Core.Data.QueryBuilder
 
                         //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
 
-                        selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
+                        //selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");
+                        whereClause.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} IN (SELECT {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name} FROM {tablePrefix}cte{cteStatements.Count - 1})");
 
                     }
 
@@ -439,7 +440,16 @@ namespace OpenIZ.Core.Data.QueryBuilder
                                 retVal.Append(" <> ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         case '~':
-                            retVal.Append(" LIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            if (sValue.Contains("*") || sValue.Contains("?"))
+                                retVal.Append(" LIKE ? ", CreateParameterValue(sValue.Substring(1).Replace("*","%"), propertyInfo.PropertyType));
+                            else
+                                retVal.Append(" LIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            break;
+                        case '^':
+                            retVal.Append(" LIKE ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            break;
+                        case '$':
+                            retVal.Append(" LIKE '%' || ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         default:
                             if (sValue.Equals("null"))

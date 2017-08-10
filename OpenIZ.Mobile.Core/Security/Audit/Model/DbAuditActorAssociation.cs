@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Actor identifier
         /// </summary>
-        [Column("actor_id"), NotNull, Indexed, ForeignKey(typeof(DbAuditActor), nameof(DbAuditActor.Id))]
+        [Column("actor_id"), NotNull, ForeignKey(typeof(DbAuditActor), nameof(DbAuditActor.Id))]
         public byte[] TargetUuid { get; set; }
 
     }

@@ -28,6 +28,9 @@ using SQLite.Net;
 using System.Collections;
 using OpenIZ.Core.Data.QueryBuilder;
 using OpenIZ.Mobile.Core.Data.Model;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -37,6 +40,50 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityRelationshipPersistenceService : IdentifiedPersistenceService<EntityRelationship, DbEntityRelationship>, ILocalAssociativePersistenceService
     {
 
+        /// <summary>
+        /// Role dictionary
+        /// </summary>
+        private Dictionary<Guid, String> m_relationshipMnemonicDictionary = new Dictionary<Guid, string>();
+
+        /// <summary>
+        /// Load relationship mnemonics
+        /// </summary>
+        public string GetRelationshipMnemonic(LocalDataContext context, Guid id)
+        {
+            if (this.m_relationshipMnemonicDictionary.Count == 0)
+                lock(this.m_relationshipMnemonicDictionary)
+                    if (this.m_relationshipMnemonicDictionary.Count == 0)
+                        foreach (var itm in context.Connection.Query<DbConcept>("select concept.uuid, mnemonic from concept_concept_set inner join concept on (concept.uuid = concept_concept_set.concept_uuid) where concept_concept_set.concept_set_uuid = ?", ConceptSetKeys.EntityRelationshipType.ToByteArray()))
+                            this.m_relationshipMnemonicDictionary.Add(itm.Key, itm.Mnemonic);
+            String retVal = null;
+            this.m_relationshipMnemonicDictionary.TryGetValue(id, out retVal);
+            return retVal;
+        }
+
+        /// <summary>
+        /// To model instance 
+        /// </summary>
+        public override EntityRelationship ToModelInstance(object dataInstance, LocalDataContext context)
+        {
+            var dbi = dataInstance as DbEntityRelationship;
+            if (dbi == null) return null;
+
+            var roleKey = new Guid(dbi.RelationshipTypeUuid);
+            return new EntityRelationship()
+            {
+                SourceEntityKey = new Guid(dbi.SourceUuid),
+                LoadState = OpenIZ.Core.Model.LoadState.FullLoad,
+                RelationshipTypeKey = roleKey,
+                RelationshipType = new Concept()
+                {
+                    Key = roleKey,
+                    Mnemonic = this.GetRelationshipMnemonic(context, roleKey)
+                },
+                TargetEntityKey = new Guid(dbi.TargetUuid),
+                Quantity = dbi.Quantity,
+                Key = new Guid(dbi.Uuid)
+            };
+        }
         /// <summary>
         /// From model instance
         /// </summary>
@@ -116,7 +163,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override EntityRelationship UpdateInternal(LocalDataContext context, EntityRelationship data)
         {
             // Ensure we haven't already persisted this
-            if (data.TargetEntity != null) data.TargetEntity = data.TargetEntity.EnsureExists(context);
+            //if (data.TargetEntity != null) data.TargetEntity = data.TargetEntity.EnsureExists(context);
             data.TargetEntityKey = data.TargetEntity?.Key ?? data.TargetEntityKey;
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;

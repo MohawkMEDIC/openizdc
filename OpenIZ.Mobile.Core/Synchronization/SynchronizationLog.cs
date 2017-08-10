@@ -110,7 +110,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Save the sync log entry
         /// </summary>
-        public void Save(Type modelType, String filter, String eTag)
+        public void Save(Type modelType, String filter, String eTag, String name)
         {
             var conn = this.CreateConnection();
             using (conn.Lock())
@@ -118,7 +118,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
                 var logEntry = conn.Table<SynchronizationLogEntry>().Where(o => o.ResourceType == modelAqn && o.Filter == filter).FirstOrDefault();
                 if (logEntry == null)
-                    conn.Insert(new SynchronizationLogEntry() { ResourceType = modelAqn, Filter = filter, LastETag = eTag, LastSync = DateTime.Now });
+                    conn.Insert(new SynchronizationLogEntry() { ResourceType = modelAqn, Filter = filter, LastETag = eTag, LastSync = DateTime.Now, Name = name });
                 else
                 {
                     logEntry.LastSync = DateTime.Now;
@@ -144,7 +144,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Save the query state so that it can come back if the connection is lost
         /// </summary>
-        public void SaveQuery(Type modelType, String filter, Guid queryId, int offset)
+        public void SaveQuery(Type modelType, String filter, Guid queryId, String name, int offset)
         {
 
             var conn = this.CreateConnection();
@@ -164,7 +164,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             Filter = filter,
                             LastSuccess = offset,
                             StartTime = DateTime.Now,
-                            ResourceType = modelAqn
+                            ResourceType = modelAqn,
+                            Name = name
                         });
                     }
                     else

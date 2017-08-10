@@ -140,6 +140,13 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlAttribute("ignoreModifiedOn")]
         public bool Always { get; set; }
+
+        /// <summary>
+        /// The friendly name
+        /// </summary>
+        [XmlAttribute("name")]
+        public String Name { get; set; }
+
     }
 
 
@@ -157,6 +164,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         OnStop = 0x04,
         OnPush = 0x08,
         OnNetworkChange = 0x10,
-        PeriodicPoll = 0x20
+        PeriodicPoll = 0x20,
+        Manual = 0x40
     }
 }

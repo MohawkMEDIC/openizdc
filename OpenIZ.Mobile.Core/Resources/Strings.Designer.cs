@@ -80,6 +80,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The care plan service is already calculating your facility plan....
+        /// </summary>
+        internal static string err_already_computing_careplan {
+            get {
+                return ResourceManager.GetString("err_already_computing_careplan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;p&gt;The server encountered an internal error while processing your request. Please contact the system administrator for more information. Include the following diagnostic error data:&lt;/p&gt;&lt;pre&gt;{0}&lt;/pre&gt;.
         /// </summary>
         internal static string InternalServerError {
