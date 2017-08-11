@@ -24,14 +24,14 @@
             <div class="input-group">
                 <label class="control-label">
                     {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} 
-                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</a>
+                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ doseSequenceFilter(act.targetModel.doseSequence) }}</a>
                     <span ng-if="act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</span>
                 
                 <span ng-if="act._created">
                     ({{ 'locale.encounters.immunization.isBooster' | i18n }})
                 </span>
                 </label>
-                <select ng-model="act.targetModel.doseSequence" ng-change="cascadeDoseSequences(act._encounter.relationship.HasComponent, act.targetModel.doseSequence)" ng-options="i for i in getDoseSequences(act.targetModel.participation.Product.player)" ng-if="act._overrideDose" class="form-control" /><br />
+                <select ng-model="act.targetModel.doseSequence" ng-change="cascadeDoseSequences(act._encounter.relationship.HasComponent, act.targetModel.doseSequence)" ng-options="doseSequenceFilter(i) for i in getDoseSequences(act.targetModel.participation.Product.player)" ng-if="act._overrideDose" class="form-control" /><br />
                 <span ng-if="act.targetModel.tag.backEntry">
                     <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
                 </span>

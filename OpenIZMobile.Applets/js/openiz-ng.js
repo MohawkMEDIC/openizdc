@@ -534,26 +534,25 @@ angular.module('openiz', [])
                                 //params.page = params.page || 0;
                                 var data = data.$type == "Bundle" ? data.item : data.item || data;
                                 var retVal = { results: [] };
-                                if (groupString == null) {
-                                    return {
-                                        results: $.map(data, function (o) {
-                                            var text = "";
-                                            if (displayString) {
-                                                scope = o;
-                                                text = eval(displayString);
+
+                                if (groupString == null && data !== undefined) {
+                                    retVal.results = retVal.results.concat($.map(data, function (o) {
+                                        var text = "";
+                                        if (displayString) {
+                                            scope = o;
+                                            text = eval(displayString);
+                                        }
+                                        else if (o.name !== undefined) {
+                                            if (o.name.OfficialRecord) {
+                                                text = OpenIZ.Util.renderName(o.name.OfficialRecord);
+                                            } else if (o.name.Assigned) {
+                                                text = OpenIZ.Util.renderName(o.name.Assigned);
                                             }
-                                            else if (o.name !== undefined) {
-                                                if (o.name.OfficialRecord) {
-                                                    text = OpenIZ.Util.renderName(o.name.OfficialRecord);
-                                                } else if (o.name.Assigned) {
-                                                    text = OpenIZ.Util.renderName(o.name.Assigned);
-                                                }
-                                            }
-                                            o.text = o.text || text;
-                                            o.id = o[resultProperty];
-                                            return o;
-                                        })
-                                    };
+                                        }
+                                        o.text = o.text || text;
+                                        o.id = o[resultProperty];
+                                        return o;
+                                    }));
                                 }
                                 else {
                                     // Get the group string
@@ -782,7 +781,7 @@ angular.module('openiz', [])
             restrict: 'A',
             template: "<span>{{site}}</span>",
             link: function (scope, element, attrs) {
-                scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length) || "N/A";
+                scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length) || OpenIZ.Localization.getString("locale.common.na");
             }
         };
     })

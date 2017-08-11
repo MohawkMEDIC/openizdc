@@ -1988,7 +1988,7 @@ var OpenIZ = OpenIZ || {
          * @method
          */
         interpretObservation: function (obs, patient, ruleSet) {
-            if (!obs.value) return;
+            if (obs.value === undefined || obs.value === null) return;
             obs.participation = obs.participation || {};
             obs.participation.RecordTarget = obs.participation.RecordTarget || {};
             obs.participation.RecordTarget.playerModel = patient;

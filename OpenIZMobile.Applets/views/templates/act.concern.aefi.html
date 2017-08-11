@@ -39,7 +39,7 @@
                   ng-change="bindRelationship(act.targetModel, 'RefersTo', act.targetModel.relationship.RefersTo.target, 'act.relationship.HasSubject.targetModel.value = (act.relationship.RefersTo.targetModel.participation.Consumable || act.relationship.RefersTo.targetModel.participation.Product).playerModel.typeConceptModel.id; act.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime = act.relationship.RefersTo.targetModel.actTime')"
                   oiz-databind="Act"
                   data-filter='{ "participation[RecordTarget].player" : "{{ patient.id }}", "statusConcept" : "afc33800-8225-4061-b168-bacc09cdbae3", "classConcept" : "932a3c7e-ad77-450a-8a1f-030fc2855450", "isNegated": "false" }'
-                  data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned) + ' ' + OpenIZ.Localization.getString('locale.encounters.immunization.doseSequence') + ' ' + scope.doseSequence"
+                  data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned) + ' ' + OpenIZ.Localization.getString('locale.encounters.immunization.doseSequence') + ' ' + (scope.doseSequence === 0 ? OpenIZ.Localization.getString('locale.encounters.immunization.birthDose') : scope.doseSequence)"
                   data-key="scope.id">
             <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
           </select>
@@ -57,7 +57,8 @@
           <label>
             {{ 'locale.encounters.immunization.doseSequence' | i18n }} :
           </label>
-          <span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence !== undefined">{{ act.targetModel.relationship.RefersTo.targetModel.doseSequence }}</span><span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence === undefined">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>
+          <span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence !== undefined">{{ doseSequenceFilter(act.targetModel.relationship.RefersTo.targetModel.doseSequence) }}</span>
+          <span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence === undefined">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>
           <label>
             {{ 'locale.encounters.immunizations.site' | i18n }} : 
           </label>
