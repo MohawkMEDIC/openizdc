@@ -19,6 +19,7 @@
  */
 using System;
 using System.Security.Cryptography.X509Certificates;
+using DisconnectedClient.Core;
 #if !IE
 using CefSharp;
 #endif

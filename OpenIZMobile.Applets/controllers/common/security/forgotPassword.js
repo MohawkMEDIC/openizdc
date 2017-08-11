@@ -161,7 +161,11 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
                 },
                 onException: function (exception) {
                     OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.invalidCode"));
-                    console.log(exception.message || exception);
+                    if (exception.message) {
+                        alert(OpenIZ.Localization.getString(exception.message));
+                    }
+                    else
+                        console.log(exception.message || exception);
                 },
                 finally: function () {
                 }
@@ -184,7 +188,11 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
             },
             onException: function (ex) {
                 OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.validation"));
-                console.log(ex.message || ex);
+                if (exception.message) {
+                    alert(OpenIZ.Localization.getString(exception.message));
+                }
+                else
+                    console.log(ex.message || ex);
             },
             finally: function () {
                 OpenIZ.App.hideWait();
@@ -224,7 +232,11 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
                         $window.location.reload();
                     },
                     onException: function (exception) {
-                        console.log(exception.message || exception);
+                        if (exception.message) {
+                            alert(OpenIZ.Localization.getString(exception.message));
+                        }
+                        else
+                            console.log(exception.message || exception);
                     },
                     finally: function () {
                         $("#forgotPasswordWizard").modal("hide");
@@ -234,10 +246,14 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
             },
             onException: function (exception) {
                 OpenIZ.App.hideWait('#submitButton');
-                console.log(exception.message || exception);
+                if (exception.message) {
+                    alert(OpenIZ.Localization.getString(exception.message));
+                }
+                else
+                    console.log(exception.message || exception);
             },
             finally: function () {
-                OpenIZ.App.hideWait();
+                OpenIZ.App.hideWait('#submitButton');
             }
         });
 

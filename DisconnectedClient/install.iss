@@ -23,7 +23,7 @@ DefaultDirName={pf}\Mohawk College\OpenIZ\Disconnected Client
 DisableProgramGroupPage=yes
 LicenseFile=.\License.rtf
 OutputDir=.\dist
-OutputBaseFilename=openiz-dc-{#MyAppVersion}
+OutputBaseFilename=openizdc-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 

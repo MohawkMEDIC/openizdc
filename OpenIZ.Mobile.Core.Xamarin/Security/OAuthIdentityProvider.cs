@@ -151,6 +151,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             {
                                 if (principal.Identity.Name == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
                                     restClient.Description.Endpoint[0].Timeout = restClient.Description.Endpoint[0].Timeout * 2;
+                                else
+                                    restClient.Description.Endpoint[0].Timeout = restClient.Description.Endpoint[0].Timeout / 2;
+
                                 OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                                 retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
                             }
@@ -164,7 +167,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                                 catch (Exception ex2)
                                 {
                                     this.m_tracer.TraceError("Error falling back to local IDP: {0}", ex2);
-                                    throw new SecurityException(Strings.err_offline_use_cache_creds);
+                                    throw new SecurityException(Strings.err_offline_use_cache_creds, ex2);
                                 }
                             }
                             this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password, true) { Principal = retVal });
@@ -184,7 +187,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             catch(Exception ex2)
                             {
                                 this.m_tracer.TraceError("Error falling back to local IDP: {0}", ex2);
-                                throw new SecurityException(Strings.err_offline_use_cache_creds);
+                                throw new SecurityException(Strings.err_offline_use_cache_creds, ex2);
                             }
                         }
                         catch (SecurityException ex)
@@ -203,7 +206,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             {
                                 this.m_tracer.TraceError("Error falling back to local IDP: {0}", ex2);
 
-                                throw new SecurityException(Strings.err_offline_use_cache_creds);
+                                throw new SecurityException(Strings.err_offline_use_cache_creds, ex2);
                             }
                         }
 

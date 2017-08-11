@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -45,16 +45,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'IeSignedRelease|AnyCPU' ">
-    <OutputPath>bin\LinuxSignedRelease\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
@@ -65,10 +56,6 @@
     </Reference>
     <Reference Include="MohawkCollege.Util.Console.Parameters">
       <HintPath>..\Solution Items\MohawkCollege.Util.Console.Parameters.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\Net45\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
@@ -84,10 +71,6 @@
     </Reference>
     <Reference Include="OpenIZ.Core.Model.AMI">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenIZ.Core.Model.ViewModelSerializers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.ViewModelSerializers.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
@@ -118,15 +101,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\Net45\System.Data.Portable.dll</HintPath>
-    </Reference>
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Transactions.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\Net45\System.Transactions.Portable.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -140,6 +115,18 @@
     </Reference>
     <Reference Include="zxing.portable">
       <HintPath>..\Solution Items\zxing.portable.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\Solution Items\Net45\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model.ViewModelSerializers">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.ViewModelSerializers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Portable">
+      <HintPath>..\Solution Items\Net45\System.Data.Portable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions.Portable">
+      <HintPath>..\Solution Items\Net45\System.Transactions.Portable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -163,11 +150,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core.Xamarin\OpenIZ.Mobile.Core.Xamarin.csproj">
-      <Project>{9a06acc9-4d6f-4eab-8a8a-9652bc6a70ae}</Project>
+      <Project>{9A06ACC9-4D6F-4EAB-8A8A-9652BC6A70AE}</Project>
       <Name>OpenIZ.Mobile.Core.Xamarin</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
-      <Project>{554df209-7744-433f-993a-783e2a2803ef}</Project>
+      <Project>{554DF209-7744-433F-993A-783E2A2803EF}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Mobile.Reporting\OpenIZ.Mobile.Reporting.csproj">
