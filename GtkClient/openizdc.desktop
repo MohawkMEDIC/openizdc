@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=0.9.7
+Name=OpenIZ Disconnected Client
+Comment=OpenIZ Disconnected Client
+Icon=openiz.png 
+Exec=/usr/share/openiz/client/bin/openizdc.sh
+Path=/usr/share/openiz/client
+Categories=Accessories;

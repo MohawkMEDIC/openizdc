@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="err_applet_corrupt_reinstall" xml:space="preserve">
-    <value>The applet {0} appears to be corrupt. Would you like to try downloading it again?</value>
-  </data>
-  <data name="err_configuration_invalid_restore_prompt" xml:space="preserve">
-    <value>Your configuration file could not be read, there is a backup. Would you like to restore the backup?</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="logo_lg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\logo_lg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
