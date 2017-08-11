@@ -61,24 +61,6 @@ namespace DisconnectedClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The applet {0} appears to be corrupt. Would you like to try downloading it again?.
-        /// </summary>
-        internal static string err_applet_corrupt_reinstall {
-            get {
-                return ResourceManager.GetString("err_applet_corrupt_reinstall", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your configuration file could not be read, there is a backup. Would you like to restore the backup?.
-        /// </summary>
-        internal static string err_configuration_invalid_restore_prompt {
-            get {
-                return ResourceManager.GetString("err_configuration_invalid_restore_prompt", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap logo_lg {

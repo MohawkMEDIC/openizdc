@@ -35,6 +35,7 @@ using CefSharp;
 #endif
 using DisconnectedClient.JNI;
 using OpenIZ.Core.Diagnostics;
+using DisconnectedClient.Core;
 
 namespace DisconnectedClient
 {
