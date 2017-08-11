@@ -515,7 +515,12 @@ namespace DisconnectedClient.Core
 	            return retVal;
 			}
 			else 
-				return null;
+			{
+				// Use MAC Address (best we can do)
+				var macadd = this.GetService<INetworkInformationService>().GetInterfaces().Where(o=>!String.IsNullOrEmpty(o.MacAddress)).FirstOrDefault();
+				return macadd.MacAddress == null ? null : Encoding.UTF8.GetBytes(macadd.MacAddress);
+			}
+			//	return null;
 #endif
         }
     }

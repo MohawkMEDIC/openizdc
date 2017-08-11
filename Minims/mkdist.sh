@@ -65,6 +65,10 @@ Homepage: http://openiz.org
 
 Package: openiz-sdk
 Architecture: any
+Section: contrib/other
+Priority: optional
+Depends: ca-certificates-mono (>=4), libmono-2.0-1 (>=4), libmono-cil-dev (>=4), mono-4.0-gac (>=4), mono-4.0-service (>=4), mono-jay (>=4), mono-runtime (>=4), mono-runtime-sgen (>=4), mono-utils (>=4), mono-devel (>=4)
+Homepage: http://openiz.org
 Description: The OpenIZ Software Development Kit.
  The OpenIZ Software Development Kit allows developers of OpenIZ Applets (clinical protocols, user interfaces, business rules) to debug and test applications on the Linux Operating System.
 
