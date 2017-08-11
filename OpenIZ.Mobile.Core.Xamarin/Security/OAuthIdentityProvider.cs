@@ -151,6 +151,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             {
                                 if (principal.Identity.Name == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
                                     restClient.Description.Endpoint[0].Timeout = restClient.Description.Endpoint[0].Timeout * 2;
+                                else
+                                    restClient.Description.Endpoint[0].Timeout = restClient.Description.Endpoint[0].Timeout / 2;
+
                                 OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                                 retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
                             }
