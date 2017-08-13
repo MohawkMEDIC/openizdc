@@ -118,7 +118,7 @@
     <!-- Actions -->
     <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.activate">Activate</string>
-    <string key="locale.action.recalculate">Re-Caculate</string>
+    <string key="locale.action.recalculate">Re-Calculate</string>
     <string key="locale.action.back">Back</string>
     <string key="locale.action.backEnter">Historical</string>
     <string key="locale.action.cancel">Cancel</string>
@@ -590,6 +590,8 @@
     <string key="locale.about.environment.mem">Kutumika kumbukumbu</string>
     <string key="locale.about.environment.os">Mfumo wa uendeshaji toleo</string>
     <string key="locale.about.environment.runtimeVersion">Ingiza jina la mtumiaji unayetaka kubadili neno siri</string>
+    <string key="locale.about.environment.facilities">Imejiandikisha</string>
+    <string key="locale.about.environment.realm">ID ya Nchi</string>
     <string key="locale.about.fileInfo">Taarifa kuhusu faili data</string>
     <string key="locale.about.files.date">Mwisho kuandika tarehe</string>
     <string key="locale.about.files.name">Faili data</string>
@@ -637,6 +639,7 @@
     <string key="locale.action.finish">Kumaliza</string>
     <string key="locale.action.next">Baadaye</string>
     <string key="locale.action.onlineOnly">Intaneti inahitajika</string>
+    <string key="locale.action.recalculate">Tathmini tena</string>
     <string key="locale.action.remove">kuondoa</string>
     <string key="locale.action.run">Kukimbia</string>
     <string key="locale.action.save">Kuokoa</string>
@@ -962,9 +965,17 @@
     <string key="locale.sync.resource.Material">Aina ya vipengele</string>
     <string key="locale.sync.resource.SecurityRole">Usalama wa habari</string>
     <string key="locale.sync.resource.Concept">dhana (Kushuka chini maadili)</string>
+    <string key="locale.sync.resource.Patient">Wagonjwa wangu</string>
     <string key="locale.sync.resource.Place">vifaa na vijiji</string>
+    <string key="locale.sync.resource.Place.state">Sehemu katika Mkoa wangu</string>
+    <string key="locale.sync.resource.Place.county">Sehemu katika Wilaya yangu</string>
+    <string key="locale.sync.resource.Place.all">Maeneo (Nchi nzima)</string>
+    <string key="locale.sync.resource.Place.outOfState">Weka nje ya Mkoa</string>
+    <string key="locale.sync.resource.Place.outOfCounty">Maeneo nje ya Wilaya</string>
+    <string key="locale.sync.resource.Place.my">Metadata yangu ya Kituo</string>
     <string key="locale.sync.resource.Organization">Mashirika</string>
     <string key="locale.sync.resource.UserEntity">Mtunzi ya Habari</string>
+    <string key="locale.sync.resource.UserEntity.my">Watumiaji katika Kituo changu</string>
     <string key="locale.sync.resource.Provider">Mtoa ya habari</string>
     <string key="locale.sync.resource.ManufacturedMaterial">vipengele hesabu nyenzo</string>
     <string key="locale.sync.resource.Person">watu (wagonjwa na jamaa)</string>
