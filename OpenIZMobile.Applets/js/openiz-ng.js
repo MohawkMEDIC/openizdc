@@ -116,6 +116,9 @@ angular.module('openiz', [])
             return OpenIZ.Localization.getString(input);
         };
     })
+    /** 
+     * @deprecated
+     */
     .filter('orderStatus', function () {
         return function (moodConcept, statusConcept) {
             if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {
@@ -128,6 +131,9 @@ angular.module('openiz', [])
             return "locale.stock.label.pending";
         };
     })
+     /** 
+     * @deprecated
+     */
     .filter('orderLabel', function () {
         return function (moodConcept, statusConcept) {
             if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {

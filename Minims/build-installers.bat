@@ -65,7 +65,10 @@ copy "..\..\..\OpenIZ\bin\Release\oizdt.config.empty" ".\openiz.exe.config"
 copy "..\..\..\OpenIZ\bin\Release\OpenIZ.Protocol.Xml.dll"
 copy "..\..\..\OpenIZ\bin\Release\System.IdentityModel.Tokens.Jwt.dll"
 copy "..\..\..\OpenIZ\Solution Items\MARc.HI.EHRS.SVC.Configuration.dll"
-
+mkdir schema
+cd schema
+copy "..\..\..\..\OpenIZ\bin\Release\Schema\*.xsd"
+cd ..
 cd ..
 
 "C:\program files\7-zip\7z" a -r -ttar .\dist\openiz-sdk-%version%.tar .\openiz-sdk-%version%

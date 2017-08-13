@@ -87,6 +87,7 @@ Source: "..\..\OpenIZ\bin\Release\oizdt.config.empty"; DestDir: "{app}"; DestNam
 Source: "..\..\OpenIZ\bin\Release\OpenIZ.Protocol.Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\System.IdentityModel.Tokens.Jwt.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\Solution Items\MARc.HI.EHRS.SVC.Configuration.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\OpenIZ\bin\Release\Schema\*.xsd"; DestDir: "{app}\schema"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\Open Immunize\SDK\OpenIZ Log Viewer"; Filename: "{app}\LogViewer.exe"
