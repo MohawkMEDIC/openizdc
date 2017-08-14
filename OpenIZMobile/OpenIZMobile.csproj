@@ -178,6 +178,7 @@
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
+    <AndroidAsset Include="Assets\Applets\org.openiz.core.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -258,5 +259,4 @@
       copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
     </PreBuildEvent>
   </PropertyGroup>
-
 </Project>
