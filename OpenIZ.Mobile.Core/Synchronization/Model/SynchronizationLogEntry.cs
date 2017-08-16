@@ -71,11 +71,11 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
         [Column("time")]
         public DateTime LastSync { get; set; }
 
-        /// <summary>
-        /// Gets or sets the friendly name
-        /// </summary>
-        [Column("name")]
-        public String Name { get; set; }
+        ///// <summary>
+        ///// Gets or sets the friendly name
+        ///// </summary>
+        //[Column("name")]
+        //public String Name { get; set; }
 
     }
 }

@@ -152,7 +152,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                                 if (principal.Identity.Name == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
                                     restClient.Description.Endpoint[0].Timeout = restClient.Description.Endpoint[0].Timeout * 2;
                                 else
-                                    restClient.Description.Endpoint[0].Timeout = restClient.Description.Endpoint[0].Timeout / 2;
+                                    restClient.Description.Endpoint[0].Timeout = (int)(restClient.Description.Endpoint[0].Timeout * 0.6666f);
 
                                 OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                                 retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
@@ -167,7 +167,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                                 catch (Exception ex2)
                                 {
                                     this.m_tracer.TraceError("Error falling back to local IDP: {0}", ex2);
-                                    throw new SecurityException(Strings.err_offline_use_cache_creds, ex2);
+                                    throw new SecurityException(String.Format(Strings.err_offline_use_cache_creds, ex2.Message), ex2);
                                 }
                             }
                             this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password, true) { Principal = retVal });
@@ -184,10 +184,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             {
                                 retVal = localIdp.Authenticate(principal, password);
                             }
-                            catch(Exception ex2)
+                            catch (Exception ex2)
                             {
                                 this.m_tracer.TraceError("Error falling back to local IDP: {0}", ex2);
-                                throw new SecurityException(Strings.err_offline_use_cache_creds, ex2);
+                                throw new SecurityException(String.Format(Strings.err_offline_use_cache_creds, ex2.Message), ex2);
                             }
                         }
                         catch (SecurityException ex)
@@ -202,11 +202,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                                 this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex.Message);
                                 retVal = localIdp.Authenticate(principal, password);
                             }
-                            catch(Exception ex2)
+                            catch (Exception ex2)
                             {
                                 this.m_tracer.TraceError("Error falling back to local IDP: {0}", ex2);
 
-                                throw new SecurityException(Strings.err_offline_use_cache_creds, ex2);
+                                throw new SecurityException(String.Format(Strings.err_offline_use_cache_creds, ex2.Message), ex2);
                             }
                         }
 
@@ -215,9 +215,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         // TODO: Clean this up
                         try
                         {
-                            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=>this.SynchronizeSecurity(password, o as IPrincipal), retVal);
+                            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o => this.SynchronizeSecurity(password, o as IPrincipal), retVal);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             try
                             {
@@ -227,7 +227,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             catch (Exception ex2)
                             {
                                 this.m_tracer.TraceError("Error falling back to local IDP: {0}", ex2);
-                                throw new SecurityException(Strings.err_offline_use_cache_creds);
+                                throw new SecurityException(String.Format(Strings.err_offline_use_cache_creds, ex2.Message));
                             }
                         }
                     }
@@ -298,8 +298,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 {
                     if (localPip.GetPolicy(itm.Value) == null)
                     {
-                        var policy = amiPip.GetPolicy(itm.Value);
-                        localPip.CreatePolicy(policy, new SystemPrincipal());
+                        try
+                        {
+                            var policy = amiPip.GetPolicy(itm.Value);
+                            localPip.CreatePolicy(policy, new SystemPrincipal());
+                        }
+                        catch (Exception e)
+                        {
+                            this.m_tracer.TraceWarning("Cannot update local policy information : {0}", e.Message);
+                        }
                     }
                 }
 
@@ -308,21 +315,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType))
                 {
                     // Ensure policy exists
-                    var amiPolicies = amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray();
-                    foreach (var pol in amiPolicies)
-                        if (localPip.GetPolicy(pol.Policy.Oid) == null)
-                        {
-                            var policy = amiPip.GetPolicy(pol.Policy.Oid);
-                            localPip.CreatePolicy(policy, new SystemPrincipal());
-                        }
-
-                    // Local role doesn't exist
-                    if (!localRoles.Contains(itm.Value))
+                    try
                     {
-                        localRp.CreateRole(itm.Value, new SystemPrincipal());
-                    }
-                    localRp.AddPoliciesToRoles(amiPolicies, new String[] { itm.Value }, new SystemPrincipal());
+                        var amiPolicies = amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray();
+                        foreach (var pol in amiPolicies)
+                            if (localPip.GetPolicy(pol.Policy.Oid) == null)
+                            {
+                                var policy = amiPip.GetPolicy(pol.Policy.Oid);
+                                localPip.CreatePolicy(policy, new SystemPrincipal());
+                            }
 
+                        // Local role doesn't exist
+                        if (!localRoles.Contains(itm.Value))
+                        {
+                            localRp.CreateRole(itm.Value, new SystemPrincipal());
+                        }
+                        localRp.AddPoliciesToRoles(amiPolicies, new String[] { itm.Value }, new SystemPrincipal());
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceWarning("Could not fetch / refresh policies: {0}", e.Message);
+                    }
                 }
 
                 var localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
@@ -354,7 +367,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     this.m_tracer.TraceWarning("Insertion of local cache credential failed: {0}", ex);
                 }
 
-                
+
             }
         }
 
@@ -434,6 +447,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
                     client.UpdateUser(user.UserId.Value, user);
                     var localIdp = new LocalIdentityService();
+
                     // Change locally
                     localIdp.ChangePassword(userName, newPassword);
 

@@ -46,7 +46,7 @@ var OpenIZApplicationService = window.OpenIZApplicationService || {};
 /**
  * @callback OpenIZ~onException
  * @summary The exception handling callback whenever an asynchronous operation does not complete successfully
- * @param {OpenIZModel#Exception} exception The exception which was thrown as a result of the operation.
+ * @param {OpenIZModel.Exception} exception The exception which was thrown as a result of the operation.
  * @param {Object} state State data which is to be passed to the async callback
  */
 /**
@@ -187,7 +187,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the act that is to be updated
          * @param {object} controlData.data The act data to be updated
-         * @see {OpenIZ.Ims.delete}
+         * @see OpenIZ.Ims.delete
          * @see OpenIZModel.Act
          * @example 
          * $scope.act.statusConcept = OpenIZModel.StatusKeys.Completed;
@@ -220,7 +220,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the act that is to be updated
-         * @see {OpenIZ.Ims.delete}
+         * @see OpenIZ.Ims.delete
          * @see OpenIZModel.Act
          * @example
          * OpenIZ.Act.obsoleteAsync({
@@ -251,7 +251,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the act that is to be updated
-         * @see {OpenIZ.Ims.delete}
+         * @see OpenIZ.Ims.delete
          * @see OpenIZModel.Act
          * @example
          * OpenIZ.Act.obsoleteAsync({
@@ -284,7 +284,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the act that is to be updated
-         * @see {OpenIZ.Ims.nullify}
+         * @see OpenIZ.Ims.nullify
          * @see OpenIZModel.Act
          */
         nullifyAsync: function (controlData) {
@@ -397,7 +397,7 @@ var OpenIZ = OpenIZ || {
           * @param {int} controlData.query._count The limit of results to return from the ims
           * @param {int} controlData.query._offset The offset of the search result window
           * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
-          * @see {OpenIZ.Ims.get}
+          * @see OpenIZ.Ims.get
           * @example Get all active acts
           * OpenIZ.Act.findAsync({
           *     query: {
@@ -447,7 +447,7 @@ var OpenIZ = OpenIZ || {
          * @summary Performs a patient insert asynchronously
          * @memberof OpenIZ.Act
          * @method
-         * @see {OpenIZ.Ims.post}
+         * @see OpenIZ.Ims.post
          * @param {object} controlData The data which controls the asynchronous process
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
@@ -533,7 +533,7 @@ var OpenIZ = OpenIZ || {
           * @param {int} controlData.query._count The limit of results to return from the ims
           * @param {int} controlData.query._offset The offset of the search result window
           * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
-          * @see {OpenIZ.Ims.get}
+          * @see OpenIZ.Ims.get
           * @example Fetch all records related to a specific patient
           * OpenIZ.Act.findClinicalActAsync({
           *     query: {
@@ -1662,7 +1662,7 @@ var OpenIZ = OpenIZ || {
          * @summary Perform a login operation asynchronously
          * @memberof OpenIZ.Authentication
          * @method
-         * @see {OpenIZ.Util.simpleGet}
+         * @see OpenIZ.Util.simpleGet
          * @param {string} controlData.userName The username to use when authenticating
          * @param {string} controlData.password The password of the user to authenticate with
          * @param {string} controlData.scope The scope to append to the OAUTH request
@@ -1923,7 +1923,7 @@ var OpenIZ = OpenIZ || {
         * @param {int} controlData.query._offset The offset of the search result window
         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
         * @method
-        * @see {OpenIZ.Ims.get}
+        * @see OpenIZ.Ims.get
         */
         getUserAsync: function (controlData) {
             OpenIZ.Ims.get({
@@ -1944,7 +1944,7 @@ var OpenIZ = OpenIZ || {
         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
         * @param {OpenIZModel.SecurityUser} controlData.data The query object which represents the filters for the object
         * @method
-        * @see {OpenIZ.Ims.get}
+        * @see OpenIZ.Ims.get
         */
         saveUserAsync: function (controlData) {
             OpenIZ.Util.simplePost("/__auth/SecurityUser", {
@@ -2275,7 +2275,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
-         * @see {OpenIZModel.ApplicationInfo}
+         * @see OpenIZModel.ApplicationInfo
          */
         getInfoAsync: function (controlData) {
             if (controlData.includeUpdates)
@@ -2711,7 +2711,7 @@ var OpenIZ = OpenIZ || {
          * @param {int} controlData.query._count The limit of results to return from the ims
          * @param {int} controlData.query._offset The offset of the search result window
          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
-         * @see {OpenIZ.Ims.get}
+         * @see OpenIZ.Ims.get
          * @see OpenIZModel.Concept
          * @example
          * OpenIZ.Concept.findConceptAsync({
@@ -2743,7 +2743,7 @@ var OpenIZ = OpenIZ || {
          * @param {int} controlData.query._count The limit of results to return from the ims
          * @param {int} controlData.query._offset The offset of the search result window
          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
-         * @see {OpenIZ.Ims.get}
+         * @see OpenIZ.Ims.get
          * @see OpenIZModel.ConceptSet
          * @example
          * OpenIZ.Concept.findConceptSetAsync({
@@ -2811,7 +2811,7 @@ var OpenIZ = OpenIZ || {
          * @param {int} controlData.query._count The limit of results to return from the ims
          * @param {int} controlData.query._offset The offset of the search result window
          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
-         * @see {OpenIZ.Ims.get}
+         * @see OpenIZ.Ims.get
          * @see OpenIZModel.Patient
          */
         findAsync: function (controlData) {
@@ -2833,7 +2833,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {object} controlData.data The patient data to be inserted into the IMS
-         * @see {OpenIZ.Ims.post}
+         * @see OpenIZ.Ims.post
          * @see OpenIZModel.Patient
          */
         insertAsync: function (controlData) {
@@ -2855,7 +2855,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {object} controlData.data The patient data to be inserted into the IMS
          * @param {uuid} controlData.id The identifier of the patient that is to be updated
-         * @see {OpenIZ.Ims.put}
+         * @see OpenIZ.Ims.put
          * @see OpenIZModel.Patient
          */
         updateAsync: function (controlData) {
@@ -2879,7 +2879,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the patient that is to be updated
-         * @see {OpenIZ.Ims.delete}
+         * @see OpenIZ.Ims.delete
          * @see OpenIZModel.Patient
          */
         obsoleteAsync: function (controlData) {
@@ -2901,7 +2901,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the patient that is to be updated
-         * @see {OpenIZ.Ims.get}
+         * @see OpenIZ.Ims.get
          * @see OpenIZModel.Patient
          */
         getAsync: function (controlData) {
@@ -2926,7 +2926,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the patient that is to be downloaded
-         * @see {OpenIZ.Ims.get}
+         * @see OpenIZ.Ims.get
          * @see OpenIZModel.Patient
          */
         downloadAsync: function (controlData) {

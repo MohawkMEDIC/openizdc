@@ -212,7 +212,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 }
 
                 if (maxTotal > 5)
-                    ApplicationContext.Current.SetProgress(String.Empty, 0);
+                    ApplicationContext.Current.SetProgress(String.Format(Strings.locale_import, String.Empty, String.Empty), 1.0f);
 
             }
             finally

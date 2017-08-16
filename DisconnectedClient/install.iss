@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.7.4"
+#define MyAppVersion "0.9.7.4b"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -35,6 +35,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: ".\bin\x86\SignedRelease\DisconnectedClient.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\DisconnectedClient.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\CefSharp.BrowserSubprocess.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: ".\bin\x86\SignedRelease\sqlite3.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\Applets\org.openiz.core.pak"; DestDir: "{app}\applets"; Flags: ignoreversion
@@ -89,7 +90,7 @@ Source: ".\bin\x86\SignedRelease\System.Transactions.Portable.dll"; DestDir: "{a
 Source: ".\bin\x86\SignedRelease\widevinecdmadapter.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\sqlcipher.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\SQLite.Net.Platform.SqlCipher.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\bin\x86\SignedRelease\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\libeay32md.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\installsupp\vcredist_x86.exe"; DestDir: "{tmp}"; Flags: dontcopy;
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

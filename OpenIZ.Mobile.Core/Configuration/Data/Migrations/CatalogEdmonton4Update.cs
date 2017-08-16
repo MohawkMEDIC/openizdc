@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
     /// <summary>
-    /// Update for migrating Edmonton CTP4 to f4
+    /// Update for migrating Edmonton CTP5 to f4
     /// </summary>
     public class CatalogEdmonton4Update : IDbMigration
     {
@@ -21,7 +21,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
         {
             get
             {
-                return "Updates Edmonton CTP4 to CTP4 database";
+                return "Updates Edmonton CTP5 to CTP5 database";
             }
         }
 
@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
         {
             get
             {
-                return "openiz-edmonton-ctp3-ctp4";
+                return "openiz-edmonton-ctp3-CTP5";
             }
         }
 
@@ -69,8 +69,8 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                 catch(Exception e)
                 {
                     db.Rollback();
-                    tracer.TraceError("Error installing CTP4 update: {0}", e);
-                    throw new InvalidOperationException("Could not install Edmonton CTP4 update");
+                    tracer.TraceError("Error installing CTP5 update: {0}", e);
+                    throw new InvalidOperationException("Could not install Edmonton CTP5 update");
                 }
             }
         }

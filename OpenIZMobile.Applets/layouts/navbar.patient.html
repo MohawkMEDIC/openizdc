@@ -56,7 +56,7 @@
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}:</label>
                         <div class="col-xs-4">
                             <span ng-model="patient.dateOfBirth" oiz-editor="date">
-                                {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                                {{ patient.dateOfBirth | datePrecision : 'yyyy-MM-dd' }}
                             </span>
                         </div>
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.facility' | i18n }}:</label>

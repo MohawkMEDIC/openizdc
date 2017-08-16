@@ -169,7 +169,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The authentication server cannot be contacted. Use the credentials you last used to access this device.
+        ///   Looks up a localized string similar to {0} - Hint: If you changed your password or account lately, try the password you last used on this device. .
         /// </summary>
         internal static string err_offline_use_cache_creds {
             get {

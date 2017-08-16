@@ -154,7 +154,7 @@
     <value>There is more than one instance of the application running. This may cause serious issues. Closing all instances of the application and restarting is recommended.</value>
   </data>
   <data name="err_offline_use_cache_creds" xml:space="preserve">
-    <value>The authentication server cannot be contacted. Use the credentials you last used to access this device</value>
+    <value>{0} - Hint: If you changed your password or account lately, try the password you last used on this device. </value>
   </data>
   <data name="err_purgeNotPermitted" xml:space="preserve">
     <value>A purge is not permitted on this application configuration. Perhaps you're set to online mode only?</value>

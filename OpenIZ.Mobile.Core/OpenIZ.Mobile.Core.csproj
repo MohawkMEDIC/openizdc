@@ -334,6 +334,7 @@
     <EmbeddedResource Include="Security\Audit\Model\ModelMap.xml" />
     <EmbeddedResource Include="Data\Warehouse\CarePlan\CarePlanWarehouseSchema.xml" />
     <EmbeddedResource Include="Alerting\ModelMap.xml" />
+    <EmbeddedResource Include="Data\Sql\999_optimize_db.sql" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -208,7 +208,8 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                                     var syncFilter = patientSync?.LastSync ?? new DateTime(1900, 01, 01);
                                     while (ofs < tr)
                                     {
-                                        ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
+                                        if(tr > 1)
+                                            ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
 
                                         var prodPatients = patientPersistence.QueryExplicitLoad(p => p.ObsoletionTime == null && p.StatusConcept.Mnemonic != "OBSOLETE" && p.CreationTime >= syncFilter, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
                                         this.QueueWorkItem(prodPatients);
@@ -292,7 +293,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
 
                         if (promiseCount > 0)
                         {
-                            ApplicationContext.Current.SetProgress(String.Empty, 0);
+                            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, 0), 1.0f);
                             ApplicationContext.Current.Configuration.SetAppSetting("openiz.mobile.core.protocol.plan.lastRun", DateTime.Now);
                             ApplicationContext.Current.SaveConfiguration();
                         }

@@ -151,9 +151,9 @@ namespace OpenIZ.Mobile.Core.Security
                         connection.Update(dbs);
                         throw new SecurityException(Strings.locale_invalidUserNamePassword);
                     }
-                    else if (dbs.InvalidLoginAttempts > 3)
+                    else if (dbs.InvalidLoginAttempts > 20)
                     { //s TODO: Make this configurable
-                        dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - 3));
+                        dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - 10));
                         connection.Update(dbs);
                         throw new SecurityException(Strings.locale_accountLocked);
                     } // TODO: Lacks login permission

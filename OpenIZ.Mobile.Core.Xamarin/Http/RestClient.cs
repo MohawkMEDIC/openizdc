@@ -111,7 +111,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
             if (!String.IsNullOrEmpty(this.m_configurationSection.ProxyAddress))
                 retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
 
-            retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
+            try
+            {
+                retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
+            }
+            catch
+            {
+                this.m_tracer.TraceWarning("Cannot assign certificate validtion callback, will set servicepointmanager");
+                ServicePointManager.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
+            }
 
             // Set appropriate header
             if (this.Description.Binding.Optimize)
