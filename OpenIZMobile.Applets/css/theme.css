@@ -1724,3 +1724,6 @@ a.disabled {
 .small-input {
     width: auto !important;
 }
+.vaccination-td {
+    white-space: normal !important;
+}
