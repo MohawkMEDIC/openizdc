@@ -260,6 +260,7 @@
     <string key="locale.settings.realmName.help">This setting controls the realm ID</string>
     <string key="locale.settings.realmPort">Alternate Port#:</string>
     <string key="locale.settings.realmPort.help">This setting controls the port number</string>
+    <string key="locale.settings.status.offline">This device must be online to join a realm</string>
     <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
     <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessable, and you're using the correct settings.</string>
 
@@ -903,6 +904,7 @@
     <string key="locale.settings.securityDescription">Matumizi ya jopo hili configure namna ambayo sera za usalama ni kutekelezwa kwa kifaa hiki.</string>
     <string key="locale.settings.securityTitle">mipangilio ya usalama</string>
 
+    <string key="locale.settings.status.offline">Kifaa hiki lazima kiwe mtandaoni ili kujiunga na eneo</string>
     <string key="locale.settings.status.joinRealm">Maombi yako sasa alijiunga uwanja huu</string>
     <string key="locale.settings.status.duplicateName">Jina hili tayari kusajiliwa kifaa. Je, unataka kubadilisha kifaa usajili kwenye kompyuta? (Kama ni hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
 
