@@ -37,7 +37,7 @@ using Android.App;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("0.9.8.*")]
+[assembly: AssemblyVersion ("0.9.9.*")]
 [assembly: AssemblyInformationalVersion("1.0")]
 [assembly: AssemblyFileVersion("0.9.8.0")]
 

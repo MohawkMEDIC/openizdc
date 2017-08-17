@@ -65,9 +65,6 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', '$stateParams'
 
                 if (typeof (ex) == "string")
                     console.log(ex);
-
-                else if (ex.message && ex.details)
-                    alert("" + OpenIZ.Localization.getString(ex.message) + " - " + OpenIZ.Localization.getString(ex.details.statusText || ex.details));
                 else if (ex.message )
                     alert(OpenIZ.Localization.getString(ex.message));
                 else

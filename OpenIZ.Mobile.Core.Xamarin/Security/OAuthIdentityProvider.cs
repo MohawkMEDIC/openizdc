@@ -357,10 +357,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     localSu.Email = cprincipal.FindClaim(ClaimTypes.Email)?.Value;
                     localSu.PhoneNumber = cprincipal.FindClaim(ClaimTypes.Telephone)?.Value;
                     ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Update(localSu);
-
+                    
                     // Add user to roles
                     // TODO: Remove users from specified roles?
                     localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
+                    // Unlock the account
+                    localIdp.SetLockout(principal.Identity.Name, false);
+
+
                 }
                 catch (Exception ex)
                 {

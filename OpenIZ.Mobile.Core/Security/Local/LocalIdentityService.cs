@@ -88,6 +88,7 @@ namespace OpenIZ.Mobile.Core.Security
         /// <param name="password">Password.</param>
         public IPrincipal Authenticate(IPrincipal principal, String password)
         {
+            var config = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
             else if (String.IsNullOrEmpty(password))
@@ -96,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Security
                 {
                     // Refresh
                     if (principal is SQLitePrincipal) /// extend the existing session 
-                        (principal as SQLitePrincipal).Expires = DateTime.Now.Add(ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>()?.MaxLocalSession ?? new TimeSpan(0, 15, 0));
+                        (principal as SQLitePrincipal).Expires = DateTime.Now.Add(config?.MaxLocalSession ?? new TimeSpan(0, 15, 0));
                     else if (principal is ClaimsPrincipal) // switch them to a SQLitePrincipal
                     {
                         var sid = (principal as ClaimsPrincipal).FindClaim(ClaimTypes.Sid)?.Value;
@@ -106,7 +107,7 @@ namespace OpenIZ.Mobile.Core.Security
                             ApplicationContext.Current.GetService<ITickleService>()?.SendTickle(new Tickler.Tickle(Guid.Parse(sid), Tickler.TickleType.SecurityInformation | Tickler.TickleType.Toast, Strings.locale_securitySwitchedMode, DateTime.Now.AddSeconds(10)));
                             return new SQLitePrincipal(new SQLiteIdentity(uname, true), (principal as ClaimsPrincipal).Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray())
                             {
-                                Expires = DateTime.Now.Add(ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>()?.MaxLocalSession ?? new TimeSpan(0, 15, 0)),
+                                Expires = DateTime.Now.Add(config?.MaxLocalSession ?? new TimeSpan(0, 15, 0)),
                                 IssueTime = DateTime.Now
                             };
                         }
@@ -141,7 +142,7 @@ namespace OpenIZ.Mobile.Core.Security
                     DbSecurityUser dbs = connection.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == principal.Identity.Name);
                     if (dbs == null)
                         throw new SecurityException(Strings.locale_invalidUserNamePassword);
-                    else if (dbs.Lockout.HasValue && dbs.Lockout > DateTime.Now)
+                    else if (config?.MaxInvalidLogins.HasValue == true && dbs.Lockout.HasValue && dbs.Lockout > DateTime.Now)
                         throw new SecurityException(Strings.locale_accountLocked);
                     else if (dbs.ObsoletionTime != null)
                         throw new SecurityException(Strings.locale_accountObsolete);
@@ -151,9 +152,9 @@ namespace OpenIZ.Mobile.Core.Security
                         connection.Update(dbs);
                         throw new SecurityException(Strings.locale_invalidUserNamePassword);
                     }
-                    else if (dbs.InvalidLoginAttempts > 20)
+                    else if (config?.MaxInvalidLogins.HasValue == true && dbs.InvalidLoginAttempts > config?.MaxInvalidLogins)
                     { //s TODO: Make this configurable
-                        dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - 10));
+                        dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - config.MaxInvalidLogins.Value));
                         connection.Update(dbs);
                         throw new SecurityException(Strings.locale_accountLocked);
                     } // TODO: Lacks login permission
@@ -169,7 +170,7 @@ namespace OpenIZ.Mobile.Core.Security
                             dbs.Uuid).Select(o => o.Name).ToArray())
                         {
                             IssueTime = DateTime.Now,
-                            Expires = DateTime.Now.Add(ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>()?.MaxLocalSession ?? new TimeSpan(0, 15, 0))
+                            Expires = DateTime.Now.Add(config?.MaxLocalSession ?? new TimeSpan(0, 15, 0))
                         };
 
                     }
@@ -359,9 +360,37 @@ namespace OpenIZ.Mobile.Core.Security
             }
         }
 
+        /// <summary>
+        /// Set the lockout 
+        /// </summary>
         public void SetLockout(string userName, bool v)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var conn = this.CreateConnection();
+                using (conn.Lock())
+                {
+                    var userData = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == userName);
+                    if (userData == null)
+                        throw new KeyNotFoundException(userName);
+                    else
+                    {
+                        if (v)
+                            userData.Lockout = DateTime.MaxValue;
+                        else
+                        {
+                            userData.Lockout = null;
+                            userData.InvalidLoginAttempts = 0;
+                        }
+                        conn.Update(userData);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error getting identity {0}", e);
+                throw;
+            }
         }
 
         /// <summary>

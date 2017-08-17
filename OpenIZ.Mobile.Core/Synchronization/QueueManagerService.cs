@@ -484,15 +484,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
         }
 
         /// <summary>
-        /// Create an alert that the user can acknowledge
-        /// </summary>
-        private void CreateUserAlert(String subject, String body, params object[] parms)
-        {
-            var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-            alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, subject, String.Format(body, parms), AlertMessageFlags.System));
-        }
-
-        /// <summary>
         /// Import element
         /// </summary>
         private void ImportElement(IdentifiedData data)
