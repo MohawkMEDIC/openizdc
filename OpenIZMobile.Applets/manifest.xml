@@ -270,7 +270,7 @@
     <string key="locale.settings.optimize.gzip">Medium - Balances CPU and bandwidth (recommended: 4g/LTE / DSL / Broadband)</string>
     <string key="locale.settings.optimize.deflate">Fast - Sacrifices bandwidth for CPU speed (recommended: Broadband WiFi)</string>
     <string key="locale.settings.optimize.off">Off - Does not optimize traffic (not recommended)</string>
-    <string key="locale.settings.optimize.help">This setting will set the compression level used to communicate with the server. The less bandwidth used the more processing power is required. </string>
+    <string key="locale.settings.optimize.help">This setting will set the compression level used to communicate with the server. The less bandwidth used the more processing power is required.</string>
     <string key="locale.settings.enableTracing">Enable Tracing</string>
 
     <string key="locale.settings.logTitle">Log Settings</string>
@@ -855,6 +855,13 @@
     <string key="locale.settings.status.duplicateName">Jina hili kifaa tayari imesajiliwa. Je, unataka kubadilisha hii usajili kifaa kwenye kompyuta? (Kama hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
     <string key="locale.settings.status.generalRealmError">Kulikuwa na hitilafu ya kuwasiliana na ulimwengu kwa kutumia mipangilio uliyoweka. Tafadhali kuhakikisha una online, ulimwengu server mzizi kufikiwa, na wewe ni kutumia mazingira sahihi.</string>
 
+    <string key="locale.settings.optimize">Uboreshaji wa Mtandao</string>
+    <string key="locale.settings.optimize.lzma">Ultra - Inahitaji server zaidi na kibao CPU lakini inapunguza bandwidth (Ilipendekezwa: 2g / dial-in)</string>
+    <string key="locale.settings.optimize.bzip2">Juu - Inahitaji wastani wa seva na kibao cha CPU (Ilipendekezwa: 3g / ISDN / DSL)</string>
+    <string key="locale.settings.optimize.gzip">a wastani - Mizani ya CPU na bandwidth (Ilipendekezwa: 4g/LTE / DSL / Broadband)</string>
+    <string key="locale.settings.optimize.deflate">Haraka - Maagizo ya bandari kwa kasi ya CPU (Ilipendekezwa: Broadband WiFi)</string>
+    <string key="locale.settings.optimize.off">Huru - Haifai biashara ya trafiki (Haipendekezi)</string>
+    <string key="locale.settings.optimize.help">Mpangilio huu utaweka kiwango cha compression kilichotumiwa kuwasiliana na seva. Bandwidth chini iko kutumika nguvu zaidi ya usindikaji inahitajika.</string>
     <string key="locale.settings.enableTracing">Wezesha kufuatilia</string>
 
     <string key="locale.settings.logTitle">Ingia Mipangilio</string>
