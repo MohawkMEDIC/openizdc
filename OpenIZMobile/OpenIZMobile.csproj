@@ -262,6 +262,18 @@
       copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
     </PreBuildEvent>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MacDebug|AnyCPU'">
+    <PreBuildEvent>
+      mono ~/Workspace/openiz-sdk-0.9.7.4/AppletCompiler.exe --compile -s $(SolutionDir)../timr-applets/src -o $(TargetDir)/tz.timr.applet.pak
+      cp $(TargetDir)/tz.timr.applet.pak $(ProjectDir)/Assets/Applets/tz.timr.applet.pak
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MacRelease|AnyCPU'">
+    <PreBuildEvent>
+      mono ~/Workspace/openiz-sdk-0.9.7.4/AppletCompiler.exe --compile -s $(SolutionDir)../timr-applets/src -o $(TargetDir)/tz.timr.applet.pak --keyFile=$(SolutionDir)/../keys/timr.mobile.applet.pfx --keyPassword=$(SolutionDir)/../keys/timr.mobile.applet.pass --embedCert 
+      cp $(TargetDir)/tz.timr.applet.pak $(ProjectDir)/Assets/Applets/tz.timr.applet.pak
+    </PreBuildEvent>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PreBuildEvent>
       "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
