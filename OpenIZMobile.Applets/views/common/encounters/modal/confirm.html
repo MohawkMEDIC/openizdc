@@ -104,10 +104,8 @@
                                             <span ng-if="!act.targetModel.valueModel">
                                                 {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.value) }} 
                                             </span>
-                                           
                                         </span>
                                         <span ng-switch-when="Act">
-                                            
                                             {{ act.targetModel.typeConceptModel | oizConcept }} -
                                             <span ng-if="act.targetModel.relationship.HasSubject">
                                                 {{ act.targetModel.relationship.HasSubject.targetModel.typeConceptModel | oizConcept }} -
@@ -124,7 +122,7 @@
                                                 </span>
                                             </span>
                                         </span>
-                                        <span class="label label-danger" ng-if="!act._enabled">
+                                        <span class="label label-danger label-inline" ng-if="!act._enabled">
                                             {{ 'locale.encounters.protocolViolation.reason' | i18n }} : {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.reasonConcept) }}
                                         </span>
                                     </div>
@@ -132,7 +130,6 @@
                             </ul>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="modal-footer">

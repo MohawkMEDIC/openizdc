@@ -1727,3 +1727,7 @@ a.disabled {
 .vaccination-td {
     white-space: normal !important;
 }
+.label-inline {
+    display: inline-block;
+    margin: 2px 0 2px 0;
+}
