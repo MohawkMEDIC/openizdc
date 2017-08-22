@@ -101,7 +101,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li role="presentation" ng-if="patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientController.download()">
+                    <a ng-click="downloadPatient()">
                         <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
                     </a>
                 </li>
