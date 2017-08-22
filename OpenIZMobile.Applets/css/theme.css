@@ -416,7 +416,9 @@ a.not-active {
     height:100%;
     overflow:scroll;
 }
-
+.scroll-x {
+    overflow-x: auto;
+}
 .white-text{
     color:white;
 }
