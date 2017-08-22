@@ -125,9 +125,14 @@ namespace OpenIZ.Mobile.Core.Android
             { // load configuration
                 try
                 {
+                   
+                    // Set master application context
+                    ApplicationContext.Current = retVal;
+                    retVal.CurrentActivity = launcherActivity;
+
                     try
                     {
-                        retVal.ConfigurationManager.Load();
+                         retVal.ConfigurationManager.Load();
                         retVal.ConfigurationManager.Backup();
                     }
                     catch
@@ -141,9 +146,6 @@ namespace OpenIZ.Mobile.Core.Android
                             throw;
                     }
 
-                    // Set master application context
-                    ApplicationContext.Current = retVal;
-                    retVal.CurrentActivity = launcherActivity;
                     retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     // HACK: For some reason the PCL doesn't do this automagically

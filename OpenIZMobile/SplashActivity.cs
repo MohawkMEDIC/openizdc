@@ -225,8 +225,6 @@ namespace OpenIZMobile
 
         }
 
-
-
         /// <summary>
         /// Shows an exception message box
         /// </summary>
@@ -240,9 +238,26 @@ namespace OpenIZMobile
             UserInterfaceUtils.ShowMessage(this,
                 (s, a) =>
                 {
+                    XamarinApplicationContext.Current?.SetProgress("Backing up...", 0.1f);
+                    var fils = Directory.GetFiles(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "*.sqlite");
+                    // Perform a backup if possible
+                    for (int i = 0; i < fils.Length; i++)
+                    {
+                        try
+                        {
+                            XamarinApplicationContext.Current?.SetProgress(String.Format("Backing up {0}...", Path.GetFileNameWithoutExtension(fils[i])), (float)i / (float)fils.Length);
+                            File.Copy(fils[i], Path.ChangeExtension(fils[i], ".bak"), true);
+                            File.Delete(fils[i]);
+                        }
+                        catch
+                        {
+                            
+                        }
+                    }
+                    File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
                     this.Finish();
                 },
-                "{0} : {1}", Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
+                Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
         }
     }
 }
