@@ -70,7 +70,8 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                 {
                     db.Rollback();
                     tracer.TraceError("Error installing CTP5 update: {0}", e);
-                    throw new InvalidOperationException("Could not install Edmonton CTP5 update");
+                    return true;
+                    //throw new InvalidOperationException("Could not install Edmonton CTP5 update");
                 }
             }
         }

@@ -228,7 +228,7 @@ Sincerely,
     <value>Optimizing Databases...</value>
   </data>
   <data name="locale_loginFromUnsubscribedFacility" xml:space="preserve">
-    <value>The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance.</value>
+    <value>The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance. Use the following information when getting assistance: {0}</value>
   </data>
   <data name="locale_securitySwitchedMode" xml:space="preserve">
     <value>Your online session couldn't be extended, you are now operating in disconnected mode.</value>

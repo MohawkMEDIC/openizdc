@@ -266,7 +266,11 @@ namespace OpenIZ.Mobile.Core.Security
                 this.Expiry = DateTime.MaxValue;
             }
 
+
             // Grab the user entity
+            String errDetail = String.Empty;
+
+            // Try to get user entity
             try
             {
                 var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -311,6 +315,7 @@ namespace OpenIZ.Mobile.Core.Security
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error getting extended session information: {0}", e);
+                errDetail = String.Format("dbErr={0}", e.Message);
             }
 
             // Only subscribed faciliites
@@ -320,14 +325,19 @@ namespace OpenIZ.Mobile.Core.Security
                 var isInSubFacility = this.m_entity?.LoadCollection<EntityRelationship>("Relationships").Any(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation && subFacl.Contains(o.TargetEntityKey.ToString())) == true;
                 if (!isInSubFacility && ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
                 {
-                    if (this.m_entity == null)
+                    if (this.m_entity == null) {
                         this.m_tracer.TraceError("User facility check could not be done : entity null");
-                    else
+                        errDetail += " entity_null";
+                    }
+                    else {
                         this.m_tracer.TraceError("User is in facility {0} but tablet only allows login from {1}",
                             String.Join(",", this.m_entity?.LoadCollection<EntityRelationship>("Relationships").Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).Select(o => o.TargetEntityKey).ToArray()),
                             String.Join(",", subFacl)
                             );
-                    throw new SecurityException(Strings.locale_loginFromUnsubscribedFacility);
+                        errDetail += String.Format(" entity={0}, facility={1}", String.Join(",", this.m_entity?.LoadCollection<EntityRelationship>("Relationships").Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).Select(o => o.TargetEntityKey).ToArray()),
+                            String.Join(",", subFacl));
+                    }
+                    throw new SecurityException(String.Format(Strings.locale_loginFromUnsubscribedFacility, errDetail));
                 }
             }
 

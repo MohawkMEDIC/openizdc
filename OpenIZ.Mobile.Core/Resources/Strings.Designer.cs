@@ -235,7 +235,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance..
+        ///   Looks up a localized string similar to The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance. Use the following information when getting assistance: {0}.
         /// </summary>
         internal static string locale_loginFromUnsubscribedFacility {
             get {

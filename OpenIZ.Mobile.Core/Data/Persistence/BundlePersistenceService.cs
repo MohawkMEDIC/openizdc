@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Bundle Insert(Bundle data)
         {
             // first, are we just doing a normal insert?
-            if (data.Item.Count <= 5000)
+            if (data.Item.Count <= 250)
                 return base.Insert(data);
             else
             { // It is cheaper to open a mem-db and let other threads access the main db for the time being
