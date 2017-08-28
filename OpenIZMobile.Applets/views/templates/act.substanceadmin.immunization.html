@@ -70,7 +70,7 @@
                             data-display="scope.lotNumber"
                             data-defaultEmpty="true"
                             data-defaultFirst="true"
-                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"></select>
+                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';  scp.addMissingConsumable(act);"></select>
 
                 </div>
                 <div class="row">
@@ -153,7 +153,7 @@
                                 data-display="scope.lotNumber"
                                 data-defaultEmpty="true"
                                 data-defaultFirst="true"
-                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"></select>
+                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf'; scp.addMissingConsumable(act);"></select>
                     </div>
                     <div class="help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
@@ -161,13 +161,16 @@
                 </div>
                 <div ng-if="$index % 2 == 1" class="clearfix"></div>
             </div>
-            <div class="col-xs-2" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                <a class="btn btn-lg btn-info margin-top-10" ng-click="makeOverdue(act, '#enable_' + act.targetModel.id)" id="makeOvd_{{act.targetModel.id}}">
+            <div class="col-xs-12">
+                <a class="btn btn-lg btn-info margin-top-10 margin-right-10" ng-click="makeOverdue(act, '#enable_' + act.targetModel.id)" id="makeOvd_{{act.targetModel.id}}" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                         <span class="hidden-xs">{{ 'locale.action.backEnter' | i18n }}</span>
                     </span>
                 </a>
+                <span ng-if="missingConsumables[act.id].length &gt; 0">
+                    <label class="input-error text-danger"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span> {{ 'locale.encounters.immunizations.errors.consumablesOutOfStock' | i18n }}:</label> {{missingConsumables[act.id].join(', ')}}
+                </span>
             </div>
         </div>
     </div>
