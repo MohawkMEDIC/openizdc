@@ -49,9 +49,11 @@
             </label>
             <div class="col-sm-6 col-xs-12 ng-binding" ng-if="contact[0]">
                 {{contact[0].value}}
+                <span class="label label-info">{{ contact[0].useModel | oizConcept }}</span>
             </div>
             <div class="col-sm-6 col-xs-12 ng-binding" ng-if="!contact[0]">
                 {{contact.value}}
+                <span class="label label-info">{{ contact.useModel | oizConcept }}</span>
             </div>
         </div>
         

@@ -27,6 +27,7 @@
 layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function ($scope, $timeout) {
     // Get the current scope that we're in
     var scope = $scope;
+    scope.missingConsumables = [];
 
     /**
      * Cascades an encounter date change
@@ -394,6 +395,30 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         }
         else {
             return false;
+        }
+    }
+
+    /*
+     * Adds missing consumables for the given act
+     */
+    scope.addMissingConsumable = function (act) {
+        for (var i = 0, length = Object.keys(act.targetModel.participation.Consumable).length; i < length; i++) {
+            if (!act.targetModel.participation.Consumable[i].player) {
+                var name;
+                if (i === 0) {
+                    name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.name.Assigned);
+                }
+                else {
+                    name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity[i - 1].targetModel.name.OfficialRecord);
+                }
+
+                if (!Array.isArray(scope.missingConsumables[act.id])) {
+                    scope.missingConsumables[act.id] = [name]
+                }
+                else if (scope.missingConsumables[act.id].indexOf(name) === -1) {
+                    scope.missingConsumables[act.id].push(name);
+                }
+            }
         }
     }
 }]);
