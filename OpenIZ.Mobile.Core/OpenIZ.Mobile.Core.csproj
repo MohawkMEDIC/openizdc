@@ -83,6 +83,7 @@
     <Compile Include="Security\Audit\Model\DbAuditObject.cs" />
     <Compile Include="Security\Audit\AuditUtil.cs" />
     <Compile Include="Security\NullCredentials.cs" />
+    <Compile Include="Services\IBackupService.cs" />
     <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
     <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
     <Compile Include="Services\ITickleService.cs" />

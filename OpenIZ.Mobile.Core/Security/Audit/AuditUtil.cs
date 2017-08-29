@@ -141,6 +141,20 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         }
 
         /// <summary>
+        /// Audit the export of data 
+        /// </summary>
+        public static void AuditDataExport()
+        {
+            AuditCode eventTypeId = CreateAuditActionCode(EventTypeCodes.Export);
+            AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.Success, EventIdentifierType.SecurityAlert, eventTypeId);
+
+            AddDeviceActor(audit);
+            AddUserActor(audit);
+
+            SendAudit(audit);
+        }
+
+        /// <summary>
         /// A utility which can be used to send a data audit 
         /// </summary>
         public static void AuditDataAction<TData>(EventTypeCodes typeCode, ActionType action, AuditableObjectLifecycle lifecycle, EventIdentifierType eventType, OutcomeIndicator outcome, String queryPerformed, params TData[] data) where TData : IdentifiedData

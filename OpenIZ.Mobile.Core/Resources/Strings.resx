@@ -242,4 +242,7 @@ Sincerely,
   <data name="locale_prepareBundle" xml:space="preserve">
     <value>Preparing Bundle....</value>
   </data>
+  <data name="locale_preparingPush" xml:space="preserve">
+    <value>Preparing to push data...</value>
+  </data>
 </root>

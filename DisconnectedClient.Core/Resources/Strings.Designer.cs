@@ -22,7 +22,7 @@ namespace DisconnectedClient.Core.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Strings {
+    public class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace DisconnectedClient.Core.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DisconnectedClient.Core.Resources.Strings", typeof(Strings).Assembly);
@@ -51,7 +51,7 @@ namespace DisconnectedClient.Core.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace DisconnectedClient.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to The applet {0} appears to be corrupt. Would you like to try downloading it again?.
         /// </summary>
-        internal static string err_applet_corrupt_reinstall {
+        public static string err_applet_corrupt_reinstall {
             get {
                 return ResourceManager.GetString("err_applet_corrupt_reinstall", resourceCulture);
             }
@@ -72,9 +72,27 @@ namespace DisconnectedClient.Core.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Your configuration file could not be read, there is a backup. Would you like to restore the backup?.
         /// </summary>
-        internal static string err_configuration_invalid_restore_prompt {
+        public static string err_configuration_invalid_restore_prompt {
             get {
                 return ResourceManager.GetString("err_configuration_invalid_restore_prompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was a serious error starting up OpenIZ Disconnected Client. For reference, the error was: {0}. Would you like to make a backup of your existing files in a public place? The files are encrypted so only this user account can read them..
+        /// </summary>
+        public static string err_startup {
+            get {
+                return ResourceManager.GetString("err_startup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We deteced a backup on your device (probably from a previous installation). Do you want to restore it?.
+        /// </summary>
+        public static string locale_confirm_restore {
+            get {
+                return ResourceManager.GetString("locale_confirm_restore", resourceCulture);
             }
         }
     }

@@ -259,6 +259,51 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Backing up your files.....
+        /// </summary>
+        internal static string locale_backup {
+            get {
+                return ResourceManager.GetString("locale_backup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compressing backup....
+        /// </summary>
+        internal static string locale_backup_compressing {
+            get {
+                return ResourceManager.GetString("locale_backup_compressing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: YOU ARE ABOUT TO EXPORT SENSITIVE CLINICAL INFORMATION FROM A SECURED LOCATION TO A PUBLIC LOCATION. YOU MUST TAKE ALL PRECAUTIONS IN SAFEGUARDING THIS DATA. AN AUDIT WITH YOUR USERNAME WILL BE GENERATED UPON CLICKING OK. DO YOU WANT TO CONTINUE?.
+        /// </summary>
+        internal static string locale_backup_confirm {
+            get {
+                return ResourceManager.GetString("locale_backup_confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restoring Your Backup....
+        /// </summary>
+        internal static string locale_backup_restore {
+            get {
+                return ResourceManager.GetString("locale_backup_restore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are about to restore a backup taken on {0}, this will overwrite any data you have on your tablet. Are you sure you want to do this?.
+        /// </summary>
+        internal static string locale_backup_restore_confirm {
+            get {
+                return ResourceManager.GetString("locale_backup_restore_confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The certificate for publisher {0} is expired (expired on {1:yyyy-MMM-dd}). Do you want to ignore this error and continue?.
         /// </summary>
         internal static string locale_certificateExpired {
@@ -309,6 +354,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         internal static string locale_invalidSignature {
             get {
                 return ResourceManager.GetString("locale_invalidSignature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing to push data....
+        /// </summary>
+        internal static string locale_preparingPush {
+            get {
+                return ResourceManager.GetString("locale_preparingPush", resourceCulture);
             }
         }
         

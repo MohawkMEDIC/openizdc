@@ -53,7 +53,7 @@
 	<!-- Errors -->
 	<string name="err_general">Oops! Something went wrong!</string>
 	<string name="err_applet_not_found">Oops! Looks like there is something wrong with that applet!</string> 
-	<string name="err_startup">A serious error occurred during startup. TImR Mobile cannot continue. Please reference the following error code when seeking help: {0}. We will attempt to backup your data. You will need to re-configure this tablet (you will need internet for this).</string>
+	<string name="err_startup">A serious error occurred during startup. TImR Mobile cannot continue. Please reference the following error code when seeking help: {0}. Do you want to back-up your files to a public location? (WARNING: Anyone with access to the tablet will be able to access this data)</string>
 	<string name="err_login">Login error: </string>
 	<string name="err_login_invalidusername">Invalid username/password</string>
 	<string name="err_exception">An unexpected error occurred</string>

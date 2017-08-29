@@ -132,7 +132,7 @@ namespace OpenIZ.Mobile.Core.Android
 
                     try
                     {
-                         retVal.ConfigurationManager.Load();
+                        retVal.ConfigurationManager.Load();
                         retVal.ConfigurationManager.Backup();
                     }
                     catch
@@ -145,7 +145,7 @@ namespace OpenIZ.Mobile.Core.Android
                         else
                             throw;
                     }
-
+                    
                     retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     // HACK: For some reason the PCL doesn't do this automagically
@@ -260,6 +260,9 @@ namespace OpenIZ.Mobile.Core.Android
                         retVal.ConfigurationManager.Save();
                     }
 
+                    // Is there a backup manager? If no then we will use the default backup manager
+                    
+
                     // Start daemons
                     ApplicationContext.Current.GetService<IUpdateManager>().AutoUpdate();
                     retVal.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o => { retVal.Start(); }, null);
@@ -271,7 +274,10 @@ namespace OpenIZ.Mobile.Core.Android
                 catch (Exception e)
                 {
                     retVal.m_tracer?.TraceError(e.ToString());
-                    ApplicationContext.Current = null;
+                    //ApplicationContext.Current = null;
+                    retVal.m_configurationManager = new Android.Configuration.ConfigurationManager(Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
+                    AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+
                     throw;
                 }
 

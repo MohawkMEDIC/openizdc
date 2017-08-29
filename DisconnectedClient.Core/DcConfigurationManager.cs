@@ -334,6 +334,17 @@ namespace DisconnectedClient.Core
             }
         }
 
+        /// <summary>
+        /// Application data directory
+        /// </summary>
+        public string ApplicationDataDirectory
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
+            }
+        }
+
 
         /// <summary>
         /// Backup the configuration

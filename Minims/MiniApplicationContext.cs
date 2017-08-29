@@ -366,7 +366,8 @@ namespace Minims
                 catch (Exception e)
                 {
                     retVal.m_tracer?.TraceError(e.ToString());
-                    ApplicationContext.Current = null;
+                    //ApplicationContext.Current = null;
+                    retVal.m_configurationManager = new MiniConfigurationManager(MiniConfigurationManager.GetDefaultConfiguration());
                     throw;
                 }
                 return true;

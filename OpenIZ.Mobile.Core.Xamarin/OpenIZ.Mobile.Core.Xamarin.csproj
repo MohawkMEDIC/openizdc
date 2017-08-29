@@ -126,6 +126,7 @@
     <Compile Include="Configuration\AmiUpdateManager.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
     <Compile Include="Data\SQLiteReportDatasource.cs" />
+    <Compile Include="Data\XamarinBackupService.cs" />
     <Compile Include="Diagnostics\FileTraceWriter.cs" />
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Http\RestClient.cs" />

@@ -253,6 +253,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preparing to push data....
+        /// </summary>
+        internal static string locale_preparingPush {
+            get {
+                return ResourceManager.GetString("locale_preparingPush", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Importing {0} from bundle ({1} of {2})....
         /// </summary>
         internal static string locale_processBundle {

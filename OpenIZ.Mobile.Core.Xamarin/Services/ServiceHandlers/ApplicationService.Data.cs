@@ -38,6 +38,11 @@ using System.IO;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Roles;
+using Jint.Parser.Ast;
+using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -49,6 +54,50 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
         // Is downloading
         private static bool s_isDownloading = false;
+
+        /// <summary>
+        /// Force re-queue of all data to server
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "PUT", UriPath = "/data/sync")]
+        [Demand(PolicyIdentifiers.AccessClientAdministrativeFunction)]
+        public void ForceRequeue()
+        {
+
+            // What does this do... oh my ... it is complex
+            //
+            // 1. We scan the entire database for all Patients that were created in the specified date ranges
+            // 2. We scan the entire database for all Acts that were created in the specified date ranges
+            // 3. We take all of those and we put them in the outbox in bundles to be shipped to the server at a later time
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            // Hit the act repository
+            var patientDataRepository = ApplicationContext.Current.GetService<IRepositoryService<Patient>>() as IPersistableQueryRepositoryService;
+            var actDataRepository = ApplicationContext.Current.GetService<IRepositoryService<Act>>() as IPersistableQueryRepositoryService;
+
+            // Get all patients matching
+            int ofs = 0, tr = 1;
+            Guid qid = Guid.NewGuid();
+            var filter = QueryExpressionParser.BuildLinqExpression<Patient>(search);
+            while(ofs < tr)
+            {
+                var res = patientDataRepository.Find<Patient>(filter, ofs, 100, out tr, qid);
+                ApplicationContext.Current.SetProgress(Strings.locale_preparingPush, (float)ofs / (float)tr * 0.5f);
+                ofs += 100;
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res, tr, ofs), DataOperationType.Update);
+            }
+
+            // Get all acts matching
+            qid = Guid.NewGuid();
+            var actFilter = QueryExpressionParser.BuildLinqExpression<Act>(search);
+            while (ofs < tr)
+            {
+                var res = actDataRepository.Find<Act>(actFilter, ofs, 100, out tr, qid);
+                ApplicationContext.Current.SetProgress(Strings.locale_preparingPush, (float)ofs / (float)tr * 0.5f + 0.5f);
+                ofs += 100;
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res, tr, ofs), DataOperationType.Update);
+            }
+
+        }
 
         /// <summary>
         /// Delete queue entry
@@ -67,21 +116,37 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             conmgr.Stop();
             (warehouse as IDaemonService)?.Stop();
 
-            // Perform a backup if possible
-            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
-            {
-                var bakFile = Path.ChangeExtension(itm.Value, ".bak");
-                if (File.Exists(bakFile))
-                {
-                    File.Copy(bakFile, itm.Value, true);
-                    File.Delete(bakFile);
-                }
-                else
-                    throw new InvalidOperationException(Strings.err_backupNotExist);
-            }
+            var bksvc = new XamarinBackupService();
+            if (bksvc.HasBackup(BackupMedia.Public))
+                bksvc.Restore(BackupMedia.Public);
+            else if (bksvc.HasBackup(BackupMedia.Private))
+                bksvc.Restore(BackupMedia.Private);
+
             ApplicationContext.Current.SaveConfiguration();
         }
 
+        /// <summary>
+        /// Delete queue entry
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "POST", UriPath = "/data/backup")]
+        [Demand(PolicyIdentifiers.ExportClinicalData)]
+        public void Backup()
+        {
+
+            // Close all connections
+            var conmgr = ApplicationContext.Current.GetService<IDataConnectionManager>();
+            var warehouse = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+            if (conmgr == null)
+                throw new InvalidOperationException(Strings.err_restoreNotPermitted);
+
+            conmgr.Stop();
+            (warehouse as IDaemonService)?.Stop();
+
+            var bksvc = new XamarinBackupService();
+            bksvc.Backup(BackupMedia.Public);
+
+            ApplicationContext.Current.SaveConfiguration();
+        }
 
         /// <summary>
         /// Instructs the service to compact all databases
@@ -122,13 +187,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             (warehouse as IDaemonService)?.Stop();
 
             // Perform a backup if possible
-            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
-            {
-                if (MiniImsServer.CurrentContext.Request.QueryString["backup"] == "true" ||
+            var bksvc = new XamarinBackupService();
+            if (MiniImsServer.CurrentContext.Request.QueryString["backup"] == "true" ||
                     parm?["backup"]?.Value<Boolean>() == true)
-                    File.Copy(itm.Value, Path.ChangeExtension(itm.Value, ".bak"), true);
-                File.Delete(itm.Value);
-            }
+                bksvc.Backup(BackupMedia.Public);
+
             ApplicationContext.Current.SaveConfiguration();
         }
 

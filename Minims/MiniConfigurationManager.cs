@@ -291,6 +291,17 @@ namespace Minims
 
         }
 
+        /// <summary>
+        /// Application data directory
+        /// </summary>
+        public string ApplicationDataDirectory
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MINIMS");
+            }
+        }
+
 
         /// <summary>
         /// Save the configuration to the default location

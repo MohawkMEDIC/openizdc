@@ -47,6 +47,7 @@ using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Protocol.Xml;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Services;
+using OpenIZ.Mobile.Core.Xamarin.Data;
 
 namespace OpenIZMobile
 {
@@ -83,11 +84,7 @@ namespace OpenIZMobile
             base.OnCreate(savedInstanceState);
 
             this.SetContentView(Resource.Layout.Splash);
-        }
 
-        protected override void OnResume()
-        {
-            base.OnResume();
             OpenIZ.Mobile.Core.ApplicationContext.Current = null;
 
             this.FindViewById<TextView>(Resource.Id.txt_splash_version).Text = String.Format("V {0} ({1})",
@@ -235,26 +232,21 @@ namespace OpenIZMobile
             Log.Error("FATAL", e.ToString());
             while (e is TargetInvocationException)
                 e = e.InnerException;
-            UserInterfaceUtils.ShowMessage(this,
+            UserInterfaceUtils.ShowConfirm(this,
                 (s, a) =>
                 {
-                    XamarinApplicationContext.Current?.SetProgress("Backing up...", 0.1f);
-                    var fils = Directory.GetFiles(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "*.sqlite");
-                    // Perform a backup if possible
-                    for (int i = 0; i < fils.Length; i++)
-                    {
-                        try
-                        {
-                            XamarinApplicationContext.Current?.SetProgress(String.Format("Backing up {0}...", Path.GetFileNameWithoutExtension(fils[i])), (float)i / (float)fils.Length);
-                            File.Copy(fils[i], Path.ChangeExtension(fils[i], ".bak"), true);
-                            File.Delete(fils[i]);
-                        }
-                        catch
-                        {
-                            
-                        }
-                    }
+                    XamarinBackupService bksvc = new XamarinBackupService();
+                    bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Public);
                     File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
+                    Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);
+                    this.Finish();
+                },
+                (s,a) =>
+                {
+                    XamarinBackupService bksvc = new XamarinBackupService();
+                    bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Private);
+                    File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
+                    Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);
                     this.Finish();
                 },
                 Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);

@@ -183,6 +183,21 @@
   <data name="flushing_logFile" xml:space="preserve">
     <value>Flusing diagnostics queue...</value>
   </data>
+  <data name="locale_backup" xml:space="preserve">
+    <value>Backing up your files....</value>
+  </data>
+  <data name="locale_backup_compressing" xml:space="preserve">
+    <value>Compressing backup...</value>
+  </data>
+  <data name="locale_backup_confirm" xml:space="preserve">
+    <value>WARNING: YOU ARE ABOUT TO EXPORT SENSITIVE CLINICAL INFORMATION FROM A SECURED LOCATION TO A PUBLIC LOCATION. YOU MUST TAKE ALL PRECAUTIONS IN SAFEGUARDING THIS DATA. AN AUDIT WITH YOUR USERNAME WILL BE GENERATED UPON CLICKING OK. DO YOU WANT TO CONTINUE?</value>
+  </data>
+  <data name="locale_backup_restore" xml:space="preserve">
+    <value>Restoring Your Backup...</value>
+  </data>
+  <data name="locale_backup_restore_confirm" xml:space="preserve">
+    <value>You are about to restore a backup taken on {0}, this will overwrite any data you have on your tablet. Are you sure you want to do this?</value>
+  </data>
   <data name="locale_certificateExpired" xml:space="preserve">
     <value>The certificate for publisher {0} is expired (expired on {1:yyyy-MMM-dd}). Do you want to ignore this error and continue?</value>
   </data>
@@ -200,6 +215,9 @@
   </data>
   <data name="locale_invalidSignature" xml:space="preserve">
     <value>The applet could not be installed because the verification stage failed.</value>
+  </data>
+  <data name="locale_preparingPush" xml:space="preserve">
+    <value>Preparing to push data...</value>
   </data>
   <data name="locale_unsignedAppletPrompt" xml:space="preserve">
     <value>The applet {0} is not signed and its authenticity cannot be verified. Do you want to continue installation?</value>

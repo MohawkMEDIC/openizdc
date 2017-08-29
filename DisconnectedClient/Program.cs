@@ -37,6 +37,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DisconnectedClient.Core;
+using OpenIZ.Mobile.Core.Xamarin.Data;
 
 namespace DisconnectedClient
 {
@@ -127,17 +128,18 @@ namespace DisconnectedClient
                 };
 
                 frmDisconnectedClient main = null;
-				if (!DcApplicationContext.StartContext(new WinFormsDialogProvider()))
+                DateTime start = new DateTime();
+
+                if (!DcApplicationContext.StartContext(new WinFormsDialogProvider()))
                 {
 					DcApplicationContext.StartTemporary(new WinFormsDialogProvider());
                     var minims = XamarinApplicationContext.Current.GetService<MiniImsServer>();
 
-                    DateTime start = new DateTime();
 
                     if (!minims.IsRunning)
                     {
                         minims.Started += startHandler;
-                        while (!started && DateTime.Now.Subtract(start).TotalSeconds < 20)
+                        while (!started && DateTime.Now.Subtract(start).TotalSeconds < 20 && splash.Visible)
                             Application.DoEvents();
                     }
 
@@ -150,7 +152,7 @@ namespace DisconnectedClient
 
 
                     DcApplicationContext.Current.Started += startHandler;
-                    while (!started)
+                    while (!started && splash.Visible)
                         Application.DoEvents();
 
                     main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/splash.html");
@@ -161,12 +163,26 @@ namespace DisconnectedClient
                 if(XamarinApplicationContext.Current.GetService<MiniImsServer>().IsRunning)
                     Application.Run(main);
 
-
-
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString());
+
+                if (MessageBox.Show(String.Format(DisconnectedClient.Core.Resources.Strings.err_startup, e.Message), "Error", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    XamarinBackupService bksvc = new XamarinBackupService();
+                    bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Public);
+                    File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZDC", "OpenIZ.config"));
+                    Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "OpenIZDC"), true);
+                }
+                else
+                {
+                    XamarinBackupService bksvc = new XamarinBackupService();
+                    bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Private);
+                    File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
+                    Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "OpenIZDC"), true);
+                }
+                Application.Exit();
+                Environment.Exit(996);
             }
         }
     }

@@ -21,7 +21,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
         {
             get
             {
-                return "Updates Edmonton CTP5 to CTP5 database";
+                return "Updates Edmonton CTP4 to CTP5 database";
             }
         }
 
