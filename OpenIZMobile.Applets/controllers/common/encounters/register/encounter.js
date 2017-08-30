@@ -409,14 +409,19 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                     name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.name.Assigned);
                 }
                 else {
-                    name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity[i - 1].targetModel.name.OfficialRecord);
+                    if (Array.isArray(OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity))) {
+                        name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity[i - 1].targetModel.name.OfficialRecord);
+                    }
+                    else {
+                        name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity.targetModel.name.OfficialRecord);
+                    }
                 }
 
-                if (!Array.isArray(scope.missingConsumables[act.id])) {
-                    scope.missingConsumables[act.id] = [name]
+                if (!Array.isArray(scope.missingConsumables[act.targetModel.id])) {
+                    scope.missingConsumables[act.targetModel.id] = [name]
                 }
-                else if (scope.missingConsumables[act.id].indexOf(name) === -1) {
-                    scope.missingConsumables[act.id].push(name);
+                else if (scope.missingConsumables[act.targetModel.id].indexOf(name) === -1) {
+                    scope.missingConsumables[act.targetModel.id].push(name);
                 }
             }
         }
