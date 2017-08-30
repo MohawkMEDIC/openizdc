@@ -409,7 +409,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                     name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.name.Assigned);
                 }
                 else {
-                    if (Array.isArray(OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity))) {
+                    if (act.targetModel.participation.Product.playerModel.relationship.UsedEntity[i - 1]) {
                         name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity[i - 1].targetModel.name.OfficialRecord);
                     }
                     else {
