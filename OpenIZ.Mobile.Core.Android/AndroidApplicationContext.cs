@@ -48,6 +48,7 @@ using System.IO.Compression;
 using System.Threading;
 using Android.OS;
 using OpenIZ.Core.Applets.Services;
+using OpenIZ.Mobile.Core.Android.Services;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -129,7 +130,6 @@ namespace OpenIZ.Mobile.Core.Android
                     // Set master application context
                     ApplicationContext.Current = retVal;
                     retVal.CurrentActivity = launcherActivity;
-
                     try
                     {
                         retVal.ConfigurationManager.Load();
@@ -145,7 +145,9 @@ namespace OpenIZ.Mobile.Core.Android
                         else
                             throw;
                     }
-                    
+
+                    retVal.AddServiceProvider(typeof(AndroidBackupService));
+
                     retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     // HACK: For some reason the PCL doesn't do this automagically

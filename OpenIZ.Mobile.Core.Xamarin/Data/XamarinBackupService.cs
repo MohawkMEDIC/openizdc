@@ -32,23 +32,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
         private Tracer m_tracer = Tracer.GetTracer(typeof(XamarinBackupService));
 
         /// <summary>
+        /// Get backup directory
+        /// </summary>
+        protected virtual string GetBackupDirectory(BackupMedia media)
+        {
+            switch (media)
+            {
+                case BackupMedia.Private:
+                    return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                case BackupMedia.Public:
+                    return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                default:
+                    throw new PlatformNotSupportedException("Don't support external media on this platform");
+            }
+        }
+
+        /// <summary>
         /// Get the last backup date
         /// </summary>
         private string GetLastBackup(BackupMedia media)
         {
-            var directoryName = String.Empty;
-            switch (media)
-            {
-                case BackupMedia.Private:
-                    directoryName = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    break;
-                case BackupMedia.Public:
-                    directoryName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    break;
-                default:
-                    throw new PlatformNotSupportedException("Don't support external media on this platform");
-            }
-
+            var directoryName = this.GetBackupDirectory(media);
             return Directory.GetFiles(directoryName, "*.oiz.tar.gz").OrderByDescending(o => o).FirstOrDefault();
 
         }
@@ -81,19 +85,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                 new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PolicyIdentifiers.ExportClinicalData).Demand();
 
             // Get the output medium
-            var directoryName = String.Empty;
-            switch (media)
-            {
-                case BackupMedia.Private:
-                    directoryName = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    break;
-                case BackupMedia.Public:
-                    directoryName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    break;
-                default:
-                    throw new PlatformNotSupportedException("Don't support external media on this platform");
-            }
-
+            var directoryName = this.GetBackupDirectory(media);
             string fileName = Path.Combine(directoryName, $"oizdc-{DateTime.Now.ToString("yyyyMMddHHmm")}.oiz.tar");
 
             // Confirm if the user really really wants to backup

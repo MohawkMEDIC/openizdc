@@ -47,6 +47,7 @@ using System.Globalization;
 using OpenIZ.Protocol.Xml;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Applets.Services;
+using OpenIZ.Mobile.Core.Xamarin.Data;
 
 namespace Minims
 {
@@ -241,7 +242,9 @@ namespace Minims
             { // load configuration
                 try
                 {
+
                     retVal.ConfigurationManager.Load();
+                    retVal.AddServiceProvider(typeof(XamarinBackupService));
 
                     // Set master application context
                     ApplicationContext.Current = retVal;

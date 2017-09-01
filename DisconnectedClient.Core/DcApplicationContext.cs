@@ -224,7 +224,7 @@ namespace DisconnectedClient.Core
                 {
                     // Set master application context
                     ApplicationContext.Current = retVal;
-                    
+
                     try
                     {
                         retVal.ConfigurationManager.Load();
@@ -240,9 +240,10 @@ namespace DisconnectedClient.Core
                         else
                             throw;
                     }
+                    retVal.AddServiceProvider(typeof(XamarinBackupService));
 
                     // Is there a backup, and if so, does the user want to restore from that backup?
-                    var backupSvc = new XamarinBackupService();
+                    var backupSvc = retVal.GetService<IBackupService>();
                     if (backupSvc.HasBackup(BackupMedia.Public) &&
                         retVal.Configuration.GetAppSetting("ignore.restore") == null &&
                         retVal.Confirm(Strings.locale_confirm_restore))

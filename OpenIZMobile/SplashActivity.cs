@@ -48,6 +48,7 @@ using OpenIZ.Protocol.Xml;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Services;
 using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZMobile
 {
@@ -235,7 +236,7 @@ namespace OpenIZMobile
             UserInterfaceUtils.ShowConfirm(this,
                 (s, a) =>
                 {
-                    XamarinBackupService bksvc = new XamarinBackupService();
+                    var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
                     bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Public);
                     File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
                     Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);
@@ -243,7 +244,7 @@ namespace OpenIZMobile
                 },
                 (s,a) =>
                 {
-                    XamarinBackupService bksvc = new XamarinBackupService();
+                    var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
                     bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Private);
                     File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
                     Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);

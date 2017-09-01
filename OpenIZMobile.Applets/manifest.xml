@@ -244,6 +244,11 @@
     <string key="locale.settings.data.restore">Restore Data</string>
     <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
     <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
+    <string key="locale.settings.data.backup">Backup Data</string>
+    <string key="locale.settings.data.backup.confirmTitle">Confirm Data Backup</string>
+    <string key="locale.settings.data.backup.description">You are about to back-up your data. This will require closing all connections to all the databases and then performing a backup to the local tablet.</string>
+    <string key="locale.settings.data.backup.restart">The backup performed closed all the connections to the database. It is recommended you restart. Do you wish to do this?</string>
+    
     <string key="locale.settings.dataTitle">Data Retrieval Settings</string>
     <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
     <string key="locale.settings.dataMode">Data Mode:</string>

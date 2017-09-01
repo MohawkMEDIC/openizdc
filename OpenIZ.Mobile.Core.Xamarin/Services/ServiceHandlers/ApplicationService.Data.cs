@@ -116,7 +116,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             conmgr.Stop();
             (warehouse as IDaemonService)?.Stop();
 
-            var bksvc = new XamarinBackupService();
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
             if (bksvc.HasBackup(BackupMedia.Public))
                 bksvc.Restore(BackupMedia.Public);
             else if (bksvc.HasBackup(BackupMedia.Private))
@@ -142,7 +142,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             conmgr.Stop();
             (warehouse as IDaemonService)?.Stop();
 
-            var bksvc = new XamarinBackupService();
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
             bksvc.Backup(BackupMedia.Public);
 
             ApplicationContext.Current.SaveConfiguration();
@@ -187,7 +187,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             (warehouse as IDaemonService)?.Stop();
 
             // Perform a backup if possible
-            var bksvc = new XamarinBackupService();
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
             if (MiniImsServer.CurrentContext.Request.QueryString["backup"] == "true" ||
                     parm?["backup"]?.Value<Boolean>() == true)
                 bksvc.Backup(BackupMedia.Public);

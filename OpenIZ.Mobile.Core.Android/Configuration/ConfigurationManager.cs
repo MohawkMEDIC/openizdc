@@ -191,6 +191,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SQLiteReportDatasource).AssemblyQualifiedName,
                     typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(AndroidBackupService).AssemblyQualifiedName,
                     typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()

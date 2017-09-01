@@ -175,7 +175,7 @@ namespace DisconnectedClient.Core
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
-
+                    typeof(XamarinBackupService).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(DcAppletManagerService).AssemblyQualifiedName,
                                         typeof(SQLiteReportDatasource).AssemblyQualifiedName,

@@ -134,6 +134,7 @@
     <Compile Include="AppletEngine\JNI\SessionServiceBridge.cs" />
     <Compile Include="Diagnostics\AndroidLogTraceWriter.cs" />
     <Compile Include="Services\AndroidAppletManagerService.cs" />
+    <Compile Include="Services\AndroidBackupService.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
     <Compile Include="Services\AndroidNetworkInformationService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

@@ -177,6 +177,7 @@ namespace Minims
                     typeof(LocalTagPersistenceService).AssemblyQualifiedName,
                     typeof(SQLiteReportDatasource).AssemblyQualifiedName,
                     typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(XamarinBackupService).AssemblyQualifiedName,
                     typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()

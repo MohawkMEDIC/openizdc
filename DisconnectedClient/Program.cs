@@ -38,6 +38,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DisconnectedClient.Core;
 using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Core.Services;
 
 namespace DisconnectedClient
 {
@@ -169,14 +170,14 @@ namespace DisconnectedClient
 
                 if (MessageBox.Show(String.Format(DisconnectedClient.Core.Resources.Strings.err_startup, e.Message), "Error", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    XamarinBackupService bksvc = new XamarinBackupService();
+                    var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
                     bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Public);
                     File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZDC", "OpenIZ.config"));
                     Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "OpenIZDC"), true);
                 }
                 else
                 {
-                    XamarinBackupService bksvc = new XamarinBackupService();
+                    var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
                     bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Private);
                     File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
                     Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "OpenIZDC"), true);

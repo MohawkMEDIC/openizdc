@@ -74,7 +74,7 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")
-                        console.log(ex.message || ex);
+                        alert(ex.message || ex);
                 }
             });
         };
@@ -104,7 +104,7 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")
-                        console.log(ex.message || ex);
+                        alert(ex.message || ex);
                 }
             });
         };
@@ -112,7 +112,7 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
         doAction();
     };
 
-    $scope.doRestore = function (override) {
+    $scope.doBackup = function (override) {
 
         // Confirm purge
         if (!override) {
@@ -123,18 +123,19 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
             $("#backupConfirmModal").modal("hide");
 
         var doAction = function () {
-            OpenIZ.App.showWait('#backupButton');
+            OpenIZ.App.showWait('#btnBackup');
             OpenIZ.App.backupDataAsync({
                 continueWith: function () {
-                    OpenIZ.App.close();
+                    if (confirm(OpenIZ.Localization.getString("locale.settings.data.backup.restart")))
+                        OpenIZ.App.close();
                     OpenIZ.Authentication.$elevationCredentials = {};
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait('#backupButton');
+                    OpenIZ.App.hideWait('#btnBackup');
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")
-                        console.log(ex.message || ex);
+                        alert(ex.message || ex);
                 }
             });
         };
