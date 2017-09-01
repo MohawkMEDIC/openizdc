@@ -168,8 +168,8 @@
                         <span class="hidden-xs">{{ 'locale.action.backEnter' | i18n }}</span>
                     </span>
                 </a>
-                <span ng-if="missingConsumables[act.id].length &gt; 0">
-                    <label class="input-error text-danger"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span> {{ 'locale.encounters.immunizations.errors.consumablesOutOfStock' | i18n }}:</label> {{missingConsumables[act.id].join(', ')}}
+                <span ng-if="missingConsumables[act.targetModel.id].length &gt; 0">
+                    <label class="input-error text-danger"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span> {{ 'locale.encounters.immunizations.errors.consumablesOutOfStock' | i18n }}:</label> {{missingConsumables[act.targetModel.id].join(', ')}}
                 </span>
             </div>
         </div>
