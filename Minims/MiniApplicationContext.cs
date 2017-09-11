@@ -242,12 +242,12 @@ namespace Minims
             { // load configuration
                 try
                 {
+					// Set master application context
+					ApplicationContext.Current = retVal;
 
-                    retVal.ConfigurationManager.Load();
+					retVal.ConfigurationManager.Load();
                     retVal.AddServiceProvider(typeof(XamarinBackupService));
 
-                    // Set master application context
-                    ApplicationContext.Current = retVal;
                     retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     var appService = retVal.GetService<IAppletManagerService>();
