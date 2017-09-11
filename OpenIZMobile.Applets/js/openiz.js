@@ -29,8 +29,8 @@ window.alert = function () {
     alert_.apply(window, arguments)
 };
 
-/// <reference path="openiz-bre.js"/>
-/// <reference path="openiz-model.js"/>
+/// <reference path="~/js/openiz-bre.js"/>
+/// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/select2.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
@@ -309,7 +309,7 @@ var OpenIZ = OpenIZ || {
         createFulfillment: function (act) {
 
             var fulfills = new OpenIZModel.Act();
-
+            
             // Clone act
             switch (act.$type) {
                 case "SubstanceAdministration":
@@ -341,6 +341,12 @@ var OpenIZ = OpenIZ || {
             fulfills.tag = {};
             if (act.stopTime < new Date())
                 fulfills.tag.backEntry = true;
+
+            // Assign the tag for original date
+            fulfills.extension = fulfills.extension || {};
+            // Original date
+            fulfills.extension["http://openiz.org/extensions/core/originalDate"] = fulfills.actTime;
+
             fulfills.id = OpenIZ.App.newGuid();
             fulfills.moodConcept = OpenIZModel.ActMoodKeys.Eventoccurrence;
             fulfills.moodConceptModel = null;
