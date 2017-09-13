@@ -152,7 +152,7 @@
         </div>
 
         <div class="btn-group">
-            <button ng-if="hasBackup()" id="btnRestore" ng-click="doRestore()" class="btn btn-warning btn-lg">
+            <button ng-if="hasBackup" id="btnRestore" ng-click="doRestore()" class="btn btn-warning btn-lg">
                 <span>
                     <span class="glyphicon glyphicon-download"></span> {{ 'locale.settings.data.restore' | i18n }}
                 </span>

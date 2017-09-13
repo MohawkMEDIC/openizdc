@@ -2245,6 +2245,21 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
+         * @summary Indicates whether the database has a backup
+         * @method
+         * @memberof OpenIZ.App
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         */
+        getBackupAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__app/data/backup", {
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
+        /**
          * @summary Loads an asset synchronously from the data/ directory
          * @method
          * @memberof OpenIZ.App
@@ -3606,7 +3621,7 @@ var OpenIZ = OpenIZ || {
             AdminQueue: "admin"
         },
         /** 
-         * @summary Retrieves a specified queue object
+         * @summary Forces a synchronization
          * @param {object} controlData An object containing search, offset, count and callback data
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
@@ -3675,6 +3690,26 @@ var OpenIZ = OpenIZ || {
         deleteQueueAsync: function (controlData) {
             OpenIZ.Util.simpleDelete("/__app/queue", {
                 query: "_id=" + controlData.queueId + "&_queue=" + controlData.queueName,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /** 
+         * @summary Re-queues the specified objects from the database back into the queue
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {Date} controlData.from The lower date bound on which to queue data
+         * @param {Date} controlData.to The upper date bound on which to queue data
+         * @memberof OpenIZ.Queue
+         * @method
+         */
+        resubmitAsync: function (controlData) {
+            OpenIZ.Util.simplePut("/__app/data/sync", {
+                query: "creationTime=<" + OpenIZ.Util.toDateInputString(controlData.to || new Date()) + "T23:59:59" + "&creationTime=>" + OpenIZ.Util.toDateInputString(controlData.from || new Date()) + "T00:00:00",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,

@@ -1,5 +1,5 @@
 @echo off
-set version=0.9.7.4
+set version=0.9.7.5
 
 echo Building Windows Installer
 "c:\Program Files (x86)\Inno Setup 5\ISCC.exe" "/o.\dist" ".\install.iss"

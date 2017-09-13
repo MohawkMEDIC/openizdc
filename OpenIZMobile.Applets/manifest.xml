@@ -575,6 +575,16 @@
     <string key="locale.audit.actors">Actors</string>
     <string key="locale.audit.objects">Objects</string>
     <!-- End Audit -->
+    
+    <!-- Resubmission -->
+    <string key="locale.settings.data.resubmit">Re-Submit To Server</string>
+    <string key="locale.settings.data.resubmit.description">This tool will resubmit all the data from your tablet to the server. Only do this action if you are instructed by a system administrator.</string>
+    <string key="locale.settings.data.resubmit.from">From</string>
+    <string key="locale.settings.data.resubmit.to">To</string>
+    <string key="locale.settings.data.resubmit.error">Please verify this value is correct</string>
+    <string key="locale.settings.data.resubmit.formError">There is a problem with the resubmission settings you're using. Please correct and try again</string>
+    <string key="locale.settings.data.resubmit.success">All the data in your tablet was successfully queued for re-submission</string>
+    <!-- End Resubmission -->
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>

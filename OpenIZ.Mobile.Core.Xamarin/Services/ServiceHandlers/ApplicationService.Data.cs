@@ -43,6 +43,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Roles;
 using Jint.Parser.Ast;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Mobile.Core.Interop.IMSI;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -73,6 +74,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Hit the act repository
             var patientDataRepository = ApplicationContext.Current.GetService<IRepositoryService<Patient>>() as IPersistableQueryRepositoryService;
             var actDataRepository = ApplicationContext.Current.GetService<IRepositoryService<Act>>() as IPersistableQueryRepositoryService;
+            var imsiIntegration = ApplicationContext.Current.GetService<ImsiIntegrationService>();
 
             // Get all patients matching
             int ofs = 0, tr = 1;
@@ -80,21 +82,42 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var filter = QueryExpressionParser.BuildLinqExpression<Patient>(search);
             while(ofs < tr)
             {
-                var res = patientDataRepository.Find<Patient>(filter, ofs, 100, out tr, qid);
+                var res = patientDataRepository.Find<Patient>(filter, ofs, 25, out tr, qid);
                 ApplicationContext.Current.SetProgress(Strings.locale_preparingPush, (float)ofs / (float)tr * 0.5f);
-                ofs += 100;
-                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res, tr, ofs), DataOperationType.Update);
+                ofs += 25;
+
+                var serverSearch = new NameValueCollection();
+                serverSearch.Add("id", res.Select(o => o.Key.ToString()).ToList());
+
+                var serverKeys = imsiIntegration.Find<Patient>(serverSearch, 0, 25, new IntegrationQueryOptions()
+                {
+                    Lean = true,
+                    InfrastructureOptions = NameValueCollection.ParseQueryString("_exclude=participation&_exclude=relationship&_exclude=tag&_exclude=identifier&_exclude=address&_exclude=name")
+                }).Item.Select(o => o.Key);
+
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res.Where(o => !serverKeys.Contains(o.Key)), tr, ofs), DataOperationType.Update);
             }
 
             // Get all acts matching
             qid = Guid.NewGuid();
             var actFilter = QueryExpressionParser.BuildLinqExpression<Act>(search);
+            ofs = 0; tr = 1;
             while (ofs < tr)
             {
-                var res = actDataRepository.Find<Act>(actFilter, ofs, 100, out tr, qid);
+                var res = actDataRepository.Find<Act>(actFilter, ofs, 25, out tr, qid);
                 ApplicationContext.Current.SetProgress(Strings.locale_preparingPush, (float)ofs / (float)tr * 0.5f + 0.5f);
-                ofs += 100;
-                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res, tr, ofs), DataOperationType.Update);
+                ofs += 25;
+
+                var serverSearch = new NameValueCollection();
+                serverSearch.Add("id", res.Select(o => o.Key.ToString()).ToList());
+
+                var serverKeys = imsiIntegration.Find<Act>(serverSearch, 0, 25, new IntegrationQueryOptions()
+                {
+                    Lean = true,
+                    InfrastructureOptions = NameValueCollection.ParseQueryString("_exclude=participation&_exclude=relationship&_exclude=tag&_exclude=identifier")
+                }).Item.Select(o => o.Key);
+
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res.Where(o=>!serverKeys.Contains(o.Key)), tr, ofs), DataOperationType.Update);
             }
 
         }
@@ -146,6 +169,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             bksvc.Backup(BackupMedia.Public);
 
             ApplicationContext.Current.SaveConfiguration();
+        }
+
+        /// <summary>
+        /// Delete queue entry
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "GET", UriPath = "/data/backup")]
+        public bool GetBackup()
+        {
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
+            return bksvc.HasBackup(BackupMedia.Public);
         }
 
         /// <summary>

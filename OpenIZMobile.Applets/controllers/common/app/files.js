@@ -145,8 +145,13 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
 
 
     // Returns true if the parent scope has a backup
-    $scope.hasBackup = function () {
-        if ($scope.$parent.about)
-            return $scope.$parent.about.hasBackup;
-    }
+    $scope.hasBackup = false;
+    
+    OpenIZ.App.getBackupAsync({
+        continueWith: function (backup) {
+            $scope.hasBackup = backup;
+            $scope.$apply();
+        }
+    });
+    
 }]);

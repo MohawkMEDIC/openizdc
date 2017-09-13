@@ -227,15 +227,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
                 //queryStatement = new SqlStatement<TDomain>().SelectFrom()
                 queryStatement = queryStatement.Where<TDomain>(expression);
-                m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
             }
             else
             {
                 queryStatement = m_builder.CreateQuery(query);
-                m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
             }
 
             queryStatement = this.AppendOrderByStatement(queryStatement).Build();
+            m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
 
             // Is this a cached query?
             var retVal = context.CacheQuery(queryStatement)?.OfType<TModel>();

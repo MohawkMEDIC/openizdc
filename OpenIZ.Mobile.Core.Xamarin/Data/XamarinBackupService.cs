@@ -171,7 +171,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                     // Move to next entry & copy 
                     while (tr.MoveToNextEntry())
                     {
+
                         this.m_tracer.TraceVerbose("Extracting : {0}", tr.Entry.Key);
+                        if (tr.Entry.Key == "DISCLAIMER.TXT" || tr.Entry.Key == ".appinfo.xml") continue;
                         var destDir = Path.Combine(sourceDirectory, tr.Entry.Key.Replace('/', Path.DirectorySeparatorChar));
                         if (!Directory.Exists(Path.GetDirectoryName(destDir)))
                             Directory.CreateDirectory(Path.GetDirectoryName(destDir));
