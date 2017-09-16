@@ -64,6 +64,9 @@ namespace OpenIZ.Mobile.Core
         // Execution uuid
         private static Guid s_executionUuid = Guid.NewGuid();
 
+        // True if the services are running
+        private bool m_running = false;
+
 		// Context singleton
 		private static ApplicationContext s_context;
 
@@ -247,7 +250,13 @@ namespace OpenIZ.Mobile.Core
         /// </summary>
         protected void Start()
         {
-            if(!this.m_cache.ContainsKey(typeof(IServiceManager)))
+            // Already running
+            if (this.m_running)
+                return;
+
+            this.m_running = true;
+
+            if (!this.m_cache.ContainsKey(typeof(IServiceManager)))
                 this.m_cache.Add(typeof(IServiceManager), this);
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
             this.Starting?.Invoke(this, EventArgs.Empty);
@@ -298,6 +307,7 @@ namespace OpenIZ.Mobile.Core
 
             this.Stopped?.Invoke(this, EventArgs.Empty);
 
+            this.m_running = false;
         }
 
         /// <summary>

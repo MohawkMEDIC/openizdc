@@ -55,8 +55,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
      * Fills in missing data for the specified participation
      */
     scope.fillParticipationPlayerEntity = scope.fillParticipationPlayerEntity || /** @param {OpenIZModel.ActParticipation} bind */ function (bind) {
-        if(bind.player)
-        {
+        if (bind.player) {
             OpenIZ.Ims.get({
                 resource: "Entity",
                 query: { _id: bind.player, _viewModel: "min" },
@@ -143,7 +142,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             bind.targetModel.actTime = bind._encounter.actTime;
             bind._encounter.relationship._OverdueHasComponent.splice($.inArray(bind, bind._encounter.relationship._OverdueHasComponent), 1);
             bind._encounter.relationship.HasComponent.push(bind);
-            if (afterFocus){
+            if (afterFocus) {
                 $timeout(function () { $(afterFocus).focus() }, 200);
             }
         };
@@ -247,7 +246,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         // Act not done!?
         if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
             validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
-        
+
         return validation;
     };
 
@@ -368,20 +367,18 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         }
     }
 
-    scope.toArray = scope.toArray || function (ptcpt)
-    {
+    scope.toArray = scope.toArray || function (ptcpt) {
         return !ptcpt ? ptcpt : Array.isArray(ptcpt) ? ptcpt : [ptcpt];
     }
 
     // Encounter
-    scope.validateAct = scope.validateAct || function (act)
-    {
+    scope.validateAct = scope.validateAct || function (act) {
         var validation = [];
 
         // Act not done!?
         if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
             validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
-       
+
         return validation;
     };
 
@@ -401,29 +398,12 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     /*
      * Adds missing consumables for the given act
      */
-    scope.addMissingConsumable = function (act) {
-        for (var i = 0, length = Object.keys(act.targetModel.participation.Consumable).length; i < length; i++) {
-            if (!act.targetModel.participation.Consumable[i].player) {
-                var name;
-                if (i === 0) {
-                    name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.name.Assigned);
-                }
-                else {
-                    if (act.targetModel.participation.Product.playerModel.relationship.UsedEntity[i - 1]) {
-                        name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity[i - 1].targetModel.name.OfficialRecord);
-                    }
-                    else {
-                        name = OpenIZ.Util.renderName(act.targetModel.participation.Product.playerModel.relationship.UsedEntity.targetModel.name.OfficialRecord);
-                    }
-                }
-
-                if (!Array.isArray(scope.missingConsumables[act.targetModel.id])) {
-                    scope.missingConsumables[act.targetModel.id] = [name]
-                }
-                else if (scope.missingConsumables[act.targetModel.id].indexOf(name) === -1) {
-                    scope.missingConsumables[act.targetModel.id].push(name);
-                }
-            }
+    scope.addMissingConsumable = function (actId, name) {
+        if (!Array.isArray(scope.missingConsumables[actId])) {
+            scope.missingConsumables[actId] = [name]
+        }
+        else if (scope.missingConsumables[actId].indexOf(name) === -1) {
+            scope.missingConsumables[actId].push(name);
         }
     }
 }]);

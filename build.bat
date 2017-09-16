@@ -1,5 +1,5 @@
 @echo off
-set version=0.9.7.5
+set version=0.9.8.0
 
 "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease /p:Platform=x86
 "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease
