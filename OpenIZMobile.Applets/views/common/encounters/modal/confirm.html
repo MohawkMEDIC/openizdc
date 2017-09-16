@@ -76,7 +76,12 @@
                                             <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.pill.png" ng-if="(act.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || act.targetModel.participation.Product.playerModel.formConcept == 'aa02267c-8f77-4233-bfd3-e6b068ab326a')&amp;&amp; act.targetModel.typeConcept == '7d84a057-1fcc-4054-a51f-b77d230fc6d1'" />
                                             {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}
                                             {{ 'locale.encounters.immunization.doseSequence' | i18n }}
-                                            {{ act.targetModel.doseSequence }}
+                                            <span ng-if="act.targetModel.doseSequence === 0">
+                                                {{ 'locale.encounters.immunization.birthDose' | i18n }}
+                                            </span>
+                                            <span ng-if="act.targetModel.doseSequence !== 0">
+                                                {{ act.targetModel.doseSequence }}
+                                            </span>
                                             <ul>
                                                 <li ng-if="act._enabled" ng-repeat="cons in act.targetModel.participation.Consumable">
                                                     {{ 'locale.encounters.immunization.lotNumber' | i18n }}
@@ -99,10 +104,8 @@
                                             <span ng-if="!act.targetModel.valueModel">
                                                 {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.value) }} 
                                             </span>
-                                           
                                         </span>
                                         <span ng-switch-when="Act">
-                                            
                                             {{ act.targetModel.typeConceptModel | oizConcept }} -
                                             <span ng-if="act.targetModel.relationship.HasSubject">
                                                 {{ act.targetModel.relationship.HasSubject.targetModel.typeConceptModel | oizConcept }} -
@@ -119,7 +122,7 @@
                                                 </span>
                                             </span>
                                         </span>
-                                        <span class="label label-danger" ng-if="!act._enabled">
+                                        <span class="label label-danger label-inline" ng-if="!act._enabled">
                                             {{ 'locale.encounters.protocolViolation.reason' | i18n }} : {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.reasonConcept) }}
                                         </span>
                                     </div>
@@ -127,7 +130,6 @@
                             </ul>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="modal-footer">

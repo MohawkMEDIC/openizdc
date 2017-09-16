@@ -68,6 +68,7 @@ namespace OpenIZ.Mobile.Core.Security
             {
                 string name = (securable as SecurityRole).Name;
                 return this.m_client.FindRole(o => o.Name == name).CollectionItem.First().Policies.Select(o => new GenericPolicyInstance(new GenericPolicy(o.Oid, o.Name, o.CanOverride), o.Grant)).ToList();
+                
             }
             else if (securable is SecurityApplication)
                 throw new NotImplementedException();

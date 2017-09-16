@@ -63,8 +63,8 @@
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}:</label>
             <div class="col-xs-4 padding-id-header">
                 <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
-                    <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
-                    <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ i.authority.name}}</span><br /></span>
+                    <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ dmn }}</span></span>
+                    <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ dmn }}</span><br /></span>
                 </div>
                 <span ng-if="patient.identifier.length &gt; 2">...</span>
 
@@ -101,7 +101,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li role="presentation" ng-if="patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientController.download()">
+                    <a ng-click="downloadPatient()">
                         <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
                     </a>
                 </li>

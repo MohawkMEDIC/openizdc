@@ -62,3 +62,13 @@ Thumbs.db
 *.tar
 *.bz2
 *.zip
+/Minims/openiz-sdk-0.9.7.4/schema
+/Minims/openiz-sdk-0.9.7.4/schema/ViewModelDescription.xsd
+/Minims/openiz-sdk-0.9.7.4/schema/OpenIZProtocol.xsd
+/Minims/openiz-sdk-0.9.7.4/schema/OpenIZModel.xsd
+/Minims/openiz-sdk-0.9.7.4/schema/OpenIZDataSet.xsd
+/Minims/openiz-sdk-0.9.7.4/schema/OpenIZApplet.xsd
+/Minims/openiz-sdk-0.9.7.4/schema/ModelMap.xsd
+/Minims/openiz-sdk-0.9.7.4/schema/BaseTypes.xsd
+/Minims/openiz-sdk-0.9.7.4/schema/AdHocDataWarehouse.xsd
+/Minims/openiz-sdk-0.9.7.4/schema

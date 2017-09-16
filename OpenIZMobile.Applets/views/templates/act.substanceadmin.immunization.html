@@ -24,14 +24,14 @@
             <div class="input-group">
                 <label class="control-label">
                     {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} 
-                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</a>
-                    <span ng-if="act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ act.targetModel.doseSequence }}</span>
+                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ doseSequenceFilter(act.targetModel.doseSequence) }}</a>
+                    <span ng-if="act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ doseSequenceFilter(act.targetModel.doseSequence) }}</span>
                 
                 <span ng-if="act._created">
                     ({{ 'locale.encounters.immunization.isBooster' | i18n }})
                 </span>
                 </label>
-                <select ng-model="act.targetModel.doseSequence" ng-change="cascadeDoseSequences(act._encounter.relationship.HasComponent, act.targetModel.doseSequence)" ng-options="i for i in getDoseSequences(act.targetModel.participation.Product.player)" ng-if="act._overrideDose" class="form-control" /><br />
+                <select ng-model="act.targetModel.doseSequence" ng-change="cascadeDoseSequences(act._encounter.relationship.HasComponent, act.targetModel.doseSequence)" ng-options="doseSequenceFilter(i) for i in getDoseSequences(act.targetModel.participation.Product.player)" ng-if="act._overrideDose" class="form-control" /><br />
                 <span ng-if="act.targetModel.tag.backEntry">
                     <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
                 </span>
@@ -66,11 +66,11 @@
                             data-watch="act.targetModel.participation.Product.player"
                             data-watch-target="relationship[Instance].source"
                             oiz-databind="ManufacturedMaterial"
-                            data-filter='{ "relationship[Instance].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                            data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                             data-display="scope.lotNumber"
                             data-defaultEmpty="true"
                             data-defaultFirst="true"
-                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"></select>
+                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';  scp.addMissingConsumable(act.targetModel.id, '{{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}');"></select>
 
                 </div>
                 <div class="row">
@@ -149,11 +149,11 @@
                                 class="form-control"
                                 ng-model="act.targetModel.participation.Consumable[$index + 1].player"
                                 oiz-databind="ManufacturedMaterial"
-                                data-filter='{ "relationship[Instance].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                                data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                                 data-display="scope.lotNumber"
                                 data-defaultEmpty="true"
                                 data-defaultFirst="true"
-                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"></select>
+                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf'; scp.addMissingConsumable(act.targetModel.id, '{{ product.targetModel.name.Assigned | oizEntityName }}');"></select>
                     </div>
                     <div class="help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
@@ -161,13 +161,16 @@
                 </div>
                 <div ng-if="$index % 2 == 1" class="clearfix"></div>
             </div>
-            <div class="col-xs-2" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                <a class="btn btn-lg btn-info margin-top-10" ng-click="makeOverdue(act, '#enable_' + act.targetModel.id)" id="makeOvd_{{act.targetModel.id}}">
+            <div class="col-xs-12">
+                <a class="btn btn-lg btn-info margin-top-10 margin-right-10" ng-click="makeOverdue(act, '#enable_' + act.targetModel.id)" id="makeOvd_{{act.targetModel.id}}" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                     <span>
                         <span class="glyphicon glyphicon-circle-arrow-up"></span>
                         <span class="hidden-xs">{{ 'locale.action.backEnter' | i18n }}</span>
                     </span>
                 </a>
+                <span ng-if="missingConsumables[act.targetModel.id].length &gt; 0">
+                    <label class="input-error text-danger"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span> {{ 'locale.encounters.immunizations.errors.consumablesOutOfStock' | i18n }}:</label> {{missingConsumables[act.targetModel.id].join(', ')}}
+                </span>
             </div>
         </div>
     </div>

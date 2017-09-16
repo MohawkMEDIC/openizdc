@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;DEV_MODE</DefineConstants>
+    <DefineConstants>DEBUG;DEV_MODE NOCRYPT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -36,7 +36,7 @@
     <ConsolePause>false</ConsolePause>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <LangVersion>6</LangVersion>
-    <DefineConstants>DEV_MODE</DefineConstants>
+    <DefineConstants>DEV_MODE;NOCRYPT</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
     <OutputPath>bin\SignedRelease\</OutputPath>
@@ -46,6 +46,26 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <DefineConstants>NOCRYPT</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MacDebug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\MacDebug\</OutputPath>
+    <DefineConstants>DEBUG;DEV_MODE NOCRYPT</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <LangVersion>6</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MacRelease|AnyCPU'">
+    <OutputPath>bin\MacRelease\</OutputPath>
+    <DefineConstants>NOCRYPT</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <LangVersion>6</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
@@ -114,6 +134,7 @@
     <Compile Include="AppletEngine\JNI\SessionServiceBridge.cs" />
     <Compile Include="Diagnostics\AndroidLogTraceWriter.cs" />
     <Compile Include="Services\AndroidAppletManagerService.cs" />
+    <Compile Include="Services\AndroidBackupService.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
     <Compile Include="Services\AndroidNetworkInformationService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

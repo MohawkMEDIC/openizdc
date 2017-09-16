@@ -74,7 +74,7 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")
-                        console.log(ex.message || ex);
+                        alert(ex.message || ex);
                 }
             });
         };
@@ -93,18 +93,18 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
             $("#restoreConfirmModal").modal("hide");
 
         var doAction = function () {
-            OpenIZ.App.showWait('#purgeButton');
+            OpenIZ.App.showWait('#restoreButton');
             OpenIZ.App.restoreDataAsync({
                 continueWith: function () {
                     OpenIZ.App.close();
                     OpenIZ.Authentication.$elevationCredentials = {};
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait('#purgeButton');
+                    OpenIZ.App.hideWait('#restoreButton');
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")
-                        console.log(ex.message || ex);
+                        alert(ex.message || ex);
                 }
             });
         };
@@ -112,8 +112,46 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
         doAction();
     };
 
-    $scope.hasBackup = function () {
-        if ($scope.$parent.about)
-            return $.grep($scope.$parent.about.fileInfo, function (a) { return a.id == "bak"; }).length > 0;
-    }
+    $scope.doBackup = function (override) {
+
+        // Confirm purge
+        if (!override) {
+            $("#backupConfirmModal").modal("show");
+            return;
+        }
+        else
+            $("#backupConfirmModal").modal("hide");
+
+        var doAction = function () {
+            OpenIZ.App.showWait('#btnBackup');
+            OpenIZ.App.backupDataAsync({
+                continueWith: function () {
+                    if (confirm(OpenIZ.Localization.getString("locale.settings.data.backup.restart")))
+                        OpenIZ.App.close();
+                    OpenIZ.Authentication.$elevationCredentials = {};
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait('#btnBackup');
+                },
+                onException: function (ex) {
+                    if (ex.type != "PolicyViolationException")
+                        alert(ex.message || ex);
+                }
+            });
+        };
+        OpenIZ.Authentication.$elevationCredentials.continueWith = doAction;
+        doAction();
+    };
+
+
+    // Returns true if the parent scope has a backup
+    $scope.hasBackup = false;
+    
+    OpenIZ.App.getBackupAsync({
+        continueWith: function (backup) {
+            $scope.hasBackup = backup;
+            $scope.$apply();
+        }
+    });
+    
 }]);

@@ -78,6 +78,12 @@ layoutApp.controller('SettingsController', ['$scope', 'uiHelperService', functio
     // join realm
     $scope.joinRealm = function (realm) {
 
+        // Tablet is offline, display error message
+        if (!OpenIZApplicationService.GetOnlineState()) {
+            alert(OpenIZ.Localization.getString("locale.settings.status.offline"));
+            return;
+        }
+
         var doJoin = function (force) {
             if (!$('#joinRealmButton')[0].hasAttribute('disabled')) {
                 OpenIZ.App.showWait('#joinRealmButton');

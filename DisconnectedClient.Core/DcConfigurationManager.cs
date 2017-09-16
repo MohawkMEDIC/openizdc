@@ -175,7 +175,7 @@ namespace DisconnectedClient.Core
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
-
+                    typeof(XamarinBackupService).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(DcAppletManagerService).AssemblyQualifiedName,
                                         typeof(SQLiteReportDatasource).AssemblyQualifiedName,
@@ -331,6 +331,17 @@ namespace DisconnectedClient.Core
             get
             {
                 return this.m_configuration;
+            }
+        }
+
+        /// <summary>
+        /// Application data directory
+        /// </summary>
+        public string ApplicationDataDirectory
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
             }
         }
 

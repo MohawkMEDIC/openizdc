@@ -1,0 +1,13 @@
+﻿CREATE UNIQUE INDEX IF NOT EXISTS concept_mnemonic on concept(mnemonic);
+CREATE UNIQUE INDEX IF NOT EXISTS concept_class_mnemonic on concept_class(mnemonic);
+CREATE INDEX IF NOT EXISTS entity_identifier_value on entity_identifier(value);
+CREATE INDEX IF NOT EXISTS act_identifier_value on act_identifier(value);
+CREATE UNIQUE INDEX IF NOT EXISTS template_mnemonic on template(mnemonic);
+CREATE UNIQUE INDEX IF NOT EXISTS security_role_name on security_role(name);
+CREATE UNIQUE INDEX IF NOT EXISTS security_user_username on security_user(username);
+CREATE INDEX IF NOT EXISTS entity_address_comp_value_id on entity_address_comp(value_id);
+CREATE INDEX IF NOT EXISTS entity_name_comp_value_id on entity_name_comp(value_id);
+CREATE INDEX IF NOT EXISTS entity_telecom_value on entity_telecom(value);
+CREATE UNIQUE INDEX IF NOT EXISTS phonetic_value_value on phonetic_value(value);
+CREATE INDEX IF NOT EXISTS act_participation_act_uuid on act_participation(act_uuid);
+CREATE INDEX IF NOT EXISTS act_participation_entity_uuid on act_participation(entity_uuid);

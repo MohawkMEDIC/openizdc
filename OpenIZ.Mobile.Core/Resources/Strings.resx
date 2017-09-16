@@ -147,7 +147,7 @@
     <value>Error importing remote data</value>
   </data>
   <data name="locale_indexing" xml:space="preserve">
-    <value>Constructing Freetext Index</value>
+    <value>Indexing Database...</value>
   </data>
   <data name="locale_rejectionBody" xml:space="preserve">
     <value>&lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;&lt;p&gt;The message has been quarantined, you can view the message in the sync centre.&lt;/p&gt;&lt;a href="#/core/sync" class="btn btn-lg btn-info"&gt;Visit Sync Centre&lt;/a&gt;</value>
@@ -213,10 +213,10 @@ Sincerely,
     <value>Importing {0} from bundle ({1} of {2})...</value>
   </data>
   <data name="locale_accountLocked" xml:space="preserve">
-    <value>Account is locked</value>
+    <value>Account is locked - Please try again in a few minutes</value>
   </data>
   <data name="locale_accountObsolete" xml:space="preserve">
-    <value>Account is deleted</value>
+    <value>Account was deleted - Please contact your system administrator</value>
   </data>
   <data name="locale_invalidUserNamePassword" xml:space="preserve">
     <value>Invalid Username / Password</value>
@@ -228,12 +228,21 @@ Sincerely,
     <value>Optimizing Databases...</value>
   </data>
   <data name="locale_loginFromUnsubscribedFacility" xml:space="preserve">
-    <value>The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance.</value>
+    <value>The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance. Use the following information when getting assistance: {0}</value>
   </data>
   <data name="locale_securitySwitchedMode" xml:space="preserve">
     <value>Your online session couldn't be extended, you are now operating in disconnected mode.</value>
   </data>
   <data name="err_already_computing_careplan" xml:space="preserve">
     <value>The care plan service is already calculating your facility plan...</value>
+  </data>
+  <data name="locale_committing" xml:space="preserve">
+    <value>Committing Data...</value>
+  </data>
+  <data name="locale_prepareBundle" xml:space="preserve">
+    <value>Preparing Bundle....</value>
+  </data>
+  <data name="locale_preparingPush" xml:space="preserve">
+    <value>Preparing to push data...</value>
   </data>
 </root>

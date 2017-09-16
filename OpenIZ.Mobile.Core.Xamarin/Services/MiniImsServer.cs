@@ -223,297 +223,298 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         private void HandleRequest(Object state)
         {
+            try
+            {
+                HttpListenerContext context = state as HttpListenerContext;
+                var request = context.Request;
+                var response = context.Response;
 
-            HttpListenerContext context = state as HttpListenerContext;
-            var request = context.Request;
-            var response = context.Response;
-
-            var appletManager = ApplicationContext.Current.GetService<IAppletManagerService>();
+                var appletManager = ApplicationContext.Current.GetService<IAppletManagerService>();
 
 #if DEBUG
             Stopwatch perfTimer = new Stopwatch();
             perfTimer.Start();
 #endif
 
-            try
-            {
-                if (!request.RemoteEndPoint.Address.Equals(IPAddress.Loopback) &&
-                                !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback))
-                    throw new UnauthorizedAccessException("Only local access allowed");
-
-                MiniImsServer.CurrentContext = context;
-
-                // Services require magic
-#if !DEBUG
-                if (!this.m_bypassMagic &&
-                    request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString() &&
-                    request.UserAgent != $"OpenIZ-DC {ApplicationContext.Current.ExecutionUuid}")
+                try
                 {
-                    // Something wierd with the appp, show them the nice message
-                    if (request.UserAgent.StartsWith("OpenIZ"))
+                    if (!request.RemoteEndPoint.Address.Equals(IPAddress.Loopback) &&
+                                    !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback))
+                        throw new UnauthorizedAccessException("Only local access allowed");
+
+                    MiniImsServer.CurrentContext = context;
+
+                    // Services require magic
+#if !DEBUG
+                    if (!this.m_bypassMagic &&
+                        request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString() &&
+                        request.UserAgent != $"OpenIZ-DC {ApplicationContext.Current.ExecutionUuid}")
                     {
-                        using (var sw = new StreamWriter(response.OutputStream))
-                            sw.WriteLine("Hmm, something went wrong. For security's sake we can't show the information you requested. Perhaps restarting the application will help");
-                        return;
+                        // Something wierd with the appp, show them the nice message
+                        if (request.UserAgent.StartsWith("OpenIZ"))
+                        {
+                            using (var sw = new StreamWriter(response.OutputStream))
+                                sw.WriteLine("Hmm, something went wrong. For security's sake we can't show the information you requested. Perhaps restarting the application will help");
+                            return;
+                        }
+                        else // User is using a browser to try and access this? How dare they
+                        {
+                            response.AddHeader("Content-Encoding", "gzip");
+                            using (var rdr = typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.antihaxor"))
+                                rdr.CopyTo(response.OutputStream);
+                            return;
+                        }
                     }
-                    else // User is using a browser to try and access this? How dare they
-                    {
-                        response.AddHeader("Content-Encoding", "gzip");
-                        using (var rdr = typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.antihaxor"))
-                            rdr.CopyTo(response.OutputStream);
-                        return;
-                    }
-                }
 #endif
 
-                this.m_tracer.TraceVerbose("Client has the right magic word");
+                    this.m_tracer.TraceVerbose("Client has the right magic word");
 
-                // Session cookie?
-                if (request.Cookies["_s"] != null)
-                {
-                    var cookie = request.Cookies["_s"];
-                    if (!cookie.Expired)
+                    // Session cookie?
+                    if (request.Cookies["_s"] != null)
                     {
-                        var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
-                        var session = smgr.Get(Guid.Parse(cookie.Value));
-                        if (session != null)
+                        var cookie = request.Cookies["_s"];
+                        if (!cookie.Expired)
                         {
-                            try
+                            var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
+                            var session = smgr.Get(Guid.Parse(cookie.Value));
+                            if (session != null)
                             {
-                                AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(session);
-                                this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
-                            }
-                            catch (SessionExpiredException)
-                            {
-                                this.m_tracer.TraceWarning("Session {0} is expired and could not be extended", cookie.Value);
-                                response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
-                            }
-                        }
-                        else // Something wrong??? Perhaps it is an issue with the thingy?
-                            response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
-                    }
-                }
-
-                // Authorization header
-                if (request.Headers["Authorization"] != null)
-                {
-                    var authHeader = request.Headers["Authorization"].Split(' ');
-                    switch (authHeader[0].ToLowerInvariant()) // Type / scheme
-                    {
-                        case "basic":
-                            {
-                                var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
-                                var authString = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader[1])).Split(':');
-                                var principal = idp.Authenticate(authString[0], authString[1]);
-                                if (principal == null)
-                                    throw new UnauthorizedAccessException();
-                                else
-                                    AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(principal);
-                                this.m_tracer.TraceVerbose("Performed BASIC auth for {0}", AuthenticationContext.Current.Principal.Identity.Name);
-
-                                break;
-                            }
-                        case "bearer":
-                            {
-                                var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
-                                var session = smgr.Get(Guid.Parse(authHeader[1]));
-                                if (session != null)
+                                try
                                 {
-                                    try
+                                    AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(session);
+                                    this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                                }
+                                catch (SessionExpiredException)
+                                {
+                                    this.m_tracer.TraceWarning("Session {0} is expired and could not be extended", cookie.Value);
+                                    response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
+                                }
+                            }
+                            else // Something wrong??? Perhaps it is an issue with the thingy?
+                                response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
+                        }
+                    }
+
+                    // Authorization header
+                    if (request.Headers["Authorization"] != null)
+                    {
+                        var authHeader = request.Headers["Authorization"].Split(' ');
+                        switch (authHeader[0].ToLowerInvariant()) // Type / scheme
+                        {
+                            case "basic":
+                                {
+                                    var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
+                                    var authString = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader[1])).Split(':');
+                                    var principal = idp.Authenticate(authString[0], authString[1]);
+                                    if (principal == null)
+                                        throw new UnauthorizedAccessException();
+                                    else
+                                        AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(principal);
+                                    this.m_tracer.TraceVerbose("Performed BASIC auth for {0}", AuthenticationContext.Current.Principal.Identity.Name);
+
+                                    break;
+                                }
+                            case "bearer":
+                                {
+                                    var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
+                                    var session = smgr.Get(Guid.Parse(authHeader[1]));
+                                    if (session != null)
                                     {
-                                        AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(session);
-                                        this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                                        try
+                                        {
+                                            AuthenticationContext.Current = AuthenticationContext.CurrentUIContext = new AuthenticationContext(session);
+                                            this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                                        }
+                                        catch (SessionExpiredException)
+                                        {
+                                            this.m_tracer.TraceWarning("Session {0} is expired and could not be extended", authHeader[1]);
+                                            throw new UnauthorizedAccessException("Session is expired");
+                                        }
                                     }
-                                    catch (SessionExpiredException)
+                                    else // Something wrong??? Perhaps it is an issue with the thingy?
+                                        throw new UnauthorizedAccessException("Session is invalid");
+                                    break;
+                                }
+
+                        }
+                    }
+
+                    // Attempt to find a service which implements the path
+                    var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
+                    InvokationInformation invoke = null;
+                    this.m_tracer.TraceVerbose("Performing service matching on {0}", rootPath);
+                    if (this.m_services.TryGetValue(rootPath, out invoke))
+                    {
+                        this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
+
+                        // Get the method information 
+                        var parmInfo = invoke.Parameters;
+                        object result = null;
+
+                        try
+                        {
+                            // Method demand?
+                            foreach (var itm in invoke.Demand)
+                                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, itm).Demand();
+
+                            // Invoke method
+                            if (parmInfo.Length == 0)
+                                result = invoke.Method.Invoke(invoke.BindObject, new object[] { });
+                            else
+                            {
+                                if (parmInfo[0].GetCustomAttribute<RestMessageAttribute>()?.MessageFormat == RestMessageFormat.SimpleJson)
+                                {
+                                    using (StreamReader sr = new StreamReader(request.InputStream))
                                     {
-                                        this.m_tracer.TraceWarning("Session {0} is expired and could not be extended", authHeader[1]);
-                                        throw new UnauthorizedAccessException("Session is expired");
+                                        var pValue = this.CreateSerializer(null).DeSerialize(sr, parmInfo[0].ParameterType);
+                                        result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
                                     }
                                 }
-                                else // Something wrong??? Perhaps it is an issue with the thingy?
-                                    throw new UnauthorizedAccessException("Session is invalid");
-                                break;
-                            }
-
-                    }
-                }
-
-                // Attempt to find a service which implements the path
-                var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
-                InvokationInformation invoke = null;
-                this.m_tracer.TraceVerbose("Performing service matching on {0}", rootPath);
-                if (this.m_services.TryGetValue(rootPath, out invoke))
-                {
-                    this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
-
-                    // Get the method information 
-                    var parmInfo = invoke.Parameters;
-                    object result = null;
-
-                    try
-                    {
-                        // Method demand?
-                        foreach (var itm in invoke.Demand)
-                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, itm).Demand();
-
-                        // Invoke method
-                        if (parmInfo.Length == 0)
-                            result = invoke.Method.Invoke(invoke.BindObject, new object[] { });
-                        else
-                        {
-                            if (parmInfo[0].GetCustomAttribute<RestMessageAttribute>()?.MessageFormat == RestMessageFormat.SimpleJson)
-                            {
-                                using (StreamReader sr = new StreamReader(request.InputStream))
+                                else
                                 {
-                                    var pValue = this.CreateSerializer(null).DeSerialize(sr, parmInfo[0].ParameterType);
+                                    var serializer = this.m_contentTypeHandler.GetSerializer(request.ContentType, parmInfo[0].ParameterType);
+                                    var pValue = serializer.DeSerialize(request.InputStream);
                                     result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
                                 }
                             }
-                            else
+                            response.StatusCode = 200;
+                        }
+                        catch (Exception e)
+                        {
+                            result = this.HandleServiceException(e, invoke, response);
+                            if (result == null)
+                                throw;
+                        }
+
+                        // Serialize the response
+                        if (request.Headers["Accept"] != null && invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.Raw &&
+                            invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.SimpleJson)
+                        {
+                            var serializer = this.m_contentTypeHandler.GetSerializer(request.Headers["Accept"].Split(',')[0], result?.GetType() ?? typeof(IdentifiedData));
+                            if (serializer != null)
                             {
-                                var serializer = this.m_contentTypeHandler.GetSerializer(request.ContentType, parmInfo[0].ParameterType);
-                                var pValue = serializer.DeSerialize(request.InputStream);
-                                result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
+                                response.ContentType = request.Headers["Accept"].Split(',')[0];
+                                serializer.Serialize(response.OutputStream, result);
                             }
+                            else
+                                throw new ArgumentOutOfRangeException(Strings.err_invalid_accept);
                         }
-                        response.StatusCode = 200;
-                    }
-                    catch (Exception e)
-                    {
-                        result = this.HandleServiceException(e, invoke, response);
-                        if (result == null)
-                            throw;
-                    }
-
-                    // Serialize the response
-                    if (request.Headers["Accept"] != null && invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.Raw &&
-                        invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.SimpleJson)
-                    {
-                        var serializer = this.m_contentTypeHandler.GetSerializer(request.Headers["Accept"].Split(',')[0], result?.GetType() ?? typeof(IdentifiedData));
-                        if (serializer != null)
-                        {
-                            response.ContentType = request.Headers["Accept"].Split(',')[0];
-                            serializer.Serialize(response.OutputStream, result);
-                        }
-                        else
-                            throw new ArgumentOutOfRangeException(Strings.err_invalid_accept);
-                    }
-                    else // Use the contract values
-                        switch (invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>().MessageFormat)
-                        {
-                            case RestMessageFormat.Raw:
-                                response.AddHeader("Content-Security-Policy", "style-src 'unsafe-inline'");
-
-                                response.AddHeader("Content-Encoding", "deflate");
-                                using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
-                                {
-                                    if (result is Stream)
-                                        (result as Stream).CopyTo(gzs);
-                                    else
-                                    {
-                                        var br = result as Byte[] ?? Encoding.UTF8.GetBytes(result as String);
-                                        gzs.Write(br, 0, br.Length);
-                                    }
-                                }
-                                break;
-                            case RestMessageFormat.SimpleJson:
-                                response.ContentType = "application/json";
-                                if (result is IdentifiedData)
-                                {
+                        else // Use the contract values
+                            switch (invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>().MessageFormat)
+                            {
+                                case RestMessageFormat.Raw:
+                                    response.AddHeader("Content-Security-Policy", "style-src 'unsafe-inline'");
 
                                     response.AddHeader("Content-Encoding", "deflate");
                                     using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
-                                    using (StreamWriter sw = new StreamWriter(gzs))
                                     {
-                                        if (request.QueryString["_viewModel"] != null)
-                                        {
-                                            var viewModelDescription = appletManager.Applets.GetViewModelDescription(request.QueryString["_viewModel"]);
-                                            var serializer = this.CreateSerializer(viewModelDescription);
-                                            serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
-                                        }
+                                        if (result is Stream)
+                                            (result as Stream).CopyTo(gzs);
                                         else
                                         {
-                                            this.CreateSerializer(null).Serialize(sw, (result as IdentifiedData).GetLocked());
+                                            var br = result as Byte[] ?? Encoding.UTF8.GetBytes(result as String);
+                                            gzs.Write(br, 0, br.Length);
                                         }
                                     }
-                                }
-                                else if (result != null)
-                                    this.m_contentTypeHandler.GetSerializer("application/json", result.GetType()).Serialize(response.OutputStream, result);
+                                    break;
+                                case RestMessageFormat.SimpleJson:
+                                    response.ContentType = "application/json";
+                                    if (result is IdentifiedData)
+                                    {
 
-                                break;
-                            case RestMessageFormat.Json:
-                                response.ContentType = "application/json";
-                                response.AddHeader("Content-Encoding", "deflate");
-                                using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
-                                    this.m_contentTypeHandler.GetSerializer("application/json", invoke.Method.ReturnType).Serialize(gzs, result);
-                                break;
-                            case RestMessageFormat.Xml:
-                                response.ContentType = "application/xml";
-                                this.m_contentTypeHandler.GetSerializer("application/xml", invoke.Method.ReturnType).Serialize(response.OutputStream, result);
-                                break;
-                        }
+                                        response.AddHeader("Content-Encoding", "deflate");
+                                        using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
+                                        using (StreamWriter sw = new StreamWriter(gzs))
+                                        {
+                                            if (request.QueryString["_viewModel"] != null)
+                                            {
+                                                var viewModelDescription = appletManager.Applets.GetViewModelDescription(request.QueryString["_viewModel"]);
+                                                var serializer = this.CreateSerializer(viewModelDescription);
+                                                serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
+                                            }
+                                            else
+                                            {
+                                                this.CreateSerializer(null).Serialize(sw, (result as IdentifiedData).GetLocked());
+                                            }
+                                        }
+                                    }
+                                    else if (result != null)
+                                        this.m_contentTypeHandler.GetSerializer("application/json", result.GetType()).Serialize(response.OutputStream, result);
+
+                                    break;
+                                case RestMessageFormat.Json:
+                                    response.ContentType = "application/json";
+                                    response.AddHeader("Content-Encoding", "deflate");
+                                    using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
+                                        this.m_contentTypeHandler.GetSerializer("application/json", invoke.Method.ReturnType).Serialize(gzs, result);
+                                    break;
+                                case RestMessageFormat.Xml:
+                                    response.ContentType = "application/xml";
+                                    this.m_contentTypeHandler.GetSerializer("application/xml", invoke.Method.ReturnType).Serialize(response.OutputStream, result);
+                                    break;
+                            }
+                    }
+                    else
+                        this.HandleAssetRenderRequest(request, response);
                 }
-                else
-                    this.HandleAssetRenderRequest(request, response);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                this.m_tracer.TraceError("Unauthorized action: {0}", ex.Message);
-                AuditUtil.AuditRestrictedFunction(ex, request.Url);
-                response.StatusCode = 403;
-                var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/403.html");
-                var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-                response.OutputStream.Write(buffer, 0, buffer.Length);
-
-            }
-            catch (SecurityException ex)
-            {
-                this.m_tracer.TraceError("General security exception: {0}", ex.Message);
-                if (AuthenticationContext.CurrentUIContext.Principal == AuthenticationContext.AnonymousPrincipal)
+                catch (UnauthorizedAccessException ex)
                 {
-                    // Is there an authentication asset in the configuration
-                    var authentication = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset;
-                    if (String.IsNullOrEmpty(authentication))
-                        authentication = appletManager.Applets.AuthenticationAssets.FirstOrDefault();
-                    if (String.IsNullOrEmpty(authentication))
-                        authentication = "/org/openiz/core/views/security/login.html";
-
-                    string redirectLocation = String.Format("{0}",
-                        authentication, request.RawUrl);
-                    response.Redirect(redirectLocation);
-                }
-                else
-                {
+                    this.m_tracer.TraceError("Unauthorized action: {0}", ex.Message);
+                    AuditUtil.AuditRestrictedFunction(ex, request.Url);
                     response.StatusCode = 403;
-
                     var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/403.html");
                     var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                     response.OutputStream.Write(buffer, 0, buffer.Length);
+
                 }
-
-            }
-            catch (FileNotFoundException ex)
-            {
-                this.m_tracer.TraceError("Asset not found: {0}", ex.FileName);
-                response.StatusCode = 404;
-                var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/404.html");
-                var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-                response.OutputStream.Write(buffer, 0, buffer.Length);
-
-            }
-            catch (Exception ex)
-            {
-                this.m_tracer.TraceError("Internal applet error: {0}", ex.ToString());
-                response.StatusCode = 500;
-                var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/500.html");
-                var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-                buffer = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(buffer).Replace("{{ exception }}", ex.ToString()));
-                response.OutputStream.Write(buffer, 0, buffer.Length);
-            }
-            finally
-            {
-                try
+                catch (SecurityException ex)
                 {
+                    this.m_tracer.TraceError("General security exception: {0}", ex.Message);
+                    if (AuthenticationContext.CurrentUIContext.Principal == AuthenticationContext.AnonymousPrincipal)
+                    {
+                        // Is there an authentication asset in the configuration
+                        var authentication = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset;
+                        if (String.IsNullOrEmpty(authentication))
+                            authentication = appletManager.Applets.AuthenticationAssets.FirstOrDefault();
+                        if (String.IsNullOrEmpty(authentication))
+                            authentication = "/org/openiz/core/views/security/login.html";
+
+                        string redirectLocation = String.Format("{0}",
+                            authentication, request.RawUrl);
+                        response.Redirect(redirectLocation);
+                    }
+                    else
+                    {
+                        response.StatusCode = 403;
+
+                        var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/403.html");
+                        var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                        response.OutputStream.Write(buffer, 0, buffer.Length);
+                    }
+
+                }
+                catch (FileNotFoundException ex)
+                {
+                    this.m_tracer.TraceError("Asset not found: {0}", ex.FileName);
+                    response.StatusCode = 404;
+                    var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/404.html");
+                    var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                    response.OutputStream.Write(buffer, 0, buffer.Length);
+
+                }
+                catch (Exception ex)
+                {
+                    this.m_tracer.TraceError("Internal applet error: {0}", ex.ToString());
+                    response.StatusCode = 500;
+                    var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/500.html");
+                    var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                    buffer = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(buffer).Replace("{{ exception }}", ex.ToString()));
+                    response.OutputStream.Write(buffer, 0, buffer.Length);
+                }
+                finally
+                {
+                    try
+                    {
 #if DEBUG
                     perfTimer.Stop();
                     this.m_tracer.TraceVerbose("PERF : MiniIMS >>>> {0} took {1} ms to service", request.Url, perfTimer.ElapsedMilliseconds);
@@ -522,16 +523,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 #if DEBUG
                     response.AddHeader("Cache-Control", "no-cache");
 #else
-                    response.AddHeader("Cache-Control", "no-store");
+                        response.AddHeader("Cache-Control", "no-store");
 #endif
 
-                    response.Close();
+                        response.Close();
+                    }
+                    catch { }
+
+                    MiniImsServer.CurrentContext = null;
                 }
-                catch { }
-
-                MiniImsServer.CurrentContext = null;
             }
-
+            catch(Exception e)
+            {
+                this.m_tracer.TraceWarning("General exception on listener: {0}", e);
+                
+            }
         }
 
         /// <summary>
@@ -540,10 +546,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         private object HandleServiceException(Exception e, InvokationInformation invoke, HttpListenerResponse response)
         {
 #if DEBUG
-            if (e is TargetInvocationException)
-                this.m_tracer.TraceError("{0} - {1} / {2}", invoke.Method.Name, e.Message, e.InnerException?.ToString());
-            else
-                this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e.ToString());
+            var ie = e;
+            while (ie != null)
+            {
+                this.m_tracer.TraceError("{0} - ({1}){2}", e == ie ? "" : "Caused By", invoke.Method.Name, e.GetType().FullName, e.Message);
+                ie = ie.InnerException;
+            }
 #else
             if (e is TargetInvocationException)
                 this.m_tracer.TraceError("{0} - {1} / {2}", invoke.Method.Name, e.Message, e.InnerException?.Message);

@@ -115,10 +115,51 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="backupConfirmModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content panel-warning">
+                    <div class="modal-header panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-warning-sign" style="font-size:2em"></span>
+                            {{ 'locale.settings.data.backup.confirmTitle' | i18n }}
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    {{ 'locale.settings.data.backup.description' | i18n }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <span>
+                                <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                            </span>
+                        </button>
+                        <button type="submit" class="btn btn-warning" ng-click="doBackup(true)">
+                            <span>
+                                <span class="glyphicon glyphicon-upload"></span> {{ 'locale.settings.data.backup' | i18n }}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="btn-group">
-            <button ng-if="hasBackup()" ng-click="doRestore()" class="btn btn-warning btn-lg">
+            <button ng-if="hasBackup" id="btnRestore" ng-click="doRestore()" class="btn btn-warning btn-lg">
                 <span>
-                    <span class="glyphicon glyphicon-upload"></span> {{ 'locale.settings.data.restore' | i18n }}
+                    <span class="glyphicon glyphicon-download"></span> {{ 'locale.settings.data.restore' | i18n }}
+                </span>
+            </button>
+            <button ng-click="doBackup()" id="btnBackup" class="btn btn-success btn-lg">
+                <span>
+                    <span class="glyphicon glyphicon-upload"></span> {{ 'locale.settings.data.backup' | i18n }}
                 </span>
             </button>
             <button ng-click="doCompact()" class="btn btn-primary btn-lg" id="compactButton">

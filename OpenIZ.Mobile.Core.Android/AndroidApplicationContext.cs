@@ -48,6 +48,7 @@ using System.IO.Compression;
 using System.Threading;
 using Android.OS;
 using OpenIZ.Core.Applets.Services;
+using OpenIZ.Mobile.Core.Android.Services;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -125,6 +126,10 @@ namespace OpenIZ.Mobile.Core.Android
             { // load configuration
                 try
                 {
+                   
+                    // Set master application context
+                    ApplicationContext.Current = retVal;
+                    retVal.CurrentActivity = launcherActivity;
                     try
                     {
                         retVal.ConfigurationManager.Load();
@@ -141,9 +146,8 @@ namespace OpenIZ.Mobile.Core.Android
                             throw;
                     }
 
-                    // Set master application context
-                    ApplicationContext.Current = retVal;
-                    retVal.CurrentActivity = launcherActivity;
+                    retVal.AddServiceProvider(typeof(AndroidBackupService));
+
                     retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     // HACK: For some reason the PCL doesn't do this automagically
@@ -258,6 +262,9 @@ namespace OpenIZ.Mobile.Core.Android
                         retVal.ConfigurationManager.Save();
                     }
 
+                    // Is there a backup manager? If no then we will use the default backup manager
+                    
+
                     // Start daemons
                     ApplicationContext.Current.GetService<IUpdateManager>().AutoUpdate();
                     retVal.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o => { retVal.Start(); }, null);
@@ -269,7 +276,10 @@ namespace OpenIZ.Mobile.Core.Android
                 catch (Exception e)
                 {
                     retVal.m_tracer?.TraceError(e.ToString());
-                    ApplicationContext.Current = null;
+                    //ApplicationContext.Current = null;
+                    retVal.m_configurationManager = new Android.Configuration.ConfigurationManager(Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
+                    AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+
                     throw;
                 }
 

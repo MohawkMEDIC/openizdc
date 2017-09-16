@@ -416,7 +416,9 @@ a.not-active {
     height:100%;
     overflow:scroll;
 }
-
+.scroll-x {
+    overflow-x: auto;
+}
 .white-text{
     color:white;
 }
@@ -516,6 +518,9 @@ body{
 }
 .margin-right-10{
     margin-right:10px;
+}
+.margin-right-5{
+    margin-right:5px;
 }
 .margin-top-5{
     margin-top:5px;
@@ -1723,4 +1728,11 @@ a.disabled {
 }
 .small-input {
     width: auto !important;
+}
+.vaccination-td {
+    white-space: normal !important;
+}
+.label-inline {
+    display: inline-block;
+    margin: 2px 0 2px 0;
 }

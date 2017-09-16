@@ -64,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the value identifier of the name value
         /// </summary>
-        [Column("value_id"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbAddressValue), nameof(DbAddressValue.Uuid)), AlwaysJoin]
+        [Column("value_id"), MaxLength(16), NotNull, ForeignKey(typeof(DbAddressValue), nameof(DbAddressValue.Uuid)), AlwaysJoin]
         public override byte[] ValueUuid
         {
             get; set;

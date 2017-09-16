@@ -24,7 +24,6 @@
 
     <!-- TODO: Call the forecaster for this -->
     <div class="table-responsive">
-        <ng-form name="vaccinationHistoryForm">
             <table class="table table-striped oiz-vaccination-history-table">
                 <thead>
                     <tr>
@@ -38,7 +37,7 @@
                 <tbody>
                     <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
                         <td>{{ antigenName }}</td>
-                        <td ng-repeat="sequence in event track by $index">
+                        <td ng-repeat="sequence in event track by $index" class="vaccination-td">
                             <div ng-if="sequence != null" class="input-group">
                                 <label class="control control--checkbox">
                                     <input type="checkbox"
@@ -51,7 +50,7 @@
                                 </label>
 
                                 <input class="date-checkbox-control form-control"
-                                       ng-class="{ 'input-error': (vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$touched || vaccinationHistoryForm.$submitted) &amp;&amp; vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid }"
+                                       ng-class="{ 'input-error': editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid  }"
                                        name="enabledImmunizationDate-{{antigenName}}-{{$index}}"
                                        ng-disabled="!sequence._enabled"
                                        ng-required="sequence._enabled"
@@ -60,18 +59,18 @@
                                        ng-init="sequence._originalTime = sequence.actTime"
                                        ng-change="harmonizeDoseTimes(sequence, $index)"
                                        max="{{sequence._enabled ? $root.page.maxEventTime : '' | date:'yyyy-MM-dd'}}"
-                                       min="{{(event[sequence.doseSequence - 1] == null || !sequence._enabled  ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date:'yyyy-MM-dd'}}" />
-                                <div class="help-block text-danger" ng-if="(vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$touched || vaccinationHistoryForm.$submitted) &amp;&amp; vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid">
-                                    <span ng-if="vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.required">
+                                       min="{{(event[sequence.doseSequence - 1] == null || !sequence._enabled || !event[sequence.doseSequence - 1]._enabled ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date:'yyyy-MM-dd'}}" />
+                                <div class="help-block text-danger" ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid  ">
+                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.required ">
                                         {{ 'locale.patient.errors.historicalVaccination.required' | i18n }}
                                     </span>
-                                    <span ng-if="vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.date">
+                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.date ">
                                         {{ 'locale.patient.errors.historicalVaccination.date' | i18n }}
                                     </span>
-                                    <span ng-if="vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.max">
+                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.max ">
                                         {{ 'locale.patient.errors.historicalVaccination.maxDate' | i18n }}
                                     </span>
-                                    <span ng-if="vaccinationHistoryForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.min">
+                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.min ">
                                         {{ 'locale.patient.errors.historicalVaccination.minDate' | i18n }}
                                     </span>
                                 </div>
@@ -80,6 +79,5 @@
                     </tr>
                 </tbody>
             </table>
-        </ng-form>
     </div>
 </fieldset>

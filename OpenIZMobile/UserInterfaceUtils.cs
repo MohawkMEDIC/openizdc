@@ -45,6 +45,22 @@ namespace OpenIZMobile
 			}, null);
 		}
 
+        /// <summary>
+        /// Show confirmation dialog
+        /// </summary>
+        public static void ShowConfirm(Context context, EventHandler<DialogClickEventArgs> confirmAction, EventHandler<DialogClickEventArgs> noAction, String message, params String[] args)
+        {
+            Application.SynchronizationContext.Post(_ =>
+            {
+                var alertDialogBuilder = new AlertDialog.Builder(context)
+                        .SetMessage(String.Format(message, args))
+                        .SetCancelable(false)
+                        .SetPositiveButton(Resource.String.confirm, confirmAction)
+                        .SetNegativeButton(Resource.String.cancel, noAction);
+
+                alertDialogBuilder.Create().Show();
+            }, null);
+        }
 
 	}
 }

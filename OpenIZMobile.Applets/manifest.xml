@@ -18,7 +18,7 @@
  - Date: 2016-7-18
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.9.7.10">
+  <info id="org.openiz.core" version="0.9.8.1">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -36,6 +36,9 @@
   </viewModel>
   <viewModel key="fastview">
     <definition>/org.openiz.core/views/viewmodel/fastview.xml</definition>
+  </viewModel>
+  <viewModel key="dropdown">
+    <definition>/org.openiz.core/views/viewmodel/dropdown.xml</definition>
   </viewModel>
   <template mnemonic="act.substanceadmin.immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
@@ -118,7 +121,7 @@
     <!-- Actions -->
     <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.activate">Activate</string>
-    <string key="locale.action.recalculate">Re-Caculate</string>
+    <string key="locale.action.recalculate">Re-Calculate</string>
     <string key="locale.action.back">Back</string>
     <string key="locale.action.backEnter">Historical</string>
     <string key="locale.action.cancel">Cancel</string>
@@ -244,6 +247,11 @@
     <string key="locale.settings.data.restore">Restore Data</string>
     <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
     <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
+    <string key="locale.settings.data.backup">Backup Data</string>
+    <string key="locale.settings.data.backup.confirmTitle">Confirm Data Backup</string>
+    <string key="locale.settings.data.backup.description">You are about to back-up your data. This will require closing all connections to all the databases and then performing a backup to the local tablet.</string>
+    <string key="locale.settings.data.backup.restart">The backup performed closed all the connections to the database. It is recommended you restart. Do you wish to do this?</string>
+    
     <string key="locale.settings.dataTitle">Data Retrieval Settings</string>
     <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
     <string key="locale.settings.dataMode">Data Mode:</string>
@@ -260,6 +268,7 @@
     <string key="locale.settings.realmName.help">This setting controls the realm ID</string>
     <string key="locale.settings.realmPort">Alternate Port#:</string>
     <string key="locale.settings.realmPort.help">This setting controls the port number</string>
+    <string key="locale.settings.status.offline">This device must be online to join a realm</string>
     <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
     <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessable, and you're using the correct settings.</string>
 
@@ -269,7 +278,7 @@
     <string key="locale.settings.optimize.gzip">Medium - Balances CPU and bandwidth (recommended: 4g/LTE / DSL / Broadband)</string>
     <string key="locale.settings.optimize.deflate">Fast - Sacrifices bandwidth for CPU speed (recommended: Broadband WiFi)</string>
     <string key="locale.settings.optimize.off">Off - Does not optimize traffic (not recommended)</string>
-    <string key="locale.settings.optimize.help">This setting will set the compression level used to communicate with the server. The less bandwidth used the more processing power is required. </string>
+    <string key="locale.settings.optimize.help">This setting will set the compression level used to communicate with the server. The less bandwidth used the more processing power is required.</string>
     <string key="locale.settings.enableTracing">Enable Tracing</string>
 
     <string key="locale.settings.logTitle">Log Settings</string>
@@ -482,7 +491,7 @@
     <string key="locale.network.online">Online</string>
     <!-- End Common Dialog -->
 
-    <string key="invalid_grant">Invalid grant - Can't login</string>
+    <string key="invalid_grant">Login Failed: </string>
     <string key="invalid_scope">The authentication server rejected your login</string>
     <string key="AUTH_INV">Invalid username or password</string>
     <string key="AUTH_LCK">Account is locked</string>
@@ -569,6 +578,16 @@
     <string key="locale.audit.actors">Actors</string>
     <string key="locale.audit.objects">Objects</string>
     <!-- End Audit -->
+    
+    <!-- Resubmission -->
+    <string key="locale.settings.data.resubmit">Re-Submit To Server</string>
+    <string key="locale.settings.data.resubmit.description">This tool will resubmit all the data from your tablet to the server. Only do this action if you are instructed by a system administrator.</string>
+    <string key="locale.settings.data.resubmit.from">From</string>
+    <string key="locale.settings.data.resubmit.to">To</string>
+    <string key="locale.settings.data.resubmit.error">Please verify this value is correct</string>
+    <string key="locale.settings.data.resubmit.formError">There is a problem with the resubmission settings you're using. Please correct and try again</string>
+    <string key="locale.settings.data.resubmit.success">All the data in your tablet was successfully queued for re-submission</string>
+    <!-- End Resubmission -->
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
@@ -590,6 +609,8 @@
     <string key="locale.about.environment.mem">Kutumika kumbukumbu</string>
     <string key="locale.about.environment.os">Mfumo wa uendeshaji toleo</string>
     <string key="locale.about.environment.runtimeVersion">Ingiza jina la mtumiaji unayetaka kubadili neno siri</string>
+    <string key="locale.about.environment.facilities">Imejiandikisha</string>
+    <string key="locale.about.environment.realm">ID ya Nchi</string>
     <string key="locale.about.fileInfo">Taarifa kuhusu faili data</string>
     <string key="locale.about.files.date">Mwisho kuandika tarehe</string>
     <string key="locale.about.files.name">Faili data</string>
@@ -637,6 +658,7 @@
     <string key="locale.action.finish">Kumaliza</string>
     <string key="locale.action.next">Baadaye</string>
     <string key="locale.action.onlineOnly">Intaneti inahitajika</string>
+    <string key="locale.action.recalculate">Tathmini tena</string>
     <string key="locale.action.remove">kuondoa</string>
     <string key="locale.action.run">Kukimbia</string>
     <string key="locale.action.save">Kuokoa</string>
@@ -851,6 +873,13 @@
     <string key="locale.settings.status.duplicateName">Jina hili kifaa tayari imesajiliwa. Je, unataka kubadilisha hii usajili kifaa kwenye kompyuta? (Kama hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
     <string key="locale.settings.status.generalRealmError">Kulikuwa na hitilafu ya kuwasiliana na ulimwengu kwa kutumia mipangilio uliyoweka. Tafadhali kuhakikisha una online, ulimwengu server mzizi kufikiwa, na wewe ni kutumia mazingira sahihi.</string>
 
+    <string key="locale.settings.optimize">Uboreshaji wa Mtandao</string>
+    <string key="locale.settings.optimize.lzma">Ultra - Inahitaji server zaidi na kibao CPU lakini inapunguza bandwidth (Ilipendekezwa: 2g / dial-in)</string>
+    <string key="locale.settings.optimize.bzip2">Juu - Inahitaji wastani wa seva na kibao cha CPU (Ilipendekezwa: 3g / ISDN / DSL)</string>
+    <string key="locale.settings.optimize.gzip">a wastani - Mizani ya CPU na bandwidth (Ilipendekezwa: 4g/LTE / DSL / Broadband)</string>
+    <string key="locale.settings.optimize.deflate">Haraka - Maagizo ya bandari kwa kasi ya CPU (Ilipendekezwa: Broadband WiFi)</string>
+    <string key="locale.settings.optimize.off">Huru - Haifai biashara ya trafiki (Haipendekezi)</string>
+    <string key="locale.settings.optimize.help">Mpangilio huu utaweka kiwango cha compression kilichotumiwa kuwasiliana na seva. Bandwidth chini iko kutumika nguvu zaidi ya usindikaji inahitajika.</string>
     <string key="locale.settings.enableTracing">Wezesha kufuatilia</string>
 
     <string key="locale.settings.logTitle">Ingia Mipangilio</string>
@@ -900,6 +929,7 @@
     <string key="locale.settings.securityDescription">Matumizi ya jopo hili configure namna ambayo sera za usalama ni kutekelezwa kwa kifaa hiki.</string>
     <string key="locale.settings.securityTitle">mipangilio ya usalama</string>
 
+    <string key="locale.settings.status.offline">Kifaa hiki lazima kiwe mtandaoni ili kujiunga na eneo</string>
     <string key="locale.settings.status.joinRealm">Maombi yako sasa alijiunga uwanja huu</string>
     <string key="locale.settings.status.duplicateName">Jina hili tayari kusajiliwa kifaa. Je, unataka kubadilisha kifaa usajili kwenye kompyuta? (Kama ni hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
 
@@ -962,9 +992,17 @@
     <string key="locale.sync.resource.Material">Aina ya vipengele</string>
     <string key="locale.sync.resource.SecurityRole">Usalama wa habari</string>
     <string key="locale.sync.resource.Concept">dhana (Kushuka chini maadili)</string>
+    <string key="locale.sync.resource.Patient">Wagonjwa wangu</string>
     <string key="locale.sync.resource.Place">vifaa na vijiji</string>
+    <string key="locale.sync.resource.Place.state">Sehemu katika Mkoa wangu</string>
+    <string key="locale.sync.resource.Place.county">Sehemu katika Wilaya yangu</string>
+    <string key="locale.sync.resource.Place.all">Maeneo (Nchi nzima)</string>
+    <string key="locale.sync.resource.Place.outOfState">Weka nje ya Mkoa</string>
+    <string key="locale.sync.resource.Place.outOfCounty">Maeneo nje ya Wilaya</string>
+    <string key="locale.sync.resource.Place.my">Metadata yangu ya Kituo</string>
     <string key="locale.sync.resource.Organization">Mashirika</string>
     <string key="locale.sync.resource.UserEntity">Mtunzi ya Habari</string>
+    <string key="locale.sync.resource.UserEntity.my">Watumiaji katika Kituo changu</string>
     <string key="locale.sync.resource.Provider">Mtoa ya habari</string>
     <string key="locale.sync.resource.ManufacturedMaterial">vipengele hesabu nyenzo</string>
     <string key="locale.sync.resource.Person">watu (wagonjwa na jamaa)</string>

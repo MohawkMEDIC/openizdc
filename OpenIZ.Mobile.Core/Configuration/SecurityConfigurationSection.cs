@@ -158,6 +158,12 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlIgnore, JsonIgnore]
         public TimeSpan MaxLocalSession { get; set; }
+
+        /// <summary>
+        /// Maximum invalid logins
+        /// </summary>
+        [XmlElement("maxInvalidLogins"), JsonProperty("maxInvalidLogins")]
+        public int? MaxInvalidLogins { get; set; }
     }
 
 }

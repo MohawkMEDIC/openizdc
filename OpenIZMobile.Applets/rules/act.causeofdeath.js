@@ -42,10 +42,22 @@ OpenIZBre.AddBusinessRule("CodedObservation", "AfterInsert",
             continueWith: /** @param {OpenIZModel.Patient} patient */ function(patient) {
                 
                 // Set the deceased date
-                if(act.relationship &&
+                if (act.relationship &&
                     act.relationship.HasComponent &&
-                    act.relationship.HasComponent.targetModel)
+                    act.relationship.HasComponent.target) {
+
+                    if (!act.relationship.HasComponent.targetModel)
+                        OpenIZ.Act.findAsync({
+                            query: { _id: act.relationship.HasComponent.target },
+                            continueWith: function (d) {
+                                act.relationship.HasComponent.targetModel = d;
+                            },
+                            synchronous: true
+                        });
+
                     patient.deceasedDate = act.relationship.HasComponent.targetModel.actTime;
+
+                }
                 else
                     patient.deceasedDate = act.actTime;
 

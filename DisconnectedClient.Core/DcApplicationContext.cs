@@ -52,6 +52,7 @@ using System.Xml.Serialization;
 using System.Security.Cryptography;
 using OpenIZ.Core.Applets.Services;
 using DisconnectedClient.Core.Resources;
+using OpenIZ.Mobile.Core.Xamarin.Data;
 
 namespace DisconnectedClient.Core
 {
@@ -217,9 +218,13 @@ namespace DisconnectedClient.Core
                 return false;
             }
             else
-            { // load configuration
+            { 
+                // load configuration
                 try
                 {
+                    // Set master application context
+                    ApplicationContext.Current = retVal;
+
                     try
                     {
                         retVal.ConfigurationManager.Load();
@@ -235,9 +240,24 @@ namespace DisconnectedClient.Core
                         else
                             throw;
                     }
+                    retVal.AddServiceProvider(typeof(XamarinBackupService));
 
-                    // Set master application context
-                    ApplicationContext.Current = retVal;
+                    // Is there a backup, and if so, does the user want to restore from that backup?
+                    var backupSvc = retVal.GetService<IBackupService>();
+                    if (backupSvc.HasBackup(BackupMedia.Public) &&
+                        retVal.Configuration.GetAppSetting("ignore.restore") == null &&
+                        retVal.Confirm(Strings.locale_confirm_restore))
+                    {
+                        backupSvc.Restore(BackupMedia.Public);
+                    }
+
+                    // Ignore restoration
+                    retVal.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Add(new AppSettingKeyValuePair()
+                    {
+                        Key = "ignore.restore",
+                        Value = "true"
+                    });
+
                     retVal.m_tracer = Tracer.GetTracer(typeof(DcApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     retVal.SetProgress("Loading configuration", 0.2f);
@@ -331,7 +351,9 @@ namespace DisconnectedClient.Core
                 catch (Exception e)
                 {
                     retVal.m_tracer?.TraceError(e.ToString());
-                    ApplicationContext.Current = null;
+                    //ApplicationContext.Current = null;
+                    retVal.m_configurationManager= new DcConfigurationManager(DcConfigurationManager.GetDefaultConfiguration());
+                    AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
                     throw;
                 }
                 return true;

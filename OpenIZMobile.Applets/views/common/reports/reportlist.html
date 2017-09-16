@@ -46,7 +46,7 @@
                     </div>
                     <div class="modal-body">
                         <div>
-                            <div class="form-group" ng-repeat="parm in currentReport.parameter">
+                            <div class="form-group" ng-repeat="parm in currentReport.parameter" ng-class="{'has-error': (reportForm.$submitted || reportForm[parm.name].$touched) &amp;&amp; reportForm[parm.name].$invalid}">
                                 <label class="col-xs-2 control-label">{{ OpenIZ.Localization.getString(parm.label) }}</label>
                                 <div class="col-xs-10" ng-switch="parm.type" ng-if="!parm.valueSet">
                                     <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" ng-max="getParameterMaxDate(parm)" max="{{ getParameterMaxDate(parm) | date:'yyyy-MM-dd'}}" ng-min="getParameterMinDate(parm)" min="{{ getParameterMinDate(parm) | date:'yyyy-MM-dd'}}" class="form-control" />
@@ -58,11 +58,12 @@
                                     </select>
                                 </div>
                                 <div class="col-xs-10" ng-if="parm.valueSet">
-                                    <select ng-required="parm.required" ng-model="currentFilter[parm.name]" size="1" name="{{parm.name}}" class="form-control select2">
+                                    <select class="form-control select2"
+                                            ng-required="parm.required" ng-model="currentFilter[parm.name]" size="1" name="{{parm.name}}">
                                         <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
                                     </select>
                                 </div>
-                                <div ng-if="(reportForm[parm.name].$touched || reportForm.$submitted) &amp;&amp; reportForm[parm.name].$invalid" class="col-xs-12">
+                                <div ng-if="(reportForm[parm.name].$touched || reportForm.$submitted) &amp;&amp; reportForm[parm.name].$invalid" class="col-xs-offset-2 col-xs-10">
                                     <span class="help-block text-danger">
                                         {{ OpenIZ.Localization.getString(parm.label) }} {{ 'locale.reports.error.required' | i18n }}
                                     </span>
@@ -72,7 +73,7 @@
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group pull-right">
-                            <button ng-click="currentReport = null" type="button" class="btn btn-danger btn-lg" data-dismiss="modal">
+                            <button ng-click="resetReportModal(reportForm)" type="button" class="btn btn-danger btn-lg" data-dismiss="modal">
                                 <span>
                                     <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
                                 </span>

@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -37,15 +38,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         // Material persister
         private MaterialPersistenceService m_materialPersister = new MaterialPersistenceService();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected override IEnumerable<ManufacturedMaterial> SortResults(IEnumerable<ManufacturedMaterial> data)
+        protected override SqlStatement AppendOrderByStatement(SqlStatement domainQuery)
         {
-            return data.OrderBy(d => d.ExpiryDate);
+            return domainQuery.OrderBy<DbMaterial>(o => o.ExpiryDate, OpenIZ.Core.Model.Map.SortOrderType.OrderByDescending);
         }
+        
         /// <summary>
         /// Material persister
         /// </summary>

@@ -36,6 +36,7 @@ layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile'
     };
     $scope.getParameterMaxDate = getParameterMaxDate;
     $scope.getParameterMinDate = getParameterMinDate;
+    $scope.resetReportModal = resetReportModal;
 
     $scope.$watch('reportBody', function (nv, ov) {
         $("#reportBody").html(nv);
@@ -175,5 +176,12 @@ layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile'
         }
 
         return min;
+    }
+
+    /* Resets the report modal form and errors */
+    function resetReportModal(form) {
+        currentReport = null;
+        form.$setPristine();
+        form.$setUntouched();
     }
 }]);

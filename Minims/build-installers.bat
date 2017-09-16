@@ -1,5 +1,5 @@
 @echo off
-set version=0.9.7.4
+set version=0.9.7.5
 
 echo Building Windows Installer
 "c:\Program Files (x86)\Inno Setup 5\ISCC.exe" "/o.\dist" ".\install.iss"
@@ -65,7 +65,10 @@ copy "..\..\..\OpenIZ\bin\Release\oizdt.config.empty" ".\openiz.exe.config"
 copy "..\..\..\OpenIZ\bin\Release\OpenIZ.Protocol.Xml.dll"
 copy "..\..\..\OpenIZ\bin\Release\System.IdentityModel.Tokens.Jwt.dll"
 copy "..\..\..\OpenIZ\Solution Items\MARc.HI.EHRS.SVC.Configuration.dll"
-
+mkdir schema
+cd schema
+copy "..\..\..\..\OpenIZ\bin\Release\Schema\*.xsd"
+cd ..
 cd ..
 
 "C:\program files\7-zip\7z" a -r -ttar .\dist\openiz-sdk-%version%.tar .\openiz-sdk-%version%
@@ -76,6 +79,7 @@ cd dist
 "C:\program files\7-zip\7z" a -tgzip .\openiz-sdk-%version%.tar.gz .\openiz-sdk-%version%.tar
 "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign "openizdc-sdk-%version%.exe"
 cd ..
-del /q openiz-%version%
-rmdir openiz-%version%
+del /q /s openiz-sdk-%version%
+rmdir openiz-sdk-%version%\schema
+rmdir openiz-sdk-%version%
 

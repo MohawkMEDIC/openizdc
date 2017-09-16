@@ -27,6 +27,7 @@
 layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function ($scope, $timeout) {
     // Get the current scope that we're in
     var scope = $scope;
+    scope.missingConsumables = [];
 
     /**
      * Cascades an encounter date change
@@ -54,8 +55,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
      * Fills in missing data for the specified participation
      */
     scope.fillParticipationPlayerEntity = scope.fillParticipationPlayerEntity || /** @param {OpenIZModel.ActParticipation} bind */ function (bind) {
-        if(bind.player)
-        {
+        if (bind.player) {
             OpenIZ.Ims.get({
                 resource: "Entity",
                 query: { _id: bind.player, _viewModel: "min" },
@@ -142,7 +142,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             bind.targetModel.actTime = bind._encounter.actTime;
             bind._encounter.relationship._OverdueHasComponent.splice($.inArray(bind, bind._encounter.relationship._OverdueHasComponent), 1);
             bind._encounter.relationship.HasComponent.push(bind);
-            if (afterFocus){
+            if (afterFocus) {
                 $timeout(function () { $(afterFocus).focus() }, 200);
             }
         };
@@ -246,7 +246,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         // Act not done!?
         if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
             validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
-        
+
         return validation;
     };
 
@@ -265,6 +265,10 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                 retVal.push(a.doseSequence);
         });
         return retVal;
+    }
+
+    scope.doseSequenceFilter = function (dose) {
+        return dose === 0 ? OpenIZ.Localization.getString('locale.encounters.immunization.birthDose') : dose;
     }
 
     /** 
@@ -363,20 +367,18 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         }
     }
 
-    scope.toArray = scope.toArray || function (ptcpt)
-    {
+    scope.toArray = scope.toArray || function (ptcpt) {
         return !ptcpt ? ptcpt : Array.isArray(ptcpt) ? ptcpt : [ptcpt];
     }
 
     // Encounter
-    scope.validateAct = scope.validateAct || function (act)
-    {
+    scope.validateAct = scope.validateAct || function (act) {
         var validation = [];
 
         // Act not done!?
         if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
             validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
-       
+
         return validation;
     };
 
@@ -390,6 +392,18 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         }
         else {
             return false;
+        }
+    }
+
+    /*
+     * Adds missing consumables for the given act
+     */
+    scope.addMissingConsumable = function (actId, name) {
+        if (!Array.isArray(scope.missingConsumables[actId])) {
+            scope.missingConsumables[actId] = [name]
+        }
+        else if (scope.missingConsumables[actId].indexOf(name) === -1) {
+            scope.missingConsumables[actId].push(name);
         }
     }
 }]);

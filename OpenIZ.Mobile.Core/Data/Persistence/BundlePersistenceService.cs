@@ -79,8 +79,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 {
                     try
                     {
+                        ApplicationContext.Current.SetProgress(Strings.locale_prepareBundle, 0.5f);
                         // We want to apply the initial schema
                         new OpenIZ.Mobile.Core.Configuration.Data.Migrations.InitialCatalog().Install(memConnection, true);
+
 
                         // Copy the name component and address component values
                         if (ApplicationContext.Current.GetCurrentContextSecurityKey() == null)
@@ -92,10 +94,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                         {
                             memConnection.BeginTransaction();
 
-                            // Names & Address
+                            //// Names & Address
                             memConnection.Execute($"INSERT OR REPLACE INTO phonetic_value SELECT * FROM file_db.phonetic_value");
                             memConnection.Execute($"INSERT OR REPLACE INTO entity_addr_val SELECT * FROM file_db.entity_addr_val");
 
+                            //foreach (var itm in memConnection.Query<String>("SELECT NAME FROM SQLITE_MASTER WHERE TYPE = 'index' AND SQL IS NOT NULL"))
+                            //    memConnection.Execute(String.Format("DROP INDEX {0};", itm));
                             memConnection.Commit();
                         }
                         catch
@@ -126,11 +130,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                 memConnection.BeginTransaction();
 
                                 // Copy copy!!!
+                                int i = 0;
                                 foreach (var tbl in columnMapping)
                                 {
-                                    // insert new first
                                     memConnection.Execute($"INSERT OR REPLACE INTO file_db.{tbl.TableName} SELECT * FROM {tbl.TableName}");
+                                    ApplicationContext.Current.SetProgress(Strings.locale_committing, (float)i++ / columnMapping.Count);
+
                                 }
+                                ApplicationContext.Current.SetProgress(Strings.locale_committing, 1.0f);
 
                                 memConnection.Commit();
                             }
@@ -170,16 +177,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 var svc = ApplicationContext.Current.GetService(idp);
                 if (svc == null) continue; // can't insert
                 String method = "Insert";
-                if (itm.TryGetExisting(context, true) != null)
+                if (context.Connection.DatabasePath != ":memory:" && itm.TryGetExisting(context, true) != null)
                     method = "Update";
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(LocalDataContext), itm.GetType() });
                 data.Item[i] = mi.Invoke(svc, new object[] { context, itm }) as IdentifiedData;
 #if SHOW_STATUS || PERFMON
                 itmSw.Stop();
 #endif
-#if SHOW_STATUS
-                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_processBundle, itm.GetType().Name, i, data.Item.Count), i / (float)data.Item.Count);
-#endif
+                if(i % 100 == 0 && data.Item.Count > 500)
+                    ApplicationContext.Current.SetProgress(String.Format(Strings.locale_processBundle, itm.GetType().Name, i, data.Item.Count), i / (float)data.Item.Count);
 #if PERFMON
                 ApplicationContext.Current.PerformanceLog(nameof(BundlePersistenceService), nameof(InsertInternal), $"Insert{itm.GetType().Name}", itmSw.Elapsed);
 #endif
