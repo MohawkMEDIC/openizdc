@@ -343,10 +343,11 @@ var OpenIZ = OpenIZ || {
                 fulfills.tag.backEntry = true;
 
             // Assign the tag for original date
-            fulfills.extension = fulfills.extension || {};
-            // Original date
-            fulfills.extension["http://openiz.org/extensions/core/originalDate"] = fulfills.actTime;
+            fulfills.tag = fulfills.tag|| {};
 
+            // Original date - Hack this is due to the fact that original protocol does not have
+            //fulfills.tag["originalProtocolRange"] = fulfills.startTime + "," + fulfills.stopTime;
+            
             fulfills.id = OpenIZ.App.newGuid();
             fulfills.moodConcept = OpenIZModel.ActMoodKeys.Eventoccurrence;
             fulfills.moodConceptModel = null;
