@@ -95,7 +95,7 @@ public partial class MainWindow: Gtk.Window
 
 		this.m_webView.Editable = false;
 		this.m_webView.TitleChanged += (o, e) => {
-			this.Title = "OpenIZ Disconnected Client for Linux - " + e.Title;
+			this.Title = "OpenIZ Disconnected Client";
 		};
 		this.m_webView.Settings = new WebkitSettings("OpenIZ-DC " + ApplicationContext.Current.ExecutionUuid.ToString());
 		this.m_webView.Closed += (sender, e) => {
