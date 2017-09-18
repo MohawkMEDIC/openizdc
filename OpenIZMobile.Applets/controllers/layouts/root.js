@@ -120,6 +120,11 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                         }
                     });
                 }
+
+		if ($("input[type='date']").prop('type') != 'date') {
+			alert("Found some dates");
+			$("[type='date']").datepicker();
+		}
             });
 
             $rootScope.page = {

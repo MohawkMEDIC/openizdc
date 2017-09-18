@@ -24,7 +24,7 @@ public partial class MainWindow: Gtk.Window
 	public MainWindow (String startUrl) : base (Gtk.WindowType.Toplevel)
 	{
 		this.CreateWidgets ();
-		this.Title = "OpenIZ Disconnected Client for Linux";
+		this.Title = "OpenIZ Disconnected Client";
 		this.Build ();
 		this.Maximize ();
 		this.m_webView.LoadUri (startUrl);

@@ -194,10 +194,10 @@ namespace DisconnectedClient.Core
 			#if NOCRYPT
 			appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName);
 			#else
-			//if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+			if(Environment.OSVersion.Platform == PlatformID.Win32NT)
 				appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.SqlCipher.SQLitePlatformSqlCipher).AssemblyQualifiedName);
-			//else
-			//	appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName);
+			else
+				appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName);
 			#endif
 
             // Security configuration

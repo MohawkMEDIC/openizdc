@@ -72,7 +72,7 @@ namespace GtkClient
 			// Token validator
 			TokenValidationManager.SymmetricKeyValidationCallback += (o, k, i) =>
 			{
-				return ConfirmBox.Show(String.Format("Trust issuer {0} with symmetric key?", i), "Token Validation Error") == ResponseType.Ok;
+				return new GtkDialogProvider().Confirm(String.Format("Trust issuer {0} with symmetric key?", i), "Token Validation Error");
 			};
 			ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, error) =>
 			{
@@ -83,7 +83,7 @@ namespace GtkClient
 				{
 					var valid = s_trustedCerts.Contains(certificate.Subject);
 					if (!valid && (chain.ChainStatus.Length > 0 || error != SslPolicyErrors.None))
-					if (ConfirmBox.Show(String.Format("The remote certificate is not trusted. The error was {0}. The certificate is: \r\n{1}\r\nWould you like to temporarily trust this certificate?", error, certificate.Subject), "Certificate Error") == ResponseType.Cancel)
+					if (!new GtkDialogProvider().Confirm(String.Format("The remote certificate is not trusted. The error was {0}. The certificate is: \r\n{1}\r\nWould you like to temporarily trust this certificate?", error, certificate.Subject), "Certificate Error"))
 						return false;
 					else
 						s_trustedCerts.Add(certificate.Subject);
@@ -134,7 +134,7 @@ namespace GtkClient
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(e.ToString(), "Runtime Error");
+				new GtkDialogProvider().Alert(e.ToString());
 			}
 		}
 
@@ -193,8 +193,6 @@ namespace GtkClient
 				s_splashWindow.Destroy();
 				main = new MainWindow("http://127.0.0.1:9200/org.openiz.core/splash.html");
 			}
-
-
 
 			if(XamarinApplicationContext.Current.GetService<MiniImsServer>().IsRunning) {
 				main.Show ();

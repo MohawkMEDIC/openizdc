@@ -6,8 +6,8 @@ mkdir dist
 cd dist
 
 # create structure
-mkdir openiz-sdk-0.9.7
-cd openiz-sdk-0.9.7
+mkdir openiz-sdk-0.9.8
+cd openiz-sdk-0.9.8
 mkdir openizsdk
 mkdir openizsdk/bin
 mkdir openizsdk/lib
@@ -15,6 +15,7 @@ cp ../../Release/*.dll ./openizsdk/lib
 cp ../../Release/*.exe ./openizsdk/lib
 cp ../../../../BrainBug/bin/Release/*.exe ./openizsdk/lib
 cp ../../../../AppletCompiler/bin/Release/*.exe ./openizsdk/lib
+cp ../../../../AppletCompiler/bin/Release/AjaxMin.dll ./openizsdk/lib
 cp ../../../unix/*.sh ./openizsdk/bin
 cp ../../../../GtkClient/Applets ./openizsdk/lib/Applets -r
 dh_make -n -s -c apache -e justin.fyfe1@mohawkcollege.ca -y

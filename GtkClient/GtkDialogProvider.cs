@@ -1,5 +1,6 @@
 ﻿using System;
 using DisconnectedClient.Core;
+using Gtk;
 
 namespace GtkClient
 {
@@ -10,11 +11,26 @@ namespace GtkClient
 	{
 
 		public bool Confirm(String text, String title) {
-			return ConfirmBox.Show (text, title) == Gtk.ResponseType.Ok;
+			bool? result = null;
+			Application.Invoke((o,e) => {
+				var md = new MessageDialog (null, DialogFlags.Modal, MessageType.Question, ButtonsType.OkCancel, text);
+				result = (ResponseType)md.Run () == ResponseType.Ok;
+				md.Destroy ();
+			});
+			while (!result.HasValue)
+				Application.RunIteration (false);
+			return result.Value;
 		}
 
 		public void Alert(String text) {
-			MessageBox.Show (text, String.Empty);
+			ResponseType? result = null;
+			Application.Invoke ((o, e) => {
+				var md = new MessageDialog (null, DialogFlags.Modal, MessageType.Other, ButtonsType.Close, text);
+				result = (ResponseType)md.Run ();
+				md.Destroy ();
+			});
+			while (!result.HasValue)
+				Application.RunIteration (false);
 		}
 	}
 }
