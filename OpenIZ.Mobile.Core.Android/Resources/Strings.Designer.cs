@@ -187,6 +187,15 @@ namespace OpenIZ.Mobile.Core.Android.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to We deteced a backup on your device (probably from a previous installation). Do you want to restore it?.
+        /// </summary>
+        internal static string locale_confirm_restore {
+            get {
+                return ResourceManager.GetString("locale_confirm_restore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There was a problem with your device&apos;s configuration. The application has attempted to recover from this error and will restart..
         /// </summary>
         internal static string locale_restartRequired {

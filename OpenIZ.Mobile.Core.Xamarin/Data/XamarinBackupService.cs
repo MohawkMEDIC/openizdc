@@ -62,6 +62,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
         /// </summary>
         private void BackupDirectory(TarWriter archive, String dir, String rootDirectory)
         {
+            if (Path.GetFileName(dir) == "log") return;
+
             // Backup
             foreach (var itm in Directory.GetDirectories(dir))
                 this.BackupDirectory(archive, itm, rootDirectory);

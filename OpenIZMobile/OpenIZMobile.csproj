@@ -192,6 +192,7 @@
     </None>
     <AndroidAsset Include="Assets\Applets\org.openiz.core.pak" />
     <AndroidAsset Include="Assets\Applets\tz.timr.applet.pak" />
+    <AndroidAsset Include="Assets\Applets\org.openiz.templates.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -250,17 +251,21 @@
   </ItemGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PreBuildEvent>
-      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.core" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.templates" -o "$(TargetDir)\org.openiz.templates.pak"
       "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak"
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+      copy "$(TargetDir)\org.openiz.templates.pak" "$(ProjectDir)\Assets\Applets\org.openiz.templates.pak"
       copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
     <PreBuildEvent>
-      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak" --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.core" -o "$(TargetDir)\org.openiz.core.pak" --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.templates" -o "$(TargetDir)\org.openiz.templates.pak" --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert --optimize
       "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak" --keyFile="$(SolutionDir)\..\keys\timr.mobile.applet.pfx" --keyPassword="$(SolutionDir)\..\keys\timr.mobile.applet.pass" --embedCert --optimize
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+      copy "$(TargetDir)\org.openiz.templates.pak" "$(ProjectDir)\Assets\Applets\org.openiz.templates.pak"
       copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
     </PreBuildEvent>
   </PropertyGroup>
@@ -278,9 +283,11 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PreBuildEvent>
-      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.core" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.templates" -o "$(TargetDir)\org.openiz.templates.pak"
       "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.pak"
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
+      copy "$(TargetDir)\org.openiz.templates.pak" "$(ProjectDir)\Assets\Applets\org.openiz.templates.pak"
       copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
     </PreBuildEvent>
   </PropertyGroup>

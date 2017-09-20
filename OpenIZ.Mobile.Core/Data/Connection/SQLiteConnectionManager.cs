@@ -362,11 +362,15 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// </summary>
         public bool Stop()
         {
+            // Already stopped
+            if (!this.IsRunning) return true;
+
             this.Stopping?.Invoke(this, EventArgs.Empty);
 
             // Wait for all write connections to finish up
             foreach (var mre in this.m_connections)
             {
+                this.m_tracer.TraceInfo("Waiting for {0} to become free...", mre.Key);
                 mre.Value.WaitOne();
                 mre.Value.Reset();
             }
@@ -374,21 +378,24 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             // Close all readonly connections
             foreach (var itm in this.m_readonlyConnections)
             {
-                this.m_tracer.TraceInfo("Waiting for connections to {0} to finish up...", itm.Key);
+                this.m_tracer.TraceInfo("Waiting for readonly connection {0} to finish up...", itm.Key);
                 while (itm.Value.Count > 0)
                     Task.Delay(100).Wait();
             }
             foreach(var itm in this.m_connectionPool)
             {
+                this.m_tracer.TraceInfo("Shutting down {0}...", itm.DatabasePath);
                 itm.Close();
                 itm.Dispose();
             }
             foreach (var itm in this.m_writeConnections)
             {
+                this.m_tracer.TraceInfo("Shutting down {0}...", itm.Key);
                 itm.Value.Close();
                 itm.Value.Dispose();
             }
 
+            this.IsRunning = false;
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;
         }
