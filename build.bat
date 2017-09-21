@@ -1,5 +1,5 @@
 @echo off
-set version=0.9.8.0
+set version=%1
 
 "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease /p:Platform=x86
 "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease
@@ -58,6 +58,7 @@ copy "..\..\AppletCompiler\bin\Release\OpenIZ.Core.Applets.dll"
 copy "..\..\AppletCompiler\bin\Release\OpenIZ.Core.Model.dll"
 copy "..\..\..\OpenIZ\bin\Release\LogViewer.exe"
 copy "..\..\OpenIZMobile\Assets\Applets\org.openiz.core.pak"
+copy "..\..\OpenIZMobile\Assets\Applets\org.openiz.templates.pak"
 copy "..\bin\SignedRelease\tools\cmdprompt.cmd"
 copy "..\..\..\OpenIZ\bin\Release\oizdt.exe"
 copy "..\..\..\OpenIZ\bin\Release\MARC.Everest.dll"
