@@ -2391,7 +2391,18 @@ var OpenIZ = OpenIZ || {
         * @return {Array} A dictionary object where the key is the templateID and the value is the display name
         */
         getTemplateDefinitions: function () {
-            return JSON.parse(OpenIZApplicationService.GetTemplates());
+            if (OpenIZApplicationService.GetTemplates)
+                return JSON.parse(OpenIZApplicationService.GetTemplates());
+            else {
+                return [
+                    'act.substanceadmin.immunization',
+                    'act.observation.weight',
+                    'act.substanceadmin.supplement',
+                    'act.concern.aefi',
+                    'act.problem',
+                    'act.observation.causeofdeath'
+                ];
+            }
         },
         /**
          * @summary Update the status of the status dialog
