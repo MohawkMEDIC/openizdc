@@ -42,6 +42,7 @@ using SharpCompress.Compressors.LZMA;
 using SharpCompress.Compressors.Deflate;
 using SharpCompress.Compressors;
 using System.Reflection;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -50,6 +51,95 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
     /// </summary>
     public class RestClient : RestClientBase
     {
+        /// <summary>
+        /// Identified data
+        /// </summary>
+        [XmlType(nameof(ErrorResult), Namespace = "http://openiz.org/imsi")]
+        [XmlRoot(nameof(ErrorResult), Namespace = "http://openiz.org/imsi")]
+        public class ErrorResult : IdentifiedData
+        {
+
+            /// <summary>
+            /// Gets the date this was modified
+            /// </summary>
+            public override DateTimeOffset ModifiedOn
+            {
+                get
+                {
+                    return DateTimeOffset.Now;
+                }
+            }
+
+            /// <summary>
+            /// Represents an error result
+            /// </summary>
+            public ErrorResult()
+            {
+                this.Details = new List<ResultDetail>();
+            }
+
+            /// <summary>
+            /// Gets or sets the details of the result
+            /// </summary>
+            [XmlElement("detail")]
+            public List<ResultDetail> Details { get; set; }
+
+            /// <summary>
+            /// String representation
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                return String.Join("\r\n", Details.Select(o => $">> {o.Type} : {o.Text}"));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the detail type
+        /// </summary>
+        [XmlType(nameof(DetailType), Namespace = "http://openiz.org/imsi")]
+        public enum DetailType
+        {
+            [XmlEnum("I")]
+            Information,
+            [XmlEnum("W")]
+            Warning,
+            [XmlEnum("E")]
+            Error
+        }
+
+        /// <summary>
+        /// A single result detail
+        /// </summary
+        [XmlType(nameof(ResultDetail), Namespace = "http://openiz.org/imsi")]
+        public class ResultDetail
+        {
+            /// <summary>
+            /// Default ctor
+            /// </summary>
+            public ResultDetail()
+            { }
+
+            /// <summary>
+            /// Creates a new result detail
+            /// </summary>
+            public ResultDetail(DetailType type, string text)
+            {
+                this.Type = type;
+                this.Text = text;
+            }
+            /// <summary>
+            /// Gets or sets the type of the error
+            /// </summary>
+            [XmlAttribute("type")]
+            public DetailType Type { get; set; }
+
+            /// <summary>
+            /// Gets or sets the text of the error
+            /// </summary>
+            [XmlText]
+            public string Text { get; set; }
+        }
 
         // Config section
         private ServiceClientConfigurationSection m_configurationSection;
@@ -450,36 +540,36 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         case WebExceptionStatus.ProtocolError:
 
                             // Deserialize
-                            TResult result = default(TResult);
+                            ErrorResult errorResult = default(ErrorResult);
+
                             var errorResponse = (e.Response as HttpWebResponse);
                             var responseContentType = errorResponse.ContentType;
                             if (responseContentType.Contains(";"))
                                 responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
                             try
                             {
-                                var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
+                                var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(ErrorResult));
 
                                 switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
                                 {
                                     case "deflate":
                                         using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            result = (TResult)serializer.DeSerialize(df);
+                                            errorResult = (ErrorResult)serializer.DeSerialize(df);
                                         break;
                                     case "gzip":
                                         using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            result = (TResult)serializer.DeSerialize(df);
+                                            errorResult = (ErrorResult)serializer.DeSerialize(df);
                                         break;
                                     case "bzip2":
                                         using (var bzs = new BZip2Stream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            result = (TResult)serializer.DeSerialize(bzs);
+                                            errorResult = (ErrorResult)serializer.DeSerialize(bzs);
                                         break;
                                     case "lzma":
                                         using (var lzmas = new LZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            result = (TResult)serializer.DeSerialize(lzmas);
-
+                                            errorResult = (ErrorResult)serializer.DeSerialize(lzmas);
                                         break;
                                     default:
-                                        result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
+                                        errorResult = (ErrorResult)serializer.DeSerialize(errorResponse.GetResponseStream());
                                         break;
                                 }
                                 //result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
@@ -493,22 +583,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             {
                                 case HttpStatusCode.Unauthorized: // Validate the response
                                     if (this.ValidateResponse(errorResponse) != ServiceClientErrorType.Valid)
-                                        throw new RestClientException<TResult>(
-                                            result,
+                                        throw new RestClientException<ErrorResult>(
+                                            errorResult,
                                             e,
                                             e.Status,
                                             e.Response);
 
                                     break;
                                 case HttpStatusCode.Conflict:
-                                    throw new RestClientException<TBody>(
-                                        body,
+                                    throw new RestClientException<ErrorResult>(
+                                        errorResult,
                                         e,
                                         e.Status,
                                         e.Response);
                                 default:
-                                    throw new RestClientException<TResult>(
-                                        result,
+                                    throw new RestClientException<ErrorResult>(
+                                        errorResult,
                                         e,
                                         e.Status,
                                         e.Response);

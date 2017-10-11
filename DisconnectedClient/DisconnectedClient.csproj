@@ -325,7 +325,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PreBuildEvent>
-      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.pak"
+      "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.core" -o "$(TargetDir)\org.openiz.core.pak"
       "C:\Program Files (x86)\Mohawk College\OpenIZ\sdk\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets\org.openiz.templates" -o "$(TargetDir)\org.openiz.templates.pak"
       copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"
       copy "$(TargetDir)\org.openiz.templates.pak" "$(ProjectDir)\Applets\org.openiz.templates.pak"
