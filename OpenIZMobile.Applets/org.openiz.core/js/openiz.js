@@ -341,9 +341,9 @@ var OpenIZ = OpenIZ || {
             fulfills.tag = {};
             if (act.stopTime < new Date())
                 fulfills.tag.backEntry = true;
-
+            
             // Assign the tag for original date
-            fulfills.tag = fulfills.tag|| {};
+            fulfills.tag.originalDate = Math.floor(new Date(OpenIZ.Util.toDateInputString(act.actTime)).getTime() / 1000);
 
             // Original date - Hack this is due to the fact that original protocol does not have
             //fulfills.tag["originalProtocolRange"] = fulfills.startTime + "," + fulfills.stopTime;
