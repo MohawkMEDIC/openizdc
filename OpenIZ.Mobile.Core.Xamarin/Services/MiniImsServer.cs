@@ -495,7 +495,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 }
                 catch (FileNotFoundException ex)
                 {
-                    this.m_tracer.TraceError("Asset not found: {0}", ex.FileName);
+                    this.m_tracer.TraceError(ex.Message);
                     response.StatusCode = 404;
                     var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/404.html");
                     var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);

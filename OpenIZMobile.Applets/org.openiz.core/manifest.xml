@@ -492,6 +492,7 @@
     <string key="locale.sync.queue.id">ID#</string>
     <string key="locale.sync.queue.content">Type of Data</string>
     <string key="locale.sync.queue.operation">Operation</string>
+    <string key="locale.sync.queue.reason">Reason</string>
     <string key="locale.sync.queue.action">Action</string>
     <string key="locale.sync.conflict">Conflict</string>
     <string key="locale.sync.retry">Retry Conflicted</string>

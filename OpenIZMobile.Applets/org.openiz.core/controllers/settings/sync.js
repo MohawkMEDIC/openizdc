@@ -35,6 +35,19 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', '$rootScope', 
     $scope.deleteQueueItem = deleteQueueItem;
     $scope.selectItem = selectItem;
     $scope.forceSync = forceSync;
+    $scope.renderReason = renderReason;
+
+    // Render reasoning
+    function renderReason(reasonText) {
+        var reason = renderB64(reasonText);
+        reason = reason.substring(0, reason.indexOf("\r"));
+        var p = "";
+        var lastReason = reason.lastIndexOf("Exception:");
+        if (lastReason == -1)
+            return reason;
+        else
+            return reason.substring(lastReason + 10);
+    }
 
     function forceSync() {
 

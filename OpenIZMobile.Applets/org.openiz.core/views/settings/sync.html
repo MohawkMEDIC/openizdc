@@ -54,6 +54,9 @@
                                     <th>
                                         {{ 'locale.sync.queue.content' | i18n }}
                                     </th>
+                                    <th ng-if="queue.current == queue.dead">
+                                        {{ 'locale.sync.queue.reason' | i18n }}
+                                    </th>
                                     <th>
                                         {{ 'locale.sync.queue.operation' | i18n }}
                                     </th>
@@ -70,6 +73,9 @@
                                     </td>
                                     <td>
                                         {{ renderType(queueItem.type) }}
+                                    </td>
+                                    <td ng-if="queue.current == queue.dead">
+                                        {{ renderReason(queueItem.tag) }}
                                     </td>
                                     <td>
                                         {{ queueItem.operation }}
