@@ -36,6 +36,7 @@ using System.Security.Principal;
 using OpenIZ.Mobile.Core.Security;
 using System.Net;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Data
 {

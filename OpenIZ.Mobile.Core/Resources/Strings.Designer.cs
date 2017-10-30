@@ -98,7 +98,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Account is locked.
+        ///   Looks up a localized string similar to Account is locked - Please try again in a few minutes.
         /// </summary>
         internal static string locale_accountLocked {
             get {
@@ -107,7 +107,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Account is deleted.
+        ///   Looks up a localized string similar to Account was deleted - Please contact your system administrator.
         /// </summary>
         internal static string locale_accountObsolete {
             get {
@@ -130,6 +130,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         internal static string locale_calculatingCarePlan {
             get {
                 return ResourceManager.GetString("locale_calculatingCarePlan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Committing Data....
+        /// </summary>
+        internal static string locale_committing {
+            get {
+                return ResourceManager.GetString("locale_committing", resourceCulture);
             }
         }
         
@@ -208,7 +217,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Constructing Freetext Index.
+        ///   Looks up a localized string similar to Indexing Database....
         /// </summary>
         internal static string locale_indexing {
             get {
@@ -226,11 +235,29 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance..
+        ///   Looks up a localized string similar to The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance. Use the following information when getting assistance: {0}.
         /// </summary>
         internal static string locale_loginFromUnsubscribedFacility {
             get {
                 return ResourceManager.GetString("locale_loginFromUnsubscribedFacility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing Bundle.....
+        /// </summary>
+        internal static string locale_prepareBundle {
+            get {
+                return ResourceManager.GetString("locale_prepareBundle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing to push data....
+        /// </summary>
+        internal static string locale_preparingPush {
+            get {
+                return ResourceManager.GetString("locale_preparingPush", resourceCulture);
             }
         }
         

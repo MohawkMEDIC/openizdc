@@ -42,6 +42,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         // Serializers
         private Dictionary<Type, XmlSerializer> m_serializers = new Dictionary<Type, XmlSerializer>();
 
+        // Queue cache (in memory queue)
+        private Dictionary<String, IdentifiedData> m_queueCache = new Dictionary<string, IdentifiedData>();
+
         /// <summary>
         /// Copy queue data 
         /// </summary>
@@ -71,27 +74,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             try
             {
 #endif
-                XmlSerializer xsz = null;
-                if (!this.m_serializers.TryGetValue(typeSpec, out xsz))
-                {
-                    xsz = new XmlSerializer(typeSpec);
-                    lock (this.m_serializers)
-                        if(!this.m_serializers.ContainsKey(typeSpec))
-                            this.m_serializers.Add(typeSpec, xsz);
-                }
+            XmlSerializer xsz = null;
+            if (!this.m_serializers.TryGetValue(typeSpec, out xsz))
+            {
+                xsz = new XmlSerializer(typeSpec);
+                lock (this.m_serializers)
+                    if (!this.m_serializers.ContainsKey(typeSpec))
+                        this.m_serializers.Add(typeSpec, xsz);
+            }
 
-                var sqlitePath = ApplicationContext.Current.Configuration.GetConnectionString(ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value;
+            var sqlitePath = ApplicationContext.Current.Configuration.GetConnectionString(ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value;
 
-                // Create blob path
-                var blobPath = Path.Combine(Path.GetDirectoryName(sqlitePath), "blob");
-                if (!Directory.Exists(blobPath))
-                    Directory.CreateDirectory(blobPath);
+            // Create blob path
+            var blobPath = Path.Combine(Path.GetDirectoryName(sqlitePath), "blob");
+            if (!Directory.Exists(blobPath))
+                Directory.CreateDirectory(blobPath);
 
-                blobPath = Path.Combine(blobPath, pathSpec);
+            blobPath = Path.Combine(blobPath, pathSpec);
+
+            IdentifiedData cached = null;
+            if (!this.m_queueCache.TryGetValue(blobPath, out cached))
+            {
                 using (FileStream fs = File.OpenRead(blobPath))
                 using (GZipStream gz = new GZipStream(fs, CompressionMode.Decompress))
                 using (TextReader tr = new StreamReader(gz))
                     return xsz.Deserialize(tr) as IdentifiedData;
+            }
+            return cached;
 #if PERFMON
             }
             finally
@@ -114,7 +123,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             try
             {
 #endif
-            
+
 
             var sqlitePath = ApplicationContext.Current.Configuration.GetConnectionString(ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value;
 
@@ -126,11 +135,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             blobPath = Path.Combine(blobPath, pathSpec);
             using (var fs = File.OpenRead(blobPath))
             using (var gzs = new GZipStream(fs, CompressionMode.Decompress))
-            using(var ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
                 gzs.CopyTo(ms);
                 ms.Flush();
-                return ms.ToArray();                    
+                return ms.ToArray();
             }
 #if PERFMON
             }
@@ -156,6 +165,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             blobPath = Path.Combine(blobPath, pathSpec);
             if (File.Exists(blobPath))
                 File.Delete(blobPath);
+            if (this.m_queueCache.ContainsKey(blobPath))
+                lock(this.m_queueCache)
+                    this.m_queueCache.Remove(blobPath);
         }
 
         /// <summary>
@@ -169,28 +181,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             try
             {
 #endif
-                XmlSerializer xsz = null;
-                if (!this.m_serializers.TryGetValue(data.GetType(), out xsz))
-                {
-                    xsz = new XmlSerializer(data.GetType());
-                    lock (this.m_serializers)
-                        if (!this.m_serializers.ContainsKey(data.GetType()))
-                            this.m_serializers.Add(data.GetType(), xsz);
-                }
+            XmlSerializer xsz = null;
+            if (!this.m_serializers.TryGetValue(data.GetType(), out xsz))
+            {
+                xsz = new XmlSerializer(data.GetType());
+                lock (this.m_serializers)
+                    if (!this.m_serializers.ContainsKey(data.GetType()))
+                        this.m_serializers.Add(data.GetType(), xsz);
+            }
 
-                var sqlitePath = ApplicationContext.Current.Configuration.GetConnectionString(ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value;
+            var sqlitePath = ApplicationContext.Current.Configuration.GetConnectionString(ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value;
 
-                // Create blob path
-                var blobPath = Path.Combine(Path.GetDirectoryName(sqlitePath), "blob");
-                if (!Directory.Exists(blobPath))
-                    Directory.CreateDirectory(blobPath);
+            // Create blob path
+            var blobPath = Path.Combine(Path.GetDirectoryName(sqlitePath), "blob");
+            if (!Directory.Exists(blobPath))
+                Directory.CreateDirectory(blobPath);
 
-                blobPath = Path.Combine(blobPath, Guid.NewGuid().ToString() + ".dat");
-                using (FileStream fs = File.Create(blobPath))
-                using (GZipStream gz = new GZipStream(fs, CompressionMode.Compress))
-                using (TextWriter tw = new StreamWriter(gz))
-                    xsz.Serialize(tw, data);
-                return Path.GetFileName(blobPath);
+            blobPath = Path.Combine(blobPath, Guid.NewGuid().ToString() + ".dat");
+            using (FileStream fs = File.Create(blobPath))
+            using (GZipStream gz = new GZipStream(fs, CompressionMode.Compress))
+            using (TextWriter tw = new StreamWriter(gz))
+                xsz.Serialize(tw, data);
+
+            lock (m_queueCache)
+                if (!this.m_queueCache.ContainsKey(blobPath))
+                    this.m_queueCache.Add(blobPath, data);
+
+            return Path.GetFileName(blobPath);
 #if PERFMON
             }
             finally

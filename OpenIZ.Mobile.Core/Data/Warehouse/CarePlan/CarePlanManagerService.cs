@@ -188,7 +188,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     var patientSync = SynchronizationLog.Current.GetAll().FirstOrDefault(o => o.ResourceType == "Person");
 
                     this.RefreshCarePlan(false);
-
+                    remoteSyncService.PullCompleted += (o, e) => { if (!remoteSyncService.IsSynchronizing) this.m_resetEvent.Set(); };
                     // Subscribe to events
                     this.SubscribeEvents();
 
@@ -204,11 +204,12 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                                     queryId = Guid.NewGuid();
                                     tr = 1;
                                     ofs = 0;
-                                    this.m_actCarePlanPromise.Clear();
+                                    //this.m_actCarePlanPromise.Clear();
                                     var syncFilter = patientSync?.LastSync ?? new DateTime(1900, 01, 01);
                                     while (ofs < tr)
                                     {
-                                        ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
+                                        if(tr > 1)
+                                            ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
 
                                         var prodPatients = patientPersistence.QueryExplicitLoad(p => p.ObsoletionTime == null && p.StatusConcept.Mnemonic != "OBSOLETE" && p.CreationTime >= syncFilter, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
                                         this.QueueWorkItem(prodPatients);
@@ -290,9 +291,9 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                                 this.m_actCarePlanPromise.RemoveAll(i => i.Key == qitm.Key);
                         }
 
-                        if (promiseCount > 0)
+                        if (promiseCount > 0 && this.m_actCarePlanPromise.Count == 0)
                         {
-                            ApplicationContext.Current.SetProgress(String.Empty, 0);
+                            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, 0), 1.0f);
                             ApplicationContext.Current.Configuration.SetAppSetting("openiz.mobile.core.protocol.plan.lastRun", DateTime.Now);
                             ApplicationContext.Current.SaveConfiguration();
                         }

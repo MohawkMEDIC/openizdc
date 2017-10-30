@@ -118,7 +118,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
                 var logEntry = conn.Table<SynchronizationLogEntry>().Where(o => o.ResourceType == modelAqn && o.Filter == filter).FirstOrDefault();
                 if (logEntry == null)
-                    conn.Insert(new SynchronizationLogEntry() { ResourceType = modelAqn, Filter = filter, LastETag = eTag, LastSync = DateTime.Now, Name = name });
+                    conn.Insert(new SynchronizationLogEntry() { ResourceType = modelAqn, Filter = filter, LastETag = eTag, LastSync = DateTime.Now });
                 else
                 {
                     logEntry.LastSync = DateTime.Now;
@@ -164,8 +164,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             Filter = filter,
                             LastSuccess = offset,
                             StartTime = DateTime.Now,
-                            ResourceType = modelAqn,
-                            Name = name
+                            ResourceType = modelAqn
                         });
                     }
                     else

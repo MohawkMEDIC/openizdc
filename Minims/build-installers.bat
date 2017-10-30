@@ -1,13 +1,13 @@
 @echo off
-set version=0.9.7.4
+set version=0.9.9.0
 
 echo Building Windows Installer
 "c:\Program Files (x86)\Inno Setup 5\ISCC.exe" "/o.\dist" ".\install.iss"
 
 echo Building Linux Tarball
 
-mkdir openiz-%version%
-cd openiz-%version%
+mkdir openiz-sdk-%version%
+cd openiz-sdk-%version%
 copy "..\bin\SignedRelease\Antlr3.Runtime.dll"
 copy "..\bin\SignedRelease\ExpressionEvaluator.dll"
 copy "..\bin\SignedRelease\jint.dll"
@@ -54,6 +54,7 @@ copy "..\..\AppletCompiler\bin\Release\OpenIZ.Core.Applets.dll"
 copy "..\..\AppletCompiler\bin\Release\OpenIZ.Core.Model.dll"
 copy "..\..\..\OpenIZ\bin\Release\LogViewer.exe"
 copy "..\..\OpenIZMobile\Assets\Applets\org.openiz.core.pak"
+copy "..\..\OpenIZMobile\Assets\Applets\org.openiz.templates.pak"
 copy "..\bin\SignedRelease\tools\cmdprompt.cmd"
 copy "..\..\..\OpenIZ\bin\Release\oizdt.exe"
 copy "..\..\..\OpenIZ\bin\Release\MARC.Everest.dll"
@@ -61,18 +62,25 @@ copy "..\..\..\OpenIZ\bin\Release\oizdt.config.empty"
 copy "..\..\..\OpenIZ\bin\Release\MARC.HI.EHRS.SVC.Core.dll"
 copy "..\..\..\OpenIZ\bin\Release\OpenIZ.Core.dll"
 copy "..\..\..\OpenIZ\bin\Release\OpenIZ.BusinessRules.JavaScript.dll"
-copy "..\..\..\OpenIZ\bin\Release\oizdt.config.empty" ".\oizdt.exe.config"
+copy "..\..\..\OpenIZ\bin\Release\oizdt.config.empty" ".\openiz.exe.config"
 copy "..\..\..\OpenIZ\bin\Release\OpenIZ.Protocol.Xml.dll"
 copy "..\..\..\OpenIZ\bin\Release\System.IdentityModel.Tokens.Jwt.dll"
 copy "..\..\..\OpenIZ\Solution Items\MARc.HI.EHRS.SVC.Configuration.dll"
-
+mkdir schema
+cd schema
+copy "..\..\..\..\OpenIZ\bin\Release\Schema\*.xsd"
+cd ..
 cd ..
 
-"C:\program files\7-zip\7z" a -r -ttar .\dist\openiz-%version%.tar .\openiz-%version%
-"C:\program files\7-zip\7z" a -r -tzip .\dist\openiz-%version%.zip .\openiz-%version%
+"C:\program files\7-zip\7z" a -r -ttar .\dist\openiz-sdk-%version%.tar .\openiz-sdk-%version%
+"C:\program files\7-zip\7z" a -r -tzip .\dist\openiz-sdk-%version%.zip .\openiz-sdk-%version%
 cd dist
-"C:\program files\7-zip\7z" a -tbzip2 .\openiz-%version%.tar.bz2 .\openiz-%version%.tar
-"C:\program files\7-zip\7z" a -tgzip .\openiz-%version%.tar.gz .\openiz-%version%.tar
+
+"C:\program files\7-zip\7z" a -tbzip2 .\openiz-sdk-%version%.tar.bz2 .\openiz-sdk-%version%.tar
+"C:\program files\7-zip\7z" a -tgzip .\openiz-sdk-%version%.tar.gz .\openiz-sdk-%version%.tar
+"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe" sign "openizdc-sdk-%version%.exe"
 cd ..
-del /q openiz-%version%
-rmdir openiz-%version%
+del /q /s openiz-sdk-%version%
+rmdir openiz-sdk-%version%\schema
+rmdir openiz-sdk-%version%
+

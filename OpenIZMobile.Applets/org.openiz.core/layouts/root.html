@@ -1,0 +1,62 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-23
+ -->
+<html ng-app="layout" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
+<head>
+    <link rel="stylesheet" type="text/css" href="/org.openiz.core/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/org.openiz.core/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/org.openiz.core/css/select2.min.css" />
+    <link rel="stylesheet" type="text/css" href="/org.openiz.core/css/toastr.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/vis.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/fullcalendar.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/pageloader.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-tokenfield.min.css"/>
+    <link rel="stylesheet" type="text/css" href="~/css/radialprogress.min.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="~/css/fullcalendar.print.css" />-->
+
+    <script src="/org.openiz.core/lib/lib-core.min.js" type="text/javascript"></script>
+    <script src="/org.openiz.core/js/openiz-core.min.js" type="text/javascript"></script>
+    <script src="/org.openiz.core/js/openiz.js" type="text/javascript"></script>
+    <script src="/org.openiz.core/js/openiz-ng.js" type="text/javascript"></script>
+    <script src="/ui/routes.js" type="text/javascript"></script>
+    <script src="/org.openiz.core/lib/select2-i18n/en-ca.js"></script>
+    <script src="/org.openiz.core/lib/select2-i18n/sw.js"></script>
+    <script src="/org.openiz.core/lib/fullcalendar-i18n/sw.js"></script>
+    <script src="/org.openiz.core/lib/jquery.datefix.js" type="text/javascript"></script>
+
+    <script src="/org.openiz.core/controllers/layouts/root.js" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+
+    <title></title>
+</head>
+<body>
+
+    <!-- #include virtual="content" -->
+    <!-- #include virtual="/org.openiz.core/views/common/modal/authenticate.html" -->
+    <div ng-if="$root.isLoading" class="pageloader">
+        <div class="cssload-loader">
+            <div class="cssload-inner cssload-one"></div>
+            <div class="cssload-inner cssload-two"></div>
+            <div class="cssload-inner cssload-three"></div>
+        </div>
+    </div>
+
+</body>
+</html>

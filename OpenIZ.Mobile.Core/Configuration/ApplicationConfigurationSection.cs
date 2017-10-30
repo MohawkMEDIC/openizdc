@@ -91,6 +91,8 @@ namespace OpenIZ.Mobile.Core.Configuration
 					this.m_services = new List<object> ();
 					foreach (var itm in this.ServiceTypes) {
 						Type t = Type.GetType (itm);
+                        if (t == null)
+                            throw new KeyNotFoundException(itm);
 						this.m_services.Add (Activator.CreateInstance (t));
 					}
 				}

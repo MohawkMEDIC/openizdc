@@ -1,0 +1,232 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-17
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel.tag.backEntry}"
+     id="{{act.id}}">
+    <div class="row" ng-class="{'has-warning' : act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime}">
+        <div class="control-label col-xs-12">
+            <div class="input-group">
+                <label class="control-label">
+                    {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} 
+                    <a ng-click="act._overrideDose = true" ng-if="!act._overrideDose &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ doseSequenceFilter(act.targetModel.doseSequence) }}</a>
+                    <span ng-if="act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">{{ doseSequenceFilter(act.targetModel.doseSequence) }}</span>
+                
+                <span ng-if="act._created">
+                    ({{ 'locale.encounters.immunization.isBooster' | i18n }})
+                </span>
+                </label>
+                <select ng-model="act.targetModel.doseSequence" ng-change="cascadeDoseSequences(act._encounter.relationship.HasComponent, act.targetModel.doseSequence)" ng-options="doseSequenceFilter(i) for i in getDoseSequences(act.targetModel.participation.Product.player)" ng-if="act._overrideDose" class="form-control" /><br />
+                <span ng-if="act.targetModel.tag.backEntry">
+                    <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})</small>
+                </span>
+                <span ng-if="!act.targetModel.tag.backEntry &amp;&amp; act.targetModel.relationship.Fulfills">
+                    <small>
+                        ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | datePrecisionFormat:'D' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | datePrecisionFormat:'D' }})
+                    </small>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div ng-if="!act.targetModel.tag.backEntry">
+        <div class="row">
+            <div class="col-xs-6" ng-show="act._enabled">
+                <div class="input-group" ng-show="act._created">
+                    <label>{{ 'locale.encounters.immunizations.antigen' | i18n }}</label>
+                    <select ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;classConcept.mnemonic=Material" bind:value="name[Assigned].component[null].value"
+                            ng-change="act.targetModel.participation.Consumable[0].player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]; act.targetModel.doseSequence = getNextDoseSequence(act.targetModel.participation.Product.player); fillParticipationPlayerEntity(act.targetModel.participation.Product);"></select>
+                </div>
+                <div class="input-group">
+                    <label>
+                        {{ 'locale.encounters.immunizations.lot' | i18n }}
+                    </label>
+                    <select ng-init="act.targetModel.participation.Consumable = toArray(act.targetModel.participation.Consumable) ; act.targetModel.participation.Consumable[0].player = act.targetModel.participation.Consumable[0].player || $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
+                            ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}"
+                            ng-if="act.targetModel.participation.Product.player"
+                            ng-required="act._enabled"
+                            ng-disabled="!act._enabled"
+                            name="consumable_{{act.targetModel.id}}"
+                            class="form-control"
+                            ng-model="act.targetModel.participation.Consumable[0].player"
+                            data-watch="act.targetModel.participation.Product.player"
+                            data-watch-target="relationship[Instance].source"
+                            oiz-databind="ManufacturedMaterial"
+                            data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                            data-display="scope.lotNumber"
+                            data-defaultEmpty="true"
+                            data-defaultFirst="true"
+                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';  scp.addMissingConsumable(act.targetModel.id, '{{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}');"></select>
+
+                </div>
+                <div class="row">
+                    <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid">
+                        {{ 'locale.encounters.immunizations.errors.missingProduct' | i18n }}
+                    </div>
+                    <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid">
+                        {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
+                    </div>
+                    <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['site_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['site_' + act.targetModel.id].$invalid">
+                        {{ 'locale.encounters.immunizations.errors.missingSite' | i18n }}
+                    </div>
+                    <div class="col-xs-10 help-block text-danger" ng-if="!act._enabled &amp;&amp; (editEncounterForm['reason_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['reason_' + act.targetModel.id].$invalid">
+                        {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-5" ng-show="act._enabled" ng-if="!act._created">
+                <div class="input-group">
+                    <label>
+                        {{ 'locale.encounters.immunizations.site' | i18n }}
+                    </label>
+                    <select name="site_{{act.targetModel.id}}"
+                            ng-required="act._enabled"
+                            class="form-control"
+                            ng-model="act.targetModel.site"
+                            bind:source="Concept"
+                            bind:value="name[{{ locale }}].value"
+                            bind:filter="conceptSet.mnemonic=AdministrationSite"
+                            ng-disabled="!act._enabled || act.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'"
+                            ng-change="act.targetModel.site == 'e5b6847e-91e0-4fca-ac2e-753962008080' ? act.targetModel.route = '0a1388b0-66fb-4063-bfe3-151dd8442838' : act.targetModel.route='d594f99f-0151-41a0-a359-282ab54683a1'">
+                        <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.site' | i18n }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-11" ng-if="!act._enabled">
+                <div class="input-group">
+                    <label>
+                        {{ 'locale.encounters.protocolViolation.reason' | i18n }}
+                    </label>
+                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled &amp;&amp; act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
+                        <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-xs-10 help-block text-danger" ng-if="!act._enabled &amp;&amp; editEncounterForm['reason_' + act.targetModel.id].$invalid &amp;&amp; (editEncounterForm['reason_' + act.targetModel.id].$touched||editEncounterForm.$submitted)">
+                        {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-1" ng-if="!act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                <label class="control control--checkbox">
+                    <input type="checkbox"
+                            ng-model="act._enabled"
+                            checked="checked"
+                            value="1"
+                            id="enable_{{act.targetModel.id}}" />
+                    <div class="control__indicator control__indicator_alt" style="top: 35px; left: 0px;"></div>
+                </label>
+            </div>
+        </div>
+        <!-- Used Entities !! -->
+        <div class="row">
+            <div ng-if="act._enabled" ng-repeat="product in toArray(act.targetModel.participation.Product.playerModel.relationship.UsedEntity)">
+                <div class="col-xs-6">
+                    <div class="input-group">
+                        <label>
+                            {{ product.targetModel.name.OfficialRecord | oizEntityName }} {{ 'locale.encounters.immunizations.lot' | i18n }}
+                        </label>
+                        <select ng-init="act.targetModel.participation.Consumable[$index + 1].player = $root.session.prefs['default.lot.' + product.target];"
+                                ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid}"
+                                ng-if="act.targetModel.participation.Product.player"
+                                ng-required="act._enabled"
+                                ng-disabled="!act._enabled"
+                                name="consumable_{{product.target}}"
+                                class="form-control"
+                                ng-model="act.targetModel.participation.Consumable[$index + 1].player"
+                                oiz-databind="ManufacturedMaterial"
+                                data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                                data-display="scope.lotNumber"
+                                data-defaultEmpty="true"
+                                data-defaultFirst="true"
+                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf'; scp.addMissingConsumable(act.targetModel.id, '{{ product.targetModel.name.Assigned | oizEntityName }}');"></select>
+                    </div>
+                    <div class="help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid">
+                        {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
+                    </div>
+                </div>
+                <div ng-if="$index % 2 == 1" class="clearfix"></div>
+            </div>
+            <div class="col-xs-12">
+                <a class="btn btn-lg btn-info margin-top-10 margin-right-10" ng-click="makeOverdue(act, '#enable_' + act.targetModel.id)" id="makeOvd_{{act.targetModel.id}}" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                    <span>
+                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                        <span class="hidden-xs">{{ 'locale.action.backEnter' | i18n }}</span>
+                    </span>
+                </a>
+                <span ng-if="missingConsumables[act.targetModel.id].length &gt; 0">
+                    <label class="input-error text-danger"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span> {{ 'locale.encounters.immunizations.errors.consumablesOutOfStock' | i18n }}:</label> {{missingConsumables[act.targetModel.id].join(', ')}}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div ng-if="act.targetModel.tag.backEntry">
+        <div class="row">
+            <div class="col-xs-8">
+                <div class="input-group">
+                    <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
+                    <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp;
+                        (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}"
+                           ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled ? $root.page.loadTime : null" ng-min="act._enabled ? patient.dateOfBirth : null"
+                           max="{{ getMaxDate(act) | date:'yyyy-MM-dd' }}"
+                           min="{{ getMinDate(act) | date:'yyyy-MM-dd' }}"
+                           ng-change="synchronizeDates(act)"
+                           ng-init="act._originalTime = act.targetModel.actTime" />
+                </div>
+            </div>
+            <div class="col-xs-3" ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                <a class="btn btn-lg btn-info" ng-if="!act.targetModel._hideActivate" ng-click="removeOverdue(act, '#enable_' + act.targetModel.id)">
+                    <span>
+                        <span class="glyphicon glyphicon-circle-arrow-down"></span>
+                        <span class="hidden-xs">{{ 'locale.action.activate' | i18n }}</span>
+                    </span>
+                </a>
+            </div>
+            <div class="col-xs-1" ng-if="act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                <label class="control control--checkbox">
+                    <input type="checkbox"
+                           ng-model="act._enabled"
+                           checked="checked"
+                           value="1"
+                           id="enable_{{act.targetModel.id}}" />
+
+                    <div class="control__indicator control__indicator_alt" style="top: 14px; left: 0px;"></div>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div ng-if="act._enabled">
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.required">
+                    {{ 'locale.encounters.immunizations.errors.requiredDate' | i18n }}
+                </div>
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.max">
+                    {{ 'locale.encounters.immunizations.errors.maxDate' | i18n }}
+                </div>
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.min">
+                    {{ 'locale.encounters.immunizations.errors.minDate' | i18n }}
+                </div>
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.date">
+                    {{ 'locale.encounters.immunizations.errors.validDate' | i18n }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 alert alert-warning" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime">
+        <span><span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.encounters.immunizations.early' | i18n }}</span>
+    </div>
+</div>

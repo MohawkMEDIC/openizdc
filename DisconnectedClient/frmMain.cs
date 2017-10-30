@@ -35,6 +35,7 @@ using CefSharp;
 #endif
 using DisconnectedClient.JNI;
 using OpenIZ.Core.Diagnostics;
+using DisconnectedClient.Core;
 
 namespace DisconnectedClient
 {
@@ -57,25 +58,22 @@ namespace DisconnectedClient
 
             InitializeComponent();
 
+             
             Action<ApplicationProgressEventArgs> updateUi = (e) =>
             {
                 try
                 {
-                    if (String.IsNullOrEmpty(e.ProgressText))
-                        return;
+
+                    lblStatus.Text = String.Format("{0} ({1:#0}%)", e.ProgressText, e.Progress * 100);
+                    if (e.Progress >= 0 && e.Progress <= 1)
+                    {
+                        pgMain.Style = ProgressBarStyle.Continuous;
+                        pgMain.Value = (int)(e.Progress * 100);
+                    }
                     else
                     {
-                        lblStatus.Text = String.Format("{0} ({1:#0}%)", e.ProgressText, e.Progress * 100);
-                        if (e.Progress >= 0 && e.Progress <= 1)
-                        {
-                            pgMain.Style = ProgressBarStyle.Continuous;
-                            pgMain.Value = (int)(e.Progress * 100);
-                        }
-                        else
-                        {
-                            pgMain.Style = ProgressBarStyle.Marquee;
+                        pgMain.Style = ProgressBarStyle.Marquee;
 
-                        }
                     }
                 }
                 catch { }
@@ -169,10 +167,10 @@ namespace DisconnectedClient
             this.m_browser.RegisterJsObject("OpenIZApplicationService", new AppletFunctionBridge(this));
             this.pnlMain.Controls.Add(this.m_browser);
             this.m_browser.Dock = DockStyle.Fill;
-            
+
         }
 
-          // Go dback
+        // Go dback
         public void Back()
         {
             this.m_browser.Back();
@@ -185,7 +183,7 @@ namespace DisconnectedClient
 
         private void btnZoomWidth_Click(object sender, EventArgs e)
         {
-            
+
             double zoomFactor = Double.Parse((sender as ToolStripMenuItem).Tag.ToString());
             this.m_browser.SetZoomLevel(zoomFactor);
         }
@@ -214,12 +212,12 @@ namespace DisconnectedClient
 
         }
 
-      
+
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             this.m_browser.Refresh();
         }
-        
+
     }
 }

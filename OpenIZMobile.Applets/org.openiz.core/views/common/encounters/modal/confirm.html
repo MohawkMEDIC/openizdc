@@ -1,0 +1,147 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2017-6-28
+ -->
+<div class="modal fade" id="encounterConfirmDialog" tabindex="-1" role="dialog" xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:oiz="http://openiz.org/applet">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title">{{ 'locale.encounters.confirm' | i18n }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ 'locale.encounters.confirm.instructions' | i18n }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>{{ 'locale.encounters.overdue' | i18n }}</h4>
+                            <ul>
+                                <li ng-repeat="act in encounter.relationship._OverdueHasComponent" ng-if="act._enabled">
+                                    <div ng-switch="act.targetModel.$type">
+                                        <span ng-switch-when="SubstanceAdministration">
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.syringe.png" ng-if="act.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1' || act.targetModel.participation.Product.playerModel.formConcept == '9902267c-8f77-4233-bfd3-e6b068ab326a'" />
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.pipette.png" ng-if="(act.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || act.targetModel.participation.Product.playerModel.formConcept == '66cbce3a-2e77-401d-95d8-ee0361f4f076') &amp;&amp; act.targetModel.typeConcept != '7d84a057-1fcc-4054-a51f-b77d230fc6d1'" />
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.pill.png" ng-if="(act.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || act.targetModel.participation.Product.playerModel.formConcept == 'aa02267c-8f77-4233-bfd3-e6b068ab326a')&amp;&amp; act.targetModel.typeConcept == '7d84a057-1fcc-4054-a51f-b77d230fc6d1'" />
+                                            {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}
+                                            {{ 'locale.encounters.immunization.doseSequence' | i18n }}
+                                            {{ act.targetModel.doseSequence }}
+                                            - {{ act.targetModel.actTime | datePrecisionFormat:'D' }}
+                                        </span>
+                                        <span ng-switch-when="QuantityObservation">
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.scale.png" ng-if="act.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                            {{ act.targetModel.typeConceptModel | oizConcept }} -
+                                            <span ng-if="act.targetModel.unitOfMeasure">
+                                                {{ act.targetModel.value }}
+                                                {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.unitOfMeasure) }}
+                                            </span>
+                                            <span ng-if="!act.targetModel.unitOfMeasure">
+                                                {{ act.targetModel.value }}
+                                            </span>
+                                            - {{ act.targetModel.actTime | datePrecisionFormat:'D' }}
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>{{ 'locale.encounters.actionsPerformed.title' | i18n }}</h4>
+                            <ul>
+                                <li ng-repeat="act in encounter.relationship.HasComponent">
+                                    <div ng-switch="act.targetModel.$type">
+                                        <div ng-switch-when="SubstanceAdministration">
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.syringe.png" ng-if="act.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1' || act.targetModel.participation.Product.playerModel.formConcept == '9902267c-8f77-4233-bfd3-e6b068ab326a'" />
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.pipette.png" ng-if="(act.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || act.targetModel.participation.Product.playerModel.formConcept == '66cbce3a-2e77-401d-95d8-ee0361f4f076') &amp;&amp; act.targetModel.typeConcept != '7d84a057-1fcc-4054-a51f-b77d230fc6d1'" />
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.pill.png" ng-if="(act.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || act.targetModel.participation.Product.playerModel.formConcept == 'aa02267c-8f77-4233-bfd3-e6b068ab326a')&amp;&amp; act.targetModel.typeConcept == '7d84a057-1fcc-4054-a51f-b77d230fc6d1'" />
+                                            {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}
+                                            {{ 'locale.encounters.immunization.doseSequence' | i18n }}
+                                            <span ng-if="act.targetModel.doseSequence === 0">
+                                                {{ 'locale.encounters.immunization.birthDose' | i18n }}
+                                            </span>
+                                            <span ng-if="act.targetModel.doseSequence !== 0">
+                                                {{ act.targetModel.doseSequence }}
+                                            </span>
+                                            <ul>
+                                                <li ng-if="act._enabled" ng-repeat="cons in act.targetModel.participation.Consumable">
+                                                    {{ 'locale.encounters.immunization.lotNumber' | i18n }}
+                                                    {{ OpenIZ.Util.renderConceptFromDom(cons.player) }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <span ng-switch-when="QuantityObservation">
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.scale.png" ng-if="act.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                            {{ act.targetModel.typeConceptModel | oizConcept }} -
+                                            {{ act.targetModel.value }}
+                                            {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.unitOfMeasure) }}
+                                        </span>
+                                        <span ng-switch-when="CodedObservation">
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.virus.png" ng-if="act.targetModel.typeConcept == '260ffe90-7882-4b38-a7af-d2110e91e752'" />
+                                            {{ act.targetModel.typeConceptModel | oizConcept }} -
+                                            <span ng-if="act.targetModel.valueModel">
+                                                {{ act.targetModel.valueModel | oizConcept}}
+                                            </span>
+                                            <span ng-if="!act.targetModel.valueModel">
+                                                {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.value) }} 
+                                            </span>
+                                        </span>
+                                        <span ng-switch-when="Act">
+                                            {{ act.targetModel.typeConceptModel | oizConcept }} -
+                                            <span ng-if="act.targetModel.relationship.HasSubject">
+                                                {{ act.targetModel.relationship.HasSubject.targetModel.typeConceptModel | oizConcept }} -
+                                                <span ng-if="act.targetModel.relationship.RefersTo">
+                                                    {{ act.targetModel.relationship.RefersTo.targetModel.participation.Product.playerModel.name.OfficialRecord | oizEntityName }}
+                                                </span>
+                                                <span ng-if="!act.targetModel.relationship.RefersTo">
+                                                    <span ng-if="act.targetModel.relationship.HasSubject.targetModel.valueModel">
+                                                        {{ act.targetModel.relationship.HasSubject.targetModel.valueModel | oizConcept }}
+                                                    </span>
+                                                    <span ng-if="!act.targetModel.relationship.HasSubject.targetModel.valueModel">
+                                                        {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.relationship.HasSubject.targetModel.value)}}
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="label label-danger label-inline" ng-if="!act._enabled">
+                                            {{ 'locale.encounters.protocolViolation.reason' | i18n }} : {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.reasonConcept) }}
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" ng-click="OpenIZ.Authentication.$elevationCredentials = {}" ng-disabled="encounter.tag.signedByAuthor">
+                    <span>
+                        <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                    </span>
+                </button>
+                <button type="submit" id="submitEncounterButton" class="btn btn-primary btn-lg" ng-click="encounter.tag.signedByAuthor = 'True'">
+                    {{ 'locale.action.confirm' | i18n }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

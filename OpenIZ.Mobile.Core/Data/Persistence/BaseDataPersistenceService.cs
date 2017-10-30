@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Services;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -46,10 +47,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         where TQueryResult : DbIdentified
 	{
 
-        /// <summary>
-        /// Get the order by
-        /// </summary>
-        protected override IEnumerable<TModel> SortResults(IEnumerable<TModel> data) => data.OrderByDescending(o => o.CreationTime);
+        protected override SqlStatement AppendOrderByStatement(SqlStatement domainQuery)
+        {
+            return domainQuery.OrderBy<TDomain>(o => o.CreationTime, OpenIZ.Core.Model.Map.SortOrderType.OrderByDescending);
+        }
 
         /// <summary>
         /// Perform the actual insert.

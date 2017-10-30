@@ -47,6 +47,8 @@ using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Protocol.Xml;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Services;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZMobile
 {
@@ -83,11 +85,7 @@ namespace OpenIZMobile
             base.OnCreate(savedInstanceState);
 
             this.SetContentView(Resource.Layout.Splash);
-        }
 
-        protected override void OnResume()
-        {
-            base.OnResume();
             OpenIZ.Mobile.Core.ApplicationContext.Current = null;
 
             this.FindViewById<TextView>(Resource.Id.txt_splash_version).Text = String.Format("V {0} ({1})",
@@ -225,8 +223,6 @@ namespace OpenIZMobile
 
         }
 
-
-
         /// <summary>
         /// Shows an exception message box
         /// </summary>
@@ -237,12 +233,31 @@ namespace OpenIZMobile
             Log.Error("FATAL", e.ToString());
             while (e is TargetInvocationException)
                 e = e.InnerException;
-            UserInterfaceUtils.ShowMessage(this,
+
+            var result = false;
+            AutoResetEvent reset = new AutoResetEvent(false);
+
+            UserInterfaceUtils.ShowConfirm(this,
                 (s, a) =>
                 {
-                    this.Finish();
+                    result = true;
+                    reset.Set();
                 },
-                "{0} : {1}", Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
+                (s,a) =>
+                {
+                    result = false;
+                    reset.Set();
+                },
+                Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
+
+            reset.WaitOne();
+
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
+            bksvc.Backup(result ? OpenIZ.Mobile.Core.Services.BackupMedia.Public : BackupMedia.Private);
+            File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
+            Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);
+            this.Finish();
+
         }
     }
 }

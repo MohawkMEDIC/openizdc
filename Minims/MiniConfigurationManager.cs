@@ -177,6 +177,7 @@ namespace Minims
                     typeof(LocalTagPersistenceService).AssemblyQualifiedName,
                     typeof(SQLiteReportDatasource).AssemblyQualifiedName,
                     typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(XamarinBackupService).AssemblyQualifiedName,
                     typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
@@ -289,6 +290,17 @@ namespace Minims
                     this.m_configuration = OpenIZConfiguration.Load(fs);
                 }
 
+        }
+
+        /// <summary>
+        /// Application data directory
+        /// </summary>
+        public string ApplicationDataDirectory
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MINIMS");
+            }
         }
 
 

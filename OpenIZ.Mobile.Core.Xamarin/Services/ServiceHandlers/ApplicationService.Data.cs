@@ -38,6 +38,13 @@ using System.IO;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Roles;
+using Jint.Parser.Ast;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Mobile.Core.Interop.IMSI;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -49,6 +56,72 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
         // Is downloading
         private static bool s_isDownloading = false;
+
+        /// <summary>
+        /// Force re-queue of all data to server
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "PUT", UriPath = "/data/sync")]
+        [Demand(PolicyIdentifiers.AccessClientAdministrativeFunction)]
+        public void ForceRequeue()
+        {
+
+            // What does this do... oh my ... it is complex
+            //
+            // 1. We scan the entire database for all Patients that were created in the specified date ranges
+            // 2. We scan the entire database for all Acts that were created in the specified date ranges
+            // 3. We take all of those and we put them in the outbox in bundles to be shipped to the server at a later time
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            // Hit the act repository
+            var patientDataRepository = ApplicationContext.Current.GetService<IRepositoryService<Patient>>() as IPersistableQueryRepositoryService;
+            var actDataRepository = ApplicationContext.Current.GetService<IRepositoryService<Act>>() as IPersistableQueryRepositoryService;
+            var imsiIntegration = ApplicationContext.Current.GetService<ImsiIntegrationService>();
+
+            // Get all patients matching
+            int ofs = 0, tr = 1;
+            Guid qid = Guid.NewGuid();
+            var filter = QueryExpressionParser.BuildLinqExpression<Patient>(search);
+            while (ofs < tr)
+            {
+                var res = patientDataRepository.Find<Patient>(filter, ofs, 25, out tr, qid);
+                ApplicationContext.Current.SetProgress(Strings.locale_preparingPush, (float)ofs / (float)tr * 0.5f);
+                ofs += 25;
+
+                var serverSearch = new NameValueCollection();
+                serverSearch.Add("id", res.Select(o => o.Key.ToString()).ToList());
+
+                var serverKeys = imsiIntegration.Find<Patient>(serverSearch, 0, 25, new IntegrationQueryOptions()
+                {
+                    Lean = true,
+                    InfrastructureOptions = NameValueCollection.ParseQueryString("_exclude=participation&_exclude=relationship&_exclude=tag&_exclude=identifier&_exclude=address&_exclude=name")
+                }).Item.Select(o => o.Key);
+
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res.Where(o => !serverKeys.Contains(o.Key)), tr, ofs), DataOperationType.Update);
+            }
+
+            // Get all acts matching
+            qid = Guid.NewGuid();
+            var actFilter = QueryExpressionParser.BuildLinqExpression<Act>(search);
+            ofs = 0; tr = 1;
+            while (ofs < tr)
+            {
+                var res = actDataRepository.Find<Act>(actFilter, ofs, 25, out tr, qid);
+                ApplicationContext.Current.SetProgress(Strings.locale_preparingPush, (float)ofs / (float)tr * 0.5f + 0.5f);
+                ofs += 25;
+
+                var serverSearch = new NameValueCollection();
+                serverSearch.Add("id", res.Select(o => o.Key.ToString()).ToList());
+
+                var serverKeys = imsiIntegration.Find<Act>(serverSearch, 0, 25, new IntegrationQueryOptions()
+                {
+                    Lean = true,
+                    InfrastructureOptions = NameValueCollection.ParseQueryString("_exclude=participation&_exclude=relationship&_exclude=tag&_exclude=identifier")
+                }).Item.Select(o => o.Key);
+
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res.Where(o => !serverKeys.Contains(o.Key)), tr, ofs), DataOperationType.Update);
+            }
+
+        }
 
         /// <summary>
         /// Delete queue entry
@@ -67,21 +140,47 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             conmgr.Stop();
             (warehouse as IDaemonService)?.Stop();
 
-            // Perform a backup if possible
-            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
-            {
-                var bakFile = Path.ChangeExtension(itm.Value, ".bak");
-                if (File.Exists(bakFile))
-                {
-                    File.Copy(bakFile, itm.Value, true);
-                    File.Delete(bakFile);
-                }
-                else
-                    throw new InvalidOperationException(Strings.err_backupNotExist);
-            }
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
+            if (bksvc.HasBackup(BackupMedia.Public))
+                bksvc.Restore(BackupMedia.Public);
+            else if (bksvc.HasBackup(BackupMedia.Private))
+                bksvc.Restore(BackupMedia.Private);
+
             ApplicationContext.Current.SaveConfiguration();
         }
 
+        /// <summary>
+        /// Delete queue entry
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "POST", UriPath = "/data/backup")]
+        [Demand(PolicyIdentifiers.ExportClinicalData)]
+        public void Backup()
+        {
+
+            // Close all connections
+            var conmgr = ApplicationContext.Current.GetService<IDataConnectionManager>();
+            var warehouse = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+            if (conmgr == null)
+                throw new InvalidOperationException(Strings.err_restoreNotPermitted);
+
+            conmgr.Stop();
+            (warehouse as IDaemonService)?.Stop();
+
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
+            bksvc.Backup(BackupMedia.Public);
+
+            ApplicationContext.Current.SaveConfiguration();
+        }
+
+        /// <summary>
+        /// Delete queue entry
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "GET", UriPath = "/data/backup")]
+        public bool GetBackup()
+        {
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
+            return bksvc.HasBackup(BackupMedia.Public);
+        }
 
         /// <summary>
         /// Instructs the service to compact all databases
@@ -122,13 +221,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             (warehouse as IDaemonService)?.Stop();
 
             // Perform a backup if possible
-            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
-            {
-                if (MiniImsServer.CurrentContext.Request.QueryString["backup"] == "true" ||
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
+            if (MiniImsServer.CurrentContext.Request.QueryString["backup"] == "true" ||
                     parm?["backup"]?.Value<Boolean>() == true)
-                    File.Copy(itm.Value, Path.ChangeExtension(itm.Value, ".bak"), true);
-                File.Delete(itm.Value);
-            }
+                bksvc.Backup(BackupMedia.Public);
+
             ApplicationContext.Current.SaveConfiguration();
         }
 
@@ -217,6 +314,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Get > Requeue > Delete
             var queueItem = SynchronizationQueue.DeadLetter.Get(id);
             queueItem.IsRetry = true;
+
+            // HACK: If the queue item is for a bundle and the reason it was rejected was a not null constraint don't re-queue it... 
+            // This is caused by older versions of the IMS sending down extensions on our place without an extension type (pre 0.9.11)
+            if (Encoding.UTF8.GetString(queueItem.TagData).Contains("entity_extension.extensionType"))
+            {
+                // Get the bundle object
+                var data = ApplicationContext.Current.GetService<IQueueFileProvider>().GetQueueData(queueItem.Data, Type.GetType(queueItem.Type));
+
+                if (data is Place ||
+                    (data as Bundle)?.Item.All(o => o is Place) == true &&
+                    (data as Bundle)?.Item.Count == 1
+                )
+                {
+                    SynchronizationQueue.DeadLetter.Delete(id);
+                    return;
+                }
+            }
 
             switch (queueItem.OriginalQueue)
             {
@@ -343,7 +457,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 CreationTime = o.CreationTime,
                                 Operation = o.Operation,
                                 Type = o.Type,
-                                OriginalQueue = o.OriginalQueue
+                                OriginalQueue = o.OriginalQueue,
+                                TagData = o.TagData
                             }).OfType<SynchronizationQueueEntry>().ToList())
                             {
                                 Size = totalResults,

@@ -2,7 +2,6 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenIZ Disconnected Client"
-#define MyAppVersion "0.9.7.4"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
 #define MyAppExeName "DisconnectedClient.exe"
@@ -23,7 +22,7 @@ DefaultDirName={pf}\Mohawk College\OpenIZ\Disconnected Client
 DisableProgramGroupPage=yes
 LicenseFile=.\License.rtf
 OutputDir=.\dist
-OutputBaseFilename=openiz-dc-{#MyAppVersion}
+OutputBaseFilename=openizdc-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 
@@ -35,9 +34,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: ".\bin\x86\SignedRelease\DisconnectedClient.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\DisconnectedClient.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\CefSharp.BrowserSubprocess.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: ".\bin\x86\SignedRelease\sqlite3.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\Applets\org.openiz.core.pak"; DestDir: "{app}\applets"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\Applets\org.openiz.templates.pak"; DestDir: "{app}\applets"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\fr\OpenIZ.Mobile.Core.resources.dll"; DestDir: "{app}\fr"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\locales\*"; DestDir: "{app}\locales"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ".\bin\x86\SignedRelease\sw\OpenIZ.Mobile.Core.Xamarin.resources.dll"; DestDir: "{app}\sw"; Flags: ignoreversion
@@ -89,7 +90,7 @@ Source: ".\bin\x86\SignedRelease\System.Transactions.Portable.dll"; DestDir: "{a
 Source: ".\bin\x86\SignedRelease\widevinecdmadapter.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\sqlcipher.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\SQLite.Net.Platform.SqlCipher.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\bin\x86\SignedRelease\libeay32.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\libeay32md.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\installsupp\vcredist_x86.exe"; DestDir: "{tmp}"; Flags: dontcopy;
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

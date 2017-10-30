@@ -77,7 +77,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 Key = new Guid(dbEntName.Uuid),
                 NameUseKey = dbEntName.UseConceptUuid == null ? null : (Guid?)new Guid(dbEntName.UseConceptUuid),
                 SourceEntityKey = new Guid(dbEntName.SourceUuid),
-                NameUse = new Concept()
+                NameUse = dbEntName.UseConceptUuid == null ? null : new Concept()
                 {
                     Key = new Guid(dbEntName.UseConceptUuid),
                     Mnemonic = this.m_nameUseMap[new Guid(dbEntName.UseConceptUuid)]

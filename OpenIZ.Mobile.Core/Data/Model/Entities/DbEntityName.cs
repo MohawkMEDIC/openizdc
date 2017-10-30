@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the value identifier of the name value
         /// </summary>
-        [Column("value_id"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbPhoneticValue), nameof(DbPhoneticValue.Uuid)), AlwaysJoin]
+        [Column("value_id"), MaxLength(16), NotNull, ForeignKey(typeof(DbPhoneticValue), nameof(DbPhoneticValue.Uuid)), AlwaysJoin]
         public override byte[] ValueUuid
         {
             get; set;
@@ -120,7 +120,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Value of the phonetic table
         /// </summary>
-        [Column("value"), NotNull, Unique]
+        [Column("value"), NotNull]
         public String Value { get; set; }
     }
 

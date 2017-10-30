@@ -127,7 +127,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     }
                 }
             };
-
+            
             // Initial Applet configuration
             AppletConfigurationSection appletSection = new AppletConfigurationSection()
             {
@@ -191,6 +191,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SQLiteReportDatasource).AssemblyQualifiedName,
                     typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(AndroidBackupService).AssemblyQualifiedName,
                     typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
@@ -273,6 +274,18 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 
 
         /// <summary>
+        /// Application data directory
+        /// </summary>
+        public string ApplicationDataDirectory
+        {
+            get
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            }
+        }
+
+
+        /// <summary>
         /// Creates a new instance of the configuration manager with the specified configuration file
         /// </summary>
         public ConfigurationManager()
@@ -332,6 +345,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             catch (Exception e)
             {
                 this.m_tracer?.TraceError(e.ToString());
+                throw;
             }
         }
 

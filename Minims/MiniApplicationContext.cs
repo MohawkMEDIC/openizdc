@@ -47,6 +47,7 @@ using System.Globalization;
 using OpenIZ.Protocol.Xml;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Applets.Services;
+using OpenIZ.Mobile.Core.Xamarin.Data;
 
 namespace Minims
 {
@@ -241,10 +242,12 @@ namespace Minims
             { // load configuration
                 try
                 {
-                    retVal.ConfigurationManager.Load();
+					// Set master application context
+					ApplicationContext.Current = retVal;
 
-                    // Set master application context
-                    ApplicationContext.Current = retVal;
+					retVal.ConfigurationManager.Load();
+                    retVal.AddServiceProvider(typeof(XamarinBackupService));
+
                     retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     var appService = retVal.GetService<IAppletManagerService>();
@@ -366,7 +369,8 @@ namespace Minims
                 catch (Exception e)
                 {
                     retVal.m_tracer?.TraceError(e.ToString());
-                    ApplicationContext.Current = null;
+                    //ApplicationContext.Current = null;
+                    retVal.m_configurationManager = new MiniConfigurationManager(MiniConfigurationManager.GetDefaultConfiguration());
                     throw;
                 }
                 return true;

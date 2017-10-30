@@ -88,6 +88,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
         /// Restore a backup
         /// </summary>
         void Restore();
+
+        /// <summary>
+        /// Application data directory
+        /// </summary>
+        string ApplicationDataDirectory { get; }
 	}
 }
 

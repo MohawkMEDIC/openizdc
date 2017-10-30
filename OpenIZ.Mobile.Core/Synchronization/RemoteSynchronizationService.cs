@@ -187,7 +187,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 totalResults += this.Pull(syncResource.ResourceType, new NameValueCollection(), false, syncResource.Name);
 
                         }
-                        ApplicationContext.Current.SetProgress(String.Empty, 0);
+                        ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, 1.0f);
 
                         // Pull complete?
                         this.IsSynchronizing = false;
@@ -197,10 +197,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                             alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "everyone", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                             this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(true, totalResults, lastSync));
+                            SQLiteConnectionManager.Current.Compact(); // Compact the DB on initial sync
                         }
                         else if (totalResults > 0)
                             this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(totalResults, lastSync));
-                        
+                        else
+                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(0, lastSync));
 
                     }
                     catch (Exception e)
@@ -345,13 +347,13 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         }
                         else
                             break;
-
+                        
                         if (String.IsNullOrEmpty(eTag))
                             eTag = result?.Item.FirstOrDefault()?.Tag;
                     }
 
                     if (result?.TotalResults > result?.Count)
-                        ApplicationContext.Current.SetProgress(String.Empty, 0);
+                        ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, result.TotalResults, result.TotalResults), 1.0f);
 
                     // Log that we synchronized successfully
                     SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag, name);

@@ -32,6 +32,7 @@ using OpenIZ.Mobile.Core.Data.Model.DataType;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -57,7 +58,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Get the order by
         /// </summary>
-        protected override IEnumerable<Act> SortResults(IEnumerable<Act> data) => data.OrderBy(o => o.CreationTime);
+        protected override SqlStatement AppendOrderByStatement(SqlStatement domainQuery)
+        {
+            return domainQuery.OrderBy<DbAct>(o => o.CreationTime, SortOrderType.OrderByDescending);
+        }
+
 
         /// <summary>
         /// Cache convert an act version

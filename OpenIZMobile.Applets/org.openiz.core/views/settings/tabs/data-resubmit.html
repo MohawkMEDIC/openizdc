@@ -1,0 +1,36 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="row" ng-controller="ResubmitDataController">
+    <oiz:script>~/controllers/settings/tabs/data-resubmit.js</oiz:script>
+    <form ng-submit="resubmit(resubmitForm)" name="resubmitForm">
+        <h3>{{ 'locale.settings.data.resubmit' | i18n }}</h3>
+        <p>{{ 'locale.settings.data.resubmit.description' | i18n }}</p>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">{{ 'locale.settings.data.resubmit.from' | i18n }}</label>
+            <div class="col-xs-9">
+                <input type="date" class="form-control" name="fromDateFilter" ng-model="resubmit.from" ng-required="true" required="required" max="{{resubmit.to | date: 'yyyy-MM-dd' }}" />
+            </div>
+            <p ng-if="(resubmitForm.fromDateFilter.$touched || (resubmitForm.$submitted || formSubmitted)) &amp;&amp; resubmitForm.fromDateFilter.$invalid">
+                {{ 'locale.settings.data.resubmit.error' | i18n }}
+            </p>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">{{ 'locale.settings.data.resubmit.to' | i18n }}</label>
+            <div class="col-xs-9">
+                <input type="date" class="form-control" name="toDateFilter" ng-model="resubmit.to" ng-required="true" required="required" min="{{resubmit.from | date: 'yyyy-MM-dd' }}" />
+            </div>
+            <p ng-if="(resubmitForm.toDateFilter.$touched || (resubmitForm.$submitted || formSubmitted)) &amp;&amp; resubmitForm.toDateFilter.$invalid">
+                {{ 'locale.settings.data.resubmit.error' | i18n }}
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="btn-group pull-right">
+                    <button class="btn-primary btn btn-lg" id="resubmitButton" type="submit">
+                        <span>
+                            <span class="glyphicon glyphicon-ok"></span> {{ 'locale.action.confirm' | i18n }}
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

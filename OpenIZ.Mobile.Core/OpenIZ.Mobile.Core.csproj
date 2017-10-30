@@ -35,13 +35,28 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LinuxSignedRelease|AnyCPU'">
-    <OutputPath>bin\LinuxSignedRelease\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MacDebug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\MacDebug\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MacRelease|AnyCPU'">
+    <OutputPath>bin\MacRelease\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Configuration\Data\Migrations\CatalogEdmonton4Update.cs" />
@@ -72,6 +87,7 @@
     <Compile Include="Security\Audit\Model\DbAuditObject.cs" />
     <Compile Include="Security\Audit\AuditUtil.cs" />
     <Compile Include="Security\NullCredentials.cs" />
+    <Compile Include="Services\IBackupService.cs" />
     <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
     <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
     <Compile Include="Services\ITickleService.cs" />
@@ -339,6 +355,7 @@
     <EmbeddedResource Include="Security\Audit\Model\ModelMap.xml" />
     <EmbeddedResource Include="Data\Warehouse\CarePlan\CarePlanWarehouseSchema.xml" />
     <EmbeddedResource Include="Alerting\ModelMap.xml" />
+    <EmbeddedResource Include="Data\Sql\999_optimize_db.sql" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
   <ItemGroup>
