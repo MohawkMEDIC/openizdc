@@ -165,6 +165,29 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             return AndroidApplicationContext.Current.GetService<IAppletManagerService>().Applets.GetTemplateDefinition(templateId)?.Form;
         }
 
+
+        /// <summary>
+        /// Gets the registered template form
+        /// </summary>
+        /// <param name="templateId"></param>
+        [JavascriptInterface]
+        [Export]
+        public String GetTemplateView(String templateId)
+        {
+            return AndroidApplicationContext.Current.GetService<IAppletManagerService>().Applets.GetTemplateDefinition(templateId)?.View;
+        }
+
+        /// <summary>
+        /// Get all templates
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetTemplates()
+        {
+            return $"[{String.Join(",", XamarinApplicationContext.Current.GetService<IAppletManagerService>().Applets.SelectMany(o => o.Templates).Where(o => o.Public).Select(o => $"\"{o.Mnemonic}\""))}]";
+        }
+
+
         /// <summary>
         /// Get log files
         /// </summary>
@@ -337,7 +360,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 this.m_tracer.TraceInfo("Received close() request");
                 ApplicationContext.Current.Stop();
                 AppletCollection.ClearCaches();
-                (this.m_context as Activity).Finish();
+                ApplicationContext.Current.Exit();
+                //(this.m_context as Activity).Finish();
             }, null);
         }
 

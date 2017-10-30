@@ -4,7 +4,6 @@
 #define MyAppName "OpenIZ Disconnected Client SDK"
 #define MyAppPublisher "Mohawk College of Applied Arts and Technology"
 #define MyAppURL "http://openiz.org"
-
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
@@ -75,6 +74,7 @@ Source: "..\AppletCompiler\bin\Release\OpenIZ.Core.Applets.dll"; DestDir: "{app}
 Source: "..\AppletCompiler\bin\Release\OpenIZ.Core.Model.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\LogViewer.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\OpenIZMobile\Assets\Applets\org.openiz.core.pak"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\OpenIZMobile\Assets\Applets\org.openiz.templates.pak"; DestDir: "{app}"; Flags: recursesubdirs
 Source: ".\bin\SignedRelease\tools\cmdprompt.cmd"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "..\..\OpenIZ\bin\Release\oizdt.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\MARC.Everest.dll"; DestDir: "{app}"; Flags: ignoreversion

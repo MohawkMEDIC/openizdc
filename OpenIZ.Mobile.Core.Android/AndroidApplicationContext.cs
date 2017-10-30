@@ -150,6 +150,22 @@ namespace OpenIZ.Mobile.Core.Android
 
                     retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
+                    // Is there a backup, and if so, does the user want to restore from that backup?
+                    var backupSvc = retVal.GetService<IBackupService>();
+                    if (backupSvc.HasBackup(BackupMedia.Public) &&
+                        retVal.Configuration.GetAppSetting("ignore.restore") == null &&
+                        retVal.Confirm(Strings.locale_confirm_restore))
+                    {
+                        backupSvc.Restore(BackupMedia.Public);
+                    }
+
+                    // Ignore restoration
+                    retVal.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Add(new AppSettingKeyValuePair()
+                    {
+                        Key = "ignore.restore",
+                        Value = "true"
+                    });
+
                     // HACK: For some reason the PCL doesn't do this automagically
                     //var connectionString = retVal.Configuration.GetConnectionString("openIzWarehouse");
                     //if (!File.Exists(connectionString.Value))
@@ -417,7 +433,7 @@ namespace OpenIZ.Mobile.Core.Android
             {
                 this.m_tracer.TraceWarning("Restarting application context");
                 ApplicationContext.Current.Stop();
-                (this.Context as Activity).Finish();
+                (this.CurrentActivity as Activity).Finish();
             }, null);
         }
 

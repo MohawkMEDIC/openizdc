@@ -35,9 +35,9 @@ using System.Runtime.CompilerServices;
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
-[assembly: AssemblyInformationalVersion("Edmonton")]
-[assembly: AssemblyVersion("0.9.8.*")]
-[assembly: AssemblyFileVersion("0.9.8")]
+[assembly: AssemblyInformationalVersion("Fredericton CTP1")]
+[assembly: AssemblyVersion("0.9.9.*")]
+[assembly: AssemblyFileVersion("0.9.9")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.

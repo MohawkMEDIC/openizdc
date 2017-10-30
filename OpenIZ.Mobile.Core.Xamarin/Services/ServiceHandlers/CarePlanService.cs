@@ -35,6 +35,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using System.IO;
 using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Xamarin.Resources;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -54,7 +55,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [RestOperation(UriPath = "/refresh", Method = "POST", FaultProvider = nameof(CarePlanFaultProvider))]
         public void Refresh()
         {
-            ApplicationContext.Current.GetService<CarePlanManagerService>().Truncate();
+            if(ApplicationContext.Current.Confirm(Strings.locale_truncateCarePlan))
+                ApplicationContext.Current.GetService<CarePlanManagerService>().Truncate();
             ApplicationContext.Current.GetService<CarePlanManagerService>().RefreshCarePlan(true);
         }
 

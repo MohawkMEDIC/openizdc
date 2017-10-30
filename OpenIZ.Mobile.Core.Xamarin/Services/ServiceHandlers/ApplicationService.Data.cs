@@ -44,6 +44,7 @@ using OpenIZ.Core.Model.Roles;
 using Jint.Parser.Ast;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Mobile.Core.Interop.IMSI;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -80,7 +81,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             int ofs = 0, tr = 1;
             Guid qid = Guid.NewGuid();
             var filter = QueryExpressionParser.BuildLinqExpression<Patient>(search);
-            while(ofs < tr)
+            while (ofs < tr)
             {
                 var res = patientDataRepository.Find<Patient>(filter, ofs, 25, out tr, qid);
                 ApplicationContext.Current.SetProgress(Strings.locale_preparingPush, (float)ofs / (float)tr * 0.5f);
@@ -117,7 +118,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     InfrastructureOptions = NameValueCollection.ParseQueryString("_exclude=participation&_exclude=relationship&_exclude=tag&_exclude=identifier")
                 }).Item.Select(o => o.Key);
 
-                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res.Where(o=>!serverKeys.Contains(o.Key)), tr, ofs), DataOperationType.Update);
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(res.Where(o => !serverKeys.Contains(o.Key)), tr, ofs), DataOperationType.Update);
             }
 
         }
@@ -314,6 +315,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var queueItem = SynchronizationQueue.DeadLetter.Get(id);
             queueItem.IsRetry = true;
 
+            // HACK: If the queue item is for a bundle and the reason it was rejected was a not null constraint don't re-queue it... 
+            // This is caused by older versions of the IMS sending down extensions on our place without an extension type (pre 0.9.11)
+            if (Encoding.UTF8.GetString(queueItem.TagData).Contains("entity_extension.extensionType"))
+            {
+                // Get the bundle object
+                var data = ApplicationContext.Current.GetService<IQueueFileProvider>().GetQueueData(queueItem.Data, Type.GetType(queueItem.Type));
+
+                if (data is Place ||
+                    (data as Bundle)?.Item.All(o => o is Place) == true &&
+                    (data as Bundle)?.Item.Count == 1
+                )
+                {
+                    SynchronizationQueue.DeadLetter.Delete(id);
+                    return;
+                }
+            }
+
             switch (queueItem.OriginalQueue)
             {
                 case "inbound":
@@ -439,7 +457,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 CreationTime = o.CreationTime,
                                 Operation = o.Operation,
                                 Type = o.Type,
-                                OriginalQueue = o.OriginalQueue
+                                OriginalQueue = o.OriginalQueue,
+                                TagData = o.TagData
                             }).OfType<SynchronizationQueueEntry>().ToList())
                             {
                                 Size = totalResults,

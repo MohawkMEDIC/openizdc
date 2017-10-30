@@ -338,6 +338,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 UserIsRequestor = true,
                 ActorRoleCode = (principal as ClaimsPrincipal)?.Claims.Where(o=>o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o=>new AuditCode(o.Value, "OizRoles")).ToList()
             });
+
             //AddDeviceActor(audit);
 
             audit.AuditableObjects.Add(new AuditableObject()
