@@ -549,7 +549,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             var ie = e;
             while (ie != null)
             {
-                this.m_tracer.TraceError("{0} - ({1}){2}", e == ie ? "" : "Caused By", invoke.Method.Name, e.GetType().FullName, e.Message);
+                this.m_tracer.TraceError("{0} - ({1}){2} - {3}", e == ie ? "" : "Caused By", invoke.Method.Name, ie.GetType().FullName, ie.Message);
                 ie = ie.InnerException;
             }
 #else

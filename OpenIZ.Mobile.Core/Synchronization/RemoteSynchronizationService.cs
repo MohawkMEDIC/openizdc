@@ -201,7 +201,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         }
                         else if (totalResults > 0)
                             this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(totalResults, lastSync));
-                        
+                        else
+                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(0, lastSync));
 
                     }
                     catch (Exception e)
