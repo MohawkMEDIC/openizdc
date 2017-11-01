@@ -38,6 +38,7 @@ Source: ".\bin\x86\SignedRelease\DisconnectedClient.Core.dll"; DestDir: "{app}";
 Source: ".\bin\x86\SignedRelease\CefSharp.BrowserSubprocess.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: ".\bin\x86\SignedRelease\sqlite3.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\Applets\org.openiz.core.pak"; DestDir: "{app}\applets"; Flags: ignoreversion
+Source: ".\bin\x86\SignedRelease\Applets\org.openiz.templates.pak"; DestDir: "{app}\applets"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\fr\OpenIZ.Mobile.Core.resources.dll"; DestDir: "{app}\fr"; Flags: ignoreversion
 Source: ".\bin\x86\SignedRelease\locales\*"; DestDir: "{app}\locales"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ".\bin\x86\SignedRelease\sw\OpenIZ.Mobile.Core.Xamarin.resources.dll"; DestDir: "{app}\sw"; Flags: ignoreversion

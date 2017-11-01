@@ -112,6 +112,24 @@ namespace DisconnectedClient.JNI
             return XamarinApplicationContext.Current.GetService<IAppletManagerService>().Applets.GetTemplateDefinition(templateId)?.Form;
         }
 
+
+        /// <summary>
+        /// Gets the registered template form
+        /// </summary>
+        /// <param name="templateId"></param>
+        public String GetTemplateView(String templateId)
+        {
+            return XamarinApplicationContext.Current.GetService<IAppletManagerService>().Applets.GetTemplateDefinition(templateId)?.View;
+        }
+
+        /// <summary>
+        /// Get all templates
+        /// </summary>
+        public String GetTemplates()
+        {
+            return $"[{String.Join(",", XamarinApplicationContext.Current.GetService<IAppletManagerService>().Applets.SelectMany(o => o.Templates).Where(o => o.Public).Select(o => $"\"{o.Mnemonic}\""))}]";
+        }
+
         /// <summary>
         /// Get log files
         /// </summary>

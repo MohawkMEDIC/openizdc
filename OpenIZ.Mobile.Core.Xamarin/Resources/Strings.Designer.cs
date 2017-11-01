@@ -367,6 +367,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Would you like to delete and completely re-calculate the entire facility plan? (selecting cancel will only do a partial re-calculation).
+        /// </summary>
+        internal static string locale_truncateCarePlan {
+            get {
+                return ResourceManager.GetString("locale_truncateCarePlan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The applet {0} is not signed and its authenticity cannot be verified. Do you want to continue installation?.
         /// </summary>
         internal static string locale_unsignedAppletPrompt {

@@ -151,7 +151,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     catch (Exception e)
                     {
                         this.m_tracer.TraceError("Error inserting bundle: {0}", e);
-                        throw new LocalPersistenceException(Synchronization.Model.DataOperationType.Insert, data, e);
+                        return base.Insert(data); // Attempt to do a slow insert 
+                        // TODO: Figure out why the copy command sometimes is missing UUIDs
+                        //throw new LocalPersistenceException(Synchronization.Model.DataOperationType.Insert, data, e);
                     }
                 }
 

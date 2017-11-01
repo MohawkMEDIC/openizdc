@@ -219,6 +219,9 @@
   <data name="locale_preparingPush" xml:space="preserve">
     <value>Preparing to push data...</value>
   </data>
+  <data name="locale_truncateCarePlan" xml:space="preserve">
+    <value>Would you like to delete and completely re-calculate the entire facility plan? (selecting cancel will only do a partial re-calculation)</value>
+  </data>
   <data name="locale_unsignedAppletPrompt" xml:space="preserve">
     <value>The applet {0} is not signed and its authenticity cannot be verified. Do you want to continue installation?</value>
   </data>

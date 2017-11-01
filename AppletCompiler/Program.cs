@@ -135,9 +135,9 @@ namespace AppletCompiler
                 }
 
             Console.WriteLine("Processing {0}...", parameters.Source);
-            String manifestFile = Path.Combine(parameters.Source, "Manifest.xml");
+            String manifestFile = Path.Combine(parameters.Source, "manifest.xml");
             if (!File.Exists(manifestFile))
-                Console.WriteLine("Directory must have Manifest.xml");
+                Console.WriteLine("Directory must have manifest.xml");
             else
             {
                 Console.WriteLine("\t Reading Manifest...", parameters.Source);

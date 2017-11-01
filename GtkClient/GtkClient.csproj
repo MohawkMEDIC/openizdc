@@ -147,7 +147,6 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MessageBox.cs" />
     <Compile Include="GtkDialogProvider.cs" />
     <Compile Include="WebkitSettings.cs" />
     <Compile Include="OpenIZWebView.cs" />

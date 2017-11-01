@@ -233,24 +233,31 @@ namespace OpenIZMobile
             Log.Error("FATAL", e.ToString());
             while (e is TargetInvocationException)
                 e = e.InnerException;
+
+            var result = false;
+            AutoResetEvent reset = new AutoResetEvent(false);
+
             UserInterfaceUtils.ShowConfirm(this,
                 (s, a) =>
                 {
-                    var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
-                    bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Public);
-                    File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
-                    Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);
-                    this.Finish();
+                    result = true;
+                    reset.Set();
                 },
                 (s,a) =>
                 {
-                    var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
-                    bksvc.Backup(OpenIZ.Mobile.Core.Services.BackupMedia.Private);
-                    File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
-                    Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);
-                    this.Finish();
+                    result = false;
+                    reset.Set();
                 },
                 Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
+
+            reset.WaitOne();
+
+            var bksvc = XamarinApplicationContext.Current.GetService<IBackupService>();
+            bksvc.Backup(result ? OpenIZ.Mobile.Core.Services.BackupMedia.Public : BackupMedia.Private);
+            File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
+            Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData)), true);
+            this.Finish();
+
         }
     }
 }

@@ -133,20 +133,30 @@ namespace DisconnectedClient
 
                 if (!DcApplicationContext.StartContext(new WinFormsDialogProvider()))
                 {
-					DcApplicationContext.StartTemporary(new WinFormsDialogProvider());
-                    var minims = XamarinApplicationContext.Current.GetService<MiniImsServer>();
-
-
-                    if (!minims.IsRunning)
+                    if (!DcApplicationContext.StartTemporary(new WinFormsDialogProvider()))
                     {
-                        minims.Started += startHandler;
-                        while (!started && DateTime.Now.Subtract(start).TotalSeconds < 20 && splash.Visible)
-                            Application.DoEvents();
+                        MessageBox.Show("There was an error starting up the Disconnected Client. Please see logs in %localappdata%\\log for more information");
+                        Application.Exit();
+                        Environment.Exit(666);
+                        Cef.Shutdown();
+                        return;
                     }
+                    else
+                    {
+                        var minims = XamarinApplicationContext.Current.GetService<MiniImsServer>();
 
-                    if (minims.IsRunning)
-                        main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
-                    else return;
+
+                        if (!minims.IsRunning)
+                        {
+                            minims.Started += startHandler;
+                            while (!started && DateTime.Now.Subtract(start).TotalSeconds < 20 && splash.Visible)
+                                Application.DoEvents();
+                        }
+
+                        if (minims.IsRunning)
+                            main = new frmDisconnectedClient("http://127.0.0.1:9200/org.openiz.core/views/settings/splash.html");
+                        else return;
+                    }
                 }
                 else 
                 {
@@ -182,6 +192,7 @@ namespace DisconnectedClient
                     File.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "OpenIZ.config"));
                     Directory.Delete(Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "OpenIZDC"), true);
                 }
+                Cef.Shutdown();
                 Application.Exit();
                 Environment.Exit(996);
             }

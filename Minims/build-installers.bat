@@ -1,5 +1,5 @@
 @echo off
-set version=0.9.7.5
+set version=0.9.9.0
 
 echo Building Windows Installer
 "c:\Program Files (x86)\Inno Setup 5\ISCC.exe" "/o.\dist" ".\install.iss"
@@ -54,6 +54,7 @@ copy "..\..\AppletCompiler\bin\Release\OpenIZ.Core.Applets.dll"
 copy "..\..\AppletCompiler\bin\Release\OpenIZ.Core.Model.dll"
 copy "..\..\..\OpenIZ\bin\Release\LogViewer.exe"
 copy "..\..\OpenIZMobile\Assets\Applets\org.openiz.core.pak"
+copy "..\..\OpenIZMobile\Assets\Applets\org.openiz.templates.pak"
 copy "..\bin\SignedRelease\tools\cmdprompt.cmd"
 copy "..\..\..\OpenIZ\bin\Release\oizdt.exe"
 copy "..\..\..\OpenIZ\bin\Release\MARC.Everest.dll"

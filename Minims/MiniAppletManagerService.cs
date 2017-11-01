@@ -322,6 +322,18 @@ namespace Minims
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
 
+                tw.WriteLine("OpenIZApplicationService.GetTemplateView = function(templateId) {");
+                tw.WriteLine("\tswitch(templateId) {");
+                foreach (var itm in this.Applets.SelectMany(o => o.Templates))
+                {
+                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Mnemonic.ToLowerInvariant(), itm.View);
+                }
+                tw.WriteLine("\t}");
+                tw.WriteLine("}");
+
+                tw.WriteLine("OpenIZApplicationService.GetTemplates = function() {");
+                tw.WriteLine("return '[{0}]'", String.Join(",", this.Applets.SelectMany(o => o.Templates).Where(o => o.Public).Select(o => $"\"{o.Mnemonic}\"")));
+                tw.WriteLine("}");
                 tw.WriteLine("OpenIZApplicationService.GetDataAsset = function(assetId) {");
                 tw.WriteLine("\tswitch(assetId) {");
                 foreach (var itm in this.Applets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("data/")))
