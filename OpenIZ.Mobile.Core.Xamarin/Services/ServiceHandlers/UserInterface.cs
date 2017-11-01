@@ -69,7 +69,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         // Collect routes
                         foreach (var itm in appletService.Applets.ViewStateAssets)
                         {
+
                             var htmlContent = (itm.Content ?? appletService.Applets.Resolver?.Invoke(itm)) as AppletAssetHtml;
+                            if (htmlContent is AppletWidget) continue;  // Skip widgets
                             var viewState = htmlContent.ViewState;
                             sw.WriteLine($"{{ name: '{viewState.Name}', url: '{viewState.Route}', abstract: {viewState.IsAbstract.ToString().ToLower()}, views: {{");
                             foreach(var view in viewState.View)
