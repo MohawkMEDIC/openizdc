@@ -111,7 +111,7 @@
                     <label>
                         {{ 'locale.encounters.protocolViolation.reason' | i18n }}
                     </label>
-                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled &amp;&amp; act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
+                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled &amp;&amp; (act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime || !act.targetModel.relationship.Fulfills.targetModel.startTime)" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
                     </select>
                 </div>
@@ -153,7 +153,7 @@
                                 data-display="scope.lotNumber"
                                 data-defaultEmpty="true"
                                 data-defaultFirst="true"
-                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf'; scp.addMissingConsumable(act.targetModel.id, '{{ product.targetModel.name.Assigned | oizEntityName }}');"></select>
+                                data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf'; scp.addMissingConsumable(act.targetModel.id, '{{ (product.targetModel.name.Assigned || product.targetModel.name.OfficialRecord) | oizEntityName }}');"></select>
                     </div>
                     <div class="help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + product.target].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + product.target].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}

@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', function ($scope, $rootScope, $stateParams) {
+angular.module('layout').controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', function ($scope, $rootScope, $stateParams) {
     $scope._isCalendarInitialized = false;
     $scope.isLoading = false;
     var appointmentBundleSubmitted;

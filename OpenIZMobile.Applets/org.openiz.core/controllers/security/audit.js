@@ -23,7 +23,7 @@
 /// <reference path="~/js/openiz-audit.js"/>
 /// <reference path="~/js/openiz-model.js"/>
 
-layoutApp.controller('AuditController', ['$scope', function ($scope) {
+angular.module('layout').controller('AuditController', ['$scope', function ($scope) {
 
     $scope.audit = { selected: null };
     $scope.audit.query = {

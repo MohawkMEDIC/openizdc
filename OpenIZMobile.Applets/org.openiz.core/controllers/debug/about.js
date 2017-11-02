@@ -23,7 +23,7 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('AboutApplicationController', ['$scope', '$rootScope', '$state', function ($scope, $rootScope, $state) {
+angular.module('layout').controller('AboutApplicationController', ['$scope', '$rootScope', '$state', function ($scope, $rootScope, $state) {
 
     var cachePlace = {};
 

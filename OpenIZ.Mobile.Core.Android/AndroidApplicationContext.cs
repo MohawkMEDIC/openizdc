@@ -213,6 +213,7 @@ namespace OpenIZ.Mobile.Core.Android
                         catch(AppDomainUnloadedException) { throw; }
                         catch (Exception e)
                         {
+                            retVal.m_tracer.TraceError("Applet Load Error: {0}", e);
                             if (retVal.Confirm(String.Format(Strings.err_applet_corrupt_reinstall, appletInfo.Id)))
                             {
                                 String appletPath = Path.Combine(retVal.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);

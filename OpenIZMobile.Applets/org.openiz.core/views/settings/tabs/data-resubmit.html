@@ -1,5 +1,5 @@
 ﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="row" ng-controller="ResubmitDataController">
-    <oiz:script>~/controllers/settings/tabs/data-resubmit.js</oiz:script>
+    <oiz:script static="false">~/controllers/settings/tabs/data-resubmit.js</oiz:script>
     <form ng-submit="resubmit(resubmitForm)" name="resubmitForm">
         <h3>{{ 'locale.settings.data.resubmit' | i18n }}</h3>
         <p>{{ 'locale.settings.data.resubmit.description' | i18n }}</p>

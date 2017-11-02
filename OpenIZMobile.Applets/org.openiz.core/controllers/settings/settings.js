@@ -21,7 +21,7 @@
 
 /// <reference path="../../js/openiz.js"/>
 
-layoutApp.controller('SettingsController', ['$scope', 'uiHelperService', function ($scope, uiHelperService) {
+angular.module('layout').controller('SettingsController', ['$scope', 'uiHelperService', function ($scope, uiHelperService) {
 
     if (OpenIZ.Authentication.$session == null)
         OpenIZ.Authentication.$session = {};

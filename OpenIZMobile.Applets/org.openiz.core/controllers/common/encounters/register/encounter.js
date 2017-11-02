@@ -24,7 +24,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function ($scope, $timeout) {
+angular.module('layout').controller('EncounterEntryController', ['$scope', '$timeout', function ($scope, $timeout) {
     // Get the current scope that we're in
     var scope = $scope;
     scope.missingConsumables = [];

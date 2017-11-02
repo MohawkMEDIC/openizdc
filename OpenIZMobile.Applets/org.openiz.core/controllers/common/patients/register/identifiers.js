@@ -22,7 +22,7 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+angular.module('layout').controller('PatientIdentifiersController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
     $scope.addIdentifier = addIdentifier;
     $scope.scanBarcode = scanBarcode;

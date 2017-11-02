@@ -23,7 +23,7 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('SyncCentreController', ['$scope', '$state', '$rootScope', function ($scope, $state, $rootScope) {
+angular.module('layout').controller('SyncCentreController', ['$scope', '$state', '$rootScope', function ($scope, $state, $rootScope) {
 
 
     $scope.queue = {};
