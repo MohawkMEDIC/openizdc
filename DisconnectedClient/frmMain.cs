@@ -159,15 +159,14 @@ namespace DisconnectedClient
 
             this.m_browser = new ChromiumWebBrowser(url);
             this.m_browser.RequestHandler = new DisconnectedClientRequestHandler();
-
+            
 #if !DEBUG
             mnsTools.Visible = Program.Parameters.Debug;
 #endif
-
             this.m_browser.RegisterJsObject("OpenIZApplicationService", new AppletFunctionBridge(this));
             this.pnlMain.Controls.Add(this.m_browser);
             this.m_browser.Dock = DockStyle.Fill;
-
+            this.m_browser.JsDialogHandler = new WinFormsDialogProvider();
         }
 
         // Go dback
