@@ -92,6 +92,7 @@ namespace Minims
                     var cData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MINIMS");
                     if (Directory.Exists(appData)) Directory.Delete(cData, true);
                     if (Directory.Exists(appData)) Directory.Delete(appData, true);
+                    Console.WriteLine("Environment Reset Successful");
                     return;
                 }
 

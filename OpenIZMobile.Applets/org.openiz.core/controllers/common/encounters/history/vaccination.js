@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('VaccinationHistoryController', ['$scope','$rootScope', function($scope, $rootScope) {
+angular.module('layout').controller('VaccinationHistoryController', ['$scope', '$rootScope', function ($scope, $rootScope) {
     //    $('.oiz-vaccination-history').each(function (i, e) {
     // Get the current scope that we're in
     //        var scope = angular.element(e).scope();

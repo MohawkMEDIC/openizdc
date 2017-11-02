@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/bootstrap.min.js"/>
-layoutApp.controller('AuthenticationDialogController', ['$scope', function ($scope) {
+angular.module('layout').controller('AuthenticationDialogController', ['$scope', function ($scope) {
 
     $scope.authenticate = function (form) {
         if(!form.$valid) 

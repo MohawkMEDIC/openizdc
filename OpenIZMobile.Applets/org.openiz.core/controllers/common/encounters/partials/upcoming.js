@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams', '$rootScope', function ($scope, $stateParams, $rootScope) {
+angular.module('layout').controller('UpcomingAppointmentController', ['$scope', '$stateParams', '$rootScope', function ($scope, $stateParams, $rootScope) {
     $scope._isCalendarInitialized = false;
 
     $scope.$watch("encounters.length", function (newValue, oldValue) {

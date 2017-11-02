@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function ($scope, $stateParams)
+angular.module('layout').controller('YellowCardController', ['$scope', '$stateParams', function ($scope, $stateParams)
 {
     var scope = $scope.$parent;
     // Init data

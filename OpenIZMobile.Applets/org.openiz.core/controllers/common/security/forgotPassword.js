@@ -20,7 +20,7 @@
  */
 
 /// <reference path="~/js/openiz.js"/>
-layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexService', function ($scope, $window, regexService) {
+angular.module('layout').controller('ForgotPasswordController', ['$scope', '$window', 'regexService', function ($scope, $window, regexService) {
 
     var controller = this;
 

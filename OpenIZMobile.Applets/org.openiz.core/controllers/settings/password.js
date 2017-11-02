@@ -21,7 +21,7 @@
 
 /// <reference path="../../js/openiz.js"/>
 
-layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', 'regexService', function ($scope, $rootScope, regexService) {
+angular.module('layout').controller('UserPasswordController', ['$scope', '$rootScope', 'regexService', function ($scope, $rootScope, regexService) {
 
     $scope.regexService = regexService;
 

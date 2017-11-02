@@ -21,7 +21,7 @@
 
 /// <reference path="../../js/openiz.js"/>
 
-layoutApp.controller('PreferencesController', ['$scope', function ($scope) {
+angular.module('layout').controller('PreferencesController', ['$scope', function ($scope) {
     $scope.isNetworkAvailable = function () {
         return OpenIZ.App.networkAvailable();
     };

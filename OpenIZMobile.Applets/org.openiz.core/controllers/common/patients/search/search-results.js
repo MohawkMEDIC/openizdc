@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 
 // Document ready, bind search results to their related contexts
-layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
+angular.module('layout').controller('SearchResultsController', ['$scope', function ($scope) {
 
     // Get the current scope that we're in
     var scope = $scope;

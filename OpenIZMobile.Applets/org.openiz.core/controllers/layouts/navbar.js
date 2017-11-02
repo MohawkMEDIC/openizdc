@@ -22,7 +22,7 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
-layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', '$state', '$templateCache', function ($scope, $interval, $rootScope, $window , $state, $templateCache) {
+angular.module('layout').controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', '$state', '$templateCache', function ($scope, $interval, $rootScope, $window, $state, $templateCache) {
     
     $rootScope.$watch('session', function (nv, ov) {
         if (nv && nv.user) {
