@@ -44,6 +44,6 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('DemographicSummaryController', ['$scope', function ($scope) {
+angular.module('layout').controller('DemographicSummaryController', ['$scope', function ($scope) {
 
 }]);

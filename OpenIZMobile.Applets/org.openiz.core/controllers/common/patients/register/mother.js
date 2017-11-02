@@ -22,7 +22,7 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('MothersInformationController', ['$scope', function ($scope) {
+angular.module('layout').controller('MothersInformationController', ['$scope', function ($scope) {
 
     $scope.scanBarcode = scanBarcode;
     $scope.mothersRegexValidation = '';

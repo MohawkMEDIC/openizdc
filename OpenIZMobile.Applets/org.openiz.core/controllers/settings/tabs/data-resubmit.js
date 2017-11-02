@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/js/openiz.js"/>
 /// <reference path="~/js/openiz-model.js"/>
 
-layoutApp.controller('ResubmitDataController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+angular.module('layout').controller('ResubmitDataController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
     // Resubmit data controller
     $scope.resubmit = {

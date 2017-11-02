@@ -21,7 +21,7 @@
 
 /// <reference path="../../js/openiz.js"/>
 
-layoutApp.controller('UserPasswordRecoveryController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+angular.module('layout').controller('UserPasswordRecoveryController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
     $rootScope.$watch('session', function (nv, ov) {
         $scope.changeData = {

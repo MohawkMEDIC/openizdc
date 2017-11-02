@@ -316,5 +316,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         {
             throw new NotImplementedException();
         }
+
+        public bool IsMember(Guid set, Guid concept)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

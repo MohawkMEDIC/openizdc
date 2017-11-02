@@ -21,7 +21,7 @@
 /// <reference path="~/js/openiz.js"/>
 
 // Report list controller
-layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile', function ($scope, $rootScope, $compile) {
+angular.module('layout').controller('ReportListController', ['$scope', '$rootScope', '$compile', function ($scope, $rootScope, $compile) {
 
     $scope.isLoading = true;
     $scope.reports = [];

@@ -23,7 +23,7 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+angular.module('layout').controller('ReportBugController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
     $rootScope.$watch('session', function (n, o) {
         if(n != null)

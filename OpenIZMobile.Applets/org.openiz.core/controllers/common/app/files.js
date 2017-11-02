@@ -20,7 +20,7 @@
  */
 
 /// <reference path="../../js/openiz.js"/>
-layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
+angular.module('layout').controller("DatabaseController", ["$scope", function ($scope) {
 
     // Compact the database
     $scope.doCompact = function () {

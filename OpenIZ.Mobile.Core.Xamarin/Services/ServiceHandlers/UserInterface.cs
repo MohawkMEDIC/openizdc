@@ -74,9 +74,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             sw.WriteLine($"{{ name: '{viewState.Name}', url: '{viewState.Route}', abstract: {viewState.IsAbstract.ToString().ToLower()}, views: {{");
                             foreach(var view in viewState.View)
                             {
-                                sw.WriteLine($"'{view.Name}' : {{ controller: '{view.Controller}', templateUrl: '{view.Route ?? itm.ToString() }' }}, ");
+                                sw.Write($"'{view.Name}' : {{ controller: '{view.Controller}', templateUrl: '{view.Route ?? itm.ToString() }'");
+                                var dynScripts = appletService.Applets.GetLazyScripts(itm);
+                                if (dynScripts.Any())
+                                {
+                                    int i = 0;
+                                    sw.Write($", resolve: {{ {String.Join(",", dynScripts.Select(o => $"loadState{i++}: [ '$ocLazyLoad', function($ocLazyLoad) {{ return $ocLazyLoad.load('{appletService.Applets.ResolveAsset(o.Reference, itm)}'); }} ]")) }  }}");
+                                }
+                                sw.WriteLine(" }}, ");
                             }
-                            sw.WriteLine("} },");
+                            sw.WriteLine("} ,");
                         }
                         sw.Write("];");
                     }

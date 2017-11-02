@@ -24,7 +24,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/controllers/layouts/navbar.js"/>
 
-layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state', function ($scope, $stateParams, $state)
+angular.module('layout').controller('ViewAlertController', ['$scope', '$stateParams', '$state', function ($scope, $stateParams, $state)
 {
     $scope.selectedMessageID = null;
 

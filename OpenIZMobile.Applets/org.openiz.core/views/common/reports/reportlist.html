@@ -18,11 +18,12 @@
  - Date: 2017-6-28
  -->
 <div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-    <oiz:script>~/controllers/common/reports/reportlist.js</oiz:script>
     <oiz:state name="org-openiz-core.reports">
         <oiz:url>/reports</oiz:url>
         <oiz:view>
             <oiz:controller>ReportListController</oiz:controller>
+            <oiz:script static="false">~/controllers/common/reports/reportlist.js</oiz:script>
+
             <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
             <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.3</oiz:demand>
             <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.0</oiz:demand>

@@ -1,0 +1,169 @@
+[
+  {
+    "outputFileName": "org.openiz.core/js/openiz-localize.min.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz-localize.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/js/openiz-model.min.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz-model.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/js/openiz.min.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/theme.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/theme.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/lib/bootstrap-tokenfield.min.js",
+    "inputFiles": [
+      "org.openiz.core/lib/bootstrap-tokenfield.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/lib/jquery.datefix.min.js",
+    "inputFiles": [
+      "org.openiz.core/lib/jquery.datefix.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/lib/select2.min.js",
+    "inputFiles": [
+      "org.openiz.core/lib/select2.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/js/openiz-ng.min.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz-ng.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/lib/bootstrap-wizard.min.js",
+    "inputFiles": [
+      "org.openiz.core/lib/bootstrap-wizard.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/js/openiz-dw.min.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz-dw.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/js/openiz-bre.min.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz-bre.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/lib/vis.min.js",
+    "inputFiles": [
+      "org.openiz.core/lib/vis.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/lib/select2-extended-ajax.min.js",
+    "inputFiles": [
+      "org.openiz.core/lib/select2-extended-ajax.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/lib/angular-filter.min.js",
+    "inputFiles": [
+      "org.openiz.core/lib/angular-filter.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/fullcalendar.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/fullcalendar.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/fullcalendar.print.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/fullcalendar.print.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/pageloader.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/pageloader.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/vis.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/vis.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/xeditable.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/xeditable.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/toastr.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/toastr.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/js/openiz-audit.min.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz-audit.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/js/openiz-core.js",
+    "inputFiles": [
+      "org.openiz.core/js/openiz-audit.js",
+      "org.openiz.core/js/openiz-bre.js",
+      "org.openiz.core/js/openiz-dw.js",
+      "org.openiz.core/js/openiz-model.js"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/radial-progress.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/radial-progress.css"
+    ]
+  },
+  {
+    "outputFileName": "org.openiz.core/css/radialprogress.min.css",
+    "inputFiles": [
+      "org.openiz.core/css/radialprogress.css"
+    ]
+  },
+   {
+    "outputFileName": "orglib/lib-core.min.js",
+    "inputFiles": [
+      "lib/jquery.min.js",
+      "lib/jquery.datefix.min.js",
+      "lib/angular.min.js",
+      "lib/angular-route.min.js",
+      "lib/angular-ui-router.min.js",
+      "lib/angular-sanitize.min.js",
+      "lib/angular-filter.min.js",
+      "lib/bootstrap.min.js",
+      "lib/bootstrap-tokenfield.min.js",
+      "lib/moment.min.js",
+      "lib/select2.min.js",
+      "lib/select2-extended-ajax.min.js",
+      "lib/toastr.min.js",
+      "lib/vis.min.js",
+      "lib/fullcalendar.min.js"
+    ]
+  }
+]

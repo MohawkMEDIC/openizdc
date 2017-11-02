@@ -21,7 +21,7 @@
 
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="../../js/openiz.js"/>
-layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window', function ($scope, $rootScope, $window) {
+angular.module('layout').controller('UserProfileController', ['$scope', '$rootScope', '$window', function ($scope, $rootScope, $window) {
     $scope.editObject = {};
 
     $rootScope.$watch('session', function (n, o) {

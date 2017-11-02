@@ -67,10 +67,18 @@ namespace OpenIZ.Mobile.Core.Caching
 			}
 		}
 
-		/// <summary>
-		/// Service is starting
-		/// </summary>
-		public event EventHandler Started;
+        public long Size
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Service is starting
+        /// </summary>
+        public event EventHandler Started;
 		/// <summary>
 		/// Service has started
 		/// </summary>
@@ -371,6 +379,14 @@ namespace OpenIZ.Mobile.Core.Caching
                 MemoryCache.Current.RemoveObject(key);
                 this.Removed?.Invoke(this, new DataCacheEventArgs(exist));
             }
+        }
+
+        /// <summary>
+        /// Clear the memory cache
+        /// </summary>
+        public void Clear()
+        {
+            MemoryCache.Current.Clear();
         }
     }
 }

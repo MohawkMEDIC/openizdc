@@ -19,7 +19,7 @@
  -->
 <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
           xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
-    <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
+    <oiz:script static="false">/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
     <div class="form-group">
         <label class="col-xs-3 control-label" for="relationType">{{ 'locale.patient.relative.type' | i18n }}<span ng-if="motherUnknown">*</span></label>
         <div class="col-xs-9" ng-class="{ 'has-error': (motherUnknown &amp;&amp; editPatientForm.nextOfKinRelationshipType.$pristine &amp;&amp; (editPatientForm.$submitted || formSubmitted))}">
