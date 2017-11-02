@@ -6,8 +6,8 @@ mkdir dist
 cd dist
 
 # create structure
-mkdir openiz-sdk-0.9.8
-cd openiz-sdk-0.9.8
+mkdir openiz-sdk-0.9.9.2
+cd openiz-sdk-0.9.9.2
 mkdir openizsdk
 mkdir openizsdk/bin
 mkdir openizsdk/lib
