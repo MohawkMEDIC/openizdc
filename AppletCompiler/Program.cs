@@ -83,7 +83,7 @@ namespace AppletCompiler
                     pkg.Save(fs);
                 return 0;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.Error.WriteLine("Cannot sign package: {0}", e);
                 return -0232;
@@ -295,7 +295,7 @@ namespace AppletCompiler
             List<AppletAsset> retVal = new List<AppletAsset>();
             foreach (var itm in Directory.GetFiles(source))
             {
-                if(Path.GetFileName(itm).StartsWith("."))
+                if (Path.GetFileName(itm).StartsWith("."))
                 {
                     Console.WriteLine("\t Skipping {0}...", itm);
                     continue;
@@ -313,30 +313,54 @@ namespace AppletCompiler
                             XElement xe = XElement.Load(itm);
 
                             // Now we have to iterate throuh and add the asset\
-                            AppletAssetHtml htmlAsset = new AppletAssetHtml();
-                            htmlAsset.Layout = ResolveName(xe.Attribute(xs_openiz + "layout")?.Value);
+                            AppletAssetHtml htmlAsset = null;
+
+                            if (xe.Elements().OfType<XElement>().Any(o => o.Name == xs_openiz + "widget"))
+                            {
+                                var widgetEle = xe.Elements().OfType<XElement>().FirstOrDefault(o => o.Name == xs_openiz + "widget");
+                                htmlAsset = new AppletWidget()
+                                {
+                                    Icon = widgetEle.Element(xs_openiz + "icon")?.Value,
+                                    Type = (AppletWidgetType)Enum.Parse(typeof(AppletWidgetType), widgetEle.Attribute("type")?.Value),
+                                    Scope = (AppletWidgetScope)Enum.Parse(typeof(AppletWidgetScope), widgetEle.Attribute("scope")?.Value),
+                                    Description = widgetEle.Elements().Where(o => o.Name == xs_openiz + "description").Select(o => new LocaleString() { Value = o.Value, Language = o.Attribute("lang")?.Value }).ToList(),
+                                    Name = widgetEle.Attribute("name")?.Value,
+                                    Controller = widgetEle.Element(xs_openiz + "controller")?.Value,
+                                };
+                            }
+                            else
+                            {
+                                htmlAsset = new AppletAssetHtml();
+                                // View state data
+                                htmlAsset.ViewState = xe.Elements().OfType<XElement>().Where(o => o.Name == xs_openiz + "state").Select(o => new AppletViewState()
+                                {
+                                    Name = o.Attribute("name")?.Value,
+                                    Route = o.Elements().OfType<XElement>().FirstOrDefault(r => r.Name == xs_openiz + "url" || r.Name == xs_openiz + "route")?.Value,
+                                    IsAbstract = Boolean.Parse(o.Attribute("abstract")?.Value ?? "False"),
+                                    View = o.Elements().OfType<XElement>().Where(v => v.Name == xs_openiz + "view")?.Select(v => new AppletView()
+                                    {
+                                        Name = v.Attribute("name")?.Value,
+                                        Title = v.Elements().OfType<XElement>().Where(t => t.Name == xs_openiz + "title")?.Select(t => new LocaleString()
+                                        {
+                                            Language = t.Attribute("lang")?.Value,
+                                            Value = t?.Value
+                                        }).ToList(),
+                                        Controller = v.Element(xs_openiz + "controller")?.Value
+                                    }).ToList()
+                                }).FirstOrDefault();
+                                htmlAsset.Layout = ResolveName(xe.Attribute(xs_openiz + "layout")?.Value);
+                                htmlAsset.Static = xe.Attribute(xs_openiz + "static")?.Value == "true";
+                            }
+
                             htmlAsset.Titles = new List<LocaleString>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "title").Select(o => new LocaleString() { Language = o.Attribute("lang")?.Value, Value = o.Value }));
                             htmlAsset.Bundle = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "bundle").Select(o => ResolveName(o.Value)));
-                            htmlAsset.Script = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "script").Select(o => ResolveName(o.Value)));
-                            htmlAsset.Style = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "style").Select(o => ResolveName(o.Value)));
-                            htmlAsset.Static = xe.Attribute(xs_openiz + "static")?.Value == "true";
-                            htmlAsset.ViewState = xe.Elements().OfType<XElement>().Where(o => o.Name == xs_openiz + "state").Select(o => new AppletViewState()
+                            htmlAsset.Script = new List<AssetScriptReference>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "script").Select(o => new AssetScriptReference()
                             {
-                                Name = o.Attribute("name")?.Value,
-                                Route = o.Elements().OfType<XElement>().FirstOrDefault(r => r.Name == xs_openiz + "url" || r.Name == xs_openiz + "route")?.Value,
-                                IsAbstract = Boolean.Parse(o.Attribute("abstract")?.Value ?? "False"),
-                                View = o.Elements().OfType<XElement>().Where(v => v.Name == xs_openiz + "view")?.Select(v => new AppletView()
-                                {
-                                    Name = v.Attribute("name")?.Value,
-                                    Title = v.Elements().OfType<XElement>().Where(t => t.Name == xs_openiz + "title")?.Select(t => new LocaleString()
-                                    {
-                                        Language = t.Attribute("lang")?.Value,
-                                        Value = t?.Value
-                                    }).ToList(),
-                                    Controller = v.Element(xs_openiz + "controller")?.Value,
-                                    ControllerScript = v.Element(xs_openiz + "script")?.Value
-                                }).ToList()
-                            }).FirstOrDefault();
+                                Reference = ResolveName(o.Value),
+                                IsStatic = Boolean.Parse(o.Attribute("static")?.Value ?? "true")
+                            }));
+                            htmlAsset.Style = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "style").Select(o => ResolveName(o.Value)));
+
                             var demand = xe.DescendantNodes().OfType<XElement>().Where(o => o.Name == xs_openiz + "demand").Select(o => o.Value).ToList();
 
                             var includes = xe.DescendantNodes().OfType<XComment>().Where(o => o?.Value?.Trim().StartsWith("#include virtual=\"") == true).ToList();
@@ -350,7 +374,6 @@ namespace AppletCompiler
                                 var includeAsset = ResolveName(assetName);
                                 inc.AddAfterSelf(new XComment(String.Format("#include virtual=\"{0}\"", includeAsset)));
                                 inc.Remove();
-
                             }
 
                             var xel = xe.Descendants().OfType<XElement>().Where(o => o.Name.Namespace == xs_openiz).ToList();
@@ -358,6 +381,7 @@ namespace AppletCompiler
                                 foreach (var x in xel)
                                     x.Remove();
                             htmlAsset.Html = xe;
+
                             retVal.Add(new AppletAsset()
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
