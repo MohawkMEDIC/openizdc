@@ -29,43 +29,48 @@
     <view>/org.openiz.templates/templates/views/display/act.substanceadmin.immunization.html</view>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.0</oid>
     <definition>/org.openiz.templates/templates/act.substanceadmin.immunization.json</definition>
+    <scope>org.openiz.act</scope>
   </template>
   <template mnemonic="act.substanceadmin.supplement" public="true">
     <form>/org.openiz.templates/templates/views/entry/act.substanceadmin.supplement.html</form>
     <view>/org.openiz.templates/templates/views/display/act.substanceadmin.supplement.html</view>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.1</oid>
     <definition>/org.openiz.templates/templates/act.substanceadmin.supplement.json</definition>
+    <scope>org.openiz.act</scope>
   </template>
   <template mnemonic="act.observation.weight" public="true">
     <form>/org.openiz.templates/templates/views/entry/act.observation.weight.html</form>
     <view>/org.openiz.templates/templates/views/display/act.observation.weight.html</view>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.0</oid>
     <definition>/org.openiz.templates/templates/act.observation.weight.json</definition>
+    <scope>org.openiz.act</scope>
   </template>
   <template mnemonic="act.observation.causeofdeath" public="true">
     <form>/org.openiz.templates/templates/views/entry/act.observation.causeofdeath.html</form>
     <view>/org.openiz.templates/templates/views/display/act.observation.causeofdeath.html</view>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.1</oid>
     <definition>/org.openiz.templates/templates/act.observation.causeofdeath.json</definition>
+    <scope>org.openiz.act</scope>
   </template>
   <template mnemonic="act.concern.aefi" public="true">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.0</oid>
     <definition>/org.openiz.templates/templates/act.concern.aefi.json</definition>
     <form>/org.openiz.templates/templates/views/entry/act.concern.aefi.html</form>
     <view>/org.openiz.templates/templates/views/display/act.concern.aefi.html</view>
+    <scope>org.openiz.act</scope>
   </template>
   <template mnemonic="act.patientencounter.appointment">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.2.0</oid>
     <definition>/org.openiz.templates/templates/act.patientencounter.appointment.json</definition>
+    <scope>org.openiz.schedule</scope>
   </template>
   <template mnemonic="act.problem" public="true">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.1</oid>
     <definition>/org.openiz.templates/templates/act.problem.json</definition>
     <form>/org.openiz.templates/templates/views/entry/act.problem.html</form>
     <view>/org.openiz.templates/templates/views/display/act.problem.html</view>
+    <scope>org.openiz.act</scope>
   </template>
-
-
   <strings lang="en">
     <!-- Actions -->
     <string key="locale.action.activate">Activate</string>

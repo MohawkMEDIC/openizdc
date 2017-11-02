@@ -333,7 +333,8 @@ namespace AppletCompiler
                                         Language = t.Attribute("lang")?.Value,
                                         Value = t?.Value
                                     }).ToList(),
-                                    Controller = v.Element(xs_openiz + "controller")?.Value
+                                    Controller = v.Element(xs_openiz + "controller")?.Value,
+                                    ControllerScript = v.Element(xs_openiz + "script")?.Value
                                 }).ToList()
                             }).FirstOrDefault();
                             var demand = xe.DescendantNodes().OfType<XElement>().Where(o => o.Name == xs_openiz + "demand").Select(o => o.Value).ToList();

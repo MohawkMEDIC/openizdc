@@ -22,7 +22,7 @@
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/toastr.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', 'angular.filter'])
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', 'angular.filter', 'oc.lazyLoad'])
     .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', '$httpProvider', function ($compileProvider, $stateProvider, $urlRouterProvider, $httpProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
