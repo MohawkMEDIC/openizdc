@@ -69,16 +69,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         // Collect routes
                         foreach (var itm in appletService.Applets.ViewStateAssets)
                         {
-
                             var htmlContent = (itm.Content ?? appletService.Applets.Resolver?.Invoke(itm)) as AppletAssetHtml;
-                            if (htmlContent is AppletWidget) continue;  // Skip widgets
                             var viewState = htmlContent.ViewState;
                             sw.WriteLine($"{{ name: '{viewState.Name}', url: '{viewState.Route}', abstract: {viewState.IsAbstract.ToString().ToLower()}, views: {{");
                             foreach(var view in viewState.View)
                             {
                                 sw.Write($"'{view.Name}' : {{ controller: '{view.Controller}', templateUrl: '{view.Route ?? itm.ToString() }'");
-                                if(!String.IsNullOrEmpty(view.ControllerScript))
-                                    sw.Write($", resolve: {{ loadState: [ '$ocLazyLoad', function($ocLazyLoad) {{ return $ocLazyLoad.load('{appletService.Applets.ResolveAsset(view.ControllerScript, itm)}'); }} ] }}");
+                                if (htmlContent.Script.Any(o => o.IsStatic == false))
+                                {
+                                    int i = 0;
+                                    sw.Write($", resolve: {{ {String.Join(",", htmlContent.Script.Where(o => o.IsStatic == false).Select(o => $"loadState{i++}: [ '$ocLazyLoad', function($ocLazyLoad) {{ return $ocLazyLoad.load('{appletService.Applets.ResolveAsset(o.Reference, itm)}'); }} ]")) }  }}");
+                                }
                                 sw.WriteLine(" }}, ");
                             }
                             sw.WriteLine("} ,");

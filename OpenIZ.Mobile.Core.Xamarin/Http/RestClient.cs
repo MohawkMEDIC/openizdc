@@ -540,37 +540,73 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         case WebExceptionStatus.ProtocolError:
 
                             // Deserialize
-                            ErrorResult errorResult = default(ErrorResult);
+                            object errorResult = default(ErrorResult);
 
                             var errorResponse = (e.Response as HttpWebResponse);
                             var responseContentType = errorResponse.ContentType;
                             if (responseContentType.Contains(";"))
                                 responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
+
+                            var ms = new MemoryStream(); // copy response to memory
+                            errorResponse.GetResponseStream().CopyTo(ms);
+                            ms.Seek(0, SeekOrigin.Begin);
+
                             try
                             {
-                                var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(ErrorResult));
+                                var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
 
-                                switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
+                                try
                                 {
-                                    case "deflate":
-                                        using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            errorResult = (ErrorResult)serializer.DeSerialize(df);
-                                        break;
-                                    case "gzip":
-                                        using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            errorResult = (ErrorResult)serializer.DeSerialize(df);
-                                        break;
-                                    case "bzip2":
-                                        using (var bzs = new BZip2Stream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            errorResult = (ErrorResult)serializer.DeSerialize(bzs);
-                                        break;
-                                    case "lzma":
-                                        using (var lzmas = new LZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
-                                            errorResult = (ErrorResult)serializer.DeSerialize(lzmas);
-                                        break;
-                                    default:
-                                        errorResult = (ErrorResult)serializer.DeSerialize(errorResponse.GetResponseStream());
-                                        break;
+                                    switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
+                                    {
+                                        case "deflate":
+                                            using (DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (TResult)serializer.DeSerialize(df);
+                                            break;
+                                        case "gzip":
+                                            using (GZipStream df = new GZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (TResult)serializer.DeSerialize(df);
+                                            break;
+                                        case "bzip2":
+                                            using (var bzs = new BZip2Stream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (TResult)serializer.DeSerialize(bzs);
+                                            break;
+                                        case "lzma":
+                                            using (var lzmas = new LZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (TResult)serializer.DeSerialize(lzmas);
+                                            break;
+                                        default:
+                                            errorResult = (TResult)serializer.DeSerialize(ms);
+                                            break;
+                                    }
+                                }
+                                catch
+                                {
+                                    serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(ErrorResult));
+
+                                    ms.Seek(0, SeekOrigin.Begin); // rewind and try generic error codes
+                                    switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
+                                    {
+                                        case "deflate":
+                                            using (DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (ErrorResult)serializer.DeSerialize(df);
+                                            break;
+                                        case "gzip":
+                                            using (GZipStream df = new GZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (ErrorResult)serializer.DeSerialize(df);
+                                            break;
+                                        case "bzip2":
+                                            using (var bzs = new BZip2Stream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (ErrorResult)serializer.DeSerialize(bzs);
+                                            break;
+                                        case "lzma":
+                                            using (var lzmas = new LZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                                errorResult = (ErrorResult)serializer.DeSerialize(lzmas);
+                                            break;
+                                        default:
+                                            errorResult = (ErrorResult)serializer.DeSerialize(ms);
+                                            break;
+                                    }
                                 }
                                 //result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
                             }
@@ -579,29 +615,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                 this.m_tracer.TraceError("Could not de-serialize error response! {0}", dse.Message);
                             }
 
+                            Exception exception = null;
+                            if (errorResult is TResult)
+                                exception = new RestClientException<TResult>((TResult)errorResult, e, e.Status, e.Response);
+                            else
+                                exception = new RestClientException<ErrorResult>((ErrorResult)errorResult, e, e.Status, e.Response);
+
                             switch (errorResponse.StatusCode)
                             {
                                 case HttpStatusCode.Unauthorized: // Validate the response
                                     if (this.ValidateResponse(errorResponse) != ServiceClientErrorType.Valid)
-                                        throw new RestClientException<ErrorResult>(
-                                            errorResult,
-                                            e,
-                                            e.Status,
-                                            e.Response);
-
+                                        throw exception;
                                     break;
-                                case HttpStatusCode.Conflict:
-                                    throw new RestClientException<ErrorResult>(
-                                        errorResult,
-                                        e,
-                                        e.Status,
-                                        e.Response);
                                 default:
-                                    throw new RestClientException<ErrorResult>(
-                                        errorResult,
-                                        e,
-                                        e.Status,
-                                        e.Response);
+                                    throw exception;
                             }
                             break;
                         default:
