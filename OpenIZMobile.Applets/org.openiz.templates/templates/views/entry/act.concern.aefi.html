@@ -36,7 +36,7 @@
                   class="form-control"
                   data-default-key="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6"
                   ng-model="act.targetModel.relationship.RefersTo.target"
-                  ng-change="bindRelationship(act.targetModel, 'RefersTo', act.targetModel.relationship.RefersTo.target, 'act.relationship.HasSubject.targetModel.value = (act.relationship.RefersTo.targetModel.participation.Consumable || act.relationship.RefersTo.targetModel.participation.Product).playerModel.typeConceptModel.id; act.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime = act.relationship.RefersTo.targetModel.actTime')"
+                  ng-change="bindRelationship(act.targetModel, 'RefersTo', act.targetModel.relationship.RefersTo.target, 'act.relationship.HasSubject.targetModel.value = act.relationship.RefersTo.targetModel.participation.Product.playerModel.typeConceptModel.id; act.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime = act.relationship.RefersTo.targetModel.actTime')"
                   oiz-databind="Act"
                   data-filter='{ "participation[RecordTarget].player" : "{{ patient.id }}", "statusConcept" : "afc33800-8225-4061-b168-bacc09cdbae3", "classConcept" : "932a3c7e-ad77-450a-8a1f-030fc2855450", "isNegated": "false" }'
                   data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned) + ' ' + OpenIZ.Localization.getString('locale.encounters.immunization.doseSequence') + ' ' + (scope.doseSequence === 0 ? OpenIZ.Localization.getString('locale.encounters.immunization.birthDose') : scope.doseSequence)"
@@ -48,7 +48,7 @@
           <label>
             {{ 'locale.encounters.immunizations.lot' | i18n }} :
           </label>
-          {{act.targetModel.relationship.RefersTo.targetModel.participation.Consumable.playerModel.lotNumber}}
+          {{toArray(act.targetModel.relationship.RefersTo.targetModel.participation.Consumable)[0].playerModel.lotNumber}}
           <label>
             {{ 'locale.encounters.date' | i18n }} :
           </label>
