@@ -474,7 +474,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
                 foreach (var itm in uniqueIds)
                 {
-                    byte[] authId = itm.Key.Value.ToByteArray();
+                    byte[] authId = itm.Authority.Key.Value.ToByteArray();
                     if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
                         throw new DuplicateKeyException(itm.Value);
                 }
