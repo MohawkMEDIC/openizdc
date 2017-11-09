@@ -283,8 +283,21 @@ angular.module('openiz', [])
                     break;
             }
 
-            if(date)
-                return moment(date).format(dateFormat);
+            if (date) {
+                // Non timed
+                switch (format) {
+                    case 1:   // Year, Month, Day always expressed in UTC for Javascript will take the original server value and adjust.
+                    case 'Y':
+                    case 2:
+                    case 'm':
+                    case 3:
+                    case 'D':
+                        return moment(date).utc().format(dateFormat);
+                    default:
+                        return moment(date).format(dateFormat);
+                }
+            }
+
             return null;
         };
     })

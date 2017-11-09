@@ -45,6 +45,7 @@ using Jint.Parser.Ast;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Mobile.Core.Interop.IMSI;
 using OpenIZ.Core.Model.Entities;
+using System.Threading;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -237,12 +238,29 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [Demand(PolicyIdentifiers.Login)]
         public void ForceSync()
         {
-            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustOutboundQueue();
-            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustAdminQueue();
-            if (ApplicationContext.Current.GetService<ISynchronizationService>().IsSynchronizing || s_isDownloading)
+
+            var qmService = ApplicationContext.Current.GetService<QueueManagerService>();
+            if (qmService.IsBusy || ApplicationContext.Current.GetService<ISynchronizationService>().IsSynchronizing || s_isDownloading)
                 throw new InvalidOperationException(Strings.err_already_syncrhonizing);
             else
             {
+                ManualResetEvent waitHandle = new ManualResetEvent(false);
+
+                ApplicationContext.Current.SetProgress(Strings.locale_waitForOutbound, 0.1f);
+
+                // Wait for outbound queue to finish
+                EventHandler<QueueExhaustedEventArgs> exhaustCallback = (o, e) =>
+                {
+                    if (e.Queue == "outbound")
+                        waitHandle.Set();
+                };
+
+                qmService.QueueExhausted += exhaustCallback;
+                qmService.ExhaustOutboundQueue();
+                qmService.ExhaustAdminQueue();
+                waitHandle.WaitOne();
+                qmService.QueueExhausted -= exhaustCallback;
+
                 s_isDownloading = true;
                 try
                 {
