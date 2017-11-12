@@ -215,7 +215,7 @@ namespace DisconnectedClient
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            this.m_browser.Refresh();
+            this.m_browser.Reload();
         }
 
     }

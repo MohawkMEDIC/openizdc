@@ -6,8 +6,8 @@ mkdir dist
 cd dist
 
 # create structure
-mkdir openizdc-0.9.8.0
-cd openizdc-0.9.8.0
+mkdir openizdc-0.9.9.2
+cd openizdc-0.9.9.2
 mkdir openizdc
 mkdir openizdc/bin
 mkdir openizdc/lib

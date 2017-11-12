@@ -73,6 +73,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public event EventHandler Stopped;
 
         public event EventHandler Stopping;
+
         /// <summary>
         /// Returns true if the service is running
         /// </summary>

@@ -431,6 +431,8 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                 var pType = typeof(IDataPersistenceService<>).MakeGenericType(t);
                 var pInstance = ApplicationContext.Current.GetService(pType) as IDataPersistenceService;
 
+                if (pInstance == null) continue;
+
                 // Create a delegate which calls UpdateCarePlan
                 // Construct the delegate
                 var ppeArgType = typeof(DataPersistenceEventArgs<>).MakeGenericType(t);
