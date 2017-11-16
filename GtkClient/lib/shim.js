@@ -45,7 +45,10 @@ OpenIZApplicationService.BarcodeScan = function () {
 }
 
 OpenIZApplicationService.Close = function () {
-    window.close();
+
+	// HACK: Because close() is not being propagated to the WebKit handler
+	console.info("cmd:close_win");
+
 }
 
 OpenIZApplicationService.GetLocale = function () {

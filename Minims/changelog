@@ -1,3 +1,11 @@
+openiz-sdk (0.9.9) UNRELEASED; urgency=medium
+
+  * Release of Fredericton SDK
+  * Inclusion of widgets and panels into PAK files
+  * New "none" compression type for PAK files
+  * Ability to mark script references as static vs. lazy loaded
+
+ -- Justin Fyfe <justin.fyfe1@mohawkcollege.ca>	Thu, 02 Nov 2017 14:44:08 -0400
 openiz-sdk (0.9.8) UNRELEASED; urgency=medium
 
   * Release of Edmonton SDK
