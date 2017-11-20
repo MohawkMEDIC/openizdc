@@ -66,7 +66,7 @@
                             data-watch="act.targetModel.participation.Product.player"
                             data-watch-target="relationship[Instance].source"
                             oiz-databind="ManufacturedMaterial"
-                            data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                            data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.currentTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                             data-display="scope.lotNumber"
                             data-defaultEmpty="true"
                             data-defaultFirst="true"
@@ -149,7 +149,7 @@
                                 class="form-control"
                                 ng-model="act.targetModel.participation.Consumable[$index + 1].player"
                                 oiz-databind="ManufacturedMaterial"
-                                data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
+                                data-filter='{ "_viewModel": "dropdown", "relationship[Instance].source" : "{{ product.target }}", "expiryDate" : "&gt;{{ $root.page.currentTime | date:"yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }'
                                 data-display="scope.lotNumber"
                                 data-defaultEmpty="true"
                                 data-defaultFirst="true"
@@ -181,7 +181,7 @@
                     <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
                     <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp;
                         (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}"
-                           ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled ? $root.page.loadTime : null" ng-min="act._enabled ? patient.dateOfBirth : null"
+                           ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled ? $root.page.currentTime : null" ng-min="act._enabled ? patient.dateOfBirth : null"
                            max="{{ getMaxDate(act) | date:'yyyy-MM-dd' }}"
                            min="{{ getMinDate(act) | date:'yyyy-MM-dd' }}"
                            ng-change="synchronizeDates(act)"

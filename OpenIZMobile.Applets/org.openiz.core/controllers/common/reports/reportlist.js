@@ -158,7 +158,7 @@ angular.module('layout').controller('ReportListController', ['$scope', '$rootSco
 
     /* Gets the maximum date for the parameter */
     function getParameterMaxDate(parameter) {
-        var max = parameter.max || $rootScope.page.loadTime;
+        var max = parameter.max || $rootScope.page.currentTime;
 
         if (parameter.name === "DateFrom" && $scope.currentFilter["DateTo"]) {
             max = $scope.currentFilter["DateTo"];

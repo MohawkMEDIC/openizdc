@@ -66,8 +66,8 @@ angular.module('layout').controller('UpcomingAppointmentController', ['$scope', 
                         );
 
                         for (var i in $scope.appointments) {
-                            if ($scope.appointments[i].startTime < $rootScope.page.loadTime) {
-                                $scope.appointments[i].startTime = $rootScope.page.loadTime;
+                            if ($scope.appointments[i].startTime < $rootScope.page.currentTime) {
+                                $scope.appointments[i].startTime = $rootScope.page.currentTime;
                             }
                             if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
                                 $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];

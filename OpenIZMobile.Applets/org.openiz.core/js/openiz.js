@@ -3849,6 +3849,19 @@ Date.prototype.addDays = function (days) {
     return retVal;
 }
 
+
+/**
+ * @summary Adds the specified number of seconds to the date
+ * @method
+ * @memberof Date
+ * @param {Number} seconds The number of seconds to add
+ */
+Date.prototype.addSeconds = function (seconds) {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(retVal.getSeconds() + seconds);
+    return retVal;
+}
+
 /**
  * @summary Gets the date on the next day
  * @memberof Date

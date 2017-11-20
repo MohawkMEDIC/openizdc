@@ -48,7 +48,7 @@
                                             <input class="form-control" ng-class="{'has-error': (appointmentForm.appointmentDate.$touched||appointmentForm.$submitted) &amp;&amp; (appointmentForm.appointmentDate.$invalid || appointment.actTime > appointment.stopTime)}"
                                                    required="required"
                                                    type="date"
-                                                   min="{{ (appointment.startTime || $root.page.loadTime) | date: 'yyyy-MM-dd' }}" name="appointmentDate"
+                                                   min="{{ (appointment.startTime || $root.page.currentTime) | date: 'yyyy-MM-dd' }}" name="appointmentDate"
                                                    ng-model="appointment.actTime" />
                                             <div class="col-xs-10 help-block text-danger" ng-if="(appointmentForm.appointmentDate.$touched||appointmentForm.$submitted) &amp;&amp; (appointmentForm.appointmentDate.$invalid)">
                                                 {{ 'locale.encounters.schedule.errors.missingTime' | i18n }}

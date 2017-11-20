@@ -126,16 +126,12 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             $rootScope.page = {
                 title: OpenIZ.App.getCurrentAssetTitle(),
                 loadTime: new Date(),
-                maxEventTime: new Date(), // Dislike Javascript
+                currentTime: new Date(),
+                maxEventTime: new Date().tomorrow().addSeconds(-1), // Dislike Javascript
                 minEventTime: new Date().yesterday(), // quite a bit
                 locale: OpenIZ.Localization.getLocale(),
                 onlineState: OpenIZ.App.getOnlineState()
             };
-
-            $rootScope.page.maxEventTime.setHours(23);
-            $rootScope.page.maxEventTime.setMinutes(59);
-            $rootScope.page.maxEventTime.setSeconds(59);
-            $rootScope.page.maxEventTime.setMilliseconds(999);
 
             // Interval to refresh online state and to check session
             setInterval(function () {
@@ -146,6 +142,11 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                     else
                         $("#onlineStateIndicator")[0].style.display = 'inline-block';
                 }
+
+                // Set max/min event time
+                $rootScope.page.maxEventTime = new Date().tomorrow().addSeconds(-1);
+                $rootScope.page.minEventTime = new Date().yesterday();
+                $rootScope.currentTime = new Date();
 
                 if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000)) {
                     var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);

@@ -38,7 +38,7 @@ angular.module('layout').controller('AppointmentSchedulerController', ['$scope',
 
                 var assistantCalendarOptions = {
                     defaultView: 'month',
-                    defaultDate: $scope.appointment != null ? $scope.appointment.actTime : OpenIZ.Util.toDateInputString($rootScope.page.loadTime),
+                    defaultDate: $scope.appointment != null ? $scope.appointment.actTime : OpenIZ.Util.toDateInputString($rootScope.page.currentTime),
                     displayEventTime: false,
                     editable: true,
                     weekends: false,
@@ -108,11 +108,11 @@ angular.module('layout').controller('AppointmentSchedulerController', ['$scope',
                             if (proposals.item[i].actTime < $scope.appointment.actTime)
                                 $scope.appointment = proposals.item[i];
 
-                        if ($scope.appointment.actTime < $rootScope.page.loadTime) {
-                            $scope.appointment.actTime = $rootScope.page.loadTime;
+                        if ($scope.appointment.actTime < $rootScope.page.currentTime) {
+                            $scope.appointment.actTime = $rootScope.page.currentTime;
                         }
-                        if ($scope.appointment.startTime < $rootScope.page.loadTime) {
-                            $scope.appointment.startTime = $rootScope.page.loadTime;
+                        if ($scope.appointment.startTime < $rootScope.page.currentTime) {
+                            $scope.appointment.startTime = $rootScope.page.currentTime;
                         }
                         if (Array.isArray($scope.appointment.relationship.HasComponent))
                             $.each($scope.appointment.relationship.HasComponent, function (i, e) {
