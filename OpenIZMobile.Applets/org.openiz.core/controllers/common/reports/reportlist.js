@@ -113,12 +113,23 @@ angular.module('layout').controller('ReportListController', ['$scope', '$rootSco
 
         $("#reportResultDialog").modal('show');
 
+        var filters = {};
+        // Fix values 
+        for (var i in $scope.currentReport.parameter) {
+            var parm = $scope.currentReport.parameter[i];
+            if (parm.type == "Date") {
+                filters[parm.name] = OpenIZ.Util.toDateInputString($scope.currentFilter[parm.name]);
+            }
+            else
+                filters[parm.name] = $scope.currentFilter[parm.name];
+        }
+
         $scope.isLoading = true;
         // TODO: Make this on-demand
         OpenIZ.Risi.executeReportAsync({
             name: $scope.currentReport.info.name,
             view: $scope.currentReport.view[$scope.viewId || 0].name,
-            query: $scope.currentFilter,
+            query: filters,
             continueWith: function (data) {
                 if (data == null)
                     $scope.reportBody = "<h2>" + OpenIZ.Localization.getString("locale.reports.nodata") + "</h2>";
