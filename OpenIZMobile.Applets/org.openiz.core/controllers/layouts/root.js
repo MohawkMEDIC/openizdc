@@ -127,7 +127,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 title: OpenIZ.App.getCurrentAssetTitle(),
                 loadTime: new Date(),
                 currentTime: new Date(),
-                maxEventTime: new Date().tomorrow().addSeconds(-1), // Dislike Javascript
+                maxEventTime: new Date().tomorrow().trunc().addSeconds(-1), // Dislike Javascript
                 minEventTime: new Date().yesterday(), // quite a bit
                 locale: OpenIZ.Localization.getLocale(),
                 onlineState: OpenIZ.App.getOnlineState()

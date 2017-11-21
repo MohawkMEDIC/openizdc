@@ -3871,6 +3871,20 @@ Date.prototype.tomorrow = function () {
     return this.addDays(1);
 }
 
+/** 
+ * @summary Truncates date to day
+ * @memberof Date
+ * @method
+ */
+Date.prototype.trunc = function () {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(0);
+    retVal.setHours(0);
+    retVal.setMinutes(0);
+    retVal.setMilliseconds(0);
+    return retVal;
+}
+
 /**
  * @summary Gets the date on the previous day
  * @method
