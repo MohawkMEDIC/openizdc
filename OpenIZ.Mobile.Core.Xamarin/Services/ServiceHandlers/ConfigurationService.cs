@@ -435,7 +435,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.Name = "locale.sync.resource.ManufacturedMaterial.my";
                                     syncSetting.ResourceAqn = "ManufacturedMaterial";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
+                                    // Any materials involved in an act assigned to me
                                     syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facilityId);
+                                    // Any materials I own
                                     syncSetting.Filters.Add("relationship[OwnedEntity].source=" + facilityId);
                                     break;
 
