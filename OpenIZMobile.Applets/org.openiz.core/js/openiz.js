@@ -1570,7 +1570,13 @@ var OpenIZ = OpenIZ || {
          * @return {string} A DATE as an ISO String only
          */
         toDateInputString: function (date) {
-            return date.toISOString().substring(0, 10);
+            var yr = (1900 + date.getYear()).toString(),
+                mo = (1 + date.getMonth()).toString(),
+                da = date.getDate().toString();
+            var pad = "00";
+            mo = pad.substring(0, 2 - mo.length) + mo;
+            da = pad.substring(0, 2 - da.length)  + da;
+            return yr + "-" + mo + "-" + da;
         },
         /**
          * @summary Start a task asynchronously
@@ -3859,6 +3865,32 @@ Date.prototype.addDays = function (days) {
 Date.prototype.addSeconds = function (seconds) {
     var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
     retVal.setSeconds(retVal.getSeconds() + seconds);
+    return retVal;
+}
+
+/**
+ * @summary Add the specified seconds to the date
+ * @method
+ * @memberof Date
+ * @param {Number} seconds The number of seconds to add
+ */
+Date.prototype.addSeconds = function (seconds) {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(retVal.getSeconds() + seconds);
+    return retVal;
+}
+
+/**
+ * @summary Truncates the specified date
+ * @method
+ * @memberof Date
+ */
+Date.prototype.trunc = function () {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(0);
+    retVal.setMinutes(0);
+    retVal.setHours(0);
+    retVal.setMilliseconds(0);
     return retVal;
 }
 

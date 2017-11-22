@@ -235,8 +235,8 @@
     <string key="locale.settings.realmPort">Alternate Port#:</string>
     <string key="locale.settings.realmPort.help">This setting controls the port number</string>
     <string key="locale.settings.status.offline">This device must be online to join a realm</string>
-    <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
-    <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessable, and you're using the correct settings.</string>
+    <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another device with this name may not be able to connect)</string>
+    <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessible, and you're using the correct settings.</string>
 
     <string key="locale.settings.optimize">Network Optimization</string>
     <string key="locale.settings.optimize.lzma">Ultra - Requires more server &amp;amp; tablet CPU but minimizes bandwidth (recommended: 2g / dial-in)</string>
