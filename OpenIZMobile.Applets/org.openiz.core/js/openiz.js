@@ -1570,13 +1570,18 @@ var OpenIZ = OpenIZ || {
          * @return {string} A DATE as an ISO String only
          */
         toDateInputString: function (date) {
-            var yr = (1900 + date.getYear()).toString(),
-                mo = (1 + date.getMonth()).toString(),
-                da = date.getDate().toString();
-            var pad = "00";
-            mo = pad.substring(0, 2 - mo.length) + mo;
-            da = pad.substring(0, 2 - da.length)  + da;
-            return yr + "-" + mo + "-" + da;
+            if (!date) return null;
+            else if (date.getYear) {
+                var yr = (1900 + date.getYear()).toString(),
+                    mo = (1 + date.getMonth()).toString(),
+                    da = date.getDate().toString();
+                var pad = "00";
+                mo = pad.substring(0, 2 - mo.length) + mo;
+                da = pad.substring(0, 2 - da.length) + da;
+                return yr + "-" + mo + "-" + da;
+            }
+            else
+                return date.toISOString().substring(0, 10);
         },
         /**
          * @summary Start a task asynchronously
