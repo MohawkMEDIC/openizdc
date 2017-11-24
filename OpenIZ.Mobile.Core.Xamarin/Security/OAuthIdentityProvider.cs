@@ -215,7 +215,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         // TODO: Clean this up
                         try
                         {
-                            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o => this.SynchronizeSecurity(password, o as IPrincipal), retVal);
+                            if(!(retVal is SQLitePrincipal))
+                               ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o => this.SynchronizeSecurity(password, o as IPrincipal), retVal);
                         }
                         catch (Exception ex)
                         {

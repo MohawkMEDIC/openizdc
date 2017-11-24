@@ -83,6 +83,8 @@ namespace DisconnectedClient
                     Directory.CreateDirectory(dir);
 
             // Token validator
+            ServicePointManager.DefaultConnectionLimit = 2;
+            ServicePointManager.MaxServicePointIdleTime = 100;
             TokenValidationManager.SymmetricKeyValidationCallback += (o, k, i) =>
             {
                 return MessageBox.Show(String.Format("Trust issuer {0} with symmetric key?", i), "Token Validation Error", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes;
