@@ -198,6 +198,10 @@ namespace DisconnectedClient
                 Application.Exit();
                 Environment.Exit(996);
             }
+            finally
+            {
+                Cef.Shutdown();
+            }
         }
     }
 }
