@@ -350,6 +350,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         
                         if (String.IsNullOrEmpty(eTag))
                             eTag = result?.Item.FirstOrDefault()?.Tag;
+
+                        if (result.Count == 0) break;
                     }
 
                     if (result?.TotalResults > result?.Count)
