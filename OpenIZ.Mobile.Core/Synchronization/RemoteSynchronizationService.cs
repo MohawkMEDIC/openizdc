@@ -145,6 +145,31 @@ namespace OpenIZ.Mobile.Core.Synchronization
         }
 
         /// <summary>
+        /// Forces a push and blocks until all data is pushed
+        /// </summary>
+        public void Push()
+        {
+            var qmService = ApplicationContext.Current.GetService<QueueManagerService>();
+            if (!qmService.IsBusy && !this.IsSynchronizing)
+            {
+                ManualResetEvent waitHandle = new ManualResetEvent(false);
+
+                // Wait for outbound queue to finish
+                EventHandler<QueueExhaustedEventArgs> exhaustCallback = (o, e) =>
+                {
+                    if (e.Queue == "outbound")
+                        waitHandle.Set();
+                };
+
+                qmService.QueueExhausted += exhaustCallback;
+                qmService.ExhaustOutboundQueue();
+                qmService.ExhaustAdminQueue();
+                waitHandle.WaitOne();
+                qmService.QueueExhausted -= exhaustCallback;
+            }
+        }
+
+        /// <summary>
         /// Pull from remote
         /// </summary>
         private void Pull(SynchronizationPullTriggerType trigger)
@@ -152,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Pool startup sync if configured..
             this.m_threadPool.QueueUserWorkItem((state) =>
             {
-
+                
                 bool initialSync = !SynchronizationLog.Current.GetAll().Any();
 
                 if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
