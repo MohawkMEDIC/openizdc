@@ -20,10 +20,10 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
     <ul class="list-group">
         <li ng-repeat="(auth, ids) in patient.identifier" class="list-group-item">
-            <div ng-if="patientController.isArray(ids)" ng-repeat="id in ids">
+            <div ng-if="ids.length" ng-repeat="id in ids">
                 <h4 class="list-group-item-heading">{{id.value}} <span class="label label-info">{{auth}}</span></h4>
             </div>
-            <div ng-if="!patientController.isArray(ids)">
+            <div ng-if="!ids.length">
                 <h4 class="list-group-item-heading">{{ids.value}} <span class="label label-info">{{auth}}</span></h4>
             </div>
         </li>

@@ -44,10 +44,10 @@ angular.module('layout').controller('PatientIdentifiersController', ['$scope', '
                     if (identifier[key]) {
                         if (!Array.isArray(identifier[key])) {
                             var value = identifier[key].value || "";
-                            $scope.identifiers.push({ domainName: key, value: value});
+                            $scope.identifiers.push({ domainName: key, value: value, authority: identifier[key].authority });
                         } else {
                             for (var i = 0; i < identifier[key].length; i++) {
-                                $scope.identifiers.push({ domainName: key, value: identifier[key][i].value});
+                                $scope.identifiers.push({ domainName: key, value: identifier[key][i].value, authority: identifier[key][i].authority });
                             }
                         }
                     }
@@ -76,11 +76,13 @@ angular.module('layout').controller('PatientIdentifiersController', ['$scope', '
 
                     if (Array.isArray($scope.patient.identifier[domainName])) {
                         $scope.patient.identifier[domainName].push({
-                            value: value
+                            value: value,
+                            authority: identifiers[key].authority
                         })
                     } else {
                         $scope.patient.identifier[domainName] = [{
-                            value: value
+                            value: value,
+                            authority: identifiers[key].authority
                         }]
                     }
                 }

@@ -47,7 +47,7 @@
                                     {{ 'locale.patient.search.header.names' | i18n }}
                                 </div>
                                 <div class="col-xs-9 search-result-field search-results-name">
-                                    {{ patient.name.OfficialRecord | oizEntityName }}
+                                    {{ patient.name.OfficialRecord || patient.name.Legal | oizEntityName }}
                                 </div>
                             </div>
                             <div class="clearfix"></div>
