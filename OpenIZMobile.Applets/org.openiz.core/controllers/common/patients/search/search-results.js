@@ -136,10 +136,6 @@ angular.module('layout').controller('SearchResultsController', ['$scope', functi
             "identifier.value": identifier.value
         };
 
-        if (identifier.domainName) {
-            barcodeQuery["identifier.authority.domainName"] = identifier.domainName;
-        }
-
         searchPatient(barcodeQuery, searchOnline, onSearchResults);
     }
 

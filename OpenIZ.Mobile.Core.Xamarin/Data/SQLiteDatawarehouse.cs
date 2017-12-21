@@ -898,10 +898,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     property?.Type == SchemaPropertyType.Uuid)
                     value = new Guid(rdr[i] as byte[]);
                 else if ((rdr[i] is int || rdr[i] is long) &&
-                    property?.Type == SchemaPropertyType.Date)
+                    (property?.Type == SchemaPropertyType.Date || property?.Type == SchemaPropertyType.DateTime))
                 {
                     value = Convert.ToInt64(rdr[i]);
-                    value = this.m_epoch.AddSeconds((Int64)value);
+
+                    // If it is a date we don't want to correct, so the date will be local
+                    if (property?.Type == SchemaPropertyType.DateTime)
+                        value = this.m_epoch.AddSeconds((Int64)value);
+                    else
+                        value = new DateTime((Int64)value * 10000000 + 621355968000000000, DateTimeKind.Local);
                 }
                 retVal.Add(rdr.GetName(i), value);
             }

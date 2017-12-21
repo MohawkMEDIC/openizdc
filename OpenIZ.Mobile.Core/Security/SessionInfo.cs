@@ -290,7 +290,7 @@ namespace OpenIZ.Mobile.Core.Security
                 // Attempt to download if the user entity is null
                 // Or if there are no relationships of type dedicated service dedicated service delivery location to force a download of the user entity 
                 var amiService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
-                if (amiService != null && amiService.IsAvailable() || this.m_entity == null || this.m_entity?.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation) == true)
+                if (this.m_entity == null || amiService != null && amiService.IsAvailable() ||  this.m_entity?.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation) == true)
                 {
                     int t = 0;
                     var sid = Guid.Parse((principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Sid)?.Value ?? ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().QueryFast(o => o.UserName == principal.Identity.Name, 0, 1, out t, Guid.Empty).FirstOrDefault()?.Key.ToString());

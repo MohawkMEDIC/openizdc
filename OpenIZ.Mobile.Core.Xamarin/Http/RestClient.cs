@@ -43,6 +43,7 @@ using SharpCompress.Compressors.Deflate;
 using SharpCompress.Compressors;
 using System.Reflection;
 using System.Xml.Serialization;
+using System.Net.Sockets;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -183,7 +184,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                 this.ClientCertificates.Add(cert);
             }
 
-          
+
         }
 
         /// <summary>
@@ -317,27 +318,28 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                     {
                         // GET Stream, 
                         Stream requestStream = null;
-                        Exception requestException = null;
-
                         try
                         {
-
-
-                            //requestStream = requestObj.GetRequestStream();
-                            var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
+                            // Get request object
+                            using (var requestTask = Task.Run(async () => { return await requestObj.GetRequestStreamAsync(); }))
                             {
-                                if (r.IsFaulted)
-                                    requestException = r.Exception.InnerExceptions.First();
-                                else
-                                    requestStream = r.Result;
-                            }, TaskContinuationOptions.LongRunning);
+                                try
+                                {
+                                    if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
+                                    {
+                                        requestObj.Abort();
+                                        throw new TimeoutException();
+                                    }
 
-                            if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
-                            {
-                                throw new TimeoutException();
+                                    requestStream = requestTask.Result;
+                                }
+                                catch(AggregateException e)
+                                {
+                                    requestObj.Abort();
+                                    throw e.InnerExceptions.First();
+                                }
                             }
-                            else if (requestException != null) throw requestException;
-
+                            
                             if (contentType == null && typeof(TResult) != typeof(Object))
                                 throw new ArgumentNullException(nameof(contentType));
 
@@ -347,7 +349,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             {
                                 if (this.Description.Binding.Optimize)
                                 {
-                                    switch((this.Description.Binding as ServiceClientBinding)?.OptimizationMethod)
+                                    switch ((this.Description.Binding as ServiceClientBinding)?.OptimizationMethod)
                                     {
                                         case OptimizationMethod.Lzma:
                                             requestObj.Headers.Add("Content-Encoding", "lzma");
@@ -396,35 +398,28 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                     // Response
                     HttpWebResponse response = null;
-                    Exception responseError = null;
-
                     try
                     {
-                        var responseTask = requestObj.GetResponseAsync().ContinueWith(r =>
+
+                        // Get request object
+                        using (var responseTask = Task.Run(async () => { return await requestObj.GetResponseAsync(); }))
                         {
-                            if (r.IsFaulted)
-                                responseError = r.Exception.InnerExceptions.First();
-                            else
+                            try
                             {
-                                this.FireResponding(new RestResponseEventArgs(method, url, query, r.Result.ContentType, null, (int)(r.Result as HttpWebResponse).StatusCode, r.Result.ContentLength));
-                                response = r.Result as HttpWebResponse;
-                            }
-                        }, TaskContinuationOptions.LongRunning);
-                        if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
-                            throw new TimeoutException();
-                        else
-                        {
-                            if (responseError != null)
-                            {
-                                if (((responseError as WebException)?.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotModified)
+                                if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
                                 {
-                                    responseHeaders = response?.Headers;
-                                    return default(TResult);
+                                    requestObj.Abort();
+                                    throw new TimeoutException();
                                 }
-                                else
-                                    throw responseError;
+                                response = (HttpWebResponse)responseTask.Result;
+                            }
+                            catch (AggregateException e)
+                            {
+                                requestObj.Abort();
+                                throw e.InnerExceptions.First();
                             }
                         }
+
 
 #if PERFMON
                         sw.Stop();
@@ -498,7 +493,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                             retVal = (TResult)serializer.DeSerialize(bzs);
                                         break;
                                     case "lzma":
-                                        using (var lzmas = new LZipStream(ms, CompressionMode.Decompress, leaveOpen : true))
+                                        using (var lzmas = new LZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
                                             retVal = (TResult)serializer.DeSerialize(lzmas);
                                         break;
                                     default:
@@ -521,7 +516,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                     finally
                     {
                         if (response != null)
+                        {
+                            response.Close();
                             response.Dispose();
+                        }
+                        //responseTask.Dispose();
                     }
                 }
                 catch (TimeoutException e)
@@ -627,10 +626,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                     if (this.ValidateResponse(errorResponse) != ServiceClientErrorType.Valid)
                                         throw exception;
                                     break;
+                                case HttpStatusCode.NotModified:
+                                    responseHeaders = errorResponse?.Headers;
+                                    return default(TResult);
                                 default:
                                     throw exception;
                             }
                             break;
+                        case WebExceptionStatus.ConnectFailure:
+                            if ((e.InnerException as SocketException)?.SocketErrorCode == SocketError.TimedOut)
+                                throw new TimeoutException();
+                            else
+                                throw;
+                        case WebExceptionStatus.Timeout:
+                            throw new TimeoutException();
                         default:
                             throw;
                     }

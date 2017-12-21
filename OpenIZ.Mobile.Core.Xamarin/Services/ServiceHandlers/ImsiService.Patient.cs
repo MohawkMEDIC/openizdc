@@ -265,7 +265,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var facilityId = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities?.FirstOrDefault();
             if (facilityId != null)
             {
-                patient.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.IncidentalServiceDeliveryLocation, Guid.Parse(facilityId)));
+                patient.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.IncidentalServiceDeliveryLocation, Guid.Parse(facilityId)) { SourceEntityKey = patient.Key });
                 imsiIntegrationService.Update(patient);
             }
             var personBundle = new Bundle();

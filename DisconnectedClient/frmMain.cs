@@ -202,9 +202,7 @@ namespace DisconnectedClient
             DcApplicationContext.Current.SetProgress("Shutting down...", 0);
 
 #if IE
-
 #else
-            Cef.Shutdown();
 #endif
             XamarinApplicationContext.Current.Stop();
             XamarinApplicationContext.ProgressChanged -= this.m_progressHandler;
