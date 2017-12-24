@@ -135,8 +135,8 @@ namespace DisconnectedClient.Core
                     tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Name.Replace("data/", ""), Convert.ToBase64String(this.Applets.RenderAssetContent(itm)).Replace("'", "\\'"));
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
+                
                 // Read the static shim
-
                 String shimFile = "DisconnectedClient.Core.lib.shim.js";
                 var manifestName = Assembly.GetEntryAssembly().GetManifestResourceNames().FirstOrDefault(o => o.EndsWith("shim.js"));
                 using (StreamReader shim = new StreamReader(Assembly.GetEntryAssembly().GetManifestResourceStream(manifestName)))
