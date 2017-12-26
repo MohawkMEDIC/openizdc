@@ -147,7 +147,7 @@
     ]
   },
    {
-    "outputFileName": "orglib/lib-core.min.js",
+    "outputFileName": "org.openiz.core/lib/lib-core.min.js",
     "inputFiles": [
       "lib/jquery.min.js",
       "lib/jquery.datefix.min.js",

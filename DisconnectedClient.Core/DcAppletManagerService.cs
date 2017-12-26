@@ -125,7 +125,26 @@ namespace DisconnectedClient.Core
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
 
-                tw.WriteLine("OpenIZApplicationService.GetTemplates = function() {");
+                // Widgets
+                tw.WriteLine("OpenIZApplicationService.GetWidgets = function(scope, type) {");
+                tw.WriteLine("\tswitch(scope) {");
+                foreach(var itm in this.Applets.WidgetAssets.GroupBy(o=>o.Scope))
+                {
+                    tw.WriteLine("\t\tcase '{0}':", itm.Key);
+                    tw.WriteLine("\t\t\tswitch(type) {");
+                    foreach (var w in itm.GroupBy(o=>o.Type))
+                    {
+                        tw.WriteLine("\t\t\t\tcase '{0}':", w.Key);
+                        tw.WriteLine("\t\t\t\t\treturn [{0}]", String.Join(",", w.Select(o=>$"{{ name: '{o.Name}', title: '{o.GetTitle(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)}', controller: '{o.Controller}', src: '/__app/widget?id={o.Name}' }}")));
+                        tw.WriteLine("\t\t\t\t\tbreak;");
+                    }
+                    tw.WriteLine("\t\t\t}");
+                    tw.WriteLine("\t\t\tbreak;");
+                }
+                tw.WriteLine("\t}");
+                tw.WriteLine("}");
+
+                tw.WriteLine("OpenIZApplicationService.GetTemplates = function(scope) {");
                 tw.WriteLine("return '[{0}]'", String.Join(",", this.Applets.SelectMany(o=>o.Templates).Where(o=>o.Public).Select(o=>$"\"{o.Mnemonic}\"")));
                 tw.WriteLine("}");
 
