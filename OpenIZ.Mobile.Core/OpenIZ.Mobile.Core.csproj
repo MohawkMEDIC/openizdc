@@ -66,6 +66,7 @@
     <Compile Include="Data\Connection\ReadonlySQLiteConnection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionExtensions.cs" />
     <Compile Include="Data\Connection\WriteableSQLiteConnection.cs" />
+    <Compile Include="Data\Hacks\RelationshipQueryHack.cs" />
     <Compile Include="Data\ILocalPersistenceService.cs" />
     <Compile Include="Data\LocalDataContext.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Data\QueryBuilder\AssociativeTableAttribute.cs" />
     <Compile Include="Data\QueryBuilder\ColumnMapping.cs" />
     <Compile Include="Data\QueryBuilder\ForeignKeyAttribute.cs" />
+    <Compile Include="Data\QueryBuilder\IQueryBuilderHack.cs" />
     <Compile Include="Data\QueryBuilder\QueryBuilder.cs" />
     <Compile Include="Data\QueryBuilder\SqlQueryExpressionBuilder.cs" />
     <Compile Include="Data\QueryBuilder\SqlStatement.cs" />

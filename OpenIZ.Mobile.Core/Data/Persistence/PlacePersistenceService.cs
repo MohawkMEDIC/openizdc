@@ -40,13 +40,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Place ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbVersionedData;
-            var place = dataInstance as DbPlace?? dataInstance.GetInstanceOf<DbPlace>() ?? context.Connection.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
+            var place = dataInstance as DbPlace?? dataInstance.GetInstanceOf<DbPlace>() ?? context.Connection.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).FirstOrDefault();
             var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
 
             var retVal = m_entityPersister.ToModelInstance<Place>(dbe, context);
-            retVal.IsMobile = place.IsMobile;
-            retVal.Lat = place.Lat;
-            retVal.Lng = place.Lng;
+            if (place != null)
+            {
+                retVal.IsMobile = place.IsMobile;
+                retVal.Lat = place.Lat;
+                retVal.Lng = place.Lng;
+            }
             //retVal.LoadAssociations(context);
 
             return retVal;

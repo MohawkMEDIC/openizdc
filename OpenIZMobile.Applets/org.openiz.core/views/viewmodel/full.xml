@@ -230,7 +230,6 @@
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
     </property>
-
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>

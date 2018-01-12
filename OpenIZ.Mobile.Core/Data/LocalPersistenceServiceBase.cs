@@ -42,6 +42,7 @@ using OpenIZ.Mobile.Core.Data.Connection;
 using System.Diagnostics;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Data.QueryBuilder;
+using OpenIZ.Mobile.Core.Data.Hacks;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -70,7 +71,7 @@ namespace OpenIZ.Mobile.Core.Data
         {
 
             m_mapper = LocalPersistenceService.Mapper;
-            m_builder = new QueryBuilder(m_mapper);
+            m_builder = new QueryBuilder(m_mapper, new RelationshipQueryHack());
         }
 
         public LocalPersistenceServiceBase()
