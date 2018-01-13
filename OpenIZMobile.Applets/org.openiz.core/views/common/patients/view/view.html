@@ -1,0 +1,27 @@
+﻿<div id="patientview1" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="~/layouts/timr.navbar.patient.html">
+<!--    <oiz:script>~/controllers/patients/view.js</oiz:script>-->
+    <oiz:state name="org-openiz-core.view-patient">
+        <oiz:url>/patient/view/:patientId/:dashId/:encounterId</oiz:url>
+        <oiz:view>
+            <oiz:title>View Patient</oiz:title>
+            <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.0</oiz:demand>
+            <oiz:controller>PatientViewController</oiz:controller>
+        </oiz:view>
+    </oiz:state>
+
+    <!-- #include virtual="/org.openiz.core/views/common/encounters/partials/scheduler.html" -->
+    <div class="alert alert-warning" ng-if="patient.tag.onlineResult">
+        <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.patient.onlineOnly' | i18n }} <a class="btn btn-warning" ng-click="downloadPatient()" id="downloadButton"><span><span class="glyphicon glyphicon-cloud-download"></span> {{ 'locale.patient.action.download' | i18n }}</span></a>
+    </div>
+    <div class="alert alert-info" ng-if="patient.tag['http://openiz.org/tags/contrib/importedData'] &amp;&amp; !patient.tag.onlineResult">
+        <span class="glyphicon glyphicon-info-sign"></span> {{ 'locale.patient.verify.external' | i18n }} <a class="btn btn-info" ng-click="verifyPatient()"><span><span class="glyphicon glyphicon-ok-sign"></span> {{ 'locale.action.verify' | i18n }}</span></a>
+    </div>
+    <div class="panel-default">
+        <div class="panel-body">
+            <div class="tab-content">
+                <div ng-repeat="widget in widgets" role="tabpanel" class="tab-pane" ng-class="$index == 0 ? 'active' : ''" id="{{widget.name}}" ng-include="widget.html">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
