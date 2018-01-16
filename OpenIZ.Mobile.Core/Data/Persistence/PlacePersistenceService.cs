@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-2-4
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
@@ -40,13 +40,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Place ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbVersionedData;
-            var place = dataInstance as DbPlace?? dataInstance.GetInstanceOf<DbPlace>() ?? context.Connection.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
+            var place = dataInstance as DbPlace?? dataInstance.GetInstanceOf<DbPlace>() ?? context.Connection.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).FirstOrDefault();
             var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
 
             var retVal = m_entityPersister.ToModelInstance<Place>(dbe, context);
-            retVal.IsMobile = place.IsMobile;
-            retVal.Lat = place.Lat;
-            retVal.Lng = place.Lng;
+            if (place != null)
+            {
+                retVal.IsMobile = place.IsMobile;
+                retVal.Lat = place.Lat;
+                retVal.Lng = place.Lng;
+            }
             //retVal.LoadAssociations(context);
 
             return retVal;
