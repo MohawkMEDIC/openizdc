@@ -109,8 +109,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
             // Proxy?
             if (!String.IsNullOrEmpty(this.m_configurationSection.ProxyAddress))
-                retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
-
+                retVal.Proxy = new WebProxy(this.m_configurationSection.
+					
             retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
 
             // Set appropriate header
