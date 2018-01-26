@@ -339,9 +339,10 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     )
                 )
             {
-                var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
-                Guid queryId = Guid.NewGuid();
                 int tr = 1, ofs = 0;
+                var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { }, out tr);
+                Guid queryId = Guid.NewGuid();
+                tr = 1;
                 while (ofs < tr)
                 {
                     ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);

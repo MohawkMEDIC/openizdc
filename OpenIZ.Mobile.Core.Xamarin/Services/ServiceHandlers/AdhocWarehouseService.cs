@@ -85,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 search.Remove("martId");
                 search.Remove("queryId");
                 search.Remove("_");
-                var results = warehouseSvc.StoredQuery(dataMart.Id, queryName, search);
+                var results = warehouseSvc.StoredQuery(dataMart.Id, queryName, search, out totalResults);
 
                 
                 return results;

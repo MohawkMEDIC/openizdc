@@ -1,9 +1,9 @@
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.templates" version="0.9.11.0">
+  <info id="org.openiz.templates" version="1.0.0.0">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Clinical Templates</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
-    <dependency id="org.openiz.core" version="0.9.11.0"/>
+    <dependency id="org.openiz.core" version="1.0.0.0"/>
   </info>
   <template mnemonic="act.substanceadmin.immunization" public="true">
     <form>/org.openiz.templates/templates/views/entry/act.substanceadmin.immunization.html</form>

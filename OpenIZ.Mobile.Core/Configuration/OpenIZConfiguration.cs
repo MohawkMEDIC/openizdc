@@ -75,8 +75,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 
 				Version v = new Version (value),
 					myVersion = typeof(OpenIZConfiguration).GetTypeInfo ().Assembly.GetName ().Version;
-				if(v.Major > myVersion.Major ||
-                    v.Minor > myVersion.Minor)
+				if(v > myVersion)
 					throw new ConfigurationException(String.Format("Configuration file version {0} is newer than OpenIZ version {1}", v, myVersion));
 			}
 		}

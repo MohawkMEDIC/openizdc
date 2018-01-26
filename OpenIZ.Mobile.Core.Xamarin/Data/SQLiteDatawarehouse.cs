@@ -687,7 +687,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Execute a stored query
         /// </summary>
-        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters)
+        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters, out int tr)
         {
             this.ThrowIfDisposed();
 
@@ -718,7 +718,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
                     var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId);
 
-                    int tr = 0;
                     return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 0, out tr);
                 }
                 catch (Exception e)
