@@ -68,15 +68,19 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
             try
             {
 
+                var connStr = ApplicationContext.Current.Configuration.GetConnectionString("openIzSearch")?.Value;
+
                 // Is the search service registered?
-                if (ApplicationContext.Current.GetService<IFreetextSearchService>() == null)
+                if (!String.IsNullOrEmpty(connStr) && ApplicationContext.Current.GetService<IFreetextSearchService>() == null)
                 {
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(SearchIndexService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new SearchIndexService());
                 }
 
                 // Get a connection to the search database
-                var conn = SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString("openIzSearch").Value);
+                if (String.IsNullOrEmpty(connStr))
+                    return true;
+                var conn = SQLiteConnectionManager.Current.GetConnection(connStr);
                 using (conn.Lock())
                 {
                     conn.CreateTable<Search.Model.SearchEntityType>();
