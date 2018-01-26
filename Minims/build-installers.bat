@@ -1,5 +1,5 @@
 @echo off
-set version=0.9.9.0
+set version=%1
 
 echo Building Windows Installer
 "c:\Program Files (x86)\Inno Setup 5\ISCC.exe" "/o.\dist" ".\install.iss"
@@ -66,6 +66,7 @@ copy "..\..\..\OpenIZ\bin\Release\oizdt.config.empty" ".\openiz.exe.config"
 copy "..\..\..\OpenIZ\bin\Release\OpenIZ.Protocol.Xml.dll"
 copy "..\..\..\OpenIZ\bin\Release\System.IdentityModel.Tokens.Jwt.dll"
 copy "..\..\..\OpenIZ\Solution Items\MARc.HI.EHRS.SVC.Configuration.dll"
+copy "..\..\OizDebug\bin\release\oizdebug.exe"
 mkdir schema
 cd schema
 copy "..\..\..\..\OpenIZ\bin\Release\Schema\*.xsd"

@@ -62,7 +62,10 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
         {
             var tracer = Tracer.GetTracer(this.GetType());
             // Database for the SQL Lite connection
-            var db = SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current?.Configuration.GetConnectionString("openIzAudit").Value);
+            var connStr = ApplicationContext.Current?.Configuration.GetConnectionString("openIzAudit")?.Value;
+            if (String.IsNullOrEmpty(connStr))
+                return true;
+            var db = SQLiteConnectionManager.Current.GetConnection(connStr);
             using (db.Lock())
             {
                 try
