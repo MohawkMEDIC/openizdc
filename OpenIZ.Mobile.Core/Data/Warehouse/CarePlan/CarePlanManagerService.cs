@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-6-28
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Data.Warehouse;
 using OpenIZ.Core.Model;
@@ -339,9 +339,10 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     )
                 )
             {
-                var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
-                Guid queryId = Guid.NewGuid();
                 int tr = 1, ofs = 0;
+                var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { }, out tr);
+                Guid queryId = Guid.NewGuid();
+                tr = 1;
                 while (ofs < tr)
                 {
                     ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
@@ -430,6 +431,8 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             {
                 var pType = typeof(IDataPersistenceService<>).MakeGenericType(t);
                 var pInstance = ApplicationContext.Current.GetService(pType) as IDataPersistenceService;
+
+                if (pInstance == null) continue;
 
                 // Create a delegate which calls UpdateCarePlan
                 // Construct the delegate

@@ -1,5 +1,5 @@
 ﻿<!--
- - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  -
  - 
  - Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2017-6-28
+ - User: fyfej
+ - Date: 2017-10-30
  -->
 <div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
     <oiz:state name="org-openiz-core.reports">
@@ -51,7 +51,7 @@
                                 <label class="col-xs-2 control-label">{{ OpenIZ.Localization.getString(parm.label) }}</label>
                                 <div class="col-xs-10" ng-switch="parm.type" ng-if="!parm.valueSet">
                                     <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" ng-max="getParameterMaxDate(parm)" max="{{ getParameterMaxDate(parm) | date:'yyyy-MM-dd'}}" ng-min="getParameterMinDate(parm)" min="{{ getParameterMinDate(parm) | date:'yyyy-MM-dd'}}" class="form-control" />
-                                    <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
+                                    <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.currentTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
                                     <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="String" type="text" name="{{parm.name}}" class="form-control" />
                                     <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="Integer" type="number" name="{{parm.name}}" class="form-control" />
                                     <select ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="Uuid" size="1" name="{{parm.name}}" class="form-control select2">
@@ -110,8 +110,8 @@
                                 <div ng-repeat="parm in currentReport.parameter">
                                     <label class="col-xs-2 control-label">{{ OpenIZ.Localization.getString(parm.label) }}</label>
                                     <div class="col-xs-4" ng-switch="parm.type" ng-if="!parm.valueSet">
-                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-dd'}}" min="{{ (parm.min || 0 ) | date:'yyyy-MM-dd'}}" class="form-control" />
-                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
+                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" max="{{ (parm.max || $root.page.currentTime) | date:'yyyy-MM-dd'}}" min="{{ (parm.min || 0 ) | date:'yyyy-MM-dd'}}" class="form-control" />
+                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.currentTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
                                         <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="String" type="text" name="{{parm.name}}" class="form-control" />
                                         <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="Integer" type="number" name="{{parm.name}}" class="form-control" />
                                         <select ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="Uuid" size="1" name="{{parm.name}}" class="form-control select2">

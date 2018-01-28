@@ -1,6 +1,6 @@
 ﻿/// <reference path="~/js/openiz-model.js"/>
 /*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,8 +15,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-23
+ * User: fyfej
+ * Date: 2017-10-30
  */
 
 /// <reference path="~/js/openiz.js"/>
@@ -126,16 +126,12 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             $rootScope.page = {
                 title: OpenIZ.App.getCurrentAssetTitle(),
                 loadTime: new Date(),
-                maxEventTime: new Date(), // Dislike Javascript
+                maxEventTime: new Date().tomorrow().trunc().addSeconds(-1), // Dislike Javascript
                 minEventTime: new Date().yesterday(), // quite a bit
                 locale: OpenIZ.Localization.getLocale(),
-                onlineState: OpenIZ.App.getOnlineState()
+                onlineState: OpenIZ.App.getOnlineState(),
+                currentTime: new Date(),
             };
-
-            $rootScope.page.maxEventTime.setHours(23);
-            $rootScope.page.maxEventTime.setMinutes(59);
-            $rootScope.page.maxEventTime.setSeconds(59);
-            $rootScope.page.maxEventTime.setMilliseconds(999);
 
             // Interval to refresh online state and to check session
             setInterval(function () {
@@ -146,6 +142,10 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                     else
                         $("#onlineStateIndicator")[0].style.display = 'inline-block';
                 }
+
+                $rootScope.page.currentTime = new Date();
+                $rootScope.page.maxEventTime = new Date().tomorrow().trunc().addSeconds(-1); // Dislike Javascript
+                $rootScope.page.minEventTime = new Date().yesterday(); // quite a bit
 
                 if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000)) {
                     var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);

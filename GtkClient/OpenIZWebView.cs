@@ -1,7 +1,8 @@
 ﻿using System;
 using GLib;
 using WebKit;
-
+using Gtk;
+using System.Runtime.InteropServices;
 
 namespace GtkClient
 {
@@ -11,13 +12,17 @@ namespace GtkClient
 	/// </summary>
 	public class ConsoleSignalArgs : SignalArgs {
 
+		public ConsoleSignalArgs ()
+		{
+			
+		}
 		/// <summary>
 		/// Gets the web frame
 		/// </summary>
 		/// <value>The frame.</value>
 		public String Source {
 			get {
-				return (String)base.Args [3];
+				return (String)base.Args [2];
 			}
 		}
 
@@ -27,7 +32,7 @@ namespace GtkClient
 		/// <value>The frame.</value>
 		public Int32 Line {
 			get {
-				return (Int32)base.Args [2];
+				return (Int32)base.Args [1];
 			}
 		}
 
@@ -37,10 +42,12 @@ namespace GtkClient
 		/// <value>The frame.</value>
 		public String Message {
 			get {
-				return (String)base.Args [1];
+				return (String)base.Args [0];
 			}
 		}
 	}
+
+	public delegate void ConsoleSignalHandler(object o, ConsoleSignalArgs e);
 
 	/// <summary>
 	/// OpenIZ DC Extensions to WebView
@@ -65,7 +72,7 @@ namespace GtkClient
 		/// <summary>
 		/// Occurs when close is requested
 		/// </summary>
-		public event EventHandler<ConsoleSignalArgs> ConsoleMessage {
+		public event ConsoleSignalHandler ConsoleMessage {
 			add {
 				Signal signal = Signal.Lookup(this, "console-message", typeof(ConsoleSignalArgs));
 				signal.AddDelegate(value);
@@ -75,6 +82,8 @@ namespace GtkClient
 				signal.RemoveDelegate(value);
 			}
 		}
+
+
 	}
 }
 

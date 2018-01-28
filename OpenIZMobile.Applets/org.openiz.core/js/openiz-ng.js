@@ -1,6 +1,6 @@
 ﻿/// <reference path="angular.min.js"/>
 /*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,8 +15,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-30
+ * User: fyfej
+ * Date: 2017-10-30
  */
 
 /// <reference path="openiz.js"/>
@@ -283,8 +283,21 @@ angular.module('openiz', [])
                     break;
             }
 
-            if(date)
-                return moment(date).format(dateFormat);
+            if (date) {
+                // Non timed
+                switch (format) {
+                    case 1:   // Year, Month, Day always expressed in UTC for Javascript will take the original server value and adjust.
+                    case 'Y':
+                    case 2:
+                    case 'm':
+                    case 3:
+                    case 'D':
+                        return moment(date).utc().format(dateFormat);
+                    default:
+                        return moment(date).format(dateFormat);
+                }
+            }
+
             return null;
         };
     })

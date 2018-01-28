@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -435,7 +435,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     syncSetting.Name = "locale.sync.resource.ManufacturedMaterial.my";
                                     syncSetting.ResourceAqn = "ManufacturedMaterial";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
+                                    // Any materials involved in an act assigned to me
                                     syncSetting.Filters.Add("participation[Consumable].source.participation[Location|Destination].player=" + facilityId);
+                                    // Any materials I own
                                     syncSetting.Filters.Add("relationship[OwnedEntity].source=" + facilityId);
                                     break;
 

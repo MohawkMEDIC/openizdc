@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-10-30
  */
 
 /// <refernece path="~/js/openiz.js"/>
@@ -66,8 +66,8 @@ angular.module('layout').controller('UpcomingAppointmentController', ['$scope', 
                         );
 
                         for (var i in $scope.appointments) {
-                            if ($scope.appointments[i].startTime < $rootScope.page.loadTime) {
-                                $scope.appointments[i].startTime = $rootScope.page.loadTime;
+                            if ($scope.appointments[i].startTime < $rootScope.page.currentTime) {
+                                $scope.appointments[i].startTime = $rootScope.page.currentTime;
                             }
                             if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
                                 $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];

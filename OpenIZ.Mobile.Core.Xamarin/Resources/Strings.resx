@@ -237,4 +237,7 @@
   <data name="locale_upgradeConfirm" xml:space="preserve">
     <value>Would you like to upgrade {0} to version {1} from version {2}?</value>
   </data>
+  <data name="locale_waitForOutbound" xml:space="preserve">
+    <value>Sending items to server...</value>
+  </data>
 </root>

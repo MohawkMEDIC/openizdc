@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-30
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Mobile.Core.Services;
 using System;
@@ -145,6 +145,31 @@ namespace OpenIZ.Mobile.Core.Synchronization
         }
 
         /// <summary>
+        /// Forces a push and blocks until all data is pushed
+        /// </summary>
+        public void Push()
+        {
+            var qmService = ApplicationContext.Current.GetService<QueueManagerService>();
+            if (!qmService.IsBusy && !this.IsSynchronizing)
+            {
+                ManualResetEvent waitHandle = new ManualResetEvent(false);
+
+                // Wait for outbound queue to finish
+                EventHandler<QueueExhaustedEventArgs> exhaustCallback = (o, e) =>
+                {
+                    if (e.Queue == "outbound")
+                        waitHandle.Set();
+                };
+
+                qmService.QueueExhausted += exhaustCallback;
+                qmService.ExhaustOutboundQueue();
+                qmService.ExhaustAdminQueue();
+                waitHandle.WaitOne();
+                qmService.QueueExhausted -= exhaustCallback;
+            }
+        }
+
+        /// <summary>
         /// Pull from remote
         /// </summary>
         private void Pull(SynchronizationPullTriggerType trigger)
@@ -152,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Pool startup sync if configured..
             this.m_threadPool.QueueUserWorkItem((state) =>
             {
-
+                
                 bool initialSync = !SynchronizationLog.Current.GetAll().Any();
 
                 if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
@@ -350,6 +375,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         
                         if (String.IsNullOrEmpty(eTag))
                             eTag = result?.Item.FirstOrDefault()?.Tag;
+
+                        if (result.Count == 0) break;
                     }
 
                     if (result?.TotalResults > result?.Count)

@@ -1,5 +1,5 @@
 ﻿<!--
- - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  -
  - 
  - Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2017-3-31
+ - User: fyfej
+ - Date: 2017-10-30
  -->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
           xmlns:bind="http://openiz.org/applet/binding"
@@ -46,7 +46,7 @@
                         <a data-toggle="tab" data-target="#vaccinations" ng-click="showVaccineTab(antigenName)">
                             <div ng-if="sequence != null" class="input-group" ng-switch="sequence.moodConcept">
                                 <div ng-switch-when="acf7baf2-221f-4bc2-8116-ceb5165be079">
-                                    <div class="text-danger" ng-if="sequence.stopTime != null &amp;&amp; sequence.stopTime &lt; $root.page.loadTime">
+                                    <div class="text-danger" ng-if="sequence.stopTime != null &amp;&amp; sequence.stopTime &lt; $root.page.currentTime">
                                         <span class="glyphicon glyphicon-exclamation-sign"></span>
                                     </div>
                                     <div class="text-warn" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &lt; $root.page.maxEventTime &amp;&amp; (sequence.stopTime == null || sequence.stopTime != null &amp;&amp;  $root.page.maxEventTime &lt; sequence.stopTime)">
@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
                                 <div ng-switch-when="099bcc5e-8e2f-4d50-b509-9f9d5bbeb58e" class="text-info">
-                                    <div class="text-danger" ng-if="sequence.actTime != null &amp;&amp; sequence.actTime &lt; $root.page.loadTime">
+                                    <div class="text-danger" ng-if="sequence.actTime != null &amp;&amp; sequence.actTime &lt; $root.page.currentTime">
                                         <span class="glyphicon glyphicon-exclamation-sign"></span>
                                     </div>
                                     <div class="text-info" ng-if="sequence.actTime != null &amp;&amp; sequence.actTime &gt; $root.page.maxEventTime">

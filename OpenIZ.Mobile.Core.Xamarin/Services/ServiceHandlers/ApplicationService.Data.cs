@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Mobile.Core.Security;
@@ -45,6 +45,7 @@ using Jint.Parser.Ast;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Mobile.Core.Interop.IMSI;
 using OpenIZ.Core.Model.Entities;
+using System.Threading;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -237,12 +238,29 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [Demand(PolicyIdentifiers.Login)]
         public void ForceSync()
         {
-            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustOutboundQueue();
-            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustAdminQueue();
-            if (ApplicationContext.Current.GetService<ISynchronizationService>().IsSynchronizing || s_isDownloading)
+
+            var qmService = ApplicationContext.Current.GetService<QueueManagerService>();
+            if (qmService.IsBusy || ApplicationContext.Current.GetService<ISynchronizationService>().IsSynchronizing || s_isDownloading)
                 throw new InvalidOperationException(Strings.err_already_syncrhonizing);
             else
             {
+                ManualResetEvent waitHandle = new ManualResetEvent(false);
+
+                ApplicationContext.Current.SetProgress(Strings.locale_waitForOutbound, 0.1f);
+
+                // Wait for outbound queue to finish
+                EventHandler<QueueExhaustedEventArgs> exhaustCallback = (o, e) =>
+                {
+                    if (e.Queue == "outbound")
+                        waitHandle.Set();
+                };
+
+                qmService.QueueExhausted += exhaustCallback;
+                qmService.ExhaustOutboundQueue();
+                qmService.ExhaustAdminQueue();
+                waitHandle.WaitOne();
+                qmService.QueueExhausted -= exhaustCallback;
+
                 s_isDownloading = true;
                 try
                 {

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-4-3
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Mobile.Core;
 using OpenIZ.Mobile.Core.Xamarin;
@@ -202,9 +202,7 @@ namespace DisconnectedClient
             DcApplicationContext.Current.SetProgress("Shutting down...", 0);
 
 #if IE
-
 #else
-            Cef.Shutdown();
 #endif
             XamarinApplicationContext.Current.Stop();
             XamarinApplicationContext.ProgressChanged -= this.m_progressHandler;
@@ -215,7 +213,7 @@ namespace DisconnectedClient
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            this.m_browser.Refresh();
+            this.m_browser.Reload();
         }
 
     }

@@ -1,5 +1,5 @@
 ﻿<!--
- - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  -
  - 
  - Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2017-3-31
+ - User: fyfej
+ - Date: 2017-10-30
  -->
 <div class="row no-margin-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <div class="col-xs-10">
@@ -36,8 +36,11 @@
         <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}:</label>
             <div class="col-xs-4">
-                <span ng-model="patient.dateOfBirth" oiz-editor="date">
+                <span ng-model="patient.dateOfBirth" oiz-editor="date" ng-if="patient.dateOfBirthPrecision">
                     {{ patient.dateOfBirth | datePrecisionFormat:patient.dateOfBirthPrecision }}
+                </span>
+                <span ng-model="patient.dateOfBirth" oiz-editor="date" ng-if="!patient.dateOfBirthPrecision">
+                    {{ patient.dateOfBirth | datePrecisionFormat:'D' }}
                 </span>
             </div>
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
@@ -63,8 +66,8 @@
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}:</label>
             <div class="col-xs-4 padding-id-header">
                 <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
-                    <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ dmn }}</span></span>
-                    <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ dmn }}</span><br /></span>
+                    <span ng-if="!id.length">{{ id.value }} <span class="label label-info">{{ id.authority.name || dmn }}</span></span>
+                    <span ng-if="id.length" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ id.authority.name || dmn }}</span><br /></span>
                 </div>
                 <span ng-if="patient.identifier.length &gt; 2">...</span>
 

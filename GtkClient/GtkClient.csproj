@@ -18,10 +18,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="/usr/share/openiz/sdk/bin/appletcompiler.sh --compile -s ${SolutionDir}/OpenIZMobile.Applets -o ${ProjectDir}/Applets/org.openiz.core.pak --optimize " />
+        <Command type="BeforeBuild" command="/usr/share/openiz/sdk/bin/appletcompiler.sh --compile -s ${SolutionDir}/OpenIZMobile.Applets/org.openiz.core -o ${ProjectDir}/Applets/org.openiz.core.pak --optimize " />
+        <Command type="BeforeBuild" command="/usr/share/openiz/sdk/bin/appletcompiler.sh --compile -s ${SolutionDir}/OpenIZMobile.Applets/org.openiz.templates -o ${ProjectDir}/Applets/org.openiz.templates.pak --optimize " />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -34,40 +34,14 @@
     <PlatformTarget>x86</PlatformTarget>
     <CustomCommands>
       <CustomCommands>
-        <Command type="BeforeBuild" command="/usr/share/openiz/sdk/bin/appletcompiler.sh --compile -s ${SolutionDir}/OpenIZMobile.Applets -o ${ProjectDir}/Applets/org.openiz.core.pak --optimize " />
+        <Command type="BeforeBuild" command="/usr/share/openiz/sdk/bin/appletcompiler.sh --compile -s ${SolutionDir}/OpenIZMobile.Applets/org.openiz.core -o ${ProjectDir}/Applets/org.openiz.core.pak --optimize " />
+        <Command type="BeforeBuild" command="/usr/share/openiz/sdk/bin/appletcompiler.sh --compile -s ${SolutionDir}/OpenIZMobile.Applets/org.openiz.templates -o ${ProjectDir}/Applets/org.openiz.templates.pak --optimize " />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>glib-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>glade-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
     <Reference Include="Mono.Posix" />
-    <Reference Include="webkit-sharp, Version=1.1.15.0, Culture=neutral, PublicKeyToken=eaa1d335d2e19745">
-      <Package>webkit-sharp-1.0</Package>
-    </Reference>
     <Reference Include="MohawkCollege.Util.Console.Parameters">
       <HintPath>..\Solution Items\MohawkCollege.Util.Console.Parameters.dll</HintPath>
     </Reference>
@@ -134,22 +108,46 @@
     <Reference Include="SQLite.Net.Platform.SqlCipher">
       <HintPath>..\Solution Items\Net45\SQLite.Net.Platform.SqlCipher.dll</HintPath>
     </Reference>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>glib-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>glade-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gtk-dotnet, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-dotnet-2.0</Package>
+    </Reference>
+    <Reference Include="webkit-sharp, Version=1.1.15.0, Culture=neutral, PublicKeyToken=eaa1d335d2e19745">
+      <Package>webkit-sharp-1.0</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="lib\logo_lg.png" />
     <EmbeddedResource Include="gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="lib\logo_lg.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="MainWindow.cs" />
-    <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GtkDialogProvider.cs" />
     <Compile Include="WebkitSettings.cs" />
     <Compile Include="OpenIZWebView.cs" />
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="gtk-gui\MainWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -173,6 +171,9 @@
   <ItemGroup>
     <None Include="Applets\org.openiz.core.pak">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Applets\org.openiz.templates.pak">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

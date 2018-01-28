@@ -419,5 +419,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
                 return ResourceManager.GetString("locale_upgradeConfirm", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sending items to server....
+        /// </summary>
+        internal static string locale_waitForOutbound {
+            get {
+                return ResourceManager.GetString("locale_waitForOutbound", resourceCulture);
+            }
+        }
     }
 }

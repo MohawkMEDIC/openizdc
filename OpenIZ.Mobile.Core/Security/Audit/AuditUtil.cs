@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-6-28
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using MARC.HI.EHRS.SVC.Auditing.Data;
 using MARC.HI.EHRS.SVC.Auditing.Services;
@@ -135,8 +135,46 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                     Type = AuditableObjectType.SystemObject
                 });
             }
+            AddAncillaryObject(audit);
 
             ApplicationContext.Current.GetService<LocalAuditRepositoryService>().Insert(audit);
+
+        }
+
+        /// <summary>
+        /// Adds ancillary object information to the audit log
+        /// </summary>
+        private static void AddAncillaryObject(AuditData audit)
+        {
+            // Add audit actors for this device and for the current user
+            var securityConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+            var subscriptionConfig = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>();
+
+            // Add auditable object which identifies the device
+            audit.AuditableObjects.Add(new AuditableObject()
+            {
+                IDTypeCode = AuditableObjectIdType.Custom,
+                CustomIdTypeCode = new AuditCode("Device","OpenIZTable"),
+                ObjectId = securityConfig.DeviceName,
+                Role = AuditableObjectRole.DataRepository,
+                Type = AuditableObjectType.SystemObject,
+                ObjectData = new List<ObjectDataExtension>()
+                {
+                    new ObjectDataExtension("versionCode", Encoding.UTF8.GetBytes(ApplicationContext.Current.GetType().GetTypeInfo().Assembly.GetName().Version.ToString()))
+                }
+            });
+
+            // Add auditable object which identifies the facility
+            var facilityId = subscriptionConfig.Facilities?.FirstOrDefault();
+            if(!String.IsNullOrEmpty(facilityId))
+                audit.AuditableObjects.Add(new AuditableObject()
+                {
+                    IDTypeCode = AuditableObjectIdType.Custom,
+                    CustomIdTypeCode = new AuditCode("Place", "OpenIZTable"),
+                    ObjectId = facilityId,
+                    Role = AuditableObjectRole.Location,
+                    Type = AuditableObjectType.Organization
+                });
 
         }
 
@@ -150,6 +188,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
 
             AddDeviceActor(audit);
             AddUserActor(audit);
+            AddAncillaryObject(audit);
 
             SendAudit(audit);
         }
@@ -162,7 +201,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             AuditCode eventTypeId = CreateAuditActionCode(typeCode);
             AuditData audit = new AuditData(DateTime.Now, action, outcome, eventType, eventTypeId);
 
-            //AddDeviceActor(audit);
+            AddDeviceActor(audit);
             AddUserActor(audit);
 
             // Objects
@@ -222,6 +261,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                     Type = AuditableObjectType.SystemObject
                 });
             }
+            AddAncillaryObject(audit);
 
             SendAudit(audit);
         }
@@ -250,6 +290,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 Role = AuditableObjectRole.SecurityResource,
                 Type = AuditableObjectType.SystemObject
             }).ToList();
+            AddAncillaryObject(audit);
+
             SendAudit(audit);
         }
 
@@ -319,6 +361,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         {
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.Success, EventIdentifierType.ApplicationActivity, CreateAuditActionCode(eventType));
             AddDeviceActor(audit);
+            AddAncillaryObject(audit);
+
             SendAudit(audit);
         }
 
@@ -339,7 +383,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 ActorRoleCode = (principal as ClaimsPrincipal)?.Claims.Where(o=>o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o=>new AuditCode(o.Value, "OizRoles")).ToList()
             });
 
-            //AddDeviceActor(audit);
+            AddDeviceActor(audit);
 
             audit.AuditableObjects.Add(new AuditableObject()
             {
@@ -349,6 +393,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 Type = AuditableObjectType.SystemObject,
                 Role = AuditableObjectRole.Job
             });
+
+            AddAncillaryObject(audit);
 
             SendAudit(audit);
         }
@@ -370,7 +416,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 UserName = principal.Identity.Name,
                 UserIsRequestor = true
             });
-            //AddDeviceActor(audit);
+            AddDeviceActor(audit);
+            AddAncillaryObject(audit);
 
             SendAudit(audit);
         }
@@ -382,7 +429,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         {
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.UseOfARestrictedFunction));
             AddUserActor(audit);
-            //AddDeviceActor(audit);
+            AddDeviceActor(audit);
             audit.AuditableObjects.Add(new AuditableObject()
             {
                 IDTypeCode = AuditableObjectIdType.Uri,
@@ -391,6 +438,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 Role = AuditableObjectRole.Resource,
                 Type = AuditableObjectType.SystemObject
             });
+            AddAncillaryObject(audit);
+
             SendAudit(audit);
         }
     }

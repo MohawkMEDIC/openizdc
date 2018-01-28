@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-6-28
+ * User: fyfej
+ * Date: 2017-10-30
  */
 
 /// <reference path="~/js/openiz.js"/>
@@ -113,12 +113,23 @@ angular.module('layout').controller('ReportListController', ['$scope', '$rootSco
 
         $("#reportResultDialog").modal('show');
 
+        var filters = {};
+        // Fix values 
+        for (var i in $scope.currentReport.parameter) {
+            var parm = $scope.currentReport.parameter[i];
+            if (parm.type == "Date") {
+                filters[parm.name] = OpenIZ.Util.toDateInputString($scope.currentFilter[parm.name]);
+            }
+            else
+                filters[parm.name] = $scope.currentFilter[parm.name];
+        }
+
         $scope.isLoading = true;
         // TODO: Make this on-demand
         OpenIZ.Risi.executeReportAsync({
             name: $scope.currentReport.info.name,
             view: $scope.currentReport.view[$scope.viewId || 0].name,
-            query: $scope.currentFilter,
+            query: filters,
             continueWith: function (data) {
                 if (data == null)
                     $scope.reportBody = "<h2>" + OpenIZ.Localization.getString("locale.reports.nodata") + "</h2>";
@@ -158,7 +169,7 @@ angular.module('layout').controller('ReportListController', ['$scope', '$rootSco
 
     /* Gets the maximum date for the parameter */
     function getParameterMaxDate(parameter) {
-        var max = parameter.max || $rootScope.page.loadTime;
+        var max = parameter.max || $rootScope.page.currentTime;
 
         if (parameter.name === "DateFrom" && $scope.currentFilter["DateTo"]) {
             max = $scope.currentFilter["DateTo"];

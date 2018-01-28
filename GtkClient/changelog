@@ -1,3 +1,9 @@
+openizdc (0.9.9) UNRELEASED; urgency=medium
+  * Fixes deadlock issue on startup
+  * Adds ability to delay load applet package files
+  * Adds improved template handling functions
+
+ -- Justin Fyfe <justin.fyfe1@mohawkcollege.ca>  Thu, 2 Nov 2017 14:44:08 -0400
 openizdc (0.9.8) UNRELEASED; urgency=medium
 
   * Edmonton Release.

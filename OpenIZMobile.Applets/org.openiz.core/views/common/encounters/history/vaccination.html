@@ -1,5 +1,5 @@
 ﻿<!--
- - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  -
  - 
  - Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2017-6-17
+ - User: fyfej
+ - Date: 2017-10-30
  -->
 <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
           xmlns:bind="http://openiz.org/applet/binding" class="oiz-vaccination-history form-horizontal form-group"
@@ -24,60 +24,63 @@
 
     <!-- TODO: Call the forecaster for this -->
     <div class="table-responsive">
-            <table class="table table-striped oiz-vaccination-history-table">
-                <thead>
-                    <tr>
-                        <th class="vaccine-table-column"></th>
-                        <th class="vaccine-table-column" style="text-align:center">{{ 'locale.encounters.immunization.birthDose' | i18n }}</th>
-                        <th class="vaccine-table-column" style="text-align:center">1</th>
-                        <th class="vaccine-table-column" style="text-align:center">2</th>
-                        <th class="vaccine-table-column" style="text-align:center">3</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
-                        <td>{{ antigenName }}</td>
-                        <td ng-repeat="sequence in event track by $index" class="vaccination-td">
-                            <div ng-if="sequence != null" class="input-group">
-                                <label class="control control--checkbox">
-                                    <input type="checkbox"
-                                           ng-model="sequence._enabled"
-                                           ng-change="vaccinationCheck(event, sequence, $index)"
-                                           ng-disabled="vaccinationCheckDisabled(event, sequence, $index)"
-                                           value="false"
-                                           name="enabledImmunization-{{antigenName}}-{{$index}}" />
-                                    <div class="control__indicator control__indicator_alt"></div>
-                                </label>
+        <table class="table table-striped oiz-vaccination-history-table">
+            <thead>
+                <tr>
+                    <th class="vaccine-table-column"></th>
+                    <th class="vaccine-table-column" style="text-align:center">{{ 'locale.encounters.immunization.birthDose' | i18n }}</th>
+                    <th class="vaccine-table-column" style="text-align:center">1</th>
+                    <th class="vaccine-table-column" style="text-align:center">2</th>
+                    <th class="vaccine-table-column" style="text-align:center">3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
+                    <td>{{ antigenName }}</td>
+                    <td ng-repeat="sequence in event track by $index" class="vaccination-td">
+                        <div ng-if="sequence != null" class="input-group">
+                            <label class="control control--checkbox">
+                                <input type="checkbox"
+                                       ng-model="sequence._enabled"
+                                       ng-change="vaccinationCheck(event, sequence, $index)"
+                                       ng-disabled="vaccinationCheckDisabled(event, sequence, $index)"
+                                       value="false"
+                                       name="enabledImmunization-{{antigenName}}-{{$index}}" />
+                                <div class="control__indicator control__indicator_alt"></div>
+                            </label>
 
-                                <input class="date-checkbox-control form-control"
-                                       ng-class="{ 'input-error': editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid  }"
-                                       name="enabledImmunizationDate-{{antigenName}}-{{$index}}"
-                                       ng-disabled="!sequence._enabled"
-                                       ng-required="sequence._enabled"
-                                       type="date"
-                                       ng-model="sequence.actTime"
-                                       ng-init="sequence._originalTime = sequence.actTime"
-                                       ng-change="harmonizeDoseTimes(sequence, $index)"
-                                       max="{{sequence._enabled ? $root.page.maxEventTime : '' | date:'yyyy-MM-dd'}}"
-                                       min="{{(event[sequence.doseSequence - 1] == null || !sequence._enabled || !event[sequence.doseSequence - 1]._enabled ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date:'yyyy-MM-dd'}}" />
-                                <div class="help-block text-danger" ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid  ">
-                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.required ">
-                                        {{ 'locale.patient.errors.historicalVaccination.required' | i18n }}
-                                    </span>
-                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.date ">
-                                        {{ 'locale.patient.errors.historicalVaccination.date' | i18n }}
-                                    </span>
-                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.max ">
-                                        {{ 'locale.patient.errors.historicalVaccination.maxDate' | i18n }}
-                                    </span>
-                                    <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.min ">
-                                        {{ 'locale.patient.errors.historicalVaccination.minDate' | i18n }}
-                                    </span>
-                                </div>
+                            <input class="date-checkbox-control form-control"
+                                   ng-class="{ 'input-error': editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid  }"
+                                   name="enabledImmunizationDate-{{antigenName}}-{{$index}}"
+                                   ng-disabled="!sequence._enabled"
+                                   ng-required="sequence._enabled"
+                                   type="date"
+                                   ng-model="sequence.actTime"
+                                   ng-init="sequence._originalTime = sequence.actTime"
+                                   ng-change="harmonizeDoseTimes(sequence, $index)"
+                                   max="{{sequence._enabled ? $root.page.maxEventTime : '' | date:'yyyy-MM-dd'}}"
+                                   min="{{(event[sequence.doseSequence - 1] == null || !sequence._enabled || !event[sequence.doseSequence - 1]._enabled ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date:'yyyy-MM-dd'}}" />
+                            <div class="help-block text-warning" ng-if="sequence._enabled &amp;&amp; sequence.actTime >= $root.page.currentTime.trunc()">
+                                <i class="fa fa-exclamation-triangle"></i> {{ 'locale.patient.errors.historicalVaccination.today' | i18n }}
                             </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            <div class="help-block text-danger" ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$invalid  ">
+                                <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.required ">
+                                    {{ 'locale.patient.errors.historicalVaccination.required' | i18n }}
+                                </span>
+                                <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.date ">
+                                    {{ 'locale.patient.errors.historicalVaccination.date' | i18n }}
+                                </span>
+                                <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.max ">
+                                    {{ 'locale.patient.errors.historicalVaccination.maxDate' | i18n }}
+                                </span>
+                                <span ng-if="editPatientForm['enabledImmunizationDate-' + antigenName + '-' + $index].$error.min ">
+                                    {{ 'locale.patient.errors.historicalVaccination.minDate' | i18n }}
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </fieldset>

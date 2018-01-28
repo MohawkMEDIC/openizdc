@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: fyfej
- * Date: 2016-10-25
+ * Date: 2017-9-1
  */
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -37,8 +37,8 @@ using Android.App;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("0.9.9.*")]
-[assembly: AssemblyInformationalVersion("Fredericton CTP1")]
+[assembly: AssemblyVersion ("1.0.0.*")]
+[assembly: AssemblyInformationalVersion("Fredericton")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.

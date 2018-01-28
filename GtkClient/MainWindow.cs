@@ -4,6 +4,8 @@ using WebKit;
 using OpenIZ.Mobile.Core;
 using GtkClient;
 using OpenIZ.Mobile.Core.Diagnostics;
+using System.Diagnostics;
+using GLib;
 
 public partial class MainWindow: Gtk.Window
 {
@@ -93,23 +95,30 @@ public partial class MainWindow: Gtk.Window
 	private void CreateWebView() {
 		this.m_webView = new OpenIZWebView ();
 
-		this.m_webView.Editable = false;
+		this.m_webView.Editable = true;
 		this.m_webView.TitleChanged += (o, e) => {
 			this.Title = "OpenIZ Disconnected Client";
 		};
+		this.m_webView.ConsoleMessage += new ConsoleSignalHandler (this.ConsoleMessage);
 		this.m_webView.Settings = new WebkitSettings("OpenIZ-DC " + ApplicationContext.Current.ExecutionUuid.ToString());
-		this.m_webView.Closed += (sender, e) => {
+	}
 
+	/// <summary>
+	/// Console message
+	/// </summary>
+	[ConnectBefore]
+	private void ConsoleMessage(System.Object sender, ConsoleSignalArgs e) {
+
+		if (e.Message == "cmd:close_win" &&
+			e.Source == "http://127.0.0.1:9200/org.openiz.core/js/openiz.js") {
 			ApplicationContext.Current.SetProgress ("Shutting down...", 0);
 			ApplicationContext.Current.Stop ();
 			this.Destroy ();
-			Application.Quit();
-		};
-		this.m_webView.ConsoleMessage += (sender, e) => {
+			Application.Quit ();
+		}
+		else
 			this.m_tracer.TraceInfo(e.Message);
-		};
 	}
-
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
 		ApplicationContext.Current.SetProgress ("Shutting down...", 0);
@@ -118,16 +127,5 @@ public partial class MainWindow: Gtk.Window
 		a.RetVal = true;
 	}
 
-	/// <summary>
-	/// Releases all resource used by the <see cref="MainWindow"/> object.
-	/// </summary>
-	/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MainWindow"/>. The <see cref="Dispose"/>
-	/// method leaves the <see cref="MainWindow"/> in an unusable state. After calling <see cref="Dispose"/>, you must
-	/// release all references to the <see cref="MainWindow"/> so the garbage collector can reclaim the memory that the
-	/// <see cref="MainWindow"/> was occupying.</remarks>
 
-	public override void Dispose ()
-	{
-		base.Dispose ();
-	}
 }

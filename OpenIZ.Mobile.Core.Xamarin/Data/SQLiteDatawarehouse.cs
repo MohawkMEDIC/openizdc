@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-6-28
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Services;
 using System;
@@ -687,7 +687,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Execute a stored query
         /// </summary>
-        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters)
+        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters, out int tr)
         {
             this.ThrowIfDisposed();
 
@@ -718,7 +718,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
                     var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId);
 
-                    int tr = 0;
                     return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 0, out tr);
                 }
                 catch (Exception e)
@@ -898,10 +897,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     property?.Type == SchemaPropertyType.Uuid)
                     value = new Guid(rdr[i] as byte[]);
                 else if ((rdr[i] is int || rdr[i] is long) &&
-                    property?.Type == SchemaPropertyType.Date)
+                    (property?.Type == SchemaPropertyType.Date || property?.Type == SchemaPropertyType.DateTime))
                 {
                     value = Convert.ToInt64(rdr[i]);
-                    value = this.m_epoch.AddSeconds((Int64)value);
+
+                    // If it is a date we don't want to correct, so the date will be local
+                    if (property?.Type == SchemaPropertyType.DateTime)
+                        value = this.m_epoch.AddSeconds((Int64)value);
+                    else
+                        value = new DateTime((Int64)value * 10000000 + 621355968000000000, DateTimeKind.Local);
                 }
                 retVal.Add(rdr.GetName(i), value);
             }

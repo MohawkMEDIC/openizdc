@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-18
+ * User: fyfej
+ * Date: 2017-10-30
  */
 
 /**
@@ -1570,7 +1570,18 @@ var OpenIZ = OpenIZ || {
          * @return {string} A DATE as an ISO String only
          */
         toDateInputString: function (date) {
-            return date.toISOString().substring(0, 10);
+            if (!date) return null; // null
+            else if (date.getYear) { // javascript date
+                var yr = (1900 + date.getYear()).toString(),
+                    mo = (1 + date.getMonth()).toString(),
+                    da = date.getDate().toString();
+                var pad = "00";
+                mo = pad.substring(0, 2 - mo.length) + mo;
+                da = pad.substring(0, 2 - da.length) + da;
+                return yr + "-" + mo + "-" + da;
+            }
+            else // other date lib
+                return date.toISOString();
         },
         /**
          * @summary Start a task asynchronously
@@ -3849,6 +3860,45 @@ Date.prototype.addDays = function (days) {
     return retVal;
 }
 
+
+/**
+ * @summary Adds the specified number of seconds to the date
+ * @method
+ * @memberof Date
+ * @param {Number} seconds The number of seconds to add
+ */
+Date.prototype.addSeconds = function (seconds) {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(retVal.getSeconds() + seconds);
+    return retVal;
+}
+
+/**
+ * @summary Add the specified seconds to the date
+ * @method
+ * @memberof Date
+ * @param {Number} seconds The number of seconds to add
+ */
+Date.prototype.addSeconds = function (seconds) {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(retVal.getSeconds() + seconds);
+    return retVal;
+}
+
+/**
+ * @summary Truncates the specified date
+ * @method
+ * @memberof Date
+ */
+Date.prototype.trunc = function () {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(0);
+    retVal.setMinutes(0);
+    retVal.setHours(0);
+    retVal.setMilliseconds(0);
+    return retVal;
+}
+
 /**
  * @summary Gets the date on the next day
  * @memberof Date
@@ -3856,6 +3906,20 @@ Date.prototype.addDays = function (days) {
  */
 Date.prototype.tomorrow = function () {
     return this.addDays(1);
+}
+
+/** 
+ * @summary Truncates date to day
+ * @memberof Date
+ * @method
+ */
+Date.prototype.trunc = function () {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setSeconds(0);
+    retVal.setHours(0);
+    retVal.setMinutes(0);
+    retVal.setMilliseconds(0);
+    return retVal;
 }
 
 /**

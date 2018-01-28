@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-10-30
  */
 
 /// <refernece path="~/js/openiz.js"/>
@@ -38,7 +38,7 @@ angular.module('layout').controller('AppointmentSchedulerController', ['$scope',
 
                 var assistantCalendarOptions = {
                     defaultView: 'month',
-                    defaultDate: $scope.appointment != null ? $scope.appointment.actTime : OpenIZ.Util.toDateInputString($rootScope.page.loadTime),
+                    defaultDate: $scope.appointment != null ? $scope.appointment.actTime : OpenIZ.Util.toDateInputString($rootScope.page.currentTime),
                     displayEventTime: false,
                     editable: true,
                     weekends: false,
@@ -108,11 +108,11 @@ angular.module('layout').controller('AppointmentSchedulerController', ['$scope',
                             if (proposals.item[i].actTime < $scope.appointment.actTime)
                                 $scope.appointment = proposals.item[i];
 
-                        if ($scope.appointment.actTime < $rootScope.page.loadTime) {
-                            $scope.appointment.actTime = $rootScope.page.loadTime;
+                        if ($scope.appointment.actTime < $rootScope.page.currentTime) {
+                            $scope.appointment.actTime = $rootScope.page.currentTime;
                         }
-                        if ($scope.appointment.startTime < $rootScope.page.loadTime) {
-                            $scope.appointment.startTime = $rootScope.page.loadTime;
+                        if ($scope.appointment.startTime < $rootScope.page.currentTime) {
+                            $scope.appointment.startTime = $rootScope.page.currentTime;
                         }
                         if (Array.isArray($scope.appointment.relationship.HasComponent))
                             $.each($scope.appointment.relationship.HasComponent, function (i, e) {

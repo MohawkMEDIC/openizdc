@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-4-3
+ * User: fyfej
+ * Date: 2017-9-1
  */
 #if !IE
 using CefSharp;
@@ -83,6 +83,8 @@ namespace DisconnectedClient
                     Directory.CreateDirectory(dir);
 
             // Token validator
+            ServicePointManager.DefaultConnectionLimit = 2;
+            ServicePointManager.MaxServicePointIdleTime = 100;
             TokenValidationManager.SymmetricKeyValidationCallback += (o, k, i) =>
             {
                 return MessageBox.Show(String.Format("Trust issuer {0} with symmetric key?", i), "Token Validation Error", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes;
@@ -195,6 +197,10 @@ namespace DisconnectedClient
                 Cef.Shutdown();
                 Application.Exit();
                 Environment.Exit(996);
+            }
+            finally
+            {
+                Cef.Shutdown();
             }
         }
     }
