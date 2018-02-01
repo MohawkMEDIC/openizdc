@@ -241,6 +241,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         Monitor.Exit(this.m_lock);
                     }
                 }
+                else
+                    this.m_tracer.TraceWarning("Will not execute {0} due to - already pulling", trigger);
             });
 
         }
