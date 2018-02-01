@@ -177,6 +177,7 @@ namespace OizDebug.Shell
         /// <param name="sources"></param>
         public ProtoDebugger(DebuggerParameters parms) : base(parms.WorkingDirectory)
         {
+            Console.WriteLine("Starting debugger...");
 
             DebugApplicationContext.Start(parms);
             ApplicationServiceContext.Current = ApplicationContext.Current;

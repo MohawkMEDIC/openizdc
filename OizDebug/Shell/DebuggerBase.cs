@@ -35,6 +35,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
@@ -809,6 +810,25 @@ namespace OizDebug.Shell
             return retVal;
         }
 
+        /// <summary>
+        /// Generate a new uuid
+        /// </summary>
+        [Command("uuid", "Generates a new uuid")]
+        public void UuidInfo()
+        {
+            this.UuidInfo(Guid.NewGuid().ToString());
+        }
 
+        /// <summary>
+        /// Provide information about the uuid
+        /// </summary>
+        [Command("uuid", "Displays information about the provided uuid")]
+        public void UuidInfo(String uuid)
+        {
+            var g = Guid.Parse(uuid);
+            Console.WriteLine("UUID: {0}", g);
+            Console.WriteLine("HEX: {0}", BitConverter.ToString(g.ToByteArray()).Replace("-", ""));
+            Console.WriteLine("DEC: {0}", new BigInteger(g.ToByteArray()));
+        }
     }
 }

@@ -122,7 +122,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (domainObject.Uuid == null || domainObject.Key == Guid.Empty)
                 data.Key = domainObject.Key = Guid.NewGuid();
 
-#if DB_DEBUG
+
             PropertyInfo[] properties = null;
             if(!this.m_requiredProperties.TryGetValue(typeof(TDomain), out properties))
             {
@@ -134,7 +134,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in properties)
                 if (itm.GetValue(domainObject) == null)
                     throw new ArgumentNullException(itm.Name, "Requires a value");
-#endif
+
 
             // Does this already exist?
 
@@ -144,7 +144,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 domainObject = this.BeforeInsertDomainObject(context, domainObject);
                 context.Connection.Insert(domainObject);
             }
-            catch // doubt this will even work
+            catch(SQLite.Net.NotNullConstraintViolationException)
+            {
+                throw;
+            }
+            catch(SQLiteException) // doubt this will even work
             {
                 context.Connection.Update(domainObject);
             }
