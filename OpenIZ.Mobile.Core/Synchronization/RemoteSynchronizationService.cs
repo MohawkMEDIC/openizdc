@@ -123,6 +123,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
             this.m_networkInfoService.NetworkStatusChanged += (o, e) => this.Pull(SynchronizationPullTriggerType.OnNetworkChange);
 
+            this.m_tracer.TraceInfo("Performing OnStart trigger pull...");
             this.Pull(SynchronizationPullTriggerType.OnStart);
 
             // Polling
