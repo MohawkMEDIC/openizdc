@@ -825,7 +825,16 @@ namespace OizDebug.Shell
         [Command("uuid", "Displays information about the provided uuid")]
         public void UuidInfo(String uuid)
         {
-            var g = Guid.Parse(uuid);
+            Guid g;
+            if (uuid.StartsWith("x", StringComparison.OrdinalIgnoreCase))
+            {
+                uuid = uuid.Substring(1);
+                g = new Guid(Enumerable.Range(0, uuid.Length)
+                                 .Where(x => x % 2 == 0)
+                                 .Select(x => Convert.ToByte(uuid.Substring(x, 2), 16)).ToArray());
+            }
+            else
+                g = Guid.Parse(uuid);
             Console.WriteLine("UUID: {0}", g);
             Console.WriteLine("HEX: {0}", BitConverter.ToString(g.ToByteArray()).Replace("-", ""));
             Console.WriteLine("DEC: {0}", new BigInteger(g.ToByteArray()));
