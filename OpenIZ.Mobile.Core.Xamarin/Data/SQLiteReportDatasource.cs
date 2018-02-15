@@ -110,6 +110,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                                 cmd.Parameters.Add(parm);
                             }
 
+#if DEBUG
+                            var filledSql = cmd.CommandText;
+                            for(int i = 0; i < cmd.Parameters.Count; i++ )
+                            {
+                                var idx = filledSql.IndexOf("?");
+                                filledSql = filledSql.Remove(idx, 1);
+                                var var = cmd.Parameters[i].Value;
+                                if (var is byte[])
+                                    var = $"x'{BitConverter.ToString((byte[])var).Replace("-", "")}'";
+                                else if (var == null)
+                                    var = "null";
+                                filledSql = filledSql.Insert(idx, var.ToString());
+                            }
+                            this.m_tracer.TraceVerbose(filledSql);
+#endif
+
                             // data reader
                             try
                             {
