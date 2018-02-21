@@ -531,6 +531,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                 catch (WebException e)
                 {
 
+                    var errorResponse = (e.Response as HttpWebResponse);
+                    if(errorResponse?.StatusCode == HttpStatusCode.NotModified)
+                    {
+                        this.m_tracer.TraceInfo("Server indicates not modified {0} {1} : {2}", method, url, e.Message);
+                        responseHeaders = errorResponse?.Headers;
+                        return default(TResult);
+                    }
+
                     this.m_tracer.TraceError("Error executing {0} {1} : {2}", method, url, e.Message);
 
                     // status
@@ -540,8 +548,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                             // Deserialize
                             object errorResult = default(ErrorResult);
-
-                            var errorResponse = (e.Response as HttpWebResponse);
+                            
                             var responseContentType = errorResponse.ContentType;
                             if (responseContentType.Contains(";"))
                                 responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));

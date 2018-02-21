@@ -356,7 +356,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 case "PatientEncounterMe":
                                     syncSetting.Name = "locale.sync.resource.PatientEncounter.my";
                                     syncSetting.Filters.Add("participation[RecordTarget].source.participation[Location].player=" + facilityId + "&participation[RecordTarget].source.statusConcept=" + StatusKeys.Active + "&participation[RecordTarget].source.classConcept=" + ActClassKeys.Encounter);
-                                    syncSetting.ResourceAqn = "Person";
+                                    syncSetting.ResourceAqn = "PatientEncounter";
                                     syncSetting.Triggers = SynchronizationPullTriggerType.PeriodicPoll;
                                     break;
                                 case "Place":

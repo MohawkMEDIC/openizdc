@@ -1163,37 +1163,7 @@ var OpenIZ = OpenIZ || {
      * @memberof OpenIZ
      */
     Util: {
-        /** 
-         * @summary Renders the specified concept name from a DOM option
-         * @memberof OpenIZ.Util
-         * @method
-         * @param {OpenIZModel.ConceptName} name The concept name to be rendered
-         */
-        renderConceptFromDom: function (val) {
-            if (val)
-                return $("option[value=" + val + "]").first().text();
-        },
-        /** 
-         * @summary Renders the specified concept name
-         * @memberof OpenIZ.Util
-         * @method
-         * @param {OpenIZModel.ConceptName} name The concept name to be rendered
-         */
-        renderConceptName: function (name) {
-            var retVal = "";
-            if (name == null)
-                retVal = "";
-            else if (typeof (name) == "String") retVal = name;
-            else if (name[OpenIZ.Localization.getLocale()] != null)
-                retVal = name[OpenIZ.Localization.getLocale()];
-            else
-                retVal = name[Object.keys(name)];
-
-            if (Array.isArray(retVal))
-                return retVal[0];
-            else
-                return retVal;
-        },
+        
         /**
          * @summary Perform a simple post of JSON data to the backend
          * @method
@@ -1446,6 +1416,47 @@ var OpenIZ = OpenIZ || {
                         controlData.finally(controlData.state);
                 });
         },
+        
+        /**
+         * @summary Log an exception to the console
+         * @method
+         * @memberof OpenIZ.Util
+         * @param {OpenIZModel.Exception} e The exception to be logged to the console
+         */
+        logException: function (e) {
+            console.warn(e);
+        },
+        /** 
+         * @summary Renders the specified concept name from a DOM option
+         * @memberof OpenIZ.Util
+         * @method
+         * @param {OpenIZModel.ConceptName} name The concept name to be rendered
+         */
+        renderConceptFromDom: function (val) {
+            if (val)
+                return $("option[value=" + val + "]").first().text();
+        },
+        /** 
+         * @summary Renders the specified concept name
+         * @memberof OpenIZ.Util
+         * @method
+         * @param {OpenIZModel.ConceptName} name The concept name to be rendered
+         */
+        renderConceptName: function (name) {
+            var retVal = "";
+            if (name == null)
+                retVal = "";
+            else if (typeof (name) == "String") retVal = name;
+            else if (name[OpenIZ.Localization.getLocale()] != null)
+                retVal = name[OpenIZ.Localization.getLocale()];
+            else
+                retVal = name[Object.keys(name)];
+
+            if (Array.isArray(retVal))
+                return retVal[0];
+            else
+                return retVal;
+        },
         /**
          * @summary Render address for display
          * @method
@@ -1457,7 +1468,7 @@ var OpenIZ = OpenIZ || {
             if (entity === undefined) return;
 
             var address = entity.component !== undefined ? entity :
-                entity.address !== undefined ? (entity.address.Direct || entity.address.HomeAddress || result.name.$other ) :
+                entity.address !== undefined ? (entity.address.Direct || entity.address.HomeAddress || result.name.$other) :
                 (entity.Direct || entity.HomeAddress || entity.$other);
             var retVal = "";
             if (address.component) {
@@ -1498,15 +1509,6 @@ var OpenIZ = OpenIZ || {
                 default:
                     return "";
             }
-        },
-        /**
-         * @summary Log an exception to the console
-         * @method
-         * @memberof OpenIZ.Util
-         * @param {OpenIZModel.Exception} e The exception to be logged to the console
-         */
-        logException: function (e) {
-            console.warn(e);
         },
         /** 
          * @summary Render a manufactured material as a simple string
