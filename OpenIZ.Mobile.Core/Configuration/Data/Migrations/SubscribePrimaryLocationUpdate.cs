@@ -45,31 +45,35 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
             var syncSection = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>();
 
             // Un-subscribe to SubstanceAdministration
-            syncSection.SynchronizationResources.RemoveAll(o => o.ResourceType == typeof(SubstanceAdministration));
+            var actTypes = new Type[] { typeof(SubstanceAdministration), typeof(QuantityObservation), typeof(TextObservation), typeof(CodedObservation), typeof(Procedure) };
+            syncSection.SynchronizationResources.RemoveAll(o => actTypes.Contains(o.ResourceType));
             syncSection.SynchronizationResources.RemoveAll(o => o.ResourceType == typeof(Patient));
-            syncSection.SynchronizationResources.RemoveAll(o => o.ResourceType == typeof(Person));
-            syncSection.SynchronizationResources.RemoveAll(o => o.Name == "locale.sync.resource.PatientEncounter.my");
 
             // Re-add substance administrations
-            syncSection.SynchronizationResources.Add(new SynchronizationResource()
+            syncSection.SynchronizationResources.AddRange(actTypes.Select(t=>new SynchronizationResource()
             {
                 Always = false,
-                Filters = syncSection.Facilities.SelectMany(o=> new String[] {
-                    $"participation[Location].player=!{o}&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation|ServiceDeliveryLocation].target={o}",
+                Filters = syncSection.Facilities.SelectMany(o => new String[] {
+                    $"participation[Location|EntryLocation].player=!{o}&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation|ServiceDeliveryLocation].target={o}",
                     $"participation[Location|InformationRecipient|EntryLocation].player={o}"
                 }).ToList(),
-                ResourceType = typeof(SubstanceAdministration),
+                ResourceType = t,
                 Triggers = SynchronizationPullTriggerType.Always
-            });
+            }));
+
+            // Add patients that are mine and those that are involved in historical acts that are not mine
             syncSection.SynchronizationResources.Add(new SynchronizationResource()
             {
                 Always = false,
                 Filters = syncSection.Facilities.SelectMany(o => new String[] {
-                    $"relationship[ServiceDeliveryLocation|DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target={o}"
+                    $"relationship[ServiceDeliveryLocation|DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target={o}",
+                    $"participation[RecordTarget].source.participation[Location].player={o}&relationship[ServiceDeliveryLocation|DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation].target=!{o}"
                 }).ToList(),
                 ResourceType = typeof(Patient),
                 Triggers = SynchronizationPullTriggerType.OnStart | SynchronizationPullTriggerType.OnNetworkChange
             });
+
+            // Persons who are related to my patients
             syncSection.SynchronizationResources.Add(new SynchronizationResource()
             {
                 Always = false,
@@ -79,16 +83,12 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                 ResourceType = typeof(Person),
                 Triggers = SynchronizationPullTriggerType.Always
             });
-            syncSection.SynchronizationResources.Add(new SynchronizationResource()
+           
+            foreach (var ss in syncSection.SynchronizationResources.Where(o => o.Filters.Any(f => f.Contains("relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation]"))))
             {
-                Name = "locale.sync.resource.PatientEncounter.my",
-                Always = false,
-                Filters = syncSection.Facilities.SelectMany(o => new String[] {
-                    $"participation[RecordTarget].source.participation[Location].player={o}&participation[RecordTarget].source.statusConcept=c8064cbd-fa06-4530-b430-1a52f1530c27&participation[RecordTarget].source.classConcept=54b52119-1709-4098-8911-5df6d6c84140"
-                }).ToList(),
-                ResourceType = typeof(Person),
-                Triggers = SynchronizationPullTriggerType.PeriodicPoll
-            });
+                ss.Filters = ss.Filters.Select(o => o.Replace("relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation]", "relationship[DedicatedServiceDeliveryLocation|IncidentalServiceDeliveryLocation|ServiceDeliveryLocation]")).ToList();
+            }
+
             return true;
         }
     }

@@ -142,15 +142,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             try
             {
                 domainObject = this.BeforeInsertDomainObject(context, domainObject);
+                context.Connection.Delete(domainObject);
                 context.Connection.Insert(domainObject);
             }
-            catch(SQLite.Net.NotNullConstraintViolationException)
+            catch
             {
                 throw;
-            }
-            catch(SQLiteException) // doubt this will even work
-            {
-                context.Connection.Update(domainObject);
             }
 
             return data;

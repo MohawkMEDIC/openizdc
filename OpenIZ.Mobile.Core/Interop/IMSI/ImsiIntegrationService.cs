@@ -95,9 +95,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             // 0.7.0.*          0.9.0.0         Compatible (client newer)
             // 0.8.0.*          1.0.0.0         Not compatible (major version mis-match)
             this.m_tracer.TraceVerbose("IMSI server indicates version {0}", this.m_options.InterfaceVersion);
-            return (expectedVersion.Major > version.Major ||
-                expectedVersion.Major == version.Major &&
-                expectedVersion.Minor >= version.Minor);
+            return (version < expectedVersion);
         }
 
         /// <summary>

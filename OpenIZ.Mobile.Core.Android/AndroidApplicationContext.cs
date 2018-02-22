@@ -160,11 +160,12 @@ namespace OpenIZ.Mobile.Core.Android
                     }
 
                     // Ignore restoration
-                    retVal.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Add(new AppSettingKeyValuePair()
-                    {
-                        Key = "ignore.restore",
-                        Value = "true"
-                    });
+                    if(!retVal.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Any(o=>o.Key == "ignore.restore"))
+                        retVal.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Add(new AppSettingKeyValuePair()
+                        {
+                            Key = "ignore.restore",
+                            Value = "true"
+                        });
 
                     // HACK: For some reason the PCL doesn't do this automagically
                     //var connectionString = retVal.Configuration.GetConnectionString("openIzWarehouse");
