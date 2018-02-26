@@ -1,6 +1,6 @@
 ﻿/// <Reference path="./openiz.js"/>
 /*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,21 +15,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
- */
-/**
- * @version 0.9.6 (Edmonton)
- * @copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
- * @license Apache 2.0
- */
-/**
- * @summary OpenIZ Data Warehouse binding class.
- *
- * @description The purpose of this object is to facilitate and organize OpenIZ applet integration with the backing  * OpenIZ container. For example, to allow an applet to get the current on/offline status, or authenticate a user.
- * @namespace OpenIZWarehouse
- * @property {Object} _session the current session
- * @property {Object} urlParams the current session
+ * User: fyfej
+ * Date: 2017-10-30
  */
 var OpenIZWarehouse = OpenIZWarehouse || {
 

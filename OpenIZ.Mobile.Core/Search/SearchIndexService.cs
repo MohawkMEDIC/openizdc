@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Mobile.Core.Services;
 using System;
@@ -39,6 +39,7 @@ using SQLite.Net.Interop;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Core.Interfaces;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core.Search
 {
@@ -182,7 +183,10 @@ namespace OpenIZ.Mobile.Core.Search
                     {
                         var entityUuid = e.Key.Value.ToByteArray();
                         var entityVersionUuid = e.VersionKey.Value.ToByteArray();
+
                         if (conn.Table<SearchEntityType>().Where(o => o.Key == entityUuid && o.VersionKey == entityVersionUuid).Count() > 0) return true; // no change
+                        else if (e.LoadCollection<EntityTag>("Tags").Any(t => t.TagKey == "isAnonymous")) // Anonymous?
+                            continue;
 
                         var tokens = (e.Names ?? new List<EntityName>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
                         .Union((e.Identifiers ?? new List<EntityIdentifier>()).Select(o => o.Value.ToLower()))

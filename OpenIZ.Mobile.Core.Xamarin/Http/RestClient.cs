@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using System;
 using System.Security.Cryptography.X509Certificates;
@@ -531,6 +531,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                 catch (WebException e)
                 {
 
+                    var errorResponse = (e.Response as HttpWebResponse);
+                    if(errorResponse?.StatusCode == HttpStatusCode.NotModified)
+                    {
+                        this.m_tracer.TraceInfo("Server indicates not modified {0} {1} : {2}", method, url, e.Message);
+                        responseHeaders = errorResponse?.Headers;
+                        return default(TResult);
+                    }
+
                     this.m_tracer.TraceError("Error executing {0} {1} : {2}", method, url, e.Message);
 
                     // status
@@ -540,8 +548,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                             // Deserialize
                             object errorResult = default(ErrorResult);
-
-                            var errorResponse = (e.Response as HttpWebResponse);
+                            
                             var responseContentType = errorResponse.ContentType;
                             if (responseContentType.Contains(";"))
                                 responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-6-28
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Mobile.Core;
@@ -135,8 +135,8 @@ namespace DisconnectedClient.Core
                     tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Name.Replace("data/", ""), Convert.ToBase64String(this.Applets.RenderAssetContent(itm)).Replace("'", "\\'"));
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
+                
                 // Read the static shim
-
                 String shimFile = "DisconnectedClient.Core.lib.shim.js";
                 var manifestName = Assembly.GetEntryAssembly().GetManifestResourceNames().FirstOrDefault(o => o.EndsWith("shim.js"));
                 using (StreamReader shim = new StreamReader(Assembly.GetEntryAssembly().GetManifestResourceStream(manifestName)))

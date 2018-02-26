@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-2-4
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using System;
 using OpenIZ.Core.Model.Security;
@@ -122,7 +122,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (domainObject.Uuid == null || domainObject.Key == Guid.Empty)
                 data.Key = domainObject.Key = Guid.NewGuid();
 
-#if DB_DEBUG
+
             PropertyInfo[] properties = null;
             if(!this.m_requiredProperties.TryGetValue(typeof(TDomain), out properties))
             {
@@ -134,7 +134,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in properties)
                 if (itm.GetValue(domainObject) == null)
                     throw new ArgumentNullException(itm.Name, "Requires a value");
-#endif
+
 
             // Does this already exist?
 
@@ -142,11 +142,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             try
             {
                 domainObject = this.BeforeInsertDomainObject(context, domainObject);
+                context.Connection.Delete(domainObject);
                 context.Connection.Insert(domainObject);
             }
-            catch // doubt this will even work
+            catch
             {
-                context.Connection.Update(domainObject);
+                throw;
             }
 
             return data;

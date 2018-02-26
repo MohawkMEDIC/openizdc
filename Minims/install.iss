@@ -76,21 +76,13 @@ Source: "..\..\OpenIZ\bin\Release\LogViewer.exe"; DestDir: "{app}"; Flags: ignor
 Source: "..\OpenIZMobile\Assets\Applets\org.openiz.core.pak"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "..\OpenIZMobile\Assets\Applets\org.openiz.templates.pak"; DestDir: "{app}"; Flags: recursesubdirs
 Source: ".\bin\SignedRelease\tools\cmdprompt.cmd"; DestDir: "{app}"; Flags: recursesubdirs
-Source: "..\..\OpenIZ\bin\Release\oizdt.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\MARC.Everest.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\oizdt.config.empty"; DestDir: "{app}"; DestName: "oizdt.exe.config"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\MARC.HI.EHRS.SVC.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\OpenIZ.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\OpenIZ.BusinessRules.JavaScript.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\oizdt.config.empty"; DestDir: "{app}"; DestName:"openiz.exe.config"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\OpenIZ.Protocol.Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\bin\Release\System.IdentityModel.Tokens.Jwt.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\OpenIZ\Solution Items\MARc.HI.EHRS.SVC.Configuration.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\OpenIZ\bin\Release\Schema\*.xsd"; DestDir: "{app}\schema"; Flags: ignoreversion
+Source: "..\OizDebug\bin\Release\OizDebug.exe"; DestDir: "{app}"; Flags: ignoreversion;
+
 
 [Icons]
 Name: "{commonprograms}\Open Immunize\SDK\OpenIZ Log Viewer"; Filename: "{app}\LogViewer.exe"
 Name: "{commonprograms}\Open Immunize\SDK\OpenIZ SDK Command Prompt"; FileName:cmd; Parameters:"/k """"{app}\cmdprompt.cmd"" ""{app}"""""
-Name: "{commonprograms}\Open Immunize\SDK\Business Rule Debugger"; Filename: cmd; Parameters: "/T:F0 /c """"{app}\oizdt.exe"" --tool=Debug --operation=BusinessRule""" 
-Name: "{commonprograms}\Open Immunize\SDK\Clinical Protocol Debugger"; Filename: cmd; Parameters: "/T:F0 /c """"{app}\oizdt.exe"" --tool=Debug --operation=CarePlan"" "
+Name: "{commonprograms}\Open Immunize\SDK\Business Rule Debugger"; Filename: cmd; Parameters: "/T:F0 /c """"{app}\oizdebug.exe"" --db=%localappdata%\MINIMS\OpenIZ.sqlite --bre""" 
+Name: "{commonprograms}\Open Immunize\SDK\Clinical Protocol Debugger"; Filename: cmd; Parameters: "/T:F0 /c """"{app}\oizdebug.exe"" --db=%localappdata%\MINIMS\OpenIZ.sqlite --xprot"" "
 

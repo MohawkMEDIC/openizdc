@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
@@ -68,15 +68,19 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
             try
             {
 
+                var connStr = ApplicationContext.Current.Configuration.GetConnectionString("openIzSearch")?.Value;
+
                 // Is the search service registered?
-                if (ApplicationContext.Current.GetService<IFreetextSearchService>() == null)
+                if (!String.IsNullOrEmpty(connStr) && ApplicationContext.Current.GetService<IFreetextSearchService>() == null)
                 {
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(SearchIndexService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new SearchIndexService());
                 }
 
                 // Get a connection to the search database
-                var conn = SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString("openIzSearch").Value);
+                if (String.IsNullOrEmpty(connStr))
+                    return true;
+                var conn = SQLiteConnectionManager.Current.GetConnection(connStr);
                 using (conn.Lock())
                 {
                     conn.CreateTable<Search.Model.SearchEntityType>();

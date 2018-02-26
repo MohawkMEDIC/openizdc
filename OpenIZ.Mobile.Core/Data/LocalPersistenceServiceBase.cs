@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-2-4
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using System;
 using System.Linq;
@@ -42,6 +42,7 @@ using OpenIZ.Mobile.Core.Data.Connection;
 using System.Diagnostics;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Data.QueryBuilder;
+using OpenIZ.Mobile.Core.Data.Hacks;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -70,7 +71,7 @@ namespace OpenIZ.Mobile.Core.Data
         {
 
             m_mapper = LocalPersistenceService.Mapper;
-            m_builder = new QueryBuilder(m_mapper);
+            m_builder = new QueryBuilder(m_mapper, new RelationshipQueryHack());
         }
 
         public LocalPersistenceServiceBase()

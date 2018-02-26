@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-30
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Resources;
@@ -252,7 +252,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             try
             {
                 var retVal = this.GetOrCreatePooledConnection(dataSource, true);
-                this.m_tracer.TraceInfo("Readonly connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
+                this.m_tracer.TraceVerbose("Readonly connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
                 
 #if DEBUG_SQL
                 conn.TraceListener = new TracerTraceListener();
@@ -330,7 +330,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             {
                 ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
                 var retVal = this.GetOrCreatePooledConnection(dataSource, false);
-                this.m_tracer.TraceInfo("Write connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
+                this.m_tracer.TraceVerbose("Write connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
 #if DEBUG_SQL
                 conn.TraceListener = new TracerTraceListener();
 #endif
@@ -370,7 +370,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             // Wait for all write connections to finish up
             foreach (var mre in this.m_connections)
             {
-                this.m_tracer.TraceInfo("Waiting for {0} to become free...", mre.Key);
+                this.m_tracer.TraceVerbose("Waiting for {0} to become free...", mre.Key);
                 mre.Value.WaitOne();
                 mre.Value.Reset();
             }

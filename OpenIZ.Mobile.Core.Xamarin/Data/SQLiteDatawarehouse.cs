@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-6-28
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Services;
 using System;
@@ -687,7 +687,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Execute a stored query
         /// </summary>
-        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters)
+        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters, out int tr)
         {
             this.ThrowIfDisposed();
 
@@ -718,7 +718,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
                     var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId);
 
-                    int tr = 0;
                     return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 0, out tr);
                 }
                 catch (Exception e)

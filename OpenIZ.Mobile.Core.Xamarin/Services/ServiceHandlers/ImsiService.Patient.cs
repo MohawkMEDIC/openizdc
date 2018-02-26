@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-3-31
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
@@ -213,7 +213,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     retVal = new List<Patient>();
                 }
 
-                retVal = retVal.Select(o => o.Clone()).OfType<Patient>().Where(o => !o.Tags.Any(t => t.TagKey == "isAnonymous"));
+                if(!search.ContainsKey("tag[isAnonymous].value")) // We're specifically looking for anon
+                    retVal = retVal.Select(o => o.Clone()).OfType<Patient>().Where(o => !o.Tags.Any(t => t.TagKey == "isAnonymous"));
 
                 // Remove those who are anon
                 if (search.ContainsKey("_onlineOnly"))
