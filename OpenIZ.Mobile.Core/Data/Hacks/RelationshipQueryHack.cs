@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace OpenIZ.Mobile.Core.Data.Hacks
@@ -38,10 +39,7 @@ namespace OpenIZ.Mobile.Core.Data.Hacks
     public class RelationshipQueryHack : IQueryBuilderHack
     {
 
-        /// <summary>
-        /// Hack query builder based on clause
-        /// </summary>
-        public bool HackQuery(QueryBuilder builder, SqlStatement sqlStatement, SqlStatement whereClause, PropertyInfo property, string queryPrefix, QueryPredicate predicate, object values, IEnumerable<TableMapping> scopedTables)
+        public bool HackQuery(QueryBuilder builder, SqlStatement sqlStatement, SqlStatement whereClause, Type tmodel, PropertyInfo property, string queryPrefix, QueryPredicate predicate, object values, IEnumerable<TableMapping> scopedTables)
         {
             string columnName = String.Empty;
             Type scanType = null;
@@ -49,20 +47,25 @@ namespace OpenIZ.Mobile.Core.Data.Hacks
             // Filter values
             if (typeof(Concept).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()) && predicate.SubPath == "mnemonic")
             {
+                Regex removeRegex = null;
                 if (predicate.Path == "participationRole" && property.DeclaringType == typeof(ActParticipation))
                 {
                     columnName = "participationRole";
                     scanType = typeof(ActParticipationKey);
+                    // We want to remove the inner join for cd_tbl
+                    removeRegex = new Regex(@"INNER\sJOIN\sconcept\s.*\(.*?relationshipType.*");
                 }
                 else if (predicate.Path == "relationshipType" && property.DeclaringType == typeof(EntityRelationship))
                 {
                     columnName = "relationshipType";
                     scanType = typeof(EntityRelationshipTypeKeys);
+                    removeRegex = new Regex(@"INNER\sJOIN\sconcept\s.*\(.*?relationshipType.*");
                 }
                 else if (predicate.Path == "relationshipType" && property.DeclaringType == typeof(ActRelationship))
                 {
                     columnName = "relationshipType";
                     scanType = typeof(ActRelationshipTypeKeys);
+                    removeRegex = new Regex(@"INNER\sJOIN\sconcept\s.*\(.*?relationshipType.*");
                 }
                 else
                     return false;
@@ -84,11 +87,32 @@ namespace OpenIZ.Mobile.Core.Data.Hacks
                 }
 
                 // Now add to query
-                whereClause.And($"{columnName} IN ({String.Join(",", qValues.Select(o => $"X'{BitConverter.ToString(((Guid)o).ToByteArray()).Replace("-","")}'").ToArray())})");
+                whereClause.And($"{columnName} IN ({String.Join(",", qValues.Select(o => $"X'{BitConverter.ToString(((Guid)o).ToByteArray()).Replace("-", "")}'").ToArray())})");
+                // Remove the inner join 
+                var remStack = new Stack<SqlStatement>();
+                SqlStatement last;
+                while (sqlStatement.RemoveLast(out last))
+                {
+                    var m = removeRegex.Match(last.SQL);
+                    if (m.Success)
+                    {
+                        // The last thing we added was the 
+                        if (m.Index == 0 && m.Length == last.SQL.Length)
+                            remStack.Pop();
+                        else
+                            sqlStatement.Append(last.SQL.Remove(m.Index, m.Length), last.Arguments.ToArray());
+                        break;
+                    }
+                    else
+                        remStack.Push(last);
+                }
+                while (remStack.Count > 0)
+                    sqlStatement.Append(remStack.Pop());
                 return true;
             }
             else
                 return false;
         }
+
     }
 }

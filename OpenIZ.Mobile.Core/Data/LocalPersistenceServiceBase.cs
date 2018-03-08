@@ -71,7 +71,8 @@ namespace OpenIZ.Mobile.Core.Data
         {
 
             m_mapper = LocalPersistenceService.Mapper;
-            m_builder = new QueryBuilder(m_mapper, new RelationshipQueryHack());
+            m_builder = new QueryBuilder(m_mapper, new RelationshipQueryHack(),
+                new ConceptQueryHack(m_mapper));
         }
 
         public LocalPersistenceServiceBase()

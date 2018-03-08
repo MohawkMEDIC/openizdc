@@ -67,6 +67,7 @@
     <Compile Include="Data\Connection\ReadonlySQLiteConnection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionExtensions.cs" />
     <Compile Include="Data\Connection\WriteableSQLiteConnection.cs" />
+    <Compile Include="Data\Hacks\ConceptQueryHack.cs" />
     <Compile Include="Data\Hacks\RelationshipQueryHack.cs" />
     <Compile Include="Data\ILocalPersistenceService.cs" />
     <Compile Include="Data\LocalDataContext.cs" />
