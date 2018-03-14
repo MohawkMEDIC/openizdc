@@ -434,7 +434,11 @@ namespace OpenIZ.Mobile.Reporting
                 {
                     object vValue = null;
                     IEnumerable<dynamic> scopeEnum = aScope as IEnumerable<dynamic>;
-                    var expr = this.CompileExpression($"{context.Report.Description.Name}.count.{facet.Value}", facet.Value);
+
+                    var body = facet.Value;
+                    if (String.IsNullOrEmpty(body))
+                        body = "!null";
+                    var expr = this.CompileExpression($"{context.Report.Description.Name}.count.{facet.Value}", body);
 
                     switch (function)
                     {
