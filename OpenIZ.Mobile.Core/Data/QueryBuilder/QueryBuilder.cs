@@ -32,6 +32,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Data.QueryBuilder
 {
@@ -201,10 +202,18 @@ namespace OpenIZ.Core.Data.QueryBuilder
         }
 
         /// <summary>
+        /// Create query 
+        /// </summary>
+        public SqlStatement CreateQuery<TModel>(IEnumerable<KeyValuePair<String, Object>> query, String tablePrefix, params ColumnMapping[] selector)
+        {
+            return CreateQuery<TModel>(query, null, false, selector);
+        }
+
+        /// <summary>
         /// Query query 
         /// </summary>
         /// <param name="query"></param>
-        public SqlStatement CreateQuery<TModel>(IEnumerable<KeyValuePair<String, Object>> query, String tablePrefix, params ColumnMapping[] selector)
+        public SqlStatement CreateQuery<TModel>(IEnumerable<KeyValuePair<String, Object>> query, String tablePrefix, bool skipJoins, params ColumnMapping[] selector)
         {
             var tableType = m_mapper.MapModelType(typeof(TModel));
             var tableMap = TableMapping.Get(tableType);
@@ -213,36 +222,44 @@ namespace OpenIZ.Core.Data.QueryBuilder
             bool skipParentJoin = true;
             SqlStatement selectStatement = null;
             KeyValuePair<SqlStatement, List<TableMapping>> cacheHit;
-            if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
+            if (skipJoins)
             {
                 selectStatement = new SqlStatement($" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
 
-                Stack<TableMapping> fkStack = new Stack<TableMapping>();
-                fkStack.Push(tableMap);
-                // Always join tables?
-                do
-                {
-                    var dt = fkStack.Pop();
-                    foreach (var jt in dt.Columns.Where(o => o.IsAlwaysJoin))
-                    {
-                        var fkTbl = TableMapping.Get(jt.ForeignKey.Table);
-                        var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
-                        selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name}) ");
-                        if (!scopedTables.Contains(fkTbl))
-                            fkStack.Push(fkTbl);
-                        scopedTables.Add(fkAtt.Table);
-                    }
-                } while (fkStack.Count > 0);
-
-                // Add the heavy work to the cache
-                lock (s_joinCache)
-                    if (!s_joinCache.ContainsKey($"{tablePrefix}.{typeof(TModel).Name}"))
-                        s_joinCache.Add($"{tablePrefix}.{typeof(TModel).Name}", new KeyValuePair<SqlStatement, List<TableMapping>>(selectStatement.Build(), scopedTables));
             }
             else
             {
-                selectStatement = cacheHit.Key.Build();
-                scopedTables = cacheHit.Value;
+                if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
+                {
+                    selectStatement = new SqlStatement($" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+
+                    Stack<TableMapping> fkStack = new Stack<TableMapping>();
+                    fkStack.Push(tableMap);
+                    // Always join tables?
+                    do
+                    {
+                        var dt = fkStack.Pop();
+                        foreach (var jt in dt.Columns.Where(o => o.IsAlwaysJoin))
+                        {
+                            var fkTbl = TableMapping.Get(jt.ForeignKey.Table);
+                            var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
+                            selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name}) ");
+                            if (!scopedTables.Contains(fkTbl))
+                                fkStack.Push(fkTbl);
+                            scopedTables.Add(fkAtt.Table);
+                        }
+                    } while (fkStack.Count > 0);
+
+                    // Add the heavy work to the cache
+                    lock (s_joinCache)
+                        if (!s_joinCache.ContainsKey($"{tablePrefix}.{typeof(TModel).Name}"))
+                            s_joinCache.Add($"{tablePrefix}.{typeof(TModel).Name}", new KeyValuePair<SqlStatement, List<TableMapping>>(selectStatement.Build(), scopedTables));
+                }
+                else
+                {
+                    selectStatement = cacheHit.Key.Build();
+                    scopedTables = cacheHit.Value;
+                }
             }
 
             // Column definitions
@@ -306,7 +323,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
 
                     // Link to this table in the other?
                     // Is this a collection?
-                    if (!this.m_hacks.Any(o => o.HackQuery(this, selectStatement, whereClause, subProp, tablePrefix, propertyPredicate, parm.Value, scopedTables)))
+                    if (!this.m_hacks.Any(o => o.HackQuery(this, selectStatement, whereClause, typeof(TModel), subProp, tablePrefix, propertyPredicate, parm.Value, scopedTables)))
                     {
                         if (typeof(IList).GetTypeInfo().IsAssignableFrom(subProp.PropertyType.GetTypeInfo())) // Other table points at this on
                         {
@@ -370,11 +387,21 @@ namespace OpenIZ.Core.Data.QueryBuilder
 
                                 // Generate method
                                 var prefix = IncrementSubQueryAlias(tablePrefix);
-                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
-                                subQueryStatement.And($" {existsClause} IN (");
+                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(bool), typeof(ColumnMapping[]) });
+
+                                // Sub path is specified
+                                if (String.IsNullOrEmpty(propertyPredicate.SubPath) && "null".Equals(parm.Value))
+                                    subQueryStatement.And($" {existsClause} NOT IN (");
+                                else
+                                    subQueryStatement.And($" {existsClause} IN (");
+
                                 nGuards++;
                                 existsClause = $"{prefix}{subTableColumn.Table.TableName}.{subTableColumn.Name}";
-                                subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
+
+                                if (subQuery.Count(p => !p.Key.Contains(".")) == 0)
+                                    subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, true, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
+                                else
+                                    subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, false, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
 
 
                                 //// TODO: Check if limiting the the query is better
@@ -415,17 +442,19 @@ namespace OpenIZ.Core.Data.QueryBuilder
 
                             // Create the sub-query
                             SqlStatement subQueryStatement = null;
+                            var subSkipJoins = subQuery.Count(o => !o.Key.Contains(".") && o.Key != "obsoletionTime") == 0;
+
                             if (String.IsNullOrEmpty(propertyPredicate.CastAs))
                             {
-                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
-                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(string), typeof(bool), typeof(ColumnMapping[]) });
+                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, null, subSkipJoins, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                             }
                             else // we need to cast!
                             {
                                 var castAsType = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType("OpenIZ.Core.Model", propertyPredicate.CastAs);
 
-                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { castAsType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
-                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { castAsType }, new Type[] { subQuery.GetType(), typeof(String), typeof(bool), typeof(ColumnMapping[]) });
+                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, null, false, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                             }
 
                             cteStatements.Add(new SqlStatement($"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
@@ -439,7 +468,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
 
                     }
                 }
-                else
+                else if (!this.m_hacks.Any(o => o.HackQuery(this, selectStatement, whereClause, typeof(TModel), typeof(TModel).GetQueryProperty(propertyPredicate.Path), tablePrefix, propertyPredicate, parm.Value, scopedTables)))
                     whereClause.And(CreateWhereCondition(typeof(TModel), propertyPredicate.Path, parm.Value, tablePrefix, scopedTables));
 
             }

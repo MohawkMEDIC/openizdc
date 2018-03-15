@@ -80,7 +80,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -93,7 +93,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -106,7 +106,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -119,7 +119,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -210,7 +210,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -364,7 +364,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -455,7 +455,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -547,7 +547,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -695,7 +695,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -708,7 +708,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -721,7 +721,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -734,7 +734,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -826,7 +826,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -918,7 +918,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1010,7 +1010,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -1023,7 +1023,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1036,7 +1036,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -1049,7 +1049,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -1141,7 +1141,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1233,7 +1233,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1325,7 +1325,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1417,7 +1417,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -1430,7 +1430,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -1443,7 +1443,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -1456,7 +1456,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1548,7 +1548,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -1561,7 +1561,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -1574,7 +1574,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -1587,7 +1587,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1679,7 +1679,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1771,7 +1771,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1784,7 +1784,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -1797,7 +1797,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -1810,7 +1810,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -1902,7 +1902,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -1994,7 +1994,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -2086,7 +2086,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -2234,7 +2234,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -2247,7 +2247,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -2260,7 +2260,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -2273,7 +2273,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -2365,7 +2365,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -2457,7 +2457,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -2470,7 +2470,7 @@
         
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isVaccinationPoint</name>
       </extensionType>
     </extension>
@@ -2483,7 +2483,7 @@
         
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/coldStorageCapacity</name>
       </extensionType>
     </extension>
@@ -2496,7 +2496,7 @@
         
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/vaccineStore</name>
       </extensionType>
     </extension>
@@ -2588,7 +2588,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -2680,7 +2680,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>
@@ -2772,7 +2772,7 @@
         
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
-        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null</handlerClass>
         <name>http://openiz.org/extensions/contrib/tiis/isleaf</name>
       </extensionType>
     </extension>

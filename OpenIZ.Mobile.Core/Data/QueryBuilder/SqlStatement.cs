@@ -107,6 +107,33 @@ namespace OpenIZ.Core.Data.QueryBuilder
         }
 
         /// <summary>
+        /// Removes the last statement from the list
+        /// </summary>
+        public bool RemoveLast(out SqlStatement last)
+        {
+            last = this.RemoveLast();
+            return last != null;
+        }
+
+        /// <summary>
+        /// Removes the last statement from the list
+        /// </summary>
+        public SqlStatement RemoveLast()
+        {
+            var t = this;
+            while (t.m_rhs?.m_rhs != null)
+                t = t.m_rhs;
+            if (t != null)
+            {
+                var m = t.m_rhs;
+                t.m_rhs = null;
+                return m;
+            }
+            else
+                return null;
+        }
+
+        /// <summary>
         /// Build the special SQL statement
         /// </summary>
         /// <returns></returns>
@@ -298,18 +325,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
         }
 
 
-        /// <summary>
-        /// Removes the last statement from the list
-        /// </summary>
-        internal void RemoveLast()
-        {
-            var t = this;
-            while (t.m_rhs?.m_rhs != null)
-                t = t.m_rhs;
-            if (t != null)
-                t.m_rhs = null;
-        }
-
+       
         /// <summary>
         /// represent as a string
         /// </summary>
