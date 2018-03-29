@@ -1,8 +1,18 @@
 @echo off
 set version=%1
 
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease /p:Platform=x86
-"C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease
+set msbuild="";
+IF EXIST "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" (
+set msbuild="C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe";
+) ELSE IF EXIST "c:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe" (
+set msbuild="c:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\MSBuild.exe"
+) ELSE (
+echo "No MSBUILD"
+exit
+)
+
+%msbuild% openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease /p:Platform=x86
+%msbuild% openizmobile.sln /t:Rebuild /p:Configuration=SignedRelease
 cd minims
 
 echo Building Windows Installer
