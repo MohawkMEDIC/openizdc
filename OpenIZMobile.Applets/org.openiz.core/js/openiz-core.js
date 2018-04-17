@@ -25,7 +25,7 @@
  * @property {uuid} EmptyGuid A property which represents an empty UUID
  */
 var OpenIZAudit = OpenIZAudit || {
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObject, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObject, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @class
      * @memberof OpenIZAudit
@@ -56,7 +56,7 @@ var OpenIZAudit = OpenIZAudit || {
             this.id = copyData.id;
         }
     },  // AuditableObject 
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditActorData, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditActorData, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @class
      * @memberof OpenIZAudit
@@ -83,7 +83,7 @@ var OpenIZAudit = OpenIZAudit || {
             this.uid = copyData.uid;
         }
     },  // AuditActorData 
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditCode, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditCode, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @class
      * @memberof OpenIZAudit
@@ -106,7 +106,7 @@ var OpenIZAudit = OpenIZAudit || {
             this.code = copyData.code;
         }
     },  // AuditCode 
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditData, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditData, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @class
      * @memberof OpenIZAudit
@@ -133,7 +133,7 @@ var OpenIZAudit = OpenIZAudit || {
             this.timestamp = copyData.timestamp;
         }
     },  // AuditData 
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit
@@ -159,7 +159,7 @@ var OpenIZAudit = OpenIZAudit || {
          */
         Other: 'Other',
     },  // AuditableObjectType 
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectRole, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectRole, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit
@@ -265,7 +265,7 @@ var OpenIZAudit = OpenIZAudit || {
          */
         Query: 'Query',
     },  // AuditableObjectRole 
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectLifecycle, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectLifecycle, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit
@@ -335,7 +335,7 @@ var OpenIZAudit = OpenIZAudit || {
          */
         PermanentErasure: 'PermanentErasure',
     },  // AuditableObjectLifecycle 
-    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectIdType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.AuditableObjectIdType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit
@@ -397,7 +397,7 @@ var OpenIZAudit = OpenIZAudit || {
          */
         Custom: 'Custom',
     },  // AuditableObjectIdType 
-    // MARC.HI.EHRS.SVC.Auditing.Data.NetworkAccessPointType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.NetworkAccessPointType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit
@@ -419,7 +419,7 @@ var OpenIZAudit = OpenIZAudit || {
          */
         TelephoneNumber: 'TelephoneNumber',
     },  // NetworkAccessPointType 
-    // MARC.HI.EHRS.SVC.Auditing.Data.ActionType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.ActionType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit
@@ -449,7 +449,7 @@ var OpenIZAudit = OpenIZAudit || {
          */
         Execute: 'Execute',
     },  // ActionType 
-    // MARC.HI.EHRS.SVC.Auditing.Data.OutcomeIndicator, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.OutcomeIndicator, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit
@@ -475,7 +475,7 @@ var OpenIZAudit = OpenIZAudit || {
          */
         EpicFail: 'EpicFail',
     },  // OutcomeIndicator 
-    // MARC.HI.EHRS.SVC.Auditing.Data.EventIdentifierType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    // MARC.HI.EHRS.SVC.Auditing.Data.EventIdentifierType, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
     /**
      * @enum {uuid}
      * @memberof OpenIZAudit

@@ -18,7 +18,7 @@
  - Date: 2017-9-1
  -->
 <modelMap xmlns="http://openiz.org/model/map">
-  <class modelClass="OpenIZ.Core.Alert.Alerting.AlertMessage, OpenIZ.Core.Alert, Version=1.0.0.0"
+  <class modelClass="OpenIZ.Core.Alert.Alerting.AlertMessage, OpenIZ.Core.Alert, Version=1.0.1.0"
 		domainClass="OpenIZ.Mobile.Core.Alerting.DbAlertMessage, OpenIZ.Mobile.Core, Version=0.5.0.0">
   </class>
 </modelMap>

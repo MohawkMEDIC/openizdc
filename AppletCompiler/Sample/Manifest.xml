@@ -19,7 +19,7 @@
  - Date: 2017-9-1
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.applet.test.layout" version="1.0.0.0">
+  <info id="org.openiz.applet.test.layout" version="1.0.1.0">
     <name lang="en">Test Layout</name>
     <author>OpenIZ Community</author>
   </info>
