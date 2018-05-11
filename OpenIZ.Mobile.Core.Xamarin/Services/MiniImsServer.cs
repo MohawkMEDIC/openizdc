@@ -146,8 +146,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 // Get loopback
                 var loopback = GetLocalIpAddress();
 
-                // Core always on 9200
-                this.m_listener.Prefixes.Add(String.Format("http://{0}:9200/", loopback));
+                // Core always on 9200 unless overridden
+                var portSetting = ApplicationContext.Current.Configuration.GetAppSetting("http.port");
+                if(portSetting != null)
+                    this.m_listener.Prefixes.Add(String.Format("http://{0}:{1}/", loopback, portSetting));
+                else
+                    this.m_listener.Prefixes.Add(String.Format("http://{0}:9200/", loopback));
 
                 this.m_acceptThread = new Thread(() =>
                 {
@@ -239,7 +243,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 try
                 {
                     if (!request.RemoteEndPoint.Address.Equals(IPAddress.Loopback) &&
-                                    !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback))
+                        !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback) &&
+                        ApplicationContext.Current.Configuration.GetAppSetting("http.externAllowed") != "true")
                         throw new UnauthorizedAccessException("Only local access allowed");
 
                     MiniImsServer.CurrentContext = context;
@@ -341,6 +346,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                     // Attempt to find a service which implements the path
                     var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
+
+                    if (request.Url.AbsolutePath == "/" && ApplicationContext.Current.Configuration.GetAppSetting("http.index") != null)
+                    {
+                        response.StatusCode = 302;
+                        response.RedirectLocation = $"{request.Url.Scheme}://{request.Url.Host}:{request.Url.Port}{ApplicationContext.Current.Configuration.GetAppSetting("http.index")}";
+                        return;
+                    }
                     InvokationInformation invoke = null;
                     this.m_tracer.TraceVerbose("Performing service matching on {0}", rootPath);
                     if (this.m_services.TryGetValue(rootPath, out invoke))

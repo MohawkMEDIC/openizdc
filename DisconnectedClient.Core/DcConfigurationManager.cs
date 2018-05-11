@@ -69,7 +69,10 @@ namespace DisconnectedClient.Core
         private OpenIZConfiguration m_configuration;
 
         // Configuration path
-        private readonly String m_configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "OpenIZDC", "OpenIZ.config");
+        private readonly String m_configPath;
+
+        // App context name
+        private readonly String m_applicationContextName;
 
         /// <summary>
         /// Returns true if OpenIZ is configured
@@ -86,7 +89,7 @@ namespace DisconnectedClient.Core
         /// <summary>
         /// Get a bare bones configuration
         /// </summary>
-        public static OpenIZConfiguration GetDefaultConfiguration()
+        public static OpenIZConfiguration GetDefaultConfiguration(string appContextName)
         {
             // TODO: Bring up initial settings dialog and utility
             var retVal = new OpenIZConfiguration();
@@ -99,23 +102,23 @@ namespace DisconnectedClient.Core
                 ConnectionString = new System.Collections.Generic.List<ConnectionString>() {
                     new ConnectionString () {
                         Name = "openIzData",
-                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC", "OpenIZ.sqlite")
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), appContextName, "OpenIZ.sqlite")
                     },
                     new ConnectionString () {
                         Name = "openIzSearch",
-                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC","OpenIZ.ftsearch.sqlite")
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), appContextName,"OpenIZ.ftsearch.sqlite")
                     },
                     new ConnectionString () {
                         Name = "openIzQueue",
-                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC","MessageQueue.sqlite")
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), appContextName,"MessageQueue.sqlite")
                     },
                     new ConnectionString () {
                         Name = "openIzWarehouse",
-                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC","OpenIZ.warehouse.sqlite")
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), appContextName,"OpenIZ.warehouse.sqlite")
                     },
                     new ConnectionString () {
                         Name = "openIzAudit",
-                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC", "OpenIZ.audit.sqlite")
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), appContextName, "OpenIZ.audit.sqlite")
                     }
                 }
             };
@@ -123,7 +126,7 @@ namespace DisconnectedClient.Core
             // Initial Applet configuration
             AppletConfigurationSection appletSection = new AppletConfigurationSection()
             {
-                AppletDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC", "applets"),
+                AppletDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appContextName, "applets"),
                 AppletGroupOrder = new System.Collections.Generic.List<string>() {
                     "Patient Management",
                     "Encounter Management",
@@ -142,7 +145,7 @@ namespace DisconnectedClient.Core
             ApplicationConfigurationSection appSection = new ApplicationConfigurationSection()
             {
                 Style = StyleSchemeType.Dark,
-                UserPrefDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC", "userpref"),
+                UserPrefDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appContextName, "userpref"),
                 ServiceTypes = new List<string>() {
                     typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
@@ -191,10 +194,10 @@ namespace DisconnectedClient.Core
                 }
             };
 
-			#if NOCRYPT
+            #if NOCRYPT
 			appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName);
-			#else
-			if(Environment.OSVersion.Platform == PlatformID.Win32NT)
+#else
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
 				appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.SqlCipher.SQLitePlatformSqlCipher).AssemblyQualifiedName);
 			else
 				appSection.ServiceTypes.Add(typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName);
@@ -225,12 +228,12 @@ namespace DisconnectedClient.Core
                     new TraceWriterConfiguration () {
                         Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new LogTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new LogTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, appContextName)
                     },
                     new TraceWriterConfiguration() {
                         Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, appContextName)
                     }
                 }
             };
@@ -263,15 +266,17 @@ namespace DisconnectedClient.Core
         /// <summary>
         /// Creates a new instance of the configuration manager with the specified configuration file
         /// </summary>
-        public DcConfigurationManager()
+        public DcConfigurationManager(string appContextName)
         {
+            this.m_configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appContextName, "OpenIZ.config");
+            this.m_applicationContextName = appContextName;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager"/> class.
         /// </summary>
         /// <param name="config">Config.</param>
-        public DcConfigurationManager(OpenIZConfiguration config)
+        public DcConfigurationManager(OpenIZConfiguration config, string appContextName) : this(appContextName)
         {
             this.m_configuration = config;
         }
@@ -341,7 +346,7 @@ namespace DisconnectedClient.Core
         {
             get
             {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenIZDC");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), this.m_applicationContextName);
             }
         }
 
