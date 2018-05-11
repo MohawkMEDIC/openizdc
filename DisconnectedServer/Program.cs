@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Security;
 using System.Reflection;
 using OpenIZ.Mobile.Core.Xamarin;
+using OpenIZ.Mobile.Core.Configuration;
 
 namespace DisconnectedServer
 {
@@ -97,6 +98,8 @@ namespace DisconnectedServer
                 if (!DcApplicationContext.StartContext(new ConsoleDialogProvider(), "OpenIZDS"))
                     DcApplicationContext.StartTemporary(new ConsoleDialogProvider(), "OpenIZDS");
 
+                DcApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.RemoveAll(o => o.Key == "http.bypassMagic");
+                DcApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Add(new AppSettingKeyValuePair() { Key = "http.bypassMagic", Value = DcApplicationContext.Current.ExecutionUuid.ToString() });
                 Console.WriteLine("Press [Enter] key to close...");
                 Console.ReadLine();
             }

@@ -107,6 +107,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 XamarinApplicationContext.Current.SetProgress("IMS Service Bus", 0);
 
                 this.m_bypassMagic = XamarinApplicationContext.Current.GetType().Name == "MiniApplicationContext";
+                this.m_tracer.TraceInfo("IMS magic check : {0}", !this.m_bypassMagic);
                 this.m_listener = new HttpListener();
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
 
@@ -145,10 +146,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                 // Get loopback
                 var loopback = GetLocalIpAddress();
-
+                
                 // Core always on 9200 unless overridden
                 var portSetting = ApplicationContext.Current.Configuration.GetAppSetting("http.port");
-                if(portSetting != null)
+                if (portSetting != null)
                     this.m_listener.Prefixes.Add(String.Format("http://{0}:{1}/", loopback, portSetting));
                 else
                     this.m_listener.Prefixes.Add(String.Format("http://{0}:9200/", loopback));
@@ -261,6 +262,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                             using (var sw = new StreamWriter(response.OutputStream))
                                 sw.WriteLine("Hmm, something went wrong. For security's sake we can't show the information you requested. Perhaps restarting the application will help");
                             return;
+                        }
+                        else if (ApplicationContext.Current.Configuration.GetAppSetting("http.bypassMagic") == ApplicationContext.Current.ExecutionUuid.ToString())
+                        {
+                            this.m_bypassMagic = true;
+                            this.m_tracer.TraceInfo("MINIMS bypass magic unlocked!");
                         }
                         else // User is using a browser to try and access this? How dare they
                         {
@@ -545,10 +551,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     MiniImsServer.CurrentContext = null;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceWarning("General exception on listener: {0}", e);
-                
+
             }
         }
 
@@ -587,7 +593,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 response.StatusCode = 403;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
             }
-            else if(e is DetectedIssueException)
+            else if (e is DetectedIssueException)
             {
                 return new ErrorResult(e);
             }

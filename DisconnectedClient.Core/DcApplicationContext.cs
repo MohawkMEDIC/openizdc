@@ -190,7 +190,7 @@ namespace DisconnectedClient.Core
 
                 retVal.SetProgress("Loading configuration", 0.2f);
                 // Load all user-downloaded applets in the data directory
-                foreach (var appPath in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Applets")))
+                foreach (var appPath in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets")))
                     try
                     {
 

@@ -482,8 +482,8 @@ Global
 		{344607C3-C412-4E4A-8C1D-32146F888266}.Release|Any CPU.Build.0 = Release|Any CPU
 		{344607C3-C412-4E4A-8C1D-32146F888266}.Release|x86.ActiveCfg = Release|Any CPU
 		{344607C3-C412-4E4A-8C1D-32146F888266}.Release|x86.Build.0 = Release|Any CPU
-		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|Any CPU.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|Any CPU.ActiveCfg = SignedRelease|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|Any CPU.Build.0 = SignedRelease|Any CPU
 		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|x86.ActiveCfg = Release|Any CPU
 		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
