@@ -365,24 +365,24 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Name = "locale.sync.resource.Place.state";
 
                                         // all SDL in my county
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&_exclude=relationship&_exclude=participation&_exclude=extension");
                                         // all places in my county
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=extension");
                                     }
                                     else if (facilityCounty != null)
                                     {
                                         syncSetting.Name = "locale.sync.resource.Place.county";
                                         // all sdl in my state
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&_exclude=relationship&_exclude=participation&_exclude=extension");
                                         // all places in my state
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=extension");
                                     }
                                     else
                                     {
                                         syncSetting.Name = "locale.sync.resource.Place.all";
 
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation&_exclude=extension");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=extension");
                                     }
                                     // all places assigned to me
                                     syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&relationship[DedicatedServiceDeliveryLocation].target=" + facilityId);
@@ -396,17 +396,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Name = "locale.sync.resource.Place.outOfState";
 
                                         // all SDL in my county
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&_exclude=relationship&_exclude=participation&_exclude=extension");
                                         // all places in my county
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[County].value=!" + facilityCounty + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=extension");
                                     }
                                     else if (facilityCounty != null)
                                     {
                                         syncSetting.Name = "locale.sync.resource.Place.outOfCounty";
                                         // all sdl in my state
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&_exclude=relationship&_exclude=participation&_exclude=extension");
                                         // all places in my state
-                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation + "&address.component[State].value=!" + facilityState + "&relationship[DedicatedServiceDeliveryLocation].target=!" + facilityId + "&_exclude=relationship&_exclude=extension");
                                     }
                                     else
                                         syncSetting = null;
