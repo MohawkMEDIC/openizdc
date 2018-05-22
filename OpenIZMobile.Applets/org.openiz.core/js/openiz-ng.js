@@ -292,7 +292,7 @@ angular.module('openiz', [])
                     case 'm':
                     case 3:
                     case 'D':
-                        return moment(date).utc().format(dateFormat);
+                        return moment(date).format(dateFormat);
                     default:
                         return moment(date).format(dateFormat);
                 }
