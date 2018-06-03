@@ -35,6 +35,14 @@ namespace OpenIZ.Mobile.Core.Configuration
     public class ApplicationConfigurationSection : IConfigurationSection
     {
 
+        /// <summary>
+        /// Creates a new application configuration section
+        /// </summary>
+        public ApplicationConfigurationSection()
+        {
+            this.AppSettings = new List<AppSettingKeyValuePair>();
+        }
+
         // Services
         private List<Object> m_services;
 
