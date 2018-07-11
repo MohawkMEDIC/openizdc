@@ -69,6 +69,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
         // Mini-listener
         private Boolean m_bypassMagic = false;
+        private Boolean m_allowCors = false;
         private HttpListener m_listener;
         private Thread m_acceptThread;
         private Tracer m_tracer = Tracer.GetTracer(typeof(MiniImsServer));
@@ -278,6 +279,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     }
 #endif
 
+                    if (!String.IsNullOrEmpty(ApplicationContext.Current.Configuration.GetAppSetting("http.cors")))
+                    {
+                        response.Headers.Add("Access-Control-Allow-Origin", ApplicationContext.Current.Configuration.GetAppSetting("http.cors"));
+                        response.Headers.Add("Access-Control-Allow-Headers", "*");
+                        response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH, NULLIFY");
+                    }
+
                     this.m_tracer.TraceVerbose("Client has the right magic word");
 
                     // Session cookie?
@@ -471,6 +479,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                     this.m_contentTypeHandler.GetSerializer("application/xml", invoke.Method.ReturnType).Serialize(response.OutputStream, result);
                                     break;
                             }
+                    }
+                    else if (request.HttpMethod.ToUpper() == "OPTIONS")
+                    {
+                        response.StatusCode = 200;
                     }
                     else
                         this.HandleAssetRenderRequest(request, response);

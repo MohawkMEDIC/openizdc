@@ -2144,7 +2144,7 @@ var OpenIZ = OpenIZ || {
     * @memberof OpenIZ
     */
     App: {
-        // OpenIZ.Core.Model.Constants.DatePrecisionFormats, OpenIZ.Core.Model, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
+        // OpenIZ.Core.Model.Constants.DatePrecisionFormats, OpenIZ.Core.Model, Version=1.0.2.0, Culture=neutral, PublicKeyToken=null
         /**
          * @enum {String}
          * @memberof OpenIZModel
