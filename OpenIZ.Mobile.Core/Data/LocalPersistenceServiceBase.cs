@@ -71,7 +71,8 @@ namespace OpenIZ.Mobile.Core.Data
         {
 
             m_mapper = LocalPersistenceService.Mapper;
-            m_builder = new QueryBuilder(m_mapper, new RelationshipQueryHack());
+            m_builder = new QueryBuilder(m_mapper, new RelationshipQueryHack(),
+                new ConceptQueryHack(m_mapper));
         }
 
         public LocalPersistenceServiceBase()
@@ -345,7 +346,7 @@ namespace OpenIZ.Mobile.Core.Data
             if (key == Guid.Empty) return null;
             var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(key);
             if ((existing as IdentifiedData)?.LoadState <= LoadState.FullLoad) {
-                using (var context = this.CreateConnection())
+                using (var context = this.CreateReadonlyConnection())
                     try
                     {
                         using (context.LockConnection())

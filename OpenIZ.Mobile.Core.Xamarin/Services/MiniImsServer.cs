@@ -69,6 +69,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
         // Mini-listener
         private Boolean m_bypassMagic = false;
+        private Boolean m_allowCors = false;
         private HttpListener m_listener;
         private Thread m_acceptThread;
         private Tracer m_tracer = Tracer.GetTracer(typeof(MiniImsServer));
@@ -107,6 +108,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 XamarinApplicationContext.Current.SetProgress("IMS Service Bus", 0);
 
                 this.m_bypassMagic = XamarinApplicationContext.Current.GetType().Name == "MiniApplicationContext";
+                this.m_tracer.TraceInfo("IMS magic check : {0}", !this.m_bypassMagic);
                 this.m_listener = new HttpListener();
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
 
@@ -145,9 +147,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                 // Get loopback
                 var loopback = GetLocalIpAddress();
-
-                // Core always on 9200
-                this.m_listener.Prefixes.Add(String.Format("http://{0}:9200/", loopback));
+                
+                // Core always on 9200 unless overridden
+                var portSetting = ApplicationContext.Current.Configuration.GetAppSetting("http.port");
+                if (portSetting != null)
+                    this.m_listener.Prefixes.Add(String.Format("http://{0}:{1}/", loopback, portSetting));
+                else
+                    this.m_listener.Prefixes.Add(String.Format("http://{0}:9200/", loopback));
 
                 this.m_acceptThread = new Thread(() =>
                 {
@@ -239,7 +245,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 try
                 {
                     if (!request.RemoteEndPoint.Address.Equals(IPAddress.Loopback) &&
-                                    !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback))
+                        !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback) &&
+                        ApplicationContext.Current.Configuration.GetAppSetting("http.externAllowed") != "true")
                         throw new UnauthorizedAccessException("Only local access allowed");
 
                     MiniImsServer.CurrentContext = context;
@@ -257,6 +264,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 sw.WriteLine("Hmm, something went wrong. For security's sake we can't show the information you requested. Perhaps restarting the application will help");
                             return;
                         }
+                        else if (ApplicationContext.Current.Configuration.GetAppSetting("http.bypassMagic") == ApplicationContext.Current.ExecutionUuid.ToString())
+                        {
+                            this.m_bypassMagic = true;
+                            this.m_tracer.TraceInfo("MINIMS bypass magic unlocked!");
+                        }
                         else // User is using a browser to try and access this? How dare they
                         {
                             response.AddHeader("Content-Encoding", "gzip");
@@ -266,6 +278,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         }
                     }
 #endif
+
+                    if (!String.IsNullOrEmpty(ApplicationContext.Current.Configuration.GetAppSetting("http.cors")))
+                    {
+                        response.Headers.Add("Access-Control-Allow-Origin", ApplicationContext.Current.Configuration.GetAppSetting("http.cors"));
+                        response.Headers.Add("Access-Control-Allow-Headers", "*");
+                        response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH, NULLIFY");
+                    }
 
                     this.m_tracer.TraceVerbose("Client has the right magic word");
 
@@ -341,6 +360,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                     // Attempt to find a service which implements the path
                     var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
+
+                    if (request.Url.AbsolutePath == "/" && ApplicationContext.Current.Configuration.GetAppSetting("http.index") != null)
+                    {
+                        response.StatusCode = 302;
+                        response.RedirectLocation = $"{request.Url.Scheme}://{request.Url.Host}:{request.Url.Port}{ApplicationContext.Current.Configuration.GetAppSetting("http.index")}";
+                        return;
+                    }
                     InvokationInformation invoke = null;
                     this.m_tracer.TraceVerbose("Performing service matching on {0}", rootPath);
                     if (this.m_services.TryGetValue(rootPath, out invoke))
@@ -454,6 +480,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                     break;
                             }
                     }
+                    else if (request.HttpMethod.ToUpper() == "OPTIONS")
+                    {
+                        response.StatusCode = 200;
+                    }
                     else
                         this.HandleAssetRenderRequest(request, response);
                 }
@@ -533,10 +563,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     MiniImsServer.CurrentContext = null;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceWarning("General exception on listener: {0}", e);
-                
+
             }
         }
 
@@ -575,7 +605,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 response.StatusCode = 403;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
             }
-            else if(e is DetectedIssueException)
+            else if (e is DetectedIssueException)
             {
                 return new ErrorResult(e);
             }

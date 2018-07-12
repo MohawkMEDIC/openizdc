@@ -62,6 +62,19 @@ namespace DisconnectedClient.Core
     public class DcApplicationContext : XamarinApplicationContext
     {
 
+
+        /// <summary>
+        /// Creates a new context with specified name
+        /// </summary>
+        /// <param name="appContextName">The name of the app context file</param>
+        public DcApplicationContext(String appContextName = "OpenIZDC")
+        {
+            this.m_appContextName = appContextName;
+        }
+
+        // Context name
+        private string m_appContextName;
+
 		// Dialog provider
 		private IDialogProvider m_dialogProvider = null;
 
@@ -155,18 +168,20 @@ namespace DisconnectedClient.Core
 		/// configuring the software
 		/// </summary>
 		/// <returns><c>true</c>, if temporary was started, <c>false</c> otherwise.</returns>
-		public static bool StartTemporary(IDialogProvider dialogProvider)
+		public static bool StartTemporary(IDialogProvider dialogProvider, String appContextName = "OpenIZDC")
         {
             try
             {
                 var retVal = new DcApplicationContext(dialogProvider);
                 retVal.SetProgress("Run setup", 0);
 
-                retVal.m_configurationManager = new DcConfigurationManager(DcConfigurationManager.GetDefaultConfiguration());
+                retVal.m_configurationManager = new DcConfigurationManager(DcConfigurationManager.GetDefaultConfiguration(appContextName), appContextName);
 
                 ApplicationContext.Current = retVal;
                 ApplicationServiceContext.Current = ApplicationContext.Current;
                 ApplicationServiceContext.HostType = OpenIZHostType.OtherClient;
+                retVal.ConfigurationManager.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.RemoveAll(o => o.Key == "http.index");
+                retVal.ConfigurationManager.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Add(new AppSettingKeyValuePair() { Key = "http.index", Value = "/org.openiz.core/views/settings/index.html" });
 
                 retVal.m_tracer = Tracer.GetTracer(typeof(DcApplicationContext));
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
@@ -175,7 +190,7 @@ namespace DisconnectedClient.Core
 
                 retVal.SetProgress("Loading configuration", 0.2f);
                 // Load all user-downloaded applets in the data directory
-                foreach (var appPath in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Applets")))
+                foreach (var appPath in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets")))
                     try
                     {
 
@@ -207,11 +222,11 @@ namespace DisconnectedClient.Core
         /// <summary>
         /// Start the application context
         /// </summary>
-        public static bool StartContext(IDialogProvider dialogProvider)
+        public static bool StartContext(IDialogProvider dialogProvider, string appContextName = "OpenIZDC")
         {
 
             var retVal = new DcApplicationContext(dialogProvider);
-            retVal.m_configurationManager = new DcConfigurationManager();
+            retVal.m_configurationManager = new DcConfigurationManager(appContextName);
             // Not configured
             if (!retVal.ConfigurationManager.IsConfigured)
             {
@@ -257,6 +272,8 @@ namespace DisconnectedClient.Core
                         Key = "ignore.restore",
                         Value = "true"
                     });
+                    retVal.ConfigurationManager.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.RemoveAll(o => o.Key == "http.index");
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Add(new AppSettingKeyValuePair() { Key = "http.index", Value = "/org.openiz.core/index.html#/" });
 
                     retVal.m_tracer = Tracer.GetTracer(typeof(DcApplicationContext), retVal.ConfigurationManager.Configuration);
 
@@ -352,7 +369,7 @@ namespace DisconnectedClient.Core
                 {
                     retVal.m_tracer?.TraceError(e.ToString());
                     //ApplicationContext.Current = null;
-                    retVal.m_configurationManager= new DcConfigurationManager(DcConfigurationManager.GetDefaultConfiguration());
+                    retVal.m_configurationManager= new DcConfigurationManager(DcConfigurationManager.GetDefaultConfiguration(appContextName), appContextName);
                     AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
                     throw;
                 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C665902-E2DA-45D3-AD9C-03DE3451CD33}"
 	ProjectSection(SolutionItems) = preProject
@@ -87,6 +87,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NOTICES", "NOTICES", "{33A0
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OizDebug", "OizDebug\OizDebug.csproj", "{16013272-94C9-46DE-84A1-9562A322719D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisconnectedServer", "DisconnectedServer\DisconnectedServer.csproj", "{344607C3-C412-4E4A-8C1D-32146F888266}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -456,6 +458,34 @@ Global
 		{16013272-94C9-46DE-84A1-9562A322719D}.SignedRelease|Any CPU.Build.0 = Release|Any CPU
 		{16013272-94C9-46DE-84A1-9562A322719D}.SignedRelease|x86.ActiveCfg = Release|Any CPU
 		{16013272-94C9-46DE-84A1-9562A322719D}.SignedRelease|x86.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Debug|x86.Build.0 = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxDebug|Any CPU.Build.0 = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxDebug|x86.ActiveCfg = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxDebug|x86.Build.0 = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxRelease|Any CPU.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxRelease|x86.ActiveCfg = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.LinuxRelease|x86.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacDebug|Any CPU.Build.0 = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacDebug|x86.ActiveCfg = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacDebug|x86.Build.0 = Debug|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacRelease|Any CPU.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacRelease|x86.ActiveCfg = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.MacRelease|x86.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Release|x86.ActiveCfg = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.Release|x86.Build.0 = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|Any CPU.ActiveCfg = SignedRelease|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|Any CPU.Build.0 = SignedRelease|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|x86.ActiveCfg = Release|Any CPU
+		{344607C3-C412-4E4A-8C1D-32146F888266}.SignedRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -473,5 +503,12 @@ Global
 		{5315173F-51E5-4600-B31D-66CFE3B94205} = {7764149B-8D63-4C52-BA7F-CFC55ECD3AF9}
 		{39A382D5-A4A1-415A-8CEB-618177E23FAC} = {76D60CF9-8CC5-4792-8CC0-4D18EFF92FE0}
 		{16013272-94C9-46DE-84A1-9562A322719D} = {9C3CB4E7-2726-4669-8335-3D49B939B76C}
+		{344607C3-C412-4E4A-8C1D-32146F888266} = {7764149B-8D63-4C52-BA7F-CFC55ECD3AF9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3F70770A-004B-4475-BF93-88A22D590C56}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

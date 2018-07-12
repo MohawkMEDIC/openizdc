@@ -277,6 +277,7 @@ namespace OpenIZ.Mobile.Reporting
                 var subContext = new ReportExecutionContext(context, subScope, subScope as IEnumerable);
 
                 List<XElement> newChildren = new List<XElement>();
+
                 foreach (var itm in subScope as IEnumerable)
                 {
                     foreach (var cel in facet.Elements())
@@ -434,7 +435,11 @@ namespace OpenIZ.Mobile.Reporting
                 {
                     object vValue = null;
                     IEnumerable<dynamic> scopeEnum = aScope as IEnumerable<dynamic>;
-                    var expr = this.CompileExpression($"{context.Report.Description.Name}.count.{facet.Value}", facet.Value);
+
+                    var body = facet.Value;
+                    if (String.IsNullOrEmpty(body))
+                        body = "!null";
+                    var expr = this.CompileExpression($"{context.Report.Description.Name}.count.{facet.Value}", body);
 
                     switch (function)
                     {
