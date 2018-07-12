@@ -39,9 +39,12 @@ namespace OpenIZ.Mobile.Core.Data.Hacks
             {
 
                 // Has this already been joined? 
-                var declType = TableMapping.Get(this.m_mapper.MapModelType(property.DeclaringType));
-                var keyProperty = property.PropertyType == typeof(Guid) ? property : property.DeclaringType.GetRuntimeProperty(property.Name + "Key");
-                var declProp = declType.GetColumn(this.m_mapper.MapModelProperty(property.DeclaringType, declType.OrmType, keyProperty));
+                var mapType = property.DeclaringType;
+                if (mapType.GetTypeInfo().IsAbstract)
+                    mapType = tmodel;
+                var declType = TableMapping.Get(this.m_mapper.MapModelType(mapType));
+                var keyProperty = property.PropertyType == typeof(Guid) ? property : mapType.GetRuntimeProperty(property.Name + "Key");
+                var declProp = declType.GetColumn(this.m_mapper.MapModelProperty(mapType, declType.OrmType, keyProperty));
                 if (declProp.ForeignKey == null) return false; // No FK link
 
                 var tblMap = TableMapping.Get(this.m_mapper.MapModelType(property.PropertyType));
