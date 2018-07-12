@@ -29,7 +29,8 @@
 	<string name="installing_applets">Installing </string>
   <string name="starting_services">Starting Services...</string>
   <string name="loading">Please Wait...</string>
-     
+  <string name="confirm">Confirm</string>
+  <string name="cancel">Cancel</string>
   <!-- Errors -->
 	<!-- Setup screen -->
 	<string name="setup_title">Welcome to TImR!</string>
