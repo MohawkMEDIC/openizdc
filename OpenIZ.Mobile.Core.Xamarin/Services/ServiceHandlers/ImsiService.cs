@@ -485,9 +485,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     // Add extension if not already exists
                     entity.Extensions.RemoveAll(o => o == null);
-                    var extension = entity.Extensions.FirstOrDefault(o => o.LoadProperty<ExtensionType>("ExtensionType").Name == extensionToSave.ExtensionType.Name);
-                    if (extension != null)
-                        entity.Extensions.Remove(extension);
+                    var extension = entity.Extensions.RemoveAll(o => o.LoadProperty<ExtensionType>("ExtensionType").Name == extensionToSave.ExtensionType.Name);
                     entity.Extensions.Add(extensionToSave);
                     return entityRepository.Save(entity);
 
