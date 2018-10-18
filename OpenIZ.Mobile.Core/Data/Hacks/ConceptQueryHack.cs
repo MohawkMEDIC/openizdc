@@ -71,13 +71,14 @@ namespace OpenIZ.Mobile.Core.Data.Hacks
                     sqlStatement.Append($" INNER JOIN {tblMap.TableName} AS {tblName} ON ({directFkName}.{fkKeyColumn.Name} = {tblName}.{fkKeyColumn.Name})");
 
                     // Append the where clause
-                    whereClause.And(builder.CreateWhereCondition(property.PropertyType, predicate.SubPath, values, $"{queryPrefix}{declProp.Name}_", new List<TableMapping>() { tblMap }));
-
-                    // Add obslt_utc version?
-                    if (typeof(DbBaseData).GetTypeInfo().IsAssignableFrom(tblMap.OrmType.GetTypeInfo()))
-                        whereClause.And($"{tblName}.{tblMap.GetColumn(nameof(DbBaseData.ObsoletionTime)).Name} IS NULL");
+                    whereClause.And(builder.CreateWhereCondition(property.PropertyType, predicate.SubPath, values, $"{queryPrefix}{declProp.Name}_", new List<TableMapping>() { tblMap }, tblName));
+                                   
                 }
-
+                else
+                {
+                    // Append the where clause
+                    whereClause.And(builder.CreateWhereCondition(property.PropertyType, predicate.SubPath, values, $"{queryPrefix}{declProp.Name}_", new List<TableMapping>() { tblMap }, $"{directFkName}"));
+                }
                 return true;
             }
             else

@@ -509,7 +509,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
         /// <summary>
         /// Create a single where condition based on the property info
         /// </summary>
-        public SqlStatement CreateWhereCondition(Type tmodel, String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables)
+        public SqlStatement CreateWhereCondition(Type tmodel, String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables, String tableAlias = null)
         {
 
             SqlStatement retVal = new SqlStatement();
@@ -522,7 +522,9 @@ namespace OpenIZ.Core.Data.QueryBuilder
             PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(tmodel, o.OrmType, propertyInfo); }).FirstOrDefault(o => o != null);
 
             // Now map the property path
-            var tableAlias = $"{tablePrefix}{tableMapping.TableName}";
+            if(String.IsNullOrEmpty(tableAlias))
+                tableAlias = $"{tablePrefix}{tableMapping.TableName}";
+
             if (domainProperty == null)
                 throw new ArgumentException($"Can't find SQL based property for {propertyPath} on {tableMapping.TableName}");
             var columnData = tableMapping.GetColumn(domainProperty);
