@@ -54,67 +54,10 @@ using Android.Content.PM;
 namespace OpenIZMobile
 {
     [Activity(Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true, ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class SplashActivity : Activity, IOperatingSystemSecurityService
+    public class SplashActivity : OpenIZApplicationActivity
     {
 
-        private ManualResetEvent m_permissionEvent = new ManualResetEvent(false);
-
-        /// <summary>
-        /// Return true if this object has permission
-        /// </summary>
-        public bool HasPermission(PermissionType permission)
-        {
-            if ((int)Build.VERSION.SdkInt < 23)
-                return true;
-            else
-                switch (permission)
-                {
-                    case PermissionType.FileSystem:
-                        return this.CheckSelfPermission(Android.Manifest.Permission.WriteExternalStorage) == (int)Permission.Granted;
-                    case PermissionType.GeoLocation:
-                        return this.CheckSelfPermission(Android.Manifest.Permission.AccessCoarseLocation) == (int)Permission.Granted;
-                    default:
-                        return false;
-                }
-        }
-
-        /// <summary>
-        /// Requests permission
-        /// </summary>
-        public bool RequestPermission(PermissionType permission)
-        {
-            if ((int)Build.VERSION.SdkInt < 23)
-                return true;
-            else
-            {
-                this.m_permissionEvent.Reset();
-                String permissionString = String.Empty;
-                switch (permission)
-                {
-                    case PermissionType.FileSystem:
-                        permissionString = Android.Manifest.Permission.WriteExternalStorage;
-                        break;
-                    case PermissionType.GeoLocation:
-                        permissionString = Android.Manifest.Permission.AccessCoarseLocation;
-                        break;
-                    default:
-                        return false;
-                }
-                this.RequestPermissions(new string[] { permissionString }, 0);
-                this.m_permissionEvent.WaitOne();
-                return this.CheckSelfPermission(Android.Manifest.Permission.AccessCoarseLocation) == (int)Permission.Granted;
-            }
-        }
-
-        /// <summary>
-        /// Request permission result
-        /// </summary>
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-        {
-            this.m_permissionEvent.Set();
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-
+        
         // Tracer
         private Tracer m_tracer;
 

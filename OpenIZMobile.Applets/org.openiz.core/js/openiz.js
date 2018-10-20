@@ -20,7 +20,7 @@
 
 /**
  * @version 0.9.6 (Edmonton)
- * @copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
+ * @copyright (C) 2015-2018, Mohawk College of Applied Arts and Technology
  * @license Apache 2.0
  */
 
