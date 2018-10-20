@@ -49,13 +49,20 @@ namespace OpenIZ.Mobile.Core.Android.Services
                 case BackupMedia.Private:
                     return System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
                 case BackupMedia.Public:
-                    var retVal = System.IO.Path.Combine(
-                        A.OS.Environment.ExternalStorageDirectory.AbsolutePath,
-                        A.OS.Environment.DirectoryDocuments, 
-                        (AndroidApplicationContext.Current as AndroidApplicationContext).AndroidApplication.PackageName);
-                    if (!System.IO.Directory.Exists(retVal))
-                        System.IO.Directory.CreateDirectory(retVal);
-                    return retVal;
+                    var ossec = (ApplicationContext.Current as AndroidApplicationContext).CurrentActivity as IOperatingSystemSecurityService;
+                    if (ossec.HasPermission(PermissionType.FileSystem) ||
+                        ossec.RequestPermission(PermissionType.FileSystem))
+                    {
+                        var retVal = System.IO.Path.Combine(
+                            A.OS.Environment.ExternalStorageDirectory.AbsolutePath,
+                            A.OS.Environment.DirectoryDocuments,
+                            (AndroidApplicationContext.Current as AndroidApplicationContext).AndroidApplication.PackageName);
+                        if (!System.IO.Directory.Exists(retVal))
+                            System.IO.Directory.CreateDirectory(retVal);
+                        return retVal;
+                    }
+                    else 
+                        return System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
                 default:
                     throw new PlatformNotSupportedException("Don't support external media on this platform");
             }

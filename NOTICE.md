@@ -4,7 +4,7 @@ The OpenIZ Disconnected Client leverages several third party artifacts to do its
 
 ## 1.1 Primary Copyright Notice
 
-Open Immunize Disconnected Client, Copyright (C) 2015-2017 Mohawk College of Applied Arts And Technology
+Open Immunize Disconnected Client, Copyright (C) 2015-2018 Mohawk College of Applied Arts And Technology
 
 + Portions Copyright (C) 2010-2017 The CefSharp Authors, All rights reserved
 + Portions Copyright (C) 1998-2017 The OpenSSL Project, All rights reserved

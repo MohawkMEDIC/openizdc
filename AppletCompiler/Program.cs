@@ -49,7 +49,7 @@ namespace AppletCompiler
         {
 
             Console.WriteLine("OpenIZ HTML Applet Compiler v{0} ({1})", Assembly.GetEntryAssembly().GetName().Version, Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
-            Console.WriteLine("Copyright (C) 2015-2017 Mohawk College of Applied Arts and Technology");
+            Console.WriteLine("Copyright (C) 2015-2018 Mohawk College of Applied Arts and Technology");
 
             int retVal = 0;
             ParameterParser<ConsoleParameters> parser = new ParameterParser<ConsoleParameters>();

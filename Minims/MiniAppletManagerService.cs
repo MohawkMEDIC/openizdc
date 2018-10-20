@@ -46,6 +46,17 @@ namespace Minims
         internal Dictionary<AppletManifest, String> m_appletBaseDir = new Dictionary<AppletManifest, string>();
 
         /// <summary>
+        /// Install applet
+        /// </summary>
+        /// <param name="package"></param>
+        /// <param name="isUpgrade"></param>
+        /// <returns></returns>
+        public override bool Install(AppletPackage package, bool isUpgrade = false)
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Mime types
         /// </summary>
         private readonly Dictionary<String, String> s_mime = new Dictionary<string, string>()

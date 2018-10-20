@@ -61,11 +61,13 @@
   <ItemGroup>
     <Compile Include="Configuration\Data\Migrations\CatalogEdmonton4Update.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialAuditCatalog.cs" />
+    <Compile Include="Configuration\Data\Migrations\SubscribePrimaryLocationUpdate.cs" />
     <Compile Include="DataModelExtensions.cs" />
     <Compile Include="Data\Connection\LockableSQLiteConnection.cs" />
     <Compile Include="Data\Connection\ReadonlySQLiteConnection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionExtensions.cs" />
     <Compile Include="Data\Connection\WriteableSQLiteConnection.cs" />
+    <Compile Include="Data\Hacks\ConceptQueryHack.cs" />
     <Compile Include="Data\Hacks\RelationshipQueryHack.cs" />
     <Compile Include="Data\ILocalPersistenceService.cs" />
     <Compile Include="Data\LocalDataContext.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="Services\IBackupService.cs" />
     <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
     <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
+    <Compile Include="Services\IOperatingSystemSecurityService.cs" />
     <Compile Include="Services\ITickleService.cs" />
     <Compile Include="Services\IUpdateManager.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />

@@ -166,7 +166,7 @@ namespace OizDebug.Shell
         /// <param name="sources"></param>
         public BreDebugger(DebuggerParameters parms) : base(parms.WorkingDirectory)
         {
-
+            Console.WriteLine("Starting debugger...");
             DebugApplicationContext.Start(parms);
             ApplicationServiceContext.Current = ApplicationContext.Current;
             ApplicationContext.Current.AddServiceProvider(typeof(FileSystemResolver));

@@ -204,6 +204,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                                     queryId = Guid.NewGuid();
                                     tr = 1;
                                     ofs = 0;
+                                    this.m_actCarePlanPromise.RemoveAll(i => !(i is Patient));
                                     //this.m_actCarePlanPromise.Clear();
                                     var syncFilter = patientSync?.LastSync ?? new DateTime(1900, 01, 01);
                                     while (ofs < tr)
@@ -579,6 +580,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                 {
                     this.m_tracer.TraceVerbose("Calculating care plan for {0}", p.Key);
                     var data = p; //  ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
+
 
                     // First, we clear the warehouse
                     warehouseService.Delete(this.m_dataMart.Id, new { patient_id = data.Key.Value });

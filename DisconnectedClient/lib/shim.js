@@ -1,6 +1,4 @@
 ﻿// OpenIZ Self-Hosted SHIM
-
-
 OpenIZApplicationService.GetStatus = function () {
     return OpenIZApplicationServer.getStatus();
 }

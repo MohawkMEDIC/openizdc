@@ -49,13 +49,15 @@ using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Services;
 using OpenIZ.Mobile.Core.Xamarin.Data;
 using OpenIZ.Mobile.Core.Services;
+using Android.Content.PM;
 
 namespace OpenIZMobile
 {
     [Activity(Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true, ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
-    public class SplashActivity : Activity
+    public class SplashActivity : OpenIZApplicationActivity
     {
 
+        
         // Tracer
         private Tracer m_tracer;
 
@@ -236,7 +238,6 @@ namespace OpenIZMobile
 
             var result = false;
             AutoResetEvent reset = new AutoResetEvent(false);
-
             UserInterfaceUtils.ShowConfirm(this,
                 (s, a) =>
                 {

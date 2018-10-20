@@ -82,10 +82,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                                 else if (itm is DateTime || itm is DateTimeOffset)
                                 {
                                     parm.DbType = System.Data.DbType.Int64;
+
                                     if (itm is DateTime)
-                                        parm.Value = ((DateTime)itm).ToUniversalTime().Ticks;
+                                    {
+                                        DateTime dt = (DateTime)itm;
+                                        switch (dt.Kind)
+                                        {
+                                            case DateTimeKind.Local:
+                                                parm.Value = ((DateTime)itm).ToUniversalTime().Ticks;
+                                                break;
+                                            default:
+                                                parm.Value = ((DateTime)itm).Ticks;
+                                                break;
+                                        }
+                                    }
                                     else
-                                        parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Ticks;
+                                        parm.Value = ((DateTimeOffset)itm).Ticks;
                                 }
                                 else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
                                 else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;
@@ -110,6 +122,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                                 cmd.Parameters.Add(parm);
                             }
 
+#if DEBUG
+                            var filledSql = cmd.CommandText;
+                            for(int i = 0; i < cmd.Parameters.Count; i++)
+                            {
+                                object cmdVal = cmd.Parameters[i].Value;
+                                var idx = filledSql.IndexOf("?");
+                                if (cmdVal is byte[])
+                                    cmdVal = $"x'{BitConverter.ToString((byte[])cmdVal).Replace("-", "")}'";
+                                else if (cmdVal == DBNull.Value)
+                                    cmdVal = "null";
+                                filledSql = filledSql.Remove(idx, 1).Insert(idx, cmdVal.ToString());
+                            }
+                            this.m_tracer.TraceVerbose("Will Execute SQL: {0}", filledSql);
+
+#endif
                             // data reader
                             try
                             {

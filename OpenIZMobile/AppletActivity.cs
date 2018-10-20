@@ -36,6 +36,9 @@ using OpenIZ.Core.Applets;
 using System.Xml;
 using System.Threading.Tasks;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Services;
+using Android.Content.PM;
+using System.Threading;
 
 namespace OpenIZMobile
 {
@@ -44,7 +47,7 @@ namespace OpenIZMobile
 	/// Applet activity
 	/// </summary>
 	[Activity (Label = "Applet", Theme = "@style/OpenIZ", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize )]			
-	public class AppletActivity : Activity
+	public class AppletActivity : OpenIZApplicationActivity
 	{
 
 
@@ -54,11 +57,12 @@ namespace OpenIZMobile
         private TextView m_textView;
         private Tracer m_tracer = Tracer.GetTracer(typeof(AppletActivity));
 
+
         /// <summary>
-		/// Called when the activity has detected the user's press of the back
-		///  key.
-		/// </summary>
-		public override void OnBackPressed()
+        /// Called when the activity has detected the user's press of the back
+        ///  key.
+        /// </summary>
+        public override void OnBackPressed()
         {
             if (this.m_webView.CanGoBack())
                 this.m_webView.GoBack();
@@ -75,8 +79,8 @@ namespace OpenIZMobile
 			base.OnConfigurationChanged (newConfig);
 		}
 
-		
-		protected override void OnCreate (Bundle savedInstanceState)
+
+        protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
 
@@ -107,6 +111,8 @@ namespace OpenIZMobile
             //             UserInterfaceUtils.ShowMessage(this, (o, e) => { this.Finish(); }, String.Format("FATAL: {0} not found (installed: {1})", assetLink, AndroidApplicationContext.Current.LoadedApplets.Count));
 
             //}
+
+           
 
             // Progress has changed
             AndroidApplicationContext.ProgressChanged += (o, e) =>
