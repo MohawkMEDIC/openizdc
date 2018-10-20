@@ -325,6 +325,15 @@ namespace OpenIZ.Mobile.Core
         }
 
         /// <summary>
+        /// Service instance
+        /// </summary>
+        public void AddServiceProvider(Object serviceInstance)
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            appSection.Services.Add(serviceInstance);
+        }
+
+        /// <summary>
         /// Get all services
         /// </summary>
         public IEnumerable<object> GetServices()

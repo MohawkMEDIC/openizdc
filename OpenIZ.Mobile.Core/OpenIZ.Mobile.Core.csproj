@@ -94,6 +94,7 @@
     <Compile Include="Services\IBackupService.cs" />
     <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
     <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
+    <Compile Include="Services\IOperatingSystemSecurityService.cs" />
     <Compile Include="Services\ITickleService.cs" />
     <Compile Include="Services\IUpdateManager.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />

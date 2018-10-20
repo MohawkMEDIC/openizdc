@@ -137,7 +137,8 @@ namespace OpenIZ.Mobile.Core.Android
                     }
                     catch
                     {
-                        if (retVal.ConfigurationManager.HasBackup() && retVal.Confirm(Strings.err_configuration_invalid_restore_prompt))
+                        if (retVal.ConfigurationManager.HasBackup() && 
+                            retVal.Confirm(Strings.err_configuration_invalid_restore_prompt))
                         {
                             retVal.ConfigurationManager.Restore();
                             retVal.ConfigurationManager.Load();
